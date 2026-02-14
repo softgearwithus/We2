@@ -1,2 +1,17 @@
 node_modules/
 dist/
+
+# Environment variables
+.env
+
+# Database
+*.sqlite
+database.sqlite
+
+# Logs
+*.log
+seeder_error.txt
+npm-debug.log
+
+# Testing
+coverage/
