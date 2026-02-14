@@ -37,6 +37,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { UserGamification } from './gamification/entities/user-gamification.entity';
 import { Badge } from './gamification/entities/badge.entity';
 import { UserBadge } from './gamification/entities/user-badge.entity';
+import { ResumeModule } from './resume/resume.module';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { UserBadge } from './gamification/entities/user-badge.entity';
     AiModule,
     GamificationModule,
     AnalyticsModule,
+    ResumeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

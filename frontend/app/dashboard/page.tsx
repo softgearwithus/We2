@@ -9,6 +9,7 @@ import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
 import PlacementRoadmap from '../components/dashboard/prep0/PlacementRoadmap';
+import Leaderboard from '../components/dashboard/Leaderboard';
 import { Sparkles, Trophy, Target, TrendingUp } from 'lucide-react';
 
 interface DashboardStats {
@@ -113,8 +114,8 @@ export default function DashboardPage() {
                         {/* Readiness Panel */}
                         <ReadinessPanel />
 
-                        {/* Placement Roadmap */}
-                        <PlacementRoadmap />
+                        {/* Placement Roadmap - REMOVED per user request */}
+                        {/* <PlacementRoadmap /> */}
 
                         {/* Quick Access Grid */}
                         <div>
@@ -131,47 +132,14 @@ export default function DashboardPage() {
                         {/* Radar Chart */}
                         <RadarSkillChart />
 
-                        {/* Recent Activity (Premium Card) */}
-                        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)]">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="font-bold text-slate-900 text-lg">Recent Activity</h3>
-                                <button className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">View All</button>
-                            </div>
-                            <div className="space-y-4">
-                                {stats.recentActivity.map((item, i) => (
-                                    <div key={i} className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-2xl transition-all duration-300 cursor-pointer group border border-transparent hover:border-slate-100">
-                                        <div className={`w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-indigo-100 group-hover:bg-indigo-50 transition-colors shadow-sm`}>
-                                            <span className={`material-symbols-outlined text-slate-400 group-hover:text-indigo-600 transition-colors`}>{item.icon}</span>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-slate-700 group-hover:text-slate-900 transition-colors">{item.title}</p>
-                                            <p className="text-xs font-medium text-slate-400">{item.time}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        {/* Leaderboard */}
+                        <Leaderboard />
                     </div>
-                </div>
-
-                {/* AI Banner Footer (Premium Gradient) */}
-                <div className="w-full bg-white border border-slate-100 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                    <div className="flex items-center gap-5 relative z-10">
-                        <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                            <Sparkles size={24} className="text-white animate-pulse-slow" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-indigo-600 uppercase tracking-wide mb-1">AI Recommendation</p>
-                            <p className="text-lg font-medium text-slate-800">Based on your weakness in Graphs, try <span className="font-bold text-slate-900 border-b-2 border-indigo-200 cursor-pointer hover:border-indigo-500 transition-colors">Dijkstra's Algorithm</span>.</p>
-                        </div>
-                    </div>
-                    <button className="bg-slate-900 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-lg shadow-slate-200 hover:shadow-indigo-200 relative z-10 flex items-center gap-2 group-hover:scale-105 active:scale-95">
-                        Start Practice <TrendingUp size={16} />
-                    </button>
                 </div>
             </div>
         </div>
     );
 }
+
+
+

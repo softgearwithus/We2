@@ -17,6 +17,7 @@ export interface ResumeData {
         tools: string[];
     };
     projects: ProjectItem[];
+    templateId: string;
 }
 
 export interface ExperienceItem {
@@ -97,4 +98,5 @@ export const initialResumeState: ResumeData = {
             link: 'github.com/johndoe/ecommerce',
         },
     ],
+    templateId: 'modern',
 };

@@ -1,16 +1,23 @@
+
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, Circle, ChevronRight, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, Map, Star } from 'lucide-react';
 import { roadmapData } from '@/app/lib/data/roadmapData';
 
 export default function RoadmapPage() {
+    const [expandedStep, setExpandedStep] = useState<string | null>(null);
+
+    // Mock Progress
+    const progress = 35;
+    const currentStepIndex = 1; // 0-based index
+
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900">
             {/* Ambient Background */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-slate-200/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
             <div className="relative z-10 max-w-5xl mx-auto p-6 lg:p-12">
                 {/* Header */}
@@ -18,61 +25,132 @@ export default function RoadmapPage() {
                     <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-6 transition-colors group">
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
                     </Link>
-                    <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
-                        Placement Roadmap <span className="text-brand-orange">.</span>
-                    </h1>
-                    <p className="text-lg text-slate-500 max-w-2xl">
-                        The complete visual guide to your placement journey. Use this as a reference timeline.
-                    </p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-2 flex items-center gap-3">
+                                <Map className="text-brand-orange" size={40} />
+                                Placement Roadmap
+                            </h1>
+                            <p className="text-lg text-slate-500 max-w-2xl">
+                                Your gamified journey to your dream career. Track your milestones and unlock new levels.
+                            </p>
+                        </div>
+
+                        {/* Overall Progress */}
+                        <div className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm min-w-[250px]">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm font-bold text-slate-700">Journey Progress</span>
+                                <span className="text-sm font-bold text-indigo-600">{progress}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${progress}%` }}
+                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Timeline */}
-                <div className="relative border-l-2 border-slate-200 ml-6 lg:ml-10 space-y-12 pb-12">
-                    {roadmapData.map((step, index) => (
-                        <div key={step.id} className="relative pl-8 lg:pl-12">
-                            {/* Icon Dot */}
-                            <div className="absolute -left-[21px] lg:-left-[25px] top-0 w-10 h-10 lg:w-12 lg:h-12 rounded-full border-4 border-slate-50 flex items-center justify-center bg-white shadow-sm z-10 text-brand-orange">
-                                <step.icon size={20} />
-                            </div>
+                {/* Vertical Timeline */}
+                <div className="relative border-l-2 border-indigo-100 ml-6 lg:ml-10 space-y-8 pb-12">
+                    {roadmapData.map((step, index) => {
+                        const isCompleted = index < currentStepIndex;
+                        const isCurrent = index === currentStepIndex;
+                        const isLocked = index > currentStepIndex;
+                        const isExpanded = expandedStep === step.id;
 
-                            {/* Content Card */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                            <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border bg-slate-50 text-slate-600 border-slate-200">
-                                                {step.timeframe}
-                                            </span>
-                                            <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
-                                                Fast Track: <span className="text-slate-700">{step.fastTrack}</span>
-                                            </span>
+                        return (
+                            <div key={step.id} className="relative pl-8 lg:pl-12">
+                                {/* Icon Dot */}
+                                <div className={`absolute -left-[21px] lg:-left-[25px] top-0 w-10 h-10 lg:w-12 lg:h-12 rounded-full border-4 flex items-center justify-center shadow-sm z-10 transition-colors duration-300
+                                    ${isCompleted ? 'bg-emerald-500 border-emerald-100 text-white' :
+                                        isCurrent ? 'bg-white border-indigo-500 text-indigo-600 ring-4 ring-indigo-50' :
+                                            'bg-slate-100 border-slate-50 text-slate-400'}
+                                `}>
+                                    {isCompleted ? <CheckCircle2 size={20} /> :
+                                        isLocked ? <Lock size={18} /> :
+                                            <step.icon size={20} />}
+                                </div>
+
+                                {/* Card */}
+                                <motion.div
+                                    layout
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className={`bg-white rounded-3xl border transition-all duration-300 overflow-hidden
+                                        ${isCurrent ? 'border-indigo-200 shadow-lg shadow-indigo-50 ring-1 ring-indigo-100' :
+                                            isLocked ? 'border-slate-100 opacity-80' :
+                                                'border-slate-100 shadow-sm hover:shadow-md'}
+                                    `}
+                                >
+                                    {/* Card Header (Clickable) */}
+                                    <div
+                                        onClick={() => setExpandedStep(isExpanded ? null : step.id)}
+                                        className="p-6 cursor-pointer flex items-center justify-between"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div>
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border
+                                                        ${isCurrent ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
+                                                            isCompleted ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                                                'bg-slate-50 text-slate-500 border-slate-200'}
+                                                    `}>
+                                                        {isLocked ? 'Locked' : isCurrent ? 'In Progress' : 'Completed'}
+                                                    </span>
+                                                    <span className="text-xs font-medium text-slate-400">{step.timeframe}</span>
+                                                </div>
+                                                <h3 className={`text-xl font-bold ${isLocked ? 'text-slate-500' : 'text-slate-900'}`}>{step.title}</h3>
+                                            </div>
                                         </div>
-                                        <h3 className="text-2xl font-bold text-slate-900">{step.title}</h3>
-                                        <p className="text-xs text-slate-400 mt-1 font-medium">
-                                            Ideal For: <span className="text-slate-600">{step.idealTime}</span>
-                                        </p>
+
+                                        <div className={`p-2 rounded-full transition-colors ${isExpanded ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-400'}`}>
+                                            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <p className="text-slate-600 mb-6">{step.desc}</p>
+                                    {/* Expandable Content */}
+                                    <AnimatePresence>
+                                        {isExpanded && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="border-t border-slate-100 bg-slate-50/50"
+                                            >
+                                                <div className="p-6 pt-2">
+                                                    <p className="text-slate-600 mb-6 text-sm leading-relaxed">{step.desc}</p>
 
-                                {/* Topics Preview */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    {step.topics.map((topic, i) => (
-                                        <div key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-brand-orange/50"></div>
-                                            {topic.title}
-                                        </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        </div>
-                    ))}
+                                                    <h4 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+                                                        <Star size={14} className="text-brand-orange fill-brand-orange" />
+                                                        Key Topics
+                                                    </h4>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        {step.topics.map((topic, i) => (
+                                                            <div key={i} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                                                                <div className={`w-2 h-2 rounded-full ${isCurrent ? 'bg-indigo-500' : 'bg-slate-300'}`}></div>
+                                                                <span className="text-sm font-medium text-slate-700">{topic.title}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {isCurrent && (
+                                                        <div className="mt-8 flex justify-end">
+                                                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-indigo-200">
+                                                                Continue Learning
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

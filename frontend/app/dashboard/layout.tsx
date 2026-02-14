@@ -39,11 +39,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
     const placementMenu: MenuItem[] = [
         { icon: 'dashboard', label: 'Overview', href: '/dashboard' },
-        { icon: 'map', label: 'Prep0 Roadmap', href: '/dashboard/roadmap' },
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation' },
         { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
         { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa' },
         { icon: 'mic', label: 'Mock Interview', href: '/dashboard/interview' },
+        { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
         { icon: 'leaderboard', label: 'Leaderboard', href: '/dashboard/leaderboard' },
     ];

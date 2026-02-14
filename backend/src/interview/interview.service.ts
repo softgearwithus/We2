@@ -23,6 +23,40 @@ export class InterviewService {
     this.model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   }
 
+  async analyzeAudio(audioBuffer: Buffer, mimeType: string, type: 'reading' | 'repeat' | 'extempore' | 'answer' = 'answer', referenceText?: string): Promise<string> {
+    try {
+      const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      let prompt = "Please analyze this audio response to an interview question. Provide constructive feedback on clarity, tone, and the content of the answer. Keep it concise (under 200 words).";
+
+      if (type === 'reading') {
+        prompt = `The user was asked to read the following text: "${referenceText}". Compare the spoken audio to this text. Rate their fluency, pronunciation, and accuracy. Point out any mispronounced words or hesitations.`;
+      } else if (type === 'repeat') {
+        prompt = `The user was asked to repeat the following sentence: "${referenceText}". Check if they repeated it accurately. Rate their listening skills and pronunciation. Mention any missing or incorrect words.`;
+      } else if (type === 'extempore') {
+        prompt = `The user was asked to speak on the topic: "${referenceText}". Analyze their speech for coherence, vocabulary, grammar, and fluency. Did they stay on topic? usage of filler words?`;
+      } else if (type === 'answer') {
+        prompt = `The user was asked the question: "${referenceText}". Analyze their answer for relevance, depth, clarity, and confidence. Provide a score out of 100 and brief feedback.`;
+      }
+
+      const result = await model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: audioBuffer.toString("base64"),
+            mimeType: mimeType
+          }
+        }
+      ]);
+
+      return result.response.text();
+    } catch (error) {
+      const fs = require('fs');
+      fs.appendFileSync('backend-error.log', `Error in analyzeAudio: ${error}\nStack: ${error.stack}\n`);
+      throw error;
+    }
+  }
+
   async startSession(userId: string) {
     const interview = this.interviewRepository.create({
       userId,
