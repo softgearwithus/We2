@@ -1,0 +1,8 @@
+ide/
+Prep0/
+text_assets/
+ui_assets/
+updated/
+backend/.env
+.vscode/
+.agent/
