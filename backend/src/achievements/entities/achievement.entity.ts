@@ -40,7 +40,7 @@ export class Achievement {
     @Column({ type: 'int', default: 0 })
     xp: number; // Experience points
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     earnedAt: Date;
 
     @CreateDateColumn()

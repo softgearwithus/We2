@@ -47,7 +47,7 @@ export class Performance {
     @Column({ type: 'varchar', length: 255 })
     evaluatedBy: string; // "AI" or userId
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     evaluatedAt: Date;
 
     @CreateDateColumn()

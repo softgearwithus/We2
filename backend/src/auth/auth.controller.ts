@@ -1,16 +1,24 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { Public } from './decorators/auth.decorators';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @ApiTags('auth')
+@UseGuards(ThrottlerGuard)
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Public()
     @Post('register')
+    @Throttle({
+        default: {
+            limit: 3,
+            ttl: 60,
+        },
+    })
     @ApiOperation({ summary: 'Register a new user' })
     @ApiBody({ type: RegisterDto })
     @ApiResponse({
@@ -26,6 +34,7 @@ export class AuthController {
     })
     @ApiResponse({ status: 400, description: 'Invalid input data' })
     @ApiResponse({ status: 409, description: 'Email already exists' })
+    @ApiResponse({ status: 429, description: 'Too many requests' })
     async register(@Body() registerDto: RegisterDto) {
         return this.authService.register(registerDto);
     }
@@ -33,6 +42,12 @@ export class AuthController {
     @Public()
     @HttpCode(HttpStatus.OK)
     @Post('login')
+    @Throttle({
+        default: {
+            limit: 8,
+            ttl: 60,
+        },
+    })
     @ApiOperation({ summary: 'Login with email and password' })
     @ApiBody({ type: LoginDto })
     @ApiResponse({
@@ -50,6 +65,7 @@ export class AuthController {
         },
     })
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
+    @ApiResponse({ status: 429, description: 'Too many requests' })
     async login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
     }

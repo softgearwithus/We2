@@ -21,7 +21,7 @@ export class UserGamification {
     @Column({ type: 'int', default: 0 })
     maxStreak: number;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     lastActivityDate: Date | null;
 
     @UpdateDateColumn()

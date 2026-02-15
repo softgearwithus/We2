@@ -22,16 +22,26 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
         setIsLoading(true);
         try {
             // In a real app with strict role checks, we might want to validate the role here or in backend
-            const response = await fetch('http://localhost:3001/auth/login', {
+            const roleMap: Record<string, string> = {
+                student: 'student',
+                college: 'college_admin',
+                industry: 'company_admin',
+                admin: 'super_admin',
+            };
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                body: JSON.stringify({
+                    ...data,
+                    role: roleMap[role],
+                }),
             });
 
             if (response.ok) {
                 const result = await response.json();
                 // Optional: Check if the returned user role matches the intended portal role
-                if (result.user.role !== role && role !== 'admin') {
+                if (result.user.role !== roleMap[role] && role !== 'admin') {
                     // Allow admin to potentially login locally if needed, or stick to strict checking
                     alert(`Access Denied: This portal is for ${role}s only.`);
                     setIsLoading(false);

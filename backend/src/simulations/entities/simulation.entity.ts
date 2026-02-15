@@ -65,10 +65,10 @@ export class Simulation {
     })
     currentPhase: SimulationPhase | null;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     startDate: Date | null;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     endDate: Date | null;
 
     @Column({ type: 'int', nullable: true })

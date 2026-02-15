@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -42,12 +43,19 @@ import { ResumeModule } from './resume/resume.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,
+          limit: 120,
+        },
+      ],
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'sqlite',
-        database: 'database.sqlite',
-        entities: [
+      useFactory: (configService: ConfigService) => {
+        const dbType = configService.get<string>('DB_TYPE') || 'sqlite';
+        const entities = [
           User,
           Simulation,
           Task,
@@ -65,10 +73,30 @@ import { ResumeModule } from './resume/resume.module';
           UserGamification,
           Badge,
           UserBadge,
-        ],
-        synchronize: true, // Auto-create tables
-        logging: false,
-      }),
+        ];
+
+        if (dbType === 'postgres') {
+          return {
+            type: 'postgres',
+            host: configService.get<string>('DB_HOST') || 'localhost',
+            port: parseInt(configService.get<string>('DB_PORT') || '5432', 10),
+            username: configService.get<string>('DB_USER') || 'admin',
+            password: configService.get<string>('DB_PASSWORD') || 'password',
+            database: configService.get<string>('DB_NAME') || 'college_prep_db',
+            entities,
+            synchronize: true,
+            logging: false,
+          };
+        }
+
+        return {
+          type: 'sqlite',
+          database: configService.get<string>('DB_SQLITE_PATH') || 'database.sqlite',
+          entities,
+          synchronize: true,
+          logging: false,
+        };
+      },
       inject: [ConfigService],
     }),
     UsersModule,

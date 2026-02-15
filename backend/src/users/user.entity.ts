@@ -16,6 +16,12 @@ export class User {
     @Column({ unique: true })
     email: string;
 
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    firstName: string | null;
+
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    lastName: string | null;
+
     @Column({ select: false }) // Don't return password by default
     password: string;
 
@@ -37,7 +43,7 @@ export class User {
     })
     subscriptionStatus: string;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     subscriptionEndDate: Date;
 
     @Column({ default: false })

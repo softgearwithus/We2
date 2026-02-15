@@ -35,7 +35,7 @@ export default function DashboardPage() {
             const fetchStats = async () => {
                 const token = localStorage.getItem('accessToken');
                 try {
-                    const response = await fetch('http://localhost:3001/users/dashboard-stats', {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/dashboard-stats`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }

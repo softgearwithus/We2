@@ -40,13 +40,13 @@ export class Project {
     })
     status: ProjectStatus;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     startDate: Date;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     dueDate: Date;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     completedAt: Date | null;
 
     @Column({ type: 'simple-json', nullable: true })

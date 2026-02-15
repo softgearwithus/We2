@@ -75,10 +75,10 @@ export class Task {
     })
     status: TaskStatus;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     deadline: Date;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     completedAt: Date | null;
 
     @Column({ type: 'text', nullable: true })

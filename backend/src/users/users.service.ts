@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -12,8 +12,20 @@ export class UsersService {
         private usersRepository: Repository<User>,
     ) { }
 
-    async create(email: string, password: string, role?: string, subscriptionPlan?: string): Promise<User> {
-        const hashedPassword = await bcrypt.hash(password, 10);
+    async create(
+        email: string,
+        password: string,
+        role?: string,
+        subscriptionPlan?: string,
+        firstName?: string,
+        lastName?: string,
+    ): Promise<User> {
+        const normalizedEmail = email.toLowerCase().trim();
+        const existing = await this.usersRepository.findOne({ where: { email: normalizedEmail } });
+        if (existing) {
+            throw new ConflictException('Email already exists');
+        }
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         let initialStatus = 'inactive';
         let endDate: Date | null = null;
@@ -24,20 +36,34 @@ export class UsersService {
         }
 
         const user = this.usersRepository.create({
-            email,
+            email: normalizedEmail,
             password: hashedPassword,
             role: role as any || 'student',
             subscriptionPlan: subscriptionPlan || 'free',
             subscriptionStatus: initialStatus,
             subscriptionEndDate: endDate as Date,
+            firstName: firstName?.trim() || null,
+            lastName: lastName?.trim() || null,
         });
         return this.usersRepository.save(user);
     }
 
     async findByEmail(email: string): Promise<User | null> {
+        const normalizedEmail = email.toLowerCase().trim();
         return this.usersRepository.findOne({
-            where: { email },
-            select: ['id', 'email', 'password', 'role', 'isTwoFactorEnabled'],
+            where: { email: normalizedEmail },
+            select: [
+                'id',
+                'email',
+                'password',
+                'role',
+                'isTwoFactorEnabled',
+                'subscriptionPlan',
+                'subscriptionStatus',
+                'subscriptionEndDate',
+                'firstName',
+                'lastName',
+            ],
         });
     }
 
@@ -57,11 +83,19 @@ export class UsersService {
         const user = await this.findById(id);
 
         if (updateUserDto.email) {
-            user.email = updateUserDto.email;
+            user.email = updateUserDto.email.toLowerCase().trim();
+        }
+
+        if (updateUserDto.firstName !== undefined) {
+            user.firstName = updateUserDto.firstName?.trim() || null;
+        }
+
+        if (updateUserDto.lastName !== undefined) {
+            user.lastName = updateUserDto.lastName?.trim() || null;
         }
 
         if (updateUserDto.password) {
-            user.password = await bcrypt.hash(updateUserDto.password, 10);
+            user.password = await bcrypt.hash(updateUserDto.password, 12);
         }
 
         return this.usersRepository.save(user);
@@ -71,9 +105,7 @@ export class UsersService {
         plainPassword: string,
         hashedPassword: string,
     ): Promise<boolean> {
-        const isValid = await bcrypt.compare(plainPassword, hashedPassword);
-        console.log(`[UsersService] Password validation result: ${isValid}`);
-        return isValid;
+        return bcrypt.compare(plainPassword, hashedPassword);
     }
     async getDashboardStats(userId: string) {
         // TODO: Replace with real DB queries

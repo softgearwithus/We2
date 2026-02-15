@@ -1,13 +1,36 @@
-import { IsEmail, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, IsOptional, Matches, MaxLength, IsIn, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
+    @ApiProperty({
+        example: 'John',
+        description: 'First name',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(100)
+    firstName?: string;
+
+    @ApiProperty({
+        example: 'Doe',
+        description: 'Last name',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(100)
+    lastName?: string;
+
     @ApiProperty({
         example: 'student@example.com',
         description: 'User email address',
     })
     @IsEmail()
     @IsNotEmpty()
+    @MaxLength(255)
     email: string;
 
     @ApiProperty({
@@ -17,6 +40,10 @@ export class RegisterDto {
     })
     @IsNotEmpty()
     @MinLength(8)
+    @MaxLength(72)
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/, {
+        message: 'Password must include uppercase, lowercase, number, and symbol',
+    })
     password: string;
 
     @ApiProperty({
@@ -25,6 +52,7 @@ export class RegisterDto {
         required: false,
     })
     @IsOptional()
+    @IsIn(['student', 'college_admin', 'company_admin'])
     role?: string;
 
     @ApiProperty({
@@ -33,6 +61,7 @@ export class RegisterDto {
         required: false,
     })
     @IsOptional()
+    @IsIn(['free', 'placement_plus', 'industry_plus', 'we2_max'])
     subscriptionPlan?: string;
 }
 
@@ -43,6 +72,7 @@ export class LoginDto {
     })
     @IsEmail()
     @IsNotEmpty()
+    @MaxLength(255)
     email: string;
 
     @ApiProperty({
@@ -50,5 +80,15 @@ export class LoginDto {
         description: 'User password',
     })
     @IsNotEmpty()
+    @MaxLength(72)
     password: string;
+
+    @ApiProperty({
+        example: 'student',
+        description: 'Optional portal role for login validation',
+        required: false,
+    })
+    @IsOptional()
+    @IsIn(['student', 'college_admin', 'company_admin', 'super_admin'])
+    role?: string;
 }

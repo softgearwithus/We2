@@ -13,5 +13,8 @@ database.sqlite
 seeder_error.txt
 npm-debug.log
 
+# TypeScript incremental build info
+*.tsbuildinfo
+
 # Testing
 coverage/

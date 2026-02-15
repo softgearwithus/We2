@@ -36,7 +36,7 @@ export class TeamMember {
     @CreateDateColumn()
     joinedAt: Date;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     leftAt: Date | null;
 
     // Relationships

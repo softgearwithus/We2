@@ -29,10 +29,10 @@ export class Certification {
     @Column({ type: 'varchar', length: 255, default: 'SimuCorp Platform' })
     issuer: string;
 
-    @Column({ type: 'datetime' })
+    @Column({ type: 'timestamp' })
     issuedAt: Date;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     expiresAt: Date | null;
 
     @Column({ type: 'varchar', length: 500, nullable: true })

@@ -9,6 +9,8 @@ interface User {
     subscriptionPlan?: string;
     subscriptionStatus?: string;
     subscriptionEndDate?: string;
+    firstName?: string | null;
+    lastName?: string | null;
 }
 
 interface AuthContextType {
@@ -28,9 +30,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         // Check for existing token on mount
         const token = localStorage.getItem('accessToken');
+        const issuedAt = localStorage.getItem('accessTokenSetAt');
+        if (issuedAt) {
+            const maxAgeMs = 1000 * 60 * 60 * 24 * 7;
+            if (Date.now() - parseInt(issuedAt, 10) > maxAgeMs) {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('accessTokenSetAt');
+            }
+        }
         if (token) {
             // Validate token or fetch user profile
-            fetch('http://localhost:3001/users/profile', {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/profile`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -56,12 +66,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = (token: string, userData: User) => {
         localStorage.setItem('accessToken', token);
+        localStorage.setItem('accessTokenSetAt', String(Date.now()));
         setUser(userData);
         router.push('/dashboard');
     };
 
     const logout = () => {
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('accessTokenSetAt');
         setUser(null);
         router.push('/login');
     };

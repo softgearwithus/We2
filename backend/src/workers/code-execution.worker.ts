@@ -263,7 +263,7 @@ async function runTestCase(
         // ... existing config ...
         Cmd: language === 'javascript' ? ['node', '/app/executor.js'] :
             language === 'python' ? ['python3', '/app/executor.py'] :
-                ['/app/executor'], // Generic default
+                ['/app/executor.sh'],
         Tty: false,
         OpenStdin: true,
         StdinOnce: true,

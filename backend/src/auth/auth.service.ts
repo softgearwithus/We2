@@ -11,39 +11,48 @@ export class AuthService {
     ) { }
 
     async register(registerDto: RegisterDto) {
-        const { email, password, role, subscriptionPlan } = registerDto;
-        const user = await this.usersService.create(email, password, role, subscriptionPlan);
+        const { email, password, role, subscriptionPlan, firstName, lastName } = registerDto;
+        const user = await this.usersService.create(
+            email,
+            password,
+            role,
+            subscriptionPlan,
+            firstName,
+            lastName,
+        );
         return {
             id: user.id,
             email: user.email,
             role: user.role,
             subscriptionPlan: user.subscriptionPlan,
+            subscriptionStatus: user.subscriptionStatus,
+            subscriptionEndDate: user.subscriptionEndDate,
+            firstName: user.firstName,
+            lastName: user.lastName,
         };
     }
 
     async login(loginDto: LoginDto) {
-        const { email, password } = loginDto;
-        console.log(`[AuthService] Attempting login for email: ${email}`);
+        const { email, password, role } = loginDto;
 
         const user = await this.usersService.findByEmail(email);
 
         if (!user) {
-            console.log(`[AuthService] User not found for email: ${email}`);
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        console.log(`[AuthService] User found, validating password...`);
         const isPasswordValid = await this.usersService.validatePassword(
             password,
             user.password,
         );
 
         if (!isPasswordValid) {
-            console.log(`[AuthService] Password validation failed for email: ${email}`);
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        console.log(`[AuthService] Login successful for email: ${email}`);
+        if (role && user.role !== role) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
         const payload = { sub: user.id, email: user.email, role: user.role };
         const accessToken = await this.jwtService.signAsync(payload);
 
@@ -53,6 +62,11 @@ export class AuthService {
                 id: user.id,
                 email: user.email,
                 role: user.role,
+                subscriptionPlan: user.subscriptionPlan,
+                subscriptionStatus: user.subscriptionStatus,
+                subscriptionEndDate: user.subscriptionEndDate,
+                firstName: user.firstName,
+                lastName: user.lastName,
             },
         };
     }

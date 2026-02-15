@@ -26,7 +26,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
         try {
             const payload = { ...data, role: roleValue, subscriptionPlan: plan };
 
-            const response = await fetch('http://localhost:3001/auth/register', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -39,7 +39,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                 // For now, redirect to login with pre-filled email? 
                 // Better UX: Auto-login. Let's assume we need to call login endpoint.
 
-                const loginResponse = await fetch('http://localhost:3001/auth/login', {
+                const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: data.email, password: data.password }),

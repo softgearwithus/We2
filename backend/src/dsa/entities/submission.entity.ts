@@ -71,7 +71,7 @@ export class Submission {
     @CreateDateColumn()
     submittedAt: Date;
 
-    @Column({ type: 'datetime', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     completedAt: Date | null;
 
     @UpdateDateColumn()
