@@ -4,12 +4,13 @@ import { motion } from 'framer-motion';
 import { ChevronRight, Database, Globe, Lock, Rocket, Server, Terminal } from 'lucide-react';
 
 const roadmapNodes = [
-    { title: "Basics of DSA", icon: Terminal, color: "text-blue-500", bg: "bg-blue-50" },
-    { title: "Advanced Arrays", icon: Database, color: "text-purple-500", bg: "bg-purple-50" },
-    { title: "System Design", icon: Server, color: "text-orange-500", bg: "bg-orange-50" },
-    { title: "Ind. Experience", icon: Rocket, color: "text-green-500", bg: "bg-green-50" }
+    { title: "Foundations & DSA", icon: Terminal, color: "text-blue-500", bg: "bg-blue-50" },
+    { title: "CS Core & Mocks", icon: Database, color: "text-purple-500", bg: "bg-purple-50" },
+    { title: "Development Projects", icon: Server, color: "text-orange-500", bg: "bg-orange-50" },
+    { title: "We2Hub Simulation", icon: Rocket, color: "text-green-500", bg: "bg-green-50" }
 ];
 
+// Forced refresh
 export default function RoadmapPreview() {
     return (
         <section className="py-24 bg-gray-50 relative overflow-hidden">

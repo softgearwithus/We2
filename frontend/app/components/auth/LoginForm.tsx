@@ -113,8 +113,8 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             {role !== 'admin' && (
                 <p className="text-center text-sm text-slate-500">
                     Don't have an account?{' '}
-                    <Link href={`/register/${role}`} className={`font-bold hover:underline ${role === 'student' ? 'text-indigo-600' : 'text-slate-900'}`}>
-                        Create {role} account
+                    <Link href="/register" className={`font-bold hover:underline ${role === 'student' ? 'text-indigo-600' : 'text-slate-900'}`}>
+                        Get Started
                     </Link>
                 </p>
             )}

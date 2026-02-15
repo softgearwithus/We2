@@ -20,7 +20,7 @@ export class VapiController {
                     firstMessage: "Hello! I am your AI Interviewer. Shall we start with a brief introduction?",
                     model: {
                         provider: "custom-llm",
-                        url: "https://<YOUR_NGROK_URL>/interview/vapi/chat", // This endpoint will be called for each turn
+                        url: `${process.env.BASE_URL || 'https://<YOUR_NGROK_URL>'}/interview/vapi/chat`, // Use env for ngrok
                         messages: [
                             {
                                 role: "system",
@@ -34,6 +34,14 @@ export class VapiController {
                     }
                 }
             };
+        }
+
+        // 2. End of Call Handshake
+        if (payload.message && payload.message.type === 'call-ended') {
+            const callId = payload.message.call.id;
+            // Trigger background fetching of report (~5 mins)
+            this.interviewService.scheduleAnalysisReport(callId);
+            return { status: 'processing' };
         }
 
         return { status: 'ok' };

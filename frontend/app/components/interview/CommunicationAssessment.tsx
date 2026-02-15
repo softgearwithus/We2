@@ -13,30 +13,41 @@ import ExtemporeSection from './sections/ExtemporeSection';
 import ResultReport from './sections/ResultReport';
 import VideoQASection from './sections/VideoQASection';
 
-interface CommunicationAssessmentProps {
-    onBack: () => void;
-}
-
-export type AssessmentSection = 'intro' | 'reading' | 'repeat' | 'extempore' | 'videoQA' | 'results';
-
 export interface SectionScore {
     section: string;
     score: number; // 0-100
     feedback: string;
 }
 
-export default function CommunicationAssessment({ onBack }: CommunicationAssessmentProps) {
+interface CommunicationAssessmentProps {
+    onBack: () => void;
+    onComplete?: (scores: SectionScore[]) => void;
+}
+
+export type AssessmentSection = 'intro' | 'reading' | 'repeat' | 'extempore' | 'videoQA' | 'results';
+
+
+export default function CommunicationAssessment({ onBack, onComplete }: CommunicationAssessmentProps) {
     const [currentSection, setCurrentSection] = useState<AssessmentSection>('intro');
     const [scores, setScores] = useState<SectionScore[]>([]);
 
     const handleSectionComplete = (scoreData: SectionScore) => {
-        setScores(prev => [...prev, scoreData]);
+        const newScores = [...scores, scoreData];
+        setScores(newScores);
 
         // Navigation logic
         if (currentSection === 'reading') setCurrentSection('repeat');
         else if (currentSection === 'repeat') setCurrentSection('extempore');
         else if (currentSection === 'extempore') setCurrentSection('videoQA');
-        else if (currentSection === 'videoQA') setCurrentSection('results');
+        else if (currentSection === 'videoQA') {
+            // If we have an onComplete prop (new flow), use it.
+            // Otherwise, fallback to the old internal result screen (legacy flow)
+            if (onComplete) {
+                onComplete(newScores);
+            } else {
+                setCurrentSection('results');
+            }
+        }
     };
 
     return (

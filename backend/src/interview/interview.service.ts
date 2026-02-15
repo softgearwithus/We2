@@ -144,6 +144,48 @@ export class InterviewService {
     }
   }
 
+  async scheduleAnalysisReport(callId: string) {
+    console.log(`Scheduling analysis fetch for call: ${callId} in 5 minutes...`);
+
+    // In a real prod environment, use a task queue like BullMQ.
+    // For this simulation, we'll use a reliable delayed execution.
+    setTimeout(async () => {
+      try {
+        await this.fetchVapiAnalysis(callId);
+      } catch (err) {
+        console.error(`Failed to fetch Vapi analysis for ${callId}:`, err);
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+  }
+
+  async fetchVapiAnalysis(callId: string) {
+    const vapiSecret = process.env.VAPI_API_KEY;
+    const vapiBase = process.env.VAPI_BASE_URL || 'https://api.vapi.ai';
+
+    try {
+      const response = await fetch(`${vapiBase}/call/${callId}`, {
+        headers: {
+          'Authorization': `Bearer ${vapiSecret}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error(`Vapi API error: ${response.statusText}`);
+
+      const data = await response.json();
+      console.log(`Analysis received for ${callId}:`, data.analysis);
+
+      // Map Vapi analysis (summary, transcript, success evaluation) 
+      // back to our Interview record if we can find it by some tag or logic
+      // Vapi can send 'metadata' which we can include in assistant-request
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching Vapi analysis:", error);
+      throw error;
+    }
+  }
+
   async endSession(interviewId: string) {
     const interview = await this.interviewRepository.findOne({ where: { id: interviewId } });
     if (!interview) throw new NotFoundException('Interview not found');

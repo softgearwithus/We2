@@ -2,40 +2,45 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { User, Building2, Briefcase, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { User, Building2, Briefcase, ShieldCheck, ArrowRight, Sparkles, GraduationCap } from 'lucide-react';
 
 export default function LoginSelectionPage() {
     const portals = [
         {
             role: 'Student',
-            icon: <User size={32} className="text-white" />,
+            icon: <GraduationCap size={32} className="text-white" />,
             description: 'Access simulations, track progress, and build your verified portfolio.',
             link: '/login/student',
             gradient: 'from-indigo-600 to-violet-600',
             border: 'hover:border-indigo-300',
             shadow: 'hover:shadow-indigo-500/20',
-            bg: 'bg-indigo-50',
-            badge: 'Most Popular'
+            badge: 'Login Portal',
+            badgeColor: 'bg-indigo-600',
+            cta: 'Student Login'
         },
         {
             role: 'Institute',
             icon: <Building2 size={32} className="text-white" />,
-            description: 'Manage student cohorts, monitor performance, and access analytics.',
-            link: '/login/college',
+            description: 'Partner with us to transform your campus into a tech talent hub.',
+            link: '/contact',
             gradient: 'from-emerald-600 to-teal-600',
             border: 'hover:border-emerald-300',
             shadow: 'hover:shadow-emerald-500/20',
-            bg: 'bg-emerald-50',
+            badge: 'Partner Program',
+            badgeColor: 'bg-emerald-600',
+            cta: 'Contact Sales'
         },
         {
             role: 'Industry',
             icon: <Briefcase size={32} className="text-white" />,
-            description: 'Hire pre-vetted talent and view verified project submissions.',
-            link: '/login/industry',
+            description: 'Hire pre-vetted talent directly from our high-performance cohorts.',
+            link: '/contact',
             gradient: 'from-slate-800 to-black',
             border: 'hover:border-slate-400',
             shadow: 'hover:shadow-slate-500/20',
-            bg: 'bg-slate-50',
+            badge: 'Hiring Solutions',
+            badgeColor: 'bg-slate-900',
+            cta: 'Inquire Now'
         },
     ];
 
@@ -43,9 +48,9 @@ export default function LoginSelectionPage() {
         <div className="min-h-screen bg-white selection:bg-brand-orange selection:text-white relative overflow-hidden flex flex-col">
             {/* Background Decoration */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl -ml-64 -mb-64" />
-                <div className="absolute inset-0 opacity-[0.02]" style={{
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64 animate-pulse-slow" />
+                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-3xl -ml-64 -mb-64 animate-pulse-slow delay-700" />
+                <div className="absolute inset-0 opacity-[0.03]" style={{
                     backgroundImage: `radial-gradient(#000 1px, transparent 1px)`,
                     backgroundSize: '32px 32px'
                 }} />
@@ -69,17 +74,17 @@ export default function LoginSelectionPage() {
 
             {/* Content */}
             <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
-                <div className="text-center max-w-2xl mb-16 animate-fade-in-up">
+                <div className="text-center max-w-3xl mb-16 animate-fade-in-up">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-black text-white text-[10px] font-bold uppercase tracking-widest mb-6 shadow-lg shadow-brand-orange/20">
                         <Sparkles size={12} className="text-brand-orange" />
                         Secure Access Portal
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-black text-brand-black mb-6 tracking-tight leading-[1.1]">
+                    <h1 className="text-5xl md:text-7xl font-black text-brand-black mb-6 tracking-tight leading-[1.1]">
                         Choose Your <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-red-500">Gateway.</span>
                     </h1>
                     <p className="text-xl text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
-                        Select the login dashboard relevant to your role to access your personalized high-performance environment.
+                        Whether you're a student building a career or an organization building the future, start here.
                     </p>
                 </div>
 
@@ -95,25 +100,23 @@ export default function LoginSelectionPage() {
                                 <div className={`relative h-full bg-white rounded-[32px] p-1 border-2 border-transparent ${portal.border} transition-all duration-500 ${portal.shadow} hover:-translate-y-2`}>
                                     <div className="absolute inset-0 bg-white rounded-[32px] shadow-xl shadow-slate-200/50" />
 
-                                    <div className="relative h-full bg-slate-50/50 rounded-[28px] p-8 overflow-hidden z-10 flex flex-col">
-                                        {portal.badge && (
-                                            <div className="absolute top-6 right-6 bg-brand-orange text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
-                                                {portal.badge}
-                                            </div>
-                                        )}
+                                    <div className="relative h-full bg-slate-50/30 backdrop-blur-sm rounded-[28px] p-8 overflow-hidden z-10 flex flex-col">
+                                        <div className={`absolute top-6 right-6 ${portal.badgeColor} text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg`}>
+                                            {portal.badge}
+                                        </div>
 
                                         <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-8 shadow-lg shadow-black/5 group-hover:scale-110 transition-transform duration-500`}>
                                             {portal.icon}
                                         </div>
 
-                                        <h2 className="text-2xl font-black text-brand-black mb-3">{portal.role} Login</h2>
+                                        <h2 className="text-2xl font-black text-brand-black mb-3">{portal.role}</h2>
 
                                         <p className="text-slate-500 font-medium leading-relaxed mb-8 flex-1">
                                             {portal.description}
                                         </p>
 
                                         <div className="flex items-center gap-2 font-bold text-sm text-brand-black group-hover:gap-4 transition-all">
-                                            Access Portal <ArrowRight size={16} className="text-brand-orange" />
+                                            {portal.cta} <ArrowRight size={16} className="text-brand-orange" />
                                         </div>
                                     </div>
                                 </div>
@@ -123,10 +126,16 @@ export default function LoginSelectionPage() {
                 </div>
 
                 <div className="mt-20">
-                    <Link href="/secure/admin" className="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-brand-orange transition-colors opacity-50 hover:opacity-100">
-                        <ShieldCheck size={14} />
-                        Authorized Personnel Only
-                    </Link>
+                    <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
+                        <Link href="/secure/admin" className="flex items-center gap-2 hover:text-brand-orange transition-colors">
+                            <ShieldCheck size={14} />
+                            Admin Access
+                        </Link>
+                        <span className="w-1 h-1 rounded-full bg-slate-300" />
+                        <Link href="/contact" className="hover:text-brand-orange transition-colors">
+                            Need Help?
+                        </Link>
+                    </div>
                 </div>
             </main>
         </div>

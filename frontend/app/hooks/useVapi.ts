@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Vapi from '@vapi-ai/web';
 
-const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || 'demo-public-key');
+const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || '');
 
 export type VapiStatus = 'idle' | 'loading' | 'active' | 'speaking' | 'listening';
 
@@ -22,12 +22,32 @@ export const useVapi = () => {
         vapi.on('volume-level', (level) => setVolumeLevel(level));
 
         vapi.on('message', (message) => {
-            console.log('Vapi Message:', message);
+            // console.log('Vapi Message:', message); 
+
+            // Only use transcript for immediate user feedback if it's new
             if (message.type === 'transcript' && message.transcriptType === 'final') {
-                setMessages(prev => [...prev, { role: 'user', text: message.transcript }]);
+                setMessages(prev => {
+                    const lastMsg = prev[prev.length - 1];
+                    // Strict deduplication: Don't add if exact same text exists at end
+                    if (lastMsg && lastMsg.role === 'user' && lastMsg.text === message.transcript) {
+                        return prev;
+                    }
+                    return [...prev, { role: 'user', text: message.transcript }];
+                });
             }
-            if (message.type === 'function-call' && message.functionCall.name === 'modelOutput') {
-                // Capture AI response if sent via function call (depends on config)
+
+            // Sync with full conversation history when available to ensure consistency
+            if (message.type === 'conversation-update') {
+                const conversation = message.conversation;
+                if (conversation && conversation.length > 0) {
+                    // We'll trust Vapi's history but map it to our format
+                    // This cleans up any partial/duplicate states
+                    const formattedMessages = conversation.map((m: any) => ({
+                        role: m.role,
+                        text: m.content
+                    }));
+                    setMessages(formattedMessages);
+                }
             }
         });
 

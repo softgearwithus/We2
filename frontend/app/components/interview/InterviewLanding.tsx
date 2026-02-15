@@ -1,20 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, Loader2, Mic, Video, ArrowRight } from 'lucide-react';
+import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2 } from 'lucide-react';
 import AudioInterview from './AudioInterview';
 import PreInterviewInstructions from './PreInterviewInstructions';
 import InterviewSession from './InterviewSession';
+import AssessmentReport, { AssessmentData, SectionScore, VideoMetrics } from './AssessmentReport';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface InterviewLandingProps {
-    onStart: () => void;
 }
 
-type Mode = 'landing' | 'audio' | 'instructions' | 'video_session';
+type Mode = 'landing' | 'audio' | 'instructions' | 'video_session' | 'result';
 
-export default function InterviewLanding({ onStart }: InterviewLandingProps) {
+export default function InterviewLanding({ }: InterviewLandingProps) {
     const [mode, setMode] = useState<Mode>('landing');
     const [isLoading, setIsLoading] = useState(false);
+    const [assessmentData, setAssessmentData] = useState<AssessmentData | null>(null);
 
     const handleStartVideoFlow = () => {
         setMode('instructions');
@@ -33,8 +35,28 @@ export default function InterviewLanding({ onStart }: InterviewLandingProps) {
         }, 1500);
     };
 
+    const handleVideoComplete = (metrics: VideoMetrics) => {
+        setAssessmentData({
+            type: 'video',
+            metrics: metrics,
+            date: new Date(),
+            duration: 600 // mock duration
+        });
+        setMode('result');
+    };
+
+    const handleAudioComplete = (scores: SectionScore[]) => {
+        setAssessmentData({
+            type: 'audio',
+            scores: scores,
+            date: new Date(),
+            duration: 300 // mock duration
+        });
+        setMode('result');
+    };
+
     if (mode === 'audio') {
-        return <AudioInterview onBack={() => setMode('landing')} />;
+        return <AudioInterview onBack={() => setMode('landing')} onComplete={handleAudioComplete} />;
     }
 
     if (mode === 'instructions') {
@@ -42,7 +64,17 @@ export default function InterviewLanding({ onStart }: InterviewLandingProps) {
     }
 
     if (mode === 'video_session') {
-        return <InterviewSession onEnd={() => setMode('landing')} />;
+        return <InterviewSession onEnd={handleVideoComplete} onCancel={() => setMode('landing')} />;
+    }
+
+    if (mode === 'result' && assessmentData) {
+        return (
+            <AssessmentReport
+                data={assessmentData}
+                onRetry={() => window.location.reload()}
+                onHome={() => setMode('landing')}
+            />
+        );
     }
 
     return (
@@ -54,7 +86,7 @@ export default function InterviewLanding({ onStart }: InterviewLandingProps) {
                 <h1 className="text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
                     Master Your Interview Skills
                     <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mt-2">
-                        With Real-Time AI Feedback
+                        With Real-Time Prep0 AI Feedback
                     </span>
                 </h1>
                 <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -115,7 +147,7 @@ export default function InterviewLanding({ onStart }: InterviewLandingProps) {
             <div className="flex gap-8 text-sm text-slate-400 font-medium">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    AI Models Online
+                    Prep0 AI Online
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-purple-500" />

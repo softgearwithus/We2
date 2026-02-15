@@ -1,11 +1,12 @@
 'use client';
 
-import CommunicationAssessment from './CommunicationAssessment';
+import CommunicationAssessment, { SectionScore } from './CommunicationAssessment';
 
 interface AudioInterviewProps {
     onBack: () => void;
+    onComplete?: (scores: SectionScore[]) => void;
 }
 
-export default function AudioInterview({ onBack }: AudioInterviewProps) {
-    return <CommunicationAssessment onBack={onBack} />;
+export default function AudioInterview({ onBack, onComplete }: AudioInterviewProps) {
+    return <CommunicationAssessment onBack={onBack} onComplete={onComplete} />;
 }
