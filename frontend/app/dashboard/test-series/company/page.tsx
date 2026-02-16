@@ -1,17 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Building2, Globe, Laptop, Lock, Rocket, Target, Layout, Star, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Building2, Lock, Sparkles, TrendingUp, ChevronRight } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
-const COMPANIES = [
-    { title: 'Google', icon: Globe, count: '10 Mock Tests', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-    { title: 'Amazon', icon: Target, count: '12 Mock Tests', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
-    { title: 'Microsoft', icon: Layout, count: '8 Mock Tests', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { title: 'TCS NQT', icon: Building2, count: '20 Mock Tests', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-    { title: 'Infosys', icon: Laptop, count: '15 Mock Tests', color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-100' },
-    { title: 'Startup Kit', icon: Rocket, count: '5 Mock Tests', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+const COLOR_OPTIONS = [
+    { color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+    { color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
+    { color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-100' },
 ];
 
 const container = {
@@ -93,6 +92,23 @@ const BackgroundDecor = () => (
 );
 
 export default function CompanyTestsPage() {
+    const [companies, setCompanies] = useState<{ key: string; label: string; count: number }[]>([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/mcqs/groups?category=company`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => res.ok ? res.json() : [])
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setCompanies(data);
+                }
+            })
+            .catch(() => undefined);
+    }, []);
+
     return (
         <div className="min-h-screen font-sans text-slate-900 selection:bg-orange-100 selection:text-orange-700 overflow-x-hidden pb-20">
             <BackgroundDecor />
@@ -109,14 +125,14 @@ export default function CompanyTestsPage() {
 
                     <div className="flex items-center gap-4 mb-6">
                         <div className="p-2 bg-orange-50 text-orange-600 rounded-lg border border-orange-100 animate-pulse">
-                            <Star size={24} />
+                            <Sparkles size={24} />
                         </div>
                         <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Industry Patterns</span>
                     </div>
 
                     <h1 className="text-6xl lg:text-8xl font-black tracking-tight text-slate-900 mb-6 leading-none">
                         Company <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Benchmarks.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Patterns.</span>
                     </h1>
                     <p className="text-xl text-slate-500 max-w-2xl leading-relaxed font-medium italic">
                         Targeted simulations designed to mirror the exact interview patterns of top-tier technology firms.
@@ -129,7 +145,9 @@ export default function CompanyTestsPage() {
                     animate="show"
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
                 >
-                    {COMPANIES.map((company, idx) => (
+                    {companies.map((company, idx) => {
+                        const palette = COLOR_OPTIONS[idx % COLOR_OPTIONS.length];
+                        return (
                         <TiltCard key={idx}>
                             <motion.div
                                 variants={item}
@@ -137,12 +155,12 @@ export default function CompanyTestsPage() {
                             >
                                 <SpotlightInside color="#f97316" />
                                 <div>
-                                    <div className={`w-20 h-20 ${company.bg} ${company.color} rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500 shadow-inner border ${company.border}`}>
-                                        <company.icon size={40} />
+                                    <div className={`w-20 h-20 ${palette.bg} ${palette.color} rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500 shadow-inner border ${palette.border}`}>
+                                        <Building2 size={40} />
                                     </div>
-                                    <h3 className="text-3xl font-black text-slate-900 mb-4 group-hover:text-orange-600 transition-colors tracking-tight leading-none">{company.title}</h3>
+                                    <h3 className="text-3xl font-black text-slate-900 mb-4 group-hover:text-orange-600 transition-colors tracking-tight leading-none">{company.label}</h3>
                                     <div className="flex items-center gap-2 mb-6">
-                                        <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">{company.count}</div>
+                                        <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">{company.count} Questions</div>
                                         <div className="w-1 h-1 rounded-full bg-slate-200" />
                                         <div className="text-[10px] font-bold text-orange-500 uppercase tracking-widest flex items-center gap-1">
                                             <TrendingUp size={10} /> Active Now
@@ -150,12 +168,16 @@ export default function CompanyTestsPage() {
                                     </div>
                                 </div>
 
-                                <button className="w-full py-5 rounded-[22px] bg-slate-900 text-white font-black text-base hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-3 active:scale-95">
-                                    <Lock size={18} /> Unlock Tests
-                                </button>
+                                <Link
+                                    href={`/dashboard/test-series/company/${company.key}`}
+                                    className="w-full py-5 rounded-[22px] bg-slate-900 text-white font-black text-base hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-500/40 transition-all flex items-center justify-center gap-3 active:scale-95"
+                                >
+                                    Start Practice <ChevronRight size={18} />
+                                </Link>
                             </motion.div>
                         </TiltCard>
-                    ))}
+                        );
+                    })}
                 </motion.div>
             </div>
         </div>

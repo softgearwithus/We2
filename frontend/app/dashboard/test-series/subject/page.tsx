@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Code2, Database, Globe, Layers, Lock, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const SUBJECTS = [
-    { title: 'Data Structures & Algorithms', icon: Code2, count: '15 Tests', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
-    { title: 'Operating Systems', icon: Layers, count: '8 Tests', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { title: 'Database Management Systems', icon: Database, count: '10 Tests', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { title: 'Computer Networks', icon: Globe, count: '6 Tests', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { title: 'Object Oriented Programming', icon: BookOpen, count: '12 Tests', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { key: 'english', title: 'English', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { key: 'aptitude', title: 'Aptitude', icon: Calculator, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+    { key: 'logical_reasoning', title: 'Logical Reasoning', icon: Brain, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { key: 'computer_science', title: 'Computer Science', icon: Code2, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
 ];
 
 const container = {
@@ -92,6 +91,27 @@ const BackgroundDecor = () => (
 );
 
 export default function SubjectTestsPage() {
+    const [counts, setCounts] = useState<Record<string, number>>({});
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/mcqs/groups?category=subject`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => res.ok ? res.json() : [])
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    const map: Record<string, number> = {};
+                    data.forEach((row) => {
+                        map[row.key] = row.count;
+                    });
+                    setCounts(map);
+                }
+            })
+            .catch(() => undefined);
+    }, []);
+
     return (
         <div className="min-h-screen font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 overflow-x-hidden pb-20">
             <BackgroundDecor />
@@ -140,18 +160,23 @@ export default function SubjectTestsPage() {
                                         <subject.icon size={40} />
                                     </div>
                                     <h3 className="text-3xl font-black text-slate-900 mb-4 group-hover:text-indigo-600 transition-colors tracking-tight leading-none">{subject.title}</h3>
-                                    <div className="flex items-center gap-2 mb-6">
-                                        <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">{subject.count}</div>
-                                        <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                        <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
-                                            <TrendingUp size={10} /> Core Subject
-                                        </div>
-                                    </div>
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                {counts[subject.key] ?? 0} Questions
+                            </div>
+                            <div className="w-1 h-1 rounded-full bg-slate-200" />
+                            <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
+                                <TrendingUp size={10} /> Core Subject
+                            </div>
+                        </div>
                                 </div>
 
-                                <button className="w-full py-5 rounded-[22px] bg-slate-900 text-white font-black text-base hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/40 transition-all flex items-center justify-center gap-3 active:scale-95">
-                                    <Lock size={18} /> Unlock Tests
-                                </button>
+                                <Link
+                                    href={`/dashboard/test-series/subject/${subject.key}`}
+                                    className="w-full py-5 rounded-[22px] bg-slate-900 text-white font-black text-base hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/40 transition-all flex items-center justify-center gap-3 active:scale-95"
+                                >
+                                    Start Practice <ChevronRight size={18} />
+                                </Link>
                             </motion.div>
                         </TiltCard>
                     ))}

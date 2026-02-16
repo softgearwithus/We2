@@ -57,8 +57,10 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                     <Input label="Email" value={data.personalInfo.email} onChange={(v) => updatePersonalInfo('email', v)} placeholder="john@example.com" />
                     <Input label="Phone" value={data.personalInfo.phone} onChange={(v) => updatePersonalInfo('phone', v)} placeholder="+1 (555) 000-0000" />
                     <Input label="LinkedIn" value={data.personalInfo.linkedin || ''} onChange={(v) => updatePersonalInfo('linkedin', v)} placeholder="linkedin.com/in/johndoe" />
+                    <Input label="LeetCode" value={data.personalInfo.leetcode || ''} onChange={(v) => updatePersonalInfo('leetcode', v)} placeholder="leetcode.com/u/johndoe" />
                     <Input label="GitHub" value={data.personalInfo.github || ''} onChange={(v) => updatePersonalInfo('github', v)} placeholder="github.com/johndoe" />
                     <Input label="Portfolio" value={data.personalInfo.portfolio || ''} onChange={(v) => updatePersonalInfo('portfolio', v)} placeholder="johndoe.com" />
+                    <Input label="Location" value={data.personalInfo.location || ''} onChange={(v) => updatePersonalInfo('location', v)} placeholder="City, Country" />
                 </div>
                 <TextArea label="Professional Summary" value={data.personalInfo.summary || ''} onChange={(v) => updatePersonalInfo('summary', v)} placeholder="Briefly describe your professional background and key achievements..." />
             </section>
@@ -153,6 +155,82 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                         </div>
                     </div>
                 ))}
+            </section>
+
+            {/* Projects */}
+            <section className="space-y-6">
+                <div className="flex justify-between items-center border-b border-indigo-500/30 pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1 h-6 bg-indigo-500 rounded-full" />
+                        <h2 className="text-xl font-bold text-white tracking-tight">Projects</h2>
+                    </div>
+                    <button
+                        onClick={() => {
+                            const newProject: ProjectItem = {
+                                id: crypto.randomUUID(),
+                                name: '',
+                                description: [''],
+                                technologies: [],
+                                liveLink: '',
+                                repoLink: '',
+                            };
+                            onChange({ ...data, projects: [...data.projects, newProject] });
+                        }}
+                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                    >
+                        <Plus size={14} /> Add Project
+                    </button>
+                </div>
+
+                <div className="space-y-4">
+                    {data.projects.map((project, index) => (
+                        <div key={project.id} className="bg-slate-800/50 border border-white/5 p-6 rounded-xl space-y-4 relative group hover:border-indigo-500/30 transition-colors">
+                            <button
+                                onClick={() => {
+                                    const updated = data.projects.filter((item) => item.id !== project.id);
+                                    onChange({ ...data, projects: updated });
+                                }}
+                                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-red-500/10 rounded-lg"
+                                title="Remove Project"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input label="Project Name" value={project.name} onChange={(v) => {
+                                    const newProjects = [...data.projects];
+                                    newProjects[index].name = v;
+                                    onChange({ ...data, projects: newProjects });
+                                }} placeholder="Project Title" />
+                                <Input label="Tech Stack" value={project.technologies.join(', ')} onChange={(v) => {
+                                    const newProjects = [...data.projects];
+                                    newProjects[index].technologies = v.split(',').map((t) => t.trim()).filter(Boolean);
+                                    onChange({ ...data, projects: newProjects });
+                                }} placeholder="React, Node.js, PostgreSQL" />
+                                <Input label="Live Link" value={project.liveLink || ''} onChange={(v) => {
+                                    const newProjects = [...data.projects];
+                                    newProjects[index].liveLink = v;
+                                    onChange({ ...data, projects: newProjects });
+                                }} placeholder="Live demo link" />
+                                <Input label="GitHub" value={project.repoLink || ''} onChange={(v) => {
+                                    const newProjects = [...data.projects];
+                                    newProjects[index].repoLink = v;
+                                    onChange({ ...data, projects: newProjects });
+                                }} placeholder="Repository link" />
+                            </div>
+                            <TextArea
+                                label="Project Highlights"
+                                value={project.description.join('\n')}
+                                onChange={(v) => {
+                                    const newProjects = [...data.projects];
+                                    newProjects[index].description = v.split('\n');
+                                    onChange({ ...data, projects: newProjects });
+                                }}
+                                placeholder="• Built a full-stack app that..."
+                                rows={4}
+                            />
+                        </div>
+                    ))}
+                </div>
             </section>
 
             {/* Skills */}

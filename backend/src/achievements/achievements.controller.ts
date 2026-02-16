@@ -67,14 +67,6 @@ export class AchievementsController {
         return this.achievementsService.getXpSummary(req.user.id);
     }
 
-    @Get('leaderboard')
-    @ApiOperation({ summary: 'Get XP leaderboard' })
-    @ApiQuery({ name: 'limit', required: false, example: 10 })
-    @ApiResponse({ status: 200, description: 'XP leaderboard' })
-    async getLeaderboard(@Query('limit') limit?: number) {
-        return this.achievementsService.getXpLeaderboard(limit || 10);
-    }
-
     @Get(':id')
     @ApiOperation({ summary: 'Get a specific achievement' })
     @ApiParam({ name: 'id', description: 'Achievement UUID' })

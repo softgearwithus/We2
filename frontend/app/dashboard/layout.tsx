@@ -45,7 +45,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         { icon: 'mic', label: 'Mock Interview', href: '/dashboard/interview' },
         { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
-        { icon: 'leaderboard', label: 'Leaderboard', href: '/dashboard/leaderboard' },
     ];
 
     const simulationMenu: MenuItem[] = [
@@ -53,7 +52,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         { icon: 'view_kanban', label: 'Sprint Board', href: '/dashboard/sprint' },
         { icon: 'folder_data', label: 'Repository', href: '/simulation/repo' },
         { icon: 'rate_review', label: 'Code Reviews', href: '/dashboard/reviews' },
-        { icon: 'leaderboard', label: 'Leaderboard', href: '/dashboard/leaderboard' },
     ];
 
     const menuItems = mode === 'prep' ? placementMenu : simulationMenu;
@@ -165,22 +163,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                         })}
                     </nav>
 
-                    <div className="p-4 shrink-0 mt-auto">
-                        <div className={`bg-gradient-to-br border rounded-2xl p-4 ${!sidebarOpen && 'hidden'} ${mode === 'prep' ? 'from-emerald-50 to-white border-emerald-100' : 'from-indigo-50 to-white border-indigo-100'}`}>
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${mode === 'prep' ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-100 text-indigo-600'}`}>
-                                    <span className="material-symbols-outlined">emoji_events</span>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-slate-500 font-bold uppercase">Rank</p>
-                                    <p className="text-sm font-bold text-slate-900">Top 5%</p>
-                                </div>
-                            </div>
-                            <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                                <div className={`h-full w-3/4 ${mode === 'prep' ? 'bg-emerald-500' : 'bg-indigo-500'}`}></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div className="p-4 shrink-0 mt-auto"></div>
                 </aside>
 
                 {/* Main Content Area */}

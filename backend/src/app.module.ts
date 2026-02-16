@@ -39,6 +39,11 @@ import { UserGamification } from './gamification/entities/user-gamification.enti
 import { Badge } from './gamification/entities/badge.entity';
 import { UserBadge } from './gamification/entities/user-badge.entity';
 import { ResumeModule } from './resume/resume.module';
+import { Resume } from './resume/entities/resume.entity';
+import { McqsModule } from './mcqs/mcqs.module';
+import { McqQuestion } from './mcqs/entities/mcq-question.entity';
+import { WriteXModule } from './writex/writex.module';
+import { WriteXQuestion } from './writex/entities/writex-question.entity';
 
 @Module({
   imports: [
@@ -73,6 +78,9 @@ import { ResumeModule } from './resume/resume.module';
           UserGamification,
           Badge,
           UserBadge,
+          Resume,
+          McqQuestion,
+          WriteXQuestion,
         ];
 
         if (dbType === 'postgres') {
@@ -117,6 +125,8 @@ import { ResumeModule } from './resume/resume.module';
     GamificationModule,
     AnalyticsModule,
     ResumeModule,
+    McqsModule,
+    WriteXModule,
   ],
   controllers: [AppController],
   providers: [AppService],

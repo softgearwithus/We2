@@ -89,7 +89,7 @@ export default function HowItWorksPage() {
                         <div className="premium-card p-8 group">
                             <Users className="text-brand-orange mb-6" size={32} />
                             <h3 className="text-xl font-bold text-brand-black mb-3">Community Driven</h3>
-                            <p className="text-gray-500 text-sm">Learn alongside thousands of peers. Compete on leaderboards, pair program, and grow your network.</p>
+                            <p className="text-gray-500 text-sm">Learn alongside thousands of peers. Pair program, and grow your network.</p>
                         </div>
                         <div className="premium-card p-8 group">
                             <Zap className="text-brand-orange mb-6" size={32} />

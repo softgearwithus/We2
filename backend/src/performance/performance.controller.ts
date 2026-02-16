@@ -69,14 +69,6 @@ export class PerformanceController {
         return this.performanceService.findByUser(req.user.id);
     }
 
-    @Get('leaderboard')
-    @ApiOperation({ summary: 'Get performance leaderboard' })
-    @ApiQuery({ name: 'limit', required: false, example: 10, description: 'Number of top users' })
-    @ApiResponse({ status: 200, description: 'Leaderboard data' })
-    async getLeaderboard(@Query('limit') limit?: number) {
-        return this.performanceService.getLeaderboard(limit || 10);
-    }
-
     @Get('simulation/:simulationId')
     @ApiOperation({ summary: 'Get performance for a specific simulation' })
     @ApiParam({ name: 'simulationId', description: 'Simulation UUID' })

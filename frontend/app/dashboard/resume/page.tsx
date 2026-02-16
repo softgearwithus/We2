@@ -1,17 +1,20 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ResumeForm from '@/app/components/resume/ResumeForm';
 import ResumePreview from '@/app/components/resume/ResumePreview';
 import { initialResumeState, ResumeData } from '@/app/lib/resume.types';
 import { useReactToPrint } from 'react-to-print';
-import { Download, Layout, ChevronLeft, ArrowRight, Sparkles, FileText, CheckCircle2 } from 'lucide-react';
+import { Download, Layout, ArrowRight, Sparkles, FileText, CheckCircle2 } from 'lucide-react';
 import ATSScanner from './_components/ats-scanner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ResumeBuilderPage() {
-    const [view, setView] = useState<'landing' | 'templates' | 'builder' | 'scanner'>('landing');
+    const [view, setView] = useState<'landing' | 'builder' | 'scanner'>('landing');
     const [data, setData] = useState<ResumeData>(initialResumeState);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
     const printRef = useRef<HTMLDivElement>(null);
 
     const handlePrint = useReactToPrint({
@@ -19,14 +22,63 @@ export default function ResumeBuilderPage() {
         documentTitle: `${data.personalInfo.fullName.replace(' ', '_')}_Resume`,
     });
 
-    const templates = [
-        { id: 'modern', name: 'Modern Professional', description: 'Clean, indigo-accented design with a focused layout.', previewColor: 'bg-indigo-500' },
-        { id: 'classic', name: 'Classic Serif', description: 'Traditional, elegant design using serif typography for a formal look.', previewColor: 'bg-slate-700' },
-        { id: 'minimal', name: 'Minimalist', description: 'Ultra-clean, single-column design focusing purely on content.', previewColor: 'bg-slate-400' },
-    ];
+    const loadResume = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/resume/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                const payload = await response.json();
+                if (payload?.data) {
+                    setData(payload.data);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load resume', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    const selectTemplate = (id: string) => {
-        setData(prev => ({ ...prev, templateId: id }));
+    const saveResume = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+        setIsSaving(true);
+        setSaveMessage(null);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/resume/me`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ data }),
+            });
+            if (!response.ok) {
+                throw new Error('Save failed');
+            }
+            setSaveMessage('Saved');
+        } catch (error) {
+            setSaveMessage('Save failed');
+        } finally {
+            setIsSaving(false);
+            setTimeout(() => setSaveMessage(null), 2000);
+        }
+    };
+
+    useEffect(() => {
+        if (view === 'builder') {
+            loadResume();
+        }
+    }, [view]);
+
+    const startBuilder = () => {
+        setData(prev => ({ ...prev, templateId: 'modern' }));
         setView('builder');
     };
 
@@ -46,23 +98,32 @@ export default function ResumeBuilderPage() {
                 <div className="flex items-center gap-4">
                     {view !== 'landing' && (
                         <button
-                            onClick={() => {
-                                if (view === 'builder') setView('templates');
-                                else setView('landing');
-                            }}
+                            onClick={() => setView('landing')}
                             className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
                         >
-                            <ChevronLeft size={16} /> {view === 'builder' ? 'Change Template' : 'Back'}
+                            Back
                         </button>
                     )}
 
                     {view === 'builder' && (
-                        <button
-                            onClick={() => handlePrint && handlePrint()}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-95"
-                        >
-                            <Download size={18} /> Export PDF
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={saveResume}
+                                disabled={isSaving}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-60"
+                            >
+                                {isSaving ? 'Saving...' : 'Save'}
+                            </button>
+                            <button
+                                onClick={() => handlePrint && handlePrint()}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-95"
+                            >
+                                <Download size={18} /> Export PDF
+                            </button>
+                            {saveMessage && (
+                                <span className="text-xs font-bold text-slate-500">{saveMessage}</span>
+                            )}
+                        </div>
                     )}
                 </div>
             </header>
@@ -96,7 +157,7 @@ export default function ResumeBuilderPage() {
                             {/* Builder Card */}
                             <motion.div
                                 whileHover={{ y: -4 }}
-                                onClick={() => setView('templates')}
+                                onClick={startBuilder}
                                 className="group bg-white border border-slate-200 hover:border-indigo-200 p-8 rounded-3xl cursor-pointer transition-all shadow-sm hover:shadow-xl hover:shadow-indigo-100 relative overflow-hidden"
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
@@ -107,7 +168,7 @@ export default function ResumeBuilderPage() {
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 mb-2">Resume Builder</h3>
                                     <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                                        Use our professional, field-tested templates to create a resume that stands out.
+                                        Use our modern professional template to create a resume that stands out.
                                     </p>
 
                                     <div className="mt-auto flex items-center justify-between">
@@ -156,44 +217,6 @@ export default function ResumeBuilderPage() {
                     </motion.div>
                 )}
 
-                {view === 'templates' && (
-                    <motion.div
-                        key="templates"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="flex-1 flex flex-col items-center p-12 overflow-y-auto custom-scrollbar"
-                    >
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-black text-slate-900 mb-2">Choose your template</h2>
-                            <p className="text-slate-500 font-medium">Select a design that best fits your career goals.</p>
-                        </div>
-
-                        <div className="grid md:grid-cols-3 gap-8 max-w-6xl w-full">
-                            {templates.map((tpl) => (
-                                <motion.div
-                                    key={tpl.id}
-                                    whileHover={{ y: -8 }}
-                                    onClick={() => selectTemplate(tpl.id)}
-                                    className="group cursor-pointer"
-                                >
-                                    <div className="aspect-[3/4] bg-white rounded-2xl border-2 border-slate-100 p-4 mb-4 group-hover:border-indigo-500 transition-all shadow-sm group-hover:shadow-xl group-hover:shadow-indigo-100 overflow-hidden relative">
-                                        <div className={`w-full h-full rounded-lg ${tpl.previewColor} opacity-10 flex items-center justify-center`}>
-                                            <FileText size={48} className="text-slate-400 opacity-50" />
-                                        </div>
-                                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white to-transparent pt-12">
-                                            <button className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                                                Select Template
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{tpl.name}</h3>
-                                    <p className="text-sm text-slate-500 font-medium">{tpl.description}</p>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
 
                 {view === 'builder' && (
                     <motion.div

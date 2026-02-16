@@ -60,7 +60,7 @@ export default function AdminDashboard() {
 
                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-purple-600">leaderboard</span>
+                        <span className="material-symbols-outlined text-purple-600">insights</span>
                         Top Performing Colleges
                     </h3>
                     <div className="space-y-4">

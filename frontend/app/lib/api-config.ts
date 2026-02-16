@@ -24,13 +24,11 @@ export const API_ENDPOINTS = {
     // Performance
     PERFORMANCE: `${API_BASE_URL}/performance`,
     PERFORMANCE_ME: `${API_BASE_URL}/performance/me`,
-    PERFORMANCE_LEADERBOARD: `${API_BASE_URL}/performance/leaderboard`,
 
     // Achievements
     ACHIEVEMENTS: `${API_BASE_URL}/achievements`,
     ACHIEVEMENTS_ME: `${API_BASE_URL}/achievements/me`,
     ACHIEVEMENTS_XP: `${API_BASE_URL}/achievements/me/xp`,
-    ACHIEVEMENTS_LEADERBOARD: `${API_BASE_URL}/achievements/leaderboard`,
 
     // Interviews
     INTERVIEWS: `${API_BASE_URL}/interview`,

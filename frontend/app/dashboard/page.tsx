@@ -9,8 +9,7 @@ import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
 import PlacementRoadmap from '../components/dashboard/prep0/PlacementRoadmap';
-import Leaderboard from '../components/dashboard/Leaderboard';
-import { Sparkles, Trophy, Target, TrendingUp } from 'lucide-react';
+import { Sparkles, Target } from 'lucide-react';
 
 interface DashboardStats {
     readinessScore: number;
@@ -83,17 +82,8 @@ export default function DashboardPage() {
                         </p>
                     </div>
 
-                    {/* Gamification Stats (Glass) */}
+                    {/* Progress Snapshot (Glass) */}
                     <div className="flex items-center gap-4">
-                        <div className="px-4 py-2 bg-white rounded-2xl border border-slate-200 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                                <Trophy size={20} className="fill-current" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Rank</p>
-                                <p className="text-sm font-bold text-slate-900">Top 5%</p>
-                            </div>
-                        </div>
                         <div className="px-4 py-2 bg-white rounded-2xl border border-slate-200 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-brand-orange">
                                 <Target size={20} className="fill-current" />
@@ -132,8 +122,8 @@ export default function DashboardPage() {
                         {/* Radar Chart */}
                         <RadarSkillChart />
 
-                        {/* Leaderboard */}
-                        <Leaderboard />
+                        {/* Placement Roadmap */}
+                        <PlacementRoadmap />
                     </div>
                 </div>
             </div>

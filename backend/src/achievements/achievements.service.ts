@@ -73,24 +73,4 @@ export class AchievementsService {
         };
     }
 
-    /**
-     * XP-based leaderboard
-     */
-    async getXpLeaderboard(limit: number = 10) {
-        const result = await this.achievementsRepo
-            .createQueryBuilder('a')
-            .select('a.userId', 'userId')
-            .addSelect('SUM(a.xp)', 'totalXp')
-            .addSelect('COUNT(a.id)', 'totalAchievements')
-            .groupBy('a.userId')
-            .orderBy('"totalXp"', 'DESC')
-            .limit(limit)
-            .getRawMany();
-
-        return result.map((r) => ({
-            userId: r.userId,
-            totalXp: parseInt(r.totalXp),
-            totalAchievements: parseInt(r.totalAchievements),
-        }));
-    }
 }

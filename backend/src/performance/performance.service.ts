@@ -108,24 +108,4 @@ export class PerformanceService {
         };
     }
 
-    /**
-     * Get leaderboard (top performers)
-     */
-    async getLeaderboard(limit: number = 10) {
-        const result = await this.perfRepo
-            .createQueryBuilder('p')
-            .select('p.userId', 'userId')
-            .addSelect('AVG(p.score)', 'averageScore')
-            .addSelect('COUNT(p.id)', 'totalEvaluations')
-            .groupBy('p.userId')
-            .orderBy('"averageScore"', 'DESC')
-            .limit(limit)
-            .getRawMany();
-
-        return result.map((r) => ({
-            userId: r.userId,
-            averageScore: Math.round(parseFloat(r.averageScore) * 10) / 10,
-            totalEvaluations: parseInt(r.totalEvaluations),
-        }));
-    }
 }

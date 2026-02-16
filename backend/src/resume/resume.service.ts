@@ -1,6 +1,9 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Resume } from './entities/resume.entity';
 const pdfParse = require('pdf-parse');
 
 @Injectable()
@@ -8,14 +11,23 @@ export class ResumeService {
     private genAI: GoogleGenerativeAI;
     private model: any;
 
-    constructor(private configService: ConfigService) {
+    constructor(
+        private configService: ConfigService,
+        @InjectRepository(Resume)
+        private resumeRepo: Repository<Resume>,
+    ) {
+        this.initializeModel();
+    }
+
+    private initializeModel() {
         const apiKey = this.configService.get<string>('GEMINI_API_KEY');
         if (!apiKey) {
             console.warn('GEMINI_API_KEY is not defined in environment variables');
-        } else {
-            this.genAI = new GoogleGenerativeAI(apiKey);
-            this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            return;
         }
+        this.genAI = new GoogleGenerativeAI(apiKey);
+        const modelName = this.configService.get<string>('GEMINI_MODEL') || 'gemini-2.5-flash';
+        this.model = this.genAI.getGenerativeModel({ model: modelName });
     }
 
     async analyzeResume(buffer: Buffer, jobDescription?: string) {
@@ -29,6 +41,9 @@ export class ResumeService {
             }
 
             // 2. Analyze with Gemini
+            if (!this.model) {
+                this.initializeModel();
+            }
             if (!this.model) {
                 throw new InternalServerErrorException('Gemini API not configured.');
             }
@@ -74,5 +89,24 @@ export class ResumeService {
             console.error('Error analyzing resume:', error);
             throw new InternalServerErrorException('Failed to analyze resume: ' + error.message);
         }
+    }
+
+    async getResumeByUser(userId: string) {
+        const resume = await this.resumeRepo.findOne({ where: { userId } });
+        if (!resume) {
+            throw new NotFoundException('Resume not found');
+        }
+        return resume;
+    }
+
+    async saveResume(userId: string, data: Record<string, any>) {
+        const existing = await this.resumeRepo.findOne({ where: { userId } });
+        if (existing) {
+            existing.data = data;
+            return this.resumeRepo.save(existing);
+        }
+
+        const resume = this.resumeRepo.create({ userId, data });
+        return this.resumeRepo.save(resume);
     }
 }

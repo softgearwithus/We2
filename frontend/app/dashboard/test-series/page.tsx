@@ -157,11 +157,6 @@ export default function TestSeriesPage() {
                             </h1>
                             <p className="text-xl text-slate-500 max-w-2xl leading-relaxed italic">
                                 "The difference between semi-pro and elite is the quality of your practice."
-                                <span className="block mt-4 not-italic font-black text-slate-900">
-                                    Master <span className="text-indigo-600 underline underline-offset-8 decoration-4 decoration-indigo-200">Engineering Core</span>,
-                                    crack <span className="text-brand-orange underline underline-offset-8 decoration-4 decoration-orange-200">MAANG</span>,
-                                    & ace <span className="text-emerald-600 underline underline-offset-8 decoration-4 decoration-emerald-200">Communication</span>.
-                                </span>
                             </p>
                         </div>
 
@@ -213,8 +208,8 @@ export default function TestSeriesPage() {
                     animate="show"
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-32"
                 >
-                    {/* Subject Wise Card */}
-                    <TiltCard href="/dashboard/test-series/subject">
+                        {/* Subject Wise Card */}
+                        <TiltCard href="/dashboard/test-series/subject">
                         <div className="relative bg-white rounded-[40px] p-10 h-full border border-slate-100 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.04)] group-hover:shadow-[0_40px_80px_-20px_rgba(99,102,241,0.15)] transition-all duration-500 flex flex-col justify-between overflow-hidden">
                             <SpotlightInside />
                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
@@ -225,17 +220,17 @@ export default function TestSeriesPage() {
                                 </div>
                                 <div className="flex items-center gap-2 mb-4">
                                     <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                                    <h3 className="text-4xl font-black text-slate-900 leading-tight tracking-tighter">Engineering <br />Core Mastery.</h3>
+                                    <h3 className="text-4xl font-black text-slate-900 leading-tight tracking-tighter">Subject <br />Practice Series.</h3>
                                 </div>
-                                <p className="text-slate-500 leading-relaxed text-lg font-medium">
-                                    Deep-dive into <span className="text-indigo-600 font-bold">DSA, OS, & DBMS</span>. The rigorous technical foundation demanded by elite teams.
-                                </p>
+                                    <p className="text-slate-500 leading-relaxed text-lg font-medium">
+                                        Practice <span className="text-indigo-600 font-bold">English, Aptitude, Logical Reasoning, & Computer Science</span> with structured MCQs.
+                                    </p>
                             </div>
 
                             <div className="relative z-20 mt-14 flex items-center justify-between">
                                 <div className="flex flex-col">
-                                    <span className="text-indigo-600 font-black text-xl">Enter Arena</span>
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">12 Modules Active</span>
+                                    <span className="text-indigo-600 font-black text-xl">Start Practice</span>
+                                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">4 Subjects Live</span>
                                 </div>
                                 <div className="w-14 h-14 rounded-[22px] bg-slate-900 text-white flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-600 transition-all duration-300 shadow-xl group-hover:shadow-indigo-500/40">
                                     <ChevronRight size={28} />
@@ -254,19 +249,19 @@ export default function TestSeriesPage() {
                                 <div className="w-20 h-20 bg-orange-50 text-brand-orange rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500 shadow-inner border border-orange-100/50">
                                     <Building2 size={40} />
                                 </div>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-1.5 h-6 bg-brand-orange rounded-full" />
-                                    <h3 className="text-4xl font-black text-slate-900 leading-tight tracking-tighter">MAANG <br />Patterns.</h3>
-                                </div>
+                                 <div className="flex items-center gap-2 mb-4">
+                                     <div className="w-1.5 h-6 bg-brand-orange rounded-full" />
+                                     <h3 className="text-4xl font-black text-slate-900 leading-tight tracking-tighter">Company <br />Patterns.</h3>
+                                 </div>
                                 <p className="text-slate-500 leading-relaxed text-lg font-medium">
-                                    Direct simulations for <span className="text-brand-orange font-bold">Google & Microsoft</span>. Master company-specific mental models.
-                                </p>
+                                     Direct simulations for <span className="text-brand-orange font-bold">company-specific patterns</span>. Master interview mental models.
+                                 </p>
                             </div>
 
                             <div className="relative z-20 mt-14 flex items-center justify-between">
                                 <div className="flex flex-col">
                                     <span className="text-brand-orange font-black text-xl">Start Mock</span>
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">8 Premium Series</span>
+                                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">Premium Questions</span>
                                 </div>
                                 <div className="w-14 h-14 rounded-[22px] bg-slate-900 text-white flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-orange transition-all duration-300 shadow-xl group-hover:shadow-orange-500/40">
                                     <ChevronRight size={28} />
@@ -275,7 +270,7 @@ export default function TestSeriesPage() {
                         </div>
                     </TiltCard>
 
-                    {/* Communication Card */}
+                    {/* WriteX Analysis Card */}
                     <TiltCard href="/dashboard/test-series/communication">
                         <div className="relative bg-white rounded-[40px] p-10 h-full border border-slate-100 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.04)] group-hover:shadow-[0_40px_80px_-20px_rgba(16,185,129,0.15)] transition-all duration-500 flex flex-col justify-between overflow-hidden">
                             <SpotlightInside />
@@ -287,17 +282,17 @@ export default function TestSeriesPage() {
                                 </div>
                                 <div className="flex items-center gap-2 mb-4">
                                     <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
-                                    <h3 className="text-4xl font-black text-slate-900 leading-tight tracking-tighter">HR & Communication.</h3>
+                                    <h3 className="text-4xl font-black text-slate-900 leading-tight tracking-tighter">WriteX Analysis.</h3>
                                 </div>
                                 <p className="text-slate-500 leading-relaxed text-lg font-medium">
-                                    Crack <span className="text-emerald-600 font-bold">Amcat, WriteX, & HR</span>. Verbal precision modules for total career readiness.
+                                    Practice long-form responses and get a lenient AI score across relevance, fluency, grammar, and vocabulary.
                                 </p>
                             </div>
 
                             <div className="relative z-20 mt-14 flex items-center justify-between">
                                 <div className="flex flex-col">
-                                    <span className="text-emerald-600 font-black text-xl">Refine Tone</span>
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">5 Labs Open</span>
+                                    <span className="text-emerald-600 font-black text-xl">Start WriteX</span>
+                                    <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">Get Question Now</span>
                                 </div>
                                 <div className="w-14 h-14 rounded-[22px] bg-slate-900 text-white flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-600 transition-all duration-300 shadow-xl group-hover:shadow-emerald-500/40">
                                     <ChevronRight size={28} />
@@ -307,51 +302,7 @@ export default function TestSeriesPage() {
                     </TiltCard>
                 </motion.div>
 
-                {/* Why Simulators - Platform Style Enhanced */}
-                <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="relative bg-white border border-slate-100 rounded-[60px] p-16 lg:p-24 shadow-2xl shadow-slate-200/50 overflow-hidden"
-                >
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600" />
-
-                    <div className="text-center mb-24 relative z-10">
-                        <div className="inline-block px-4 py-1 rounded-full bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest mb-6">Cutting Edge Support</div>
-                        <h2 className="text-4xl lg:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">Engineered for <span className="italic font-light">Absolute</span> Advantage.</h2>
-                        <p className="text-slate-500 max-w-2xl mx-auto text-xl font-medium leading-relaxed">Our simulators don't just test you; they adapt to your neuro-patterns to build high-performance habits.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 relative z-10">
-                        {[
-                            { icon: Zap, title: "Nano-Feedback", desc: "Latency-free analysis on every keystroke and decision.", color: "text-amber-500", bg: "bg-amber-50" },
-                            { icon: Trophy, title: "Global Ranking", desc: "Know where you stand against the top 1% global cohort.", color: "text-indigo-600", bg: "bg-indigo-50" },
-                            { icon: Target, title: "Gap Discovery", desc: "Automated mapping of your conceptual knowledge gaps.", color: "text-rose-500", bg: "bg-rose-50" },
-                            { icon: Sparkles, title: "Neural Adaptive", desc: "Scenario complexity shifts in real-time based on your load.", color: "text-emerald-600", bg: "bg-emerald-50" }
-                        ].map((feature, idx) => (
-                            <div key={idx} className="group flex flex-col items-center text-center">
-                                <div className={`w-20 h-20 ${feature.bg} ${feature.color} rounded-[28px] flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-sm border border-white`}>
-                                    <feature.icon size={36} />
-                                </div>
-                                <h3 className="font-black text-xl text-slate-900 mb-3 tracking-tight">{feature.title}</h3>
-                                <p className="text-slate-500 text-sm font-semibold leading-relaxed px-4">{feature.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Bottom CTA Gradient Bar */}
-                    <div className="mt-24 pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                                <TrendingUp size={24} />
-                            </div>
-                            <p className="text-slate-900 font-bold">System Status: <span className="text-emerald-600">Nominal • 99.9% Reliable</span></p>
-                        </div>
-                        <button className="px-10 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:-translate-y-1 active:scale-95 flex items-center gap-3">
-                            Check Readiness Score < ChevronRight size={18} />
-                        </button>
-                    </div>
-                </motion.div>
+                {/* Cutting Edge Support section removed */}
             </div>
         </div>
     );

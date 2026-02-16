@@ -30,7 +30,7 @@ const PLACEMENT_PLUS = {
         { text: 'Unlimited IDE Submissions', included: true },
         { text: 'Mock Technical Interviews', included: true },
         { text: 'Resume Analytics', included: true },
-        { text: 'Gamification & Leaderboard', included: true },
+        { text: 'Progress Tracking', included: true },
         { text: 'Placement Readiness Score', included: true },
     ],
     ctaText: 'Start Prep',

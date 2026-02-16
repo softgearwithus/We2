@@ -135,17 +135,4 @@ export class DsaController {
         return this.dsaService.getUserStats(req.user.id);
     }
 
-    @Get('leaderboard')
-    @Public()
-    @ApiOperation({ summary: 'Get DSA leaderboard' })
-    @ApiQuery({
-        name: 'limit',
-        required: false,
-        type: Number,
-        example: 10,
-    })
-    @ApiResponse({ status: 200, description: 'Leaderboard data' })
-    async getLeaderboard(@Query('limit') limit?: string) {
-        return this.dsaService.getLeaderboard(limit ? parseInt(limit) : 10);
-    }
 }

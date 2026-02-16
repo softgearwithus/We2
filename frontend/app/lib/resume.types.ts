@@ -4,6 +4,7 @@ export interface ResumeData {
         email: string;
         phone: string;
         linkedin?: string;
+        leetcode?: string;
         github?: string;
         portfolio?: string;
         summary?: string;
@@ -17,7 +18,7 @@ export interface ResumeData {
         tools: string[];
     };
     projects: ProjectItem[];
-    templateId: string;
+    templateId: 'modern';
 }
 
 export interface ExperienceItem {
@@ -46,7 +47,8 @@ export interface ProjectItem {
     name: string;
     description: string[];
     technologies: string[];
-    link?: string;
+    liveLink?: string;
+    repoLink?: string;
 }
 
 export const initialResumeState: ResumeData = {
@@ -55,8 +57,10 @@ export const initialResumeState: ResumeData = {
         email: 'john.doe@example.com',
         phone: '(555) 123-4567',
         linkedin: 'linkedin.com/in/johndoe',
+        leetcode: 'leetcode.com/u/johndoe',
         github: 'github.com/johndoe',
         summary: 'Passionate Software Engineer with experience in building scalable web applications using React and Node.js.',
+        location: 'New York, NY',
     },
     experience: [
         {
@@ -95,7 +99,8 @@ export const initialResumeState: ResumeData = {
             name: 'E-commerce Platform',
             description: ['Built a full-stack e-commerce site with payment integration.'],
             technologies: ['React', 'Node.js', 'Stripe'],
-            link: 'github.com/johndoe/ecommerce',
+            liveLink: 'demo.example.com',
+            repoLink: 'github.com/johndoe/ecommerce',
         },
     ],
     templateId: 'modern',
