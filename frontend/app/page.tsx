@@ -17,51 +17,75 @@ export default function Home() {
 
       {/* Hero Section - Violet/Gradient Theme */}
       <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden">
-        {/* Background Animated Glow */}
-        <div className="absolute top-0 right-0 -z-10 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-20%] right-[-10%] w-[1000px] h-[1000px] rounded-full bg-brand-orange/10 blur-[150px] animate-pulse-soft"></div>
-          <div className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] rounded-full bg-purple-500/10 blur-[150px] animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
+        {/* Background Animated Glows & Halo */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Main Halo Effect - Centered behind text area */}
+          <div className="absolute top-[20%] left-[10%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(255,87,34,0.15)_0%,rgba(255,255,255,0)_70%)] blur-[80px] animate-pulse-slow mix-blend-multiply dark:mix-blend-screen"></div>
+
+          {/* Secondary Ambient Glows */}
+          <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] rounded-full bg-purple-500/5 blur-[120px] animate-pulse-soft" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-[-10%] left-[-20%] w-[800px] h-[800px] rounded-full bg-blue-500/5 blur-[120px] animate-pulse-soft" style={{ animationDelay: '3s' }}></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
 
+
           {/* Left Content */}
-          <div className="relative z-10 animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-orange-100 text-brand-orange text-[12px] font-extrabold uppercase tracking-widest mb-10 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-brand-orange animate-ping" />
-              Empowering 5,000+ Aspiring Engineers
+          <div className="relative z-10 animate-fade-in-up flex flex-col items-start text-left">
+
+            {/* Badge - High Contrast Pill */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 border border-orange-100 mb-8 transition-all hover:bg-orange-100 cursor-default group shadow-sm">
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-orange"></span>
+              </span>
+              <span className="text-sm font-bold text-orange-800 tracking-tight">Empowering 5,000+ Engineers</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-[80px] font-[900] tracking-tight text-brand-black mb-10 leading-[1] text-balance">
+            {/* Headline - Balanced & Vibrant */}
+            <h1 className="text-5xl md:text-7xl lg:text-[80px] font-[900] tracking-tight text-brand-black mb-8 leading-[1.1] text-balance">
               The Complete <br />
-              <span className="text-gradient">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-600 to-purple-600 pb-2">
                 Placement Ecosystem.
               </span>
             </h1>
 
-            <p className="text-xl text-gray-500 leading-relaxed max-w-lg mb-12 font-medium text-balance opacity-90">
-              Don't just code. <strong className="text-brand-black">Prep0</strong> gets you placement-ready (DSA, CS Core, Mocks), and <strong className="text-brand-black">We2Hub</strong> gives you the industrial experience (Real-world JIRA Simulation).
+            {/* Subtext - Optimized for Readability */}
+            <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed max-w-xl mb-10 text-balance">
+              Don't just code. <span className="text-brand-black font-bold">Prep0</span> handles your DSA & Mocks, while <span className="text-brand-black font-bold">We2Hub</span> delivers real-world JIRA experience.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-5 mb-16">
-              <Link href="/register" className="w-full sm:w-auto h-16 px-12 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-2xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-3 active:scale-95">
+            {/* CTAs - Polished & Tactile */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
+              <Link href="/register" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95">
                 Start Prep0 Free
                 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
               </Link>
-              <Link href="/simulations" className="w-full sm:w-auto h-16 px-12 rounded-2xl glass border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange transition-all flex items-center justify-center gap-3 group active:scale-95">
-                <span className="material-symbols-outlined text-brand-orange group-hover:rotate-12 transition-transform">play_circle</span>
+              <Link href="/simulations" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
+                <span className="material-symbols-outlined text-brand-orange group-hover:scale-110 transition-transform filled-icon">play_circle</span>
                 Explore We2Hub
               </Link>
             </div>
 
-            <div className="flex items-center gap-5 text-sm font-bold text-gray-500">
-              <div className="flex -space-x-3">
-                <img className="w-12 h-12 rounded-full border-4 border-white shadow-xl" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <img className="w-12 h-12 rounded-full border-4 border-white shadow-xl" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <img className="w-12 h-12 rounded-full border-4 border-white shadow-xl" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <div className="w-12 h-12 rounded-full border-4 border-white bg-gray-50 flex items-center justify-center text-xs text-gray-400 font-black border-dashed">+2000</div>
+            {/* Social Proof - Subtle & Trustworthy */}
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-4">
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="User" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="User" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="User" />
+                <div className="w-10 h-10 rounded-full border-[3px] border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shadow-sm">+2k</div>
               </div>
-              <p className="tracking-tight">Join 2,000+ students mastering skills today</p>
+              <div className="h-8 w-px bg-gray-200 mx-2"></div>
+              <div className="flex flex-col">
+                <div className="flex gap-0.5 text-yellow-500 text-[10px]">
+                  <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
+                  <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
+                  <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
+                  <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
+                  <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
+                </div>
+                <p className="text-xs font-bold text-gray-500 mt-0.5">Example of <span className="text-gray-900">Premium Design</span></p>
+              </div>
             </div>
           </div>
 
