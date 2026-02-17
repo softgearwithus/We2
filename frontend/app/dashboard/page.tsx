@@ -60,15 +60,15 @@ export default function DashboardPage() {
     }
 
     if (loading || !stats) {
-        return <div className="min-h-screen bg-prep-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-prep-primary"></div></div>;
+        return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>;
     }
 
     // New PREP0 Dashboard Layout (Premium Light Theme)
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
             {/* Ambient Background Gradient (Subtle) */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-orange/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-orange/5 rounded-full blur-[50px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
 
             <div className="relative z-10 max-w-7xl mx-auto p-6 space-y-8">
                 {/* Header */}

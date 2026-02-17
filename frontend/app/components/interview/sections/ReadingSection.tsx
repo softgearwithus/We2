@@ -38,7 +38,7 @@ export default function ReadingSection({ onComplete }: ReadingSectionProps) {
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
-    const timerRef = useRef<NodeJS.Timeout>();
+    const timerRef = useRef<any>(null);
 
     const currentPassage = PASSAGES[currentLevel];
 

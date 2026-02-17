@@ -29,7 +29,7 @@ export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) 
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
-    const timerRef = useRef<NodeJS.Timeout>();
+    const timerRef = useRef<any>(null);
 
     useEffect(() => {
         setTopic(TOPICS[Math.floor(Math.random() * TOPICS.length)]);

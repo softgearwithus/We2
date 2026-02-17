@@ -32,40 +32,51 @@ export default function IntelligencePage() {
     return (
         <div className="max-w-6xl mx-auto min-h-screen pb-32 px-6 flex flex-col gap-8 pt-10 text-slate-900">
 
-            {/* Lean Journal Header */}
-            <header className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-slate-100 pb-8">
-                <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-xl">
-                        <TrendingUp className="w-7 h-7 text-white" />
+            {/* Premium Header Design */}
+            <header className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 border-b border-slate-100/80 pb-8 relative">
+                <div className="flex items-center gap-6 group">
+                    <div className="relative">
+                        <div className="w-16 h-16 bg-slate-900 rounded-3xl flex items-center justify-center shadow-2xl shadow-slate-900/20 group-hover:scale-105 transition-transform duration-500">
+                            <TrendingUp className="w-8 h-8 text-white relative z-10" />
+                            <div className="absolute inset-0 bg-indigo-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        </div>
                     </div>
                     <div>
-                        <h1 className="text-4xl font-black tracking-tight text-slate-900">
+                        <h1 className="text-[2.75rem] font-black tracking-tight text-slate-900 leading-tight">
                             Synapse
                         </h1>
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.4em] mt-1">
-                            Signals Intelligence System
-                        </p>
+                        <div className="flex items-center gap-3 mt-1">
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em]">
+                                Signals Intelligence
+                            </p>
+                            <span className="w-1 h-1 rounded-full bg-slate-300" />
+                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                                v4.2 Live
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-10">
-                    <div className="hidden lg:flex items-center gap-6 pr-6 border-r border-slate-100">
-                        <div className="flex flex-col items-end">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-300">Daily Streak</span>
-                            <div className="flex items-center gap-2 font-black text-slate-900">
-                                <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-                                03
+                <div className="flex flex-col-reverse sm:flex-row items-start sm:items-center gap-8 w-full xl:w-auto overflow-hidden">
+                    <div className="hidden lg:flex items-center gap-8 pr-8 border-r border-slate-100 min-h-[2.5rem]">
+                        <div className="flex flex-col items-end group cursor-pointer">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-600 transition-colors">Daily Streak</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xl font-black text-slate-900">03</span>
+                                <Flame className="w-5 h-5 text-orange-500 fill-orange-500 animate-pulse" />
                             </div>
                         </div>
-                        <div className="flex flex-col items-end">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-300">Authority</span>
-                            <span className="text-xs font-black text-indigo-600">APEX RANK</span>
+                        <div className="flex flex-col items-end group cursor-pointer">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-600 transition-colors">Authority</span>
+                            <span className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors">APEX RANK</span>
                         </div>
                     </div>
-                    <CategoryFilter
-                        selectedCategory={selectedCategory}
-                        onSelect={setSelectedCategory}
-                    />
+                    <div className="min-w-0 overflow-hidden">
+                        <CategoryFilter
+                            selectedCategory={selectedCategory}
+                            onSelect={setSelectedCategory}
+                        />
+                    </div>
                 </div>
             </header>
 

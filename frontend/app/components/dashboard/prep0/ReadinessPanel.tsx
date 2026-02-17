@@ -8,7 +8,7 @@ export default function ReadinessPanel() {
     return (
         <div className="w-full bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] group transition-all hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
             {/* Background Blob (Subtle) */}
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-50 rounded-full blur-[80px] group-hover:bg-indigo-100/50 transition-all duration-700"></div>
+            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-50 rounded-full blur-[40px] group-hover:bg-indigo-100/50 transition-all duration-700"></div>
 
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 {/* Score Circle */}

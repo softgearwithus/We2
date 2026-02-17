@@ -2,8 +2,14 @@
 
 import { Student } from "@/lib/institute/mockData";
 import { X, Mail, Phone, Calendar, Download, Trophy, GraduationCap, Github, Linkedin, ExternalLink } from "lucide-react";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import { ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from 'next/dynamic';
+
+const StudentRadarChart = dynamic(() => import('./StudentRadarChart'), {
+    ssr: false,
+    loading: () => <div className="h-full w-full flex items-center justify-center text-gray-300">Loading Chart...</div>
+});
 
 interface ModalProps {
     student: Student;
@@ -103,19 +109,7 @@ export function StudentProfileModal({ student, onClose }: ModalProps) {
                                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">Skill Radar</h4>
                                 <div className="flex-1 w-full min-h-[250px]">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                                            <PolarGrid stroke="#e5e7eb" />
-                                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#6b7280', fontSize: 10, fontWeight: '900' }} />
-                                            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                                            <Radar
-                                                name={student.name}
-                                                dataKey="A"
-                                                stroke="#FF5722"
-                                                strokeWidth={3}
-                                                fill="#FF5722"
-                                                fillOpacity={0.2}
-                                            />
-                                        </RadarChart>
+                                        <StudentRadarChart data={chartData} studentName={student.name} />
                                     </ResponsiveContainer>
                                 </div>
                                 <div className="text-center mt-4">

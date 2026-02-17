@@ -2,10 +2,19 @@
 
 import { mockStudents } from "@/lib/institute/mockData";
 import { ReadinessMetrics } from "@/components/institute/Placements/ReadinessMetrics";
-import { ResumeQualityChart } from "@/components/institute/Placements/ResumeQualityChart";
-import { MockInterviewTrends } from "@/components/institute/Placements/MockInterviewTrends";
 import { FileDown } from "lucide-react";
 import { motion } from "framer-motion";
+import dynamic from 'next/dynamic';
+
+const ResumeQualityChart = dynamic(() => import('@/components/institute/Placements/ResumeQualityChart').then(mod => mod.ResumeQualityChart), {
+    ssr: false,
+    loading: () => <div className="h-full w-full flex items-center justify-center text-slate-500">Loading Resume Chart...</div>
+});
+
+const MockInterviewTrends = dynamic(() => import('@/components/institute/Placements/MockInterviewTrends').then(mod => mod.MockInterviewTrends), {
+    ssr: false,
+    loading: () => <div className="h-full w-full flex items-center justify-center text-slate-500">Loading Trends...</div>
+});
 
 const container = {
     hidden: { opacity: 0 },

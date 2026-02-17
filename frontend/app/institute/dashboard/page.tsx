@@ -2,9 +2,14 @@
 
 import { mockDepartmentStats, mockStudents } from "@/lib/institute/mockData";
 import { StatsCards } from "@/components/institute/Dashboard/StatsCards";
-import { PlacementChart } from "@/components/institute/Dashboard/PlacementChart";
 import { DepartmentPerformance } from "@/components/institute/Dashboard/DepartmentPerformance";
 import { motion } from "framer-motion";
+import dynamic from 'next/dynamic';
+
+const PlacementChart = dynamic(() => import('@/components/institute/Dashboard/PlacementChart').then(mod => mod.PlacementChart), {
+    ssr: false,
+    loading: () => <div className="h-full w-full flex items-center justify-center text-gray-400">Loading Chart...</div>
+});
 
 const container = {
     hidden: { opacity: 0 },
