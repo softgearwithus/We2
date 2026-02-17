@@ -9,11 +9,22 @@ import { Readable } from 'stream';
 import { User } from '../users/user.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
 import { Badge } from '../gamification/entities/badge.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // Initialize TypeORM manually for worker process
+const dbType = process.env.DB_TYPE || 'postgres';
+if (dbType !== 'postgres') {
+    throw new Error('SQLite is not supported. Set DB_TYPE=postgres.');
+}
 const AppDataSource = new DataSource({
-    type: 'sqlite',
-    database: 'database.sqlite',
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    username: process.env.DB_USER || 'admin',
+    password: process.env.DB_PASSWORD || 'password',
+    database: process.env.DB_NAME || 'college_prep_db',
     entities: [Submission, DsaProblem, User, UserGamification, Badge],
     synchronize: true,
 });

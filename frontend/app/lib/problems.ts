@@ -13,6 +13,9 @@ export interface Problem {
     examples: Array<{ input: string; output: string; explanation?: string }>;
     constraints: string[];
     starterCode: Record<string, string>;
+    codeTemplates?: Record<string, string>;
+    languageMeta?: Array<{ lang: string; langSlug: string }>;
+    leetcodeUrl?: string | null;
     testCases: TestCase[];
     // New Fields
     acceptanceRate: number;
@@ -38,6 +41,9 @@ export const fetchProblems = async (): Promise<Problem[]> => {
             examples: p.examples,
             constraints: p.constraints,
             starterCode: p.starterCode,
+            codeTemplates: p.codeTemplates || null,
+            languageMeta: p.languageMeta || null,
+            leetcodeUrl: p.leetcodeUrl || null,
             testCases: p.testCases,
             acceptanceRate: p.submissions > 0 ? Math.round((p.accepted / p.submissions) * 100 * 10) / 10 : 0,
             status: 'Todo',
@@ -67,6 +73,9 @@ export const fetchProblemBySlug = async (slug: string): Promise<Problem | null> 
             examples: p.examples,
             constraints: p.constraints,
             starterCode: p.starterCode,
+            codeTemplates: p.codeTemplates || null,
+            languageMeta: p.languageMeta || null,
+            leetcodeUrl: p.leetcodeUrl || null,
             testCases: p.testCases,
             acceptanceRate: p.submissions > 0 ? Math.round((p.accepted / p.submissions) * 100 * 10) / 10 : 0,
             status: 'Todo',

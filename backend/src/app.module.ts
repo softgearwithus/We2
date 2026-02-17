@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -28,6 +27,9 @@ import { Project } from './projects/entities/project.entity';
 import { InterviewSession } from './interviews/entities/interview-session.entity';
 import { DsaProblem } from './dsa/entities/dsa-problem.entity';
 import { Submission } from './dsa/entities/submission.entity';
+import { DsaUserState } from './dsa/entities/dsa-user-state.entity';
+import { DsaTrainingSession } from './dsa/entities/dsa-training-session.entity';
+import { DsaProblemInsight } from './dsa/entities/dsa-problem-insight.entity';
 import { Interview } from './interview/entities/interview.entity';
 import { CourseContent } from './course-content/entities/course-content.entity';
 import { InterviewModule } from './interview/interview.module';
@@ -48,18 +50,10 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 60,
-          limit: 120,
-        },
-      ],
-    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const dbType = configService.get<string>('DB_TYPE') || 'sqlite';
+        const dbType = configService.get<string>('DB_TYPE') || 'postgres';
         const entities = [
           User,
           Simulation,
@@ -74,6 +68,9 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           Interview,
           DsaProblem,
           Submission,
+          DsaUserState,
+          DsaTrainingSession,
+          DsaProblemInsight,
           CourseContent,
           UserGamification,
           Badge,
@@ -97,13 +94,7 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           };
         }
 
-        return {
-          type: 'sqlite',
-          database: configService.get<string>('DB_SQLITE_PATH') || 'database.sqlite',
-          entities,
-          synchronize: true,
-          logging: false,
-        };
+        throw new Error('SQLite is not supported. Set DB_TYPE=postgres.');
       },
       inject: [ConfigService],
     }),

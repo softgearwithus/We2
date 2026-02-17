@@ -38,6 +38,12 @@ export class DsaProblem {
     @Column({ type: 'varchar', unique: true })
     slug: string;
 
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    leetcodeSlug?: string | null;
+
+    @Column({ type: 'varchar', length: 512, nullable: true })
+    leetcodeUrl?: string | null;
+
     @Column({ type: 'varchar' })
     difficulty: Difficulty;
 
@@ -52,6 +58,12 @@ export class DsaProblem {
 
     @Column({ type: 'simple-json' })
     starterCode: Record<string, string>; // { javascript: '...', python: '...', java: '...' }
+
+    @Column({ type: 'simple-json', nullable: true })
+    codeTemplates?: Record<string, string> | null; // { cpp: '...', python: '...' }
+
+    @Column({ type: 'simple-json', nullable: true })
+    languageMeta?: Array<{ lang: string; langSlug: string }> | null;
 
     @Column({ type: 'simple-json' })
     testCases: Array<{

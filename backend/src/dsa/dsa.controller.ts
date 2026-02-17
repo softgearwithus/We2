@@ -36,6 +36,8 @@ export class DsaController {
 
     // ── Problem Endpoints ────────────────────────────────
 
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('problems')
     @Roles(UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Create a new DSA problem (Admin only)' })
@@ -87,6 +89,8 @@ export class DsaController {
         return this.submissionQueueService.submitCode(req.user.id, dto);
     }
 
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard)
     @Get('submissions/:id')
     @ApiOperation({ summary: 'Get submission details & status' })
     @ApiParam({ name: 'id', description: 'Submission UUID' })
@@ -95,6 +99,8 @@ export class DsaController {
         return this.submissionQueueService.getSubmission(id);
     }
 
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard)
     @Get('submissions/me')
     @ApiOperation({ summary: 'Get my submissions' })
     @ApiResponse({ status: 200, description: 'List of user submissions' })
@@ -102,6 +108,8 @@ export class DsaController {
         return this.dsaService.getUserSubmissions(req.user.id);
     }
 
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard)
     @Get('submissions/problem/:problemId')
     @ApiOperation({ summary: 'Get my submissions for a specific problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
@@ -134,5 +142,6 @@ export class DsaController {
     async getMyStats(@Request() req: any) {
         return this.dsaService.getUserStats(req.user.id);
     }
+
 
 }

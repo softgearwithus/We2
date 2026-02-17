@@ -11,6 +11,16 @@ export class CreateDsaProblemDto {
     @IsString()
     slug: string;
 
+    @ApiProperty({ required: false, example: 'two-sum' })
+    @IsOptional()
+    @IsString()
+    leetcodeSlug?: string;
+
+    @ApiProperty({ required: false, example: 'https://leetcode.com/problems/two-sum/' })
+    @IsOptional()
+    @IsString()
+    leetcodeUrl?: string;
+
     @ApiProperty({ enum: Difficulty, example: Difficulty.EASY })
     @IsEnum(Difficulty)
     difficulty: Difficulty;
@@ -41,6 +51,14 @@ export class CreateDsaProblemDto {
         },
     })
     starterCode: Record<string, string>;
+
+    @ApiProperty({ required: false, example: { cpp: '//...', python: '#...' } })
+    @IsOptional()
+    codeTemplates?: Record<string, string>;
+
+    @ApiProperty({ required: false, example: [{ lang: 'C++', langSlug: 'cpp' }] })
+    @IsOptional()
+    languageMeta?: Array<{ lang: string; langSlug: string }>;
 
     @ApiProperty({
         example: [{ input: '([2,7,11,15], 9)', expected: '[0,1]' }],

@@ -1,291 +1,440 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { problems as mockProblems, Problem, fetchProblems } from '@/app/lib/problems';
-import {
-    Search, Filter, CheckCircle2, Circle, Clock, ChevronLeft, ChevronRight,
-    TrendingUp, Award, Calendar, ExternalLink
-} from 'lucide-react';
+import { Panel, Group, Separator } from 'react-resizable-panels';
+import { CheckCircle2, ArrowRight, Clock, RefreshCcw, Info, Sparkles, ArrowLeft } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
-export default function ProblemListingPage() {
-    // State for filters
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All');
-    const [selectedStatus, setSelectedStatus] = useState<string>('All');
-    const [selectedTag, setSelectedTag] = useState<string>('All');
-    const [problems, setProblems] = useState<Problem[]>([]);
+import ProblemDescription from '@/app/components/dsa/ProblemDescription';
+import Console from '@/app/components/dsa/Console';
+import SubmissionsTab from '@/app/components/dsa/SubmissionsTab';
+import AIAssistant from '@/app/components/dsa/AIAssistant';
+import { fetchTrainingInsight, fetchTrainingTask, submitTrainingTask, TrainingSubmitResult, TrainingTask } from '@/app/lib/dsa-training';
+
+const Editor = dynamic(
+    () => import('@monaco-editor/react').then((mod) => mod.Editor),
+    { ssr: false, loading: () => <div className="h-full w-full flex items-center justify-center bg-slate-50 text-slate-400">Loading Editor...</div> }
+);
+
+type Tab = 'description' | 'submissions' | 'learn';
+type RightTab = 'console' | 'ai_assist';
+type Theme = 'light' | 'vs-dark';
+
+export default function DsaTrainingPage() {
+    const [task, setTask] = useState<TrainingTask | null>(null);
+    const [taskMessage, setTaskMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [language, setLanguage] = useState('cpp');
+    const [code, setCode] = useState('');
+    const [leftTab, setLeftTab] = useState<Tab>('description');
+    const [rightBottomTab, setRightBottomTab] = useState<RightTab>('console');
+    const [submitResult, setSubmitResult] = useState<TrainingSubmitResult | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [theme, setTheme] = useState<Theme>('light');
+    const [insight, setInsight] = useState<string | null>(null);
+    const [insightLoading, setInsightLoading] = useState(false);
+    const [showSubmitToast, setShowSubmitToast] = useState(true);
 
-    useEffect(() => {
-        const loadProblems = async () => {
-            setLoading(true);
-            const data = await fetchProblems();
-            setProblems(data);
-            setLoading(false);
+    const problem = task?.problem;
+    const canSubmit = task?.canSubmit ?? false;
+
+    const normalizedProblem = useMemo(() => {
+        if (!problem) return null;
+        const difficultyRaw = String(problem.difficulty || '').toLowerCase();
+        const difficulty = difficultyRaw
+            ? `${difficultyRaw.charAt(0).toUpperCase()}${difficultyRaw.slice(1)}`
+            : 'Easy';
+        const languageLabelMap: Record<string, string> = {
+            cpp: 'C++',
+            java: 'Java',
+            python: 'Python',
+            javascript: 'JavaScript',
+            typescript: 'TypeScript',
+            csharp: 'C#',
+            go: 'Go',
+            rust: 'Rust',
+            kotlin: 'Kotlin',
+            swift: 'Swift',
+            ruby: 'Ruby',
+            php: 'PHP',
         };
-        loadProblems();
-    }, []);
 
-    // Stats Logic
-    const stats = {
-        solved: problems.filter(p => p.status === 'Solved').length,
-        attempted: problems.filter(p => p.status === 'Attempted').length,
-        total: problems.length,
-        easy: problems.filter(p => p.difficulty === 'Easy').length,
-        medium: problems.filter(p => p.difficulty === 'Medium').length,
-        hard: problems.filter(p => p.difficulty === 'Hard').length
-    };
+        const fallbackLangs = Object.keys(problem.codeTemplates || problem.starterCode || {});
+        const languageMeta = problem.languageMeta?.length
+            ? problem.languageMeta
+            : fallbackLangs.map((langSlug: string) => ({
+                lang: languageLabelMap[langSlug] || langSlug,
+                langSlug,
+            }));
 
-    // Filter Logic
-    const filteredProblems = useMemo(() => {
-        return problems.filter(problem => {
-            const matchesSearch = problem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                problem.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-            const matchesDifficulty = selectedDifficulty === 'All' || problem.difficulty === selectedDifficulty;
-            const matchesStatus = selectedStatus === 'All' || problem.status === selectedStatus;
-            const matchesTag = selectedTag === 'All' || problem.tags.includes(selectedTag); // Simple exact match for dropdown
+        return {
+            ...problem,
+            difficulty,
+            languageMeta,
+            examples: problem.examples || [],
+            constraints: problem.constraints || [],
+        };
+    }, [problem]);
 
-            return matchesSearch && matchesDifficulty && matchesStatus && matchesTag;
-        });
-    }, [problems, searchQuery, selectedDifficulty, selectedStatus, selectedTag]);
-
-    // Unique Tags for Filter Dropdown
-    const allTags = useMemo(() => {
-        const tags = new Set<string>();
-        problems.forEach(p => p.tags.forEach(t => tags.add(t)));
-        return Array.from(tags).sort();
-    }, [problems]);
-
-    const getDifficultyColor = (diff: string) => {
-        switch (diff) {
-            case 'Easy': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
-            case 'Medium': return 'text-amber-600 bg-amber-50 border-amber-100';
-            case 'Hard': return 'text-red-600 bg-red-50 border-red-100';
-            default: return 'text-slate-600';
+    const loadTask = async () => {
+        setSubmitResult(null);
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('accessToken') || '';
+            const data = await fetchTrainingTask(token);
+            if ('message' in data) {
+                setTaskMessage(data.message);
+                setTask(null);
+                return;
+            }
+            setTask(data);
+            setTaskMessage(null);
+            setInsight(null);
+            setShowSubmitToast(true);
+            const languageMeta = data.problem?.languageMeta || [];
+            const fallbackLangs = Object.keys(data.problem?.codeTemplates || data.problem?.starterCode || {});
+            const firstLang = languageMeta?.[0]?.langSlug || fallbackLangs?.[0] || 'cpp';
+            setLanguage(firstLang);
+            const template = data.problem?.codeTemplates?.[firstLang]
+                || data.problem?.starterCode?.[firstLang]
+                || '';
+            setCode(template);
+        } catch (error) {
+            setTaskMessage('Failed to load training task.');
+        } finally {
+            setLoading(false);
         }
     };
 
-    return (
-        <div className="min-h-screen bg-slate-50 p-6 space-y-8">
-            {/* Header & Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="md:col-span-3 space-y-2">
-                    <h1 className="text-2xl font-bold text-slate-900">Problem Set</h1>
-                    <p className="text-slate-500">Master Data Structures & Algorithms with our curated list of problems.</p>
-                </div>
+    useEffect(() => {
+        loadTask();
+    }, []);
 
-                {/* Gamification Card - Preview */}
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Weekly Streak</div>
-                        <div className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                            3 Days <span className="text-base text-yellow-500">🔥</span>
+    useEffect(() => {
+        setSubmitResult(null);
+        if (!problem) return;
+        const saved = localStorage.getItem(`dsa_training_${problem.id}_${language}`);
+        const template = problem.codeTemplates?.[language] || problem.starterCode?.[language] || '';
+        setCode(saved || template);
+    }, [problem?.id, language]);
+
+    useEffect(() => {
+        if (!problem) return;
+        if (!code) return;
+        const handle = setTimeout(() => {
+            localStorage.setItem(`dsa_training_${problem.id}_${language}`, code);
+        }, 600);
+        return () => clearTimeout(handle);
+    }, [code, problem?.id, language]);
+
+
+    const handleSubmit = async () => {
+        if (!task?.sessionId || !problem || !canSubmit || isSubmitting) return;
+        try {
+            setIsSubmitting(true);
+            const token = localStorage.getItem('accessToken') || '';
+            const result = await submitTrainingTask(token, {
+                sessionId: task.sessionId,
+                code,
+                language,
+            });
+            if ('message' in result) {
+                setTaskMessage(result.message);
+                return;
+            }
+            setSubmitResult(result);
+            setShowSubmitToast(true);
+            setTask({ ...task, canSubmit: false, mastery: result.mastery, nextReviewAt: result.nextReviewAt });
+            setRightBottomTab('console');
+        } catch (error) {
+            setTaskMessage('Failed to submit solution.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleLoadInsight = async () => {
+        if (!problem) return;
+        try {
+            setInsightLoading(true);
+            const token = localStorage.getItem('accessToken') || '';
+            const data = await fetchTrainingInsight(token, problem.id);
+            if (data?.content) {
+                setInsight(data.content);
+            } else if (data?.message) {
+                setInsight(data.message);
+            } else {
+                setInsight('No insight available.');
+            }
+        } catch (error) {
+            setInsight('Failed to load insight.');
+        } finally {
+            setInsightLoading(false);
+        }
+    };
+
+    const metadata = useMemo(() => {
+        if (!task) return null;
+        return {
+            mastery: task.mastery ?? 0,
+            nextReviewAt: task.nextReviewAt,
+        };
+    }, [task]);
+
+    if (loading) {
+        return <div className="min-h-screen flex items-center justify-center text-slate-500">Loading training task...</div>;
+    }
+
+    if (!task || !problem) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-center p-6 gap-4">
+                <div className="text-2xl font-bold text-slate-800">No task due</div>
+                <div className="text-sm text-slate-500">{taskMessage || 'You are all caught up for now.'}</div>
+                <button
+                    onClick={loadTask}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                    <RefreshCcw size={16} /> Refresh
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="h-[calc(100vh-6rem)] w-full bg-slate-50 flex flex-col font-sans overflow-hidden">
+            {/* Top Bar */}
+            <div className="h-12 shrink-0 flex items-center justify-between px-4 border-b border-slate-200 bg-white shadow-sm z-20">
+                <div className="flex items-center gap-3 text-sm text-slate-500">
+                    <Link href="/dashboard" className="flex items-center hover:text-indigo-600 transition-colors">
+                        <ArrowLeft size={16} /> <span className="ml-1">Dashboard</span>
+                    </Link>
+                    <span className="text-slate-300">/</span>
+                    <span className="font-bold text-slate-700">DSA Training</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
+                        <Sparkles size={12} /> Mastery {metadata?.mastery ?? 0}
+                    </div>
+                    {metadata?.nextReviewAt && (
+                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
+                            <Clock size={12} /> Next review {new Date(metadata.nextReviewAt).toLocaleDateString()}
                         </div>
-                    </div>
-                    <div className="h-10 w-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
-                        <Award size={20} />
-                    </div>
+                    )}
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                {/* Left: Filters & List */}
-                <div className="lg:col-span-3 space-y-6">
-                    {/* Filters Bar */}
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
-                        <div className="relative w-full md:w-96">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search questions, tags, or companies..."
-                                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white transition-all outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                            <select
-                                value={selectedDifficulty}
-                                onChange={(e) => setSelectedDifficulty(e.target.value)}
-                                className="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 focus:border-indigo-500 outline-none"
+            <div className="flex-1 w-full overflow-hidden relative">
+                <Group orientation="horizontal" className="flex h-full w-full">
+                    {/* LEFT PANEL */}
+                    <Panel defaultSize={40} minSize={25} className="bg-white flex flex-col h-full border-r border-slate-200">
+                        <div className="h-10 border-b border-slate-200 bg-slate-50 flex items-center px-4 gap-6 shrink-0">
+                            <button
+                                onClick={() => setLeftTab('description')}
+                                className={`flex items-center gap-2 text-sm font-medium h-full border-b-2 transition-all px-1 ${leftTab === 'description'
+                                    ? 'text-indigo-600 border-indigo-600'
+                                    : 'text-slate-500 border-transparent hover:text-slate-700'
+                                    }`}
                             >
-                                <option value="All">Difficulty</option>
-                                <option value="Easy">Easy</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Hard">Hard</option>
-                            </select>
-
-                            <select
-                                value={selectedStatus}
-                                onChange={(e) => setSelectedStatus(e.target.value)}
-                                className="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 focus:border-indigo-500 outline-none"
+                                <Info size={14} /> Description
+                            </button>
+                            <button
+                                onClick={() => setLeftTab('submissions')}
+                                className={`flex items-center gap-2 text-sm font-medium h-full border-b-2 transition-all px-1 ${leftTab === 'submissions'
+                                    ? 'text-indigo-600 border-indigo-600'
+                                    : 'text-slate-500 border-transparent hover:text-slate-700'
+                                    }`}
                             >
-                                <option value="All">Status</option>
-                                <option value="Solved">Solved</option>
-                                <option value="Attempted">Attempted</option>
-                                <option value="Todo">Todo</option>
-                            </select>
-
-                            <select
-                                value={selectedTag}
-                                onChange={(e) => setSelectedTag(e.target.value)}
-                                className="px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white text-slate-700 focus:border-indigo-500 outline-none"
+                                <CheckCircle2 size={14} /> Submissions
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setLeftTab('learn');
+                                    if (!insight && !insightLoading) {
+                                        handleLoadInsight();
+                                    }
+                                }}
+                                className={`flex items-center gap-2 text-sm font-medium h-full border-b-2 transition-all px-1 ${leftTab === 'learn'
+                                    ? 'text-indigo-600 border-indigo-600'
+                                    : 'text-slate-500 border-transparent hover:text-slate-700'
+                                    }`}
                             >
-                                <option value="All">Tags</option>
-                                {allTags.map(tag => (
-                                    <option key={tag} value={tag}>{tag}</option>
-                                ))}
-                            </select>
+                                <Sparkles size={14} /> Learn
+                            </button>
                         </div>
+
+                        <div className="flex-1 overflow-hidden relative">
+                            {leftTab === 'description' ? (
+                                <div className="h-full overflow-y-auto custom-scrollbar">
+                                    {normalizedProblem ? (
+                                        <ProblemDescription problem={normalizedProblem} />
+                                    ) : null}
+                                </div>
+                            ) : leftTab === 'learn' ? (
+                                <div className="h-full overflow-y-auto custom-scrollbar p-6 bg-white">
+                                    {insightLoading ? (
+                                        <div className="text-sm text-slate-500">Loading insight...</div>
+                                    ) : (
+                                        <div className="prose prose-slate max-w-none text-sm">
+                                            <ReactMarkdown>{insight || 'No insight available.'}</ReactMarkdown>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="h-full overflow-y-auto custom-scrollbar p-0 bg-slate-50">
+                                    <SubmissionsTab />
+                                </div>
+                            )}
+                        </div>
+                    </Panel>
+
+                    <Separator className="w-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
+
+                    {/* RIGHT PANEL */}
+                    <Panel defaultSize={60} minSize={30} className="h-full flex flex-col">
+                        <Group orientation="vertical" className="flex flex-col h-full w-full">
+                            <Panel defaultSize={65} minSize={20} className="flex flex-col bg-white h-full border-b border-slate-200">
+                                <div className="h-10 border-b border-slate-200 bg-slate-50 flex items-center justify-between px-3 shrink-0">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                                        Training Editor
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <select
+                                            value={language}
+                                            onChange={(e) => setLanguage(e.target.value)}
+                                            className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
+                                        >
+                                            {(normalizedProblem?.languageMeta || [
+                                                { lang: 'C++', langSlug: 'cpp' },
+                                                { lang: 'Java', langSlug: 'java' },
+                                                { lang: 'Python', langSlug: 'python' },
+                                                { lang: 'JavaScript', langSlug: 'javascript' },
+                                            ]).map((lang: any) => (
+                                                <option key={lang.langSlug} value={lang.langSlug}>{lang.lang}</option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            onClick={() => setTheme(theme === 'light' ? 'vs-dark' : 'light')}
+                                            className="px-2 py-1 text-xs rounded-md border border-slate-200 text-slate-600 hover:bg-slate-100"
+                                        >
+                                            {theme === 'light' ? 'Dark' : 'Light'}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex-1 overflow-hidden relative flex flex-col">
+                                    <Editor
+                                        height="100%"
+                                        language={language}
+                                        value={code}
+                                        onChange={(value) => setCode(value || '')}
+                                        theme={theme}
+                                        options={{
+                                            minimap: { enabled: false },
+                                            fontSize: 14,
+                                            lineNumbers: 'on',
+                                            scrollBeyondLastLine: false,
+                                            automaticLayout: true,
+                                            padding: { top: 16, bottom: 16 },
+                                            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                                            fontLigatures: true,
+                                            cursorBlinking: 'smooth',
+                                            smoothScrolling: true,
+                                            renderLineHighlight: 'all',
+                                        }}
+                                    />
+                                </div>
+                            </Panel>
+
+                            <Separator className="h-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-row-resize flex items-center justify-center group z-10" />
+
+                            <Panel defaultSize={35} minSize={10} className="bg-white flex flex-col h-full">
+                                <div className="h-9 border-b border-slate-200 bg-slate-50 flex items-center px-4 gap-6 shrink-0">
+                                    <button
+                                        onClick={() => setRightBottomTab('console')}
+                                        className={`flex items-center gap-2 text-xs font-bold h-full border-b-2 transition-all px-1 ${rightBottomTab === 'console'
+                                            ? 'text-indigo-600 border-indigo-600'
+                                            : 'text-slate-500 border-transparent hover:text-slate-700'
+                                            }`}
+                                    >
+                                        Console
+                                    </button>
+                                    <button
+                                        onClick={() => setRightBottomTab('ai_assist')}
+                                        className={`flex items-center gap-2 text-xs font-bold h-full border-b-2 transition-all px-1 ${rightBottomTab === 'ai_assist'
+                                            ? 'text-indigo-600 border-indigo-600'
+                                            : 'text-slate-500 border-transparent hover:text-slate-700'
+                                            }`}
+                                    >
+                                        AI Assist
+                                    </button>
+                                </div>
+
+                                <div className="flex-1 overflow-hidden bg-white relative flex flex-col">
+                                    {rightBottomTab === 'ai_assist' ? (
+                                        <AIAssistant />
+                                    ) : (
+                                        <Console
+                                            onRun={() => {}}
+                                            onSubmit={handleSubmit}
+                                            isRunning={false}
+                                            isSubmitting={isSubmitting}
+                                            runDisabled
+                                            submitDisabled={!canSubmit}
+                                            submitLabel={canSubmit ? 'Submit for Review' : 'Locked'}
+                                            result={submitResult ? {
+                                                status: submitResult.status === 'accepted' ? 'Accepted' : 'Wrong Answer',
+                                                totalTests: 0,
+                                                passedTests: 0,
+                                                runtime: '-',
+                                                memory: '-',
+                                                error: submitResult.summary || undefined,
+                                            } : null}
+                                        />
+                                    )}
+                                </div>
+
+                                <div className="h-8 border-t border-slate-200 bg-slate-50 flex items-center justify-between px-3 text-[10px] text-slate-500 shrink-0">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-1.5 h-1.5 rounded-full ${canSubmit ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                                        <span>{canSubmit ? 'Submission Available' : 'Submission Locked'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span>{language}</span>
+                                        <span>UTF-8</span>
+                                    </div>
+                                </div>
+                            </Panel>
+                        </Group>
+                    </Panel>
+                </Group>
+            </div>
+
+            {submitResult && showSubmitToast && (
+                <div className="border-t border-slate-200 bg-white px-4 py-3 flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-3">
+                        <div className={`px-2 py-1 rounded-full text-xs font-bold ${submitResult.status === 'accepted' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                            {submitResult.status === 'accepted' ? 'Accepted' : 'Needs Review'}
+                        </div>
+                        <div className="text-slate-600">Score {submitResult.score}</div>
+                        <div className="text-slate-500">{submitResult.summary}</div>
                     </div>
-
-                    {/* Problem Table */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
-                                <tr>
-                                    <th className="px-6 py-4 w-12 text-center">Status</th>
-                                    <th className="px-6 py-4">Title</th>
-                                    <th className="px-6 py-4 w-32">Difficulty</th>
-                                    <th className="px-6 py-4 w-32">Acceptance</th>
-                                    <th className="px-6 py-4 hidden md:table-cell">Tags</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {filteredProblems.map((problem) => (
-                                    <tr key={problem.id} className="hover:bg-slate-50 transition-colors group">
-                                        <td className="px-6 py-4 text-center">
-                                            {problem.status === 'Solved' && <CheckCircle2 className="mx-auto text-emerald-500" size={18} />}
-                                            {problem.status === 'Attempted' && <Clock className="mx-auto text-amber-500" size={18} />}
-                                            {problem.status === 'Todo' && <Circle className="mx-auto text-slate-300" size={18} />}
-                                        </td>
-                                        <td className="px-6 py-4 font-medium">
-                                            <Link href={`/dashboard/dsa/${problem.id}`} className="text-slate-900 group-hover:text-indigo-600 transition-colors flex items-center gap-2">
-                                                {problem.title}
-                                                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400" />
-                                            </Link>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getDifficultyColor(problem.difficulty)}`}>
-                                                {problem.difficulty}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-500">
-                                            {problem.acceptanceRate}%
-                                        </td>
-                                        <td className="px-6 py-4 hidden md:table-cell">
-                                            <div className="flex gap-2 flex-wrap">
-                                                {problem.tags.slice(0, 2).map(tag => (
-                                                    <span key={tag} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                                {problem.tags.length > 2 && (
-                                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs">+{problem.tags.length - 2}</span>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-
-                        {filteredProblems.length === 0 && (
-                            <div className="p-8 text-center text-slate-500">
-                                No problems found matching your filters.
-                            </div>
-                        )}
-
-                        {/* Pagination (Mock) */}
-                        <div className="p-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-                            <div>Showing 1 to {Math.min(filteredProblems.length, 10)} of {filteredProblems.length} entries</div>
-                            <div className="flex gap-1">
-                                <button className="p-2 border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-50" disabled><ChevronLeft size={16} /></button>
-                                <button className="p-2 border border-slate-200 rounded hover:bg-slate-50 bg-indigo-50 text-indigo-600 border-indigo-200 font-bold">1</button>
-                                <button className="p-2 border border-slate-200 rounded hover:bg-slate-50">2</button>
-                                <button className="p-2 border border-slate-200 rounded hover:bg-slate-50"><ChevronRight size={16} /></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right: Progress & Widgets */}
-                <div className="space-y-6">
-                    {/* Progress Card */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <TrendingUp size={20} className="text-indigo-600" />
-                            Session Progress
-                        </h3>
-                        <div className="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center">
-                            {/* Simple CSS Circle Chart Mock */}
-                            <div className="absolute inset-0 rounded-full border-8 border-slate-100"></div>
-                            <div className="absolute inset-0 rounded-full border-8 border-transparent border-t-indigo-500 border-r-indigo-500 rotate-45"></div>
-                            <div className="text-center">
-                                <div className="text-3xl font-bold text-slate-900">{stats.solved}</div>
-                                <div className="text-xs text-slate-400 font-medium uppercase">Solved</div>
-                            </div>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-emerald-600 font-medium">Easy</span>
-                                <span className="text-slate-900 font-bold">{stats.easy} <span className="text-slate-400 font-normal">/ 45</span></span>
-                            </div>
-                            <div className="w-full bg-emerald-100 h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-emerald-500 h-full w-[30%]"></div>
-                            </div>
-
-                            <div className="flex justify-between text-sm">
-                                <span className="text-amber-600 font-medium">Medium</span>
-                                <span className="text-slate-900 font-bold">{stats.medium} <span className="text-slate-400 font-normal">/ 86</span></span>
-                            </div>
-                            <div className="w-full bg-amber-100 h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-amber-500 h-full w-[12%]"></div>
-                            </div>
-
-                            <div className="flex justify-between text-sm">
-                                <span className="text-red-600 font-medium">Hard</span>
-                                <span className="text-slate-900 font-bold">{stats.hard} <span className="text-slate-400 font-normal">/ 20</span></span>
-                            </div>
-                            <div className="w-full bg-red-100 h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-red-500 h-full w-[5%]"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Daily Challenge Card */}
-                    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-xl shadow-lg text-white">
-                        <div className="flex items-start justify-between mb-4">
-                            <div>
-                                <div className="text-indigo-100 text-xs font-bold uppercase mb-1">Daily Challenge</div>
-                                <div className="font-bold text-lg">Merge Intervals</div>
-                            </div>
-                            <Calendar className="text-indigo-200" size={24} />
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-indigo-100 mb-4">
-                            <span className="px-2 py-0.5 bg-white/20 rounded text-xs font-bold">Medium</span>
-                            <span>+10 XP</span>
-                        </div>
-                        <button className="w-full py-2 bg-white text-indigo-600 font-bold rounded-lg text-sm hover:bg-indigo-50 transition-colors">
-                            Solve Now
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={loadTask}
+                            className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                        >
+                            Next Task <ArrowRight size={14} />
+                        </button>
+                        <button
+                            onClick={() => setShowSubmitToast(false)}
+                            className="text-xs font-semibold text-slate-500 hover:text-slate-700"
+                        >
+                            Dismiss
                         </button>
                     </div>
-
-                    {/* Companies */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Top Companies</h3>
-                        <div className="flex flex-wrap gap-2">
-                            {['Google', 'Amazon', 'Facebook', 'Microsoft', 'Uber'].map(c => (
-                                <button key={c} className="px-3 py-1.5 bg-slate-500 hover:bg-slate-100 rounded-full text-xs font-medium text-slate-600 border border-slate-200 transition-colors">
-                                    {c}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

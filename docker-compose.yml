@@ -17,6 +17,7 @@ services:
       NEST_CLI_CONFIG: /app/nest-cli.json
     volumes:
       - ./backend:/app
+      - ./dataset.json:/app/dataset.json:ro
       - backend_node_modules:/app/node_modules
     depends_on:
       - postgres

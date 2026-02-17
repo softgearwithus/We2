@@ -42,6 +42,17 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
                     </div>
                 </div>
 
+                {problem.leetcodeUrl && (
+                    <a
+                        href={problem.leetcodeUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 mb-6"
+                    >
+                        Solve on LeetCode <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    </a>
+                )}
+
                 <div
                     className="prose prose-slate max-w-none text-sm leading-relaxed mb-8"
                     dangerouslySetInnerHTML={{ __html: problem.description }}

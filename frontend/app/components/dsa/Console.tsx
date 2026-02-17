@@ -5,10 +5,19 @@ interface ConsoleProps {
     onRun: () => void;
     onSubmit: () => void;
     isRunning: boolean;
+    isSubmitting?: boolean;
+    submitLabel?: string;
+    submitDisabled?: boolean;
+    runDisabled?: boolean;
     result: ExecutionResult | null;
 }
 
-export default function Console({ onRun, onSubmit, isRunning, result }: ConsoleProps) {
+export default function Console({ onRun, onSubmit, isRunning, isSubmitting = false, submitLabel, submitDisabled = false, runDisabled = false, result }: ConsoleProps) {
+    const isBusy = isRunning || isSubmitting;
+    const isRunDisabled = isBusy || runDisabled;
+    const isSubmitDisabled = isBusy || submitDisabled;
+    const submitText = isSubmitting ? 'Submitting...' : submitLabel || 'Submit';
+
     return (
         <div className="h-full flex flex-col bg-slate-50 border-t border-slate-200">
             {/* Console Header */}
@@ -20,7 +29,7 @@ export default function Console({ onRun, onSubmit, isRunning, result }: ConsoleP
                 <div className="flex gap-2">
                     <button
                         onClick={onRun}
-                        disabled={isRunning}
+                        disabled={isRunDisabled}
                         className="flex items-center gap-1.5 px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
                     >
                         <Play size={14} className="fill-slate-700" />
@@ -28,11 +37,15 @@ export default function Console({ onRun, onSubmit, isRunning, result }: ConsoleP
                     </button>
                     <button
                         onClick={onSubmit}
-                        disabled={isRunning}
+                        disabled={isSubmitDisabled}
                         className="flex items-center gap-1.5 px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50 shadow-sm shadow-green-600/20"
                     >
-                        <Send size={14} />
-                        Submit
+                        {isSubmitting ? (
+                            <div className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <Send size={14} />
+                        )}
+                        {submitText}
                     </button>
                 </div>
             </div>

@@ -47,7 +47,7 @@ export default function DsaProblemPage() {
 
     // State
     const [problem, setProblem] = useState(mockProblems[0]);
-    const [language, setLanguage] = useState('javascript');
+    const [language, setLanguage] = useState('cpp');
     const [code, setCode] = useState('');
     const [isRunning, setIsRunning] = useState(false);
     const [result, setResult] = useState<ExecutionResult | null>(null);
@@ -82,7 +82,8 @@ export default function DsaProblemPage() {
                 if (foundProblem) {
                     setProblem(foundProblem);
                     const savedCode = localStorage.getItem(`dsa_code_${problemId}_${language}`);
-                    setCode(savedCode || foundProblem.starterCode[language] || '');
+                    const template = foundProblem.codeTemplates?.[language] || foundProblem.starterCode[language] || '';
+                    setCode(savedCode || template);
 
                     // Initialize Test Cases
                     setTestCases(foundProblem.testCases.map((tc, i) => ({
@@ -186,6 +187,9 @@ export default function DsaProblemPage() {
 
     const handleLanguageChange = (lang: string) => {
         setLanguage(lang);
+        const savedCode = localStorage.getItem(`dsa_code_${problemId}_${lang}`);
+        const template = problem.codeTemplates?.[lang] || problem.starterCode[lang] || '';
+        setCode(savedCode || template);
     };
 
     const handleResetCode = () => {
@@ -357,10 +361,14 @@ export default function DsaProblemPage() {
                                             onChange={(e) => handleLanguageChange(e.target.value)}
                                             className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
                                         >
-                                            <option value="javascript">JavaScript</option>
-                                            <option value="python">Python</option>
-                                            <option value="java">Java</option>
-                                            <option value="cpp">C++</option>
+                                            {(problem.languageMeta || [
+                                                { lang: 'C++', langSlug: 'cpp' },
+                                                { lang: 'Java', langSlug: 'java' },
+                                                { lang: 'Python', langSlug: 'python' },
+                                                { lang: 'JavaScript', langSlug: 'javascript' },
+                                            ]).map((lang) => (
+                                                <option key={lang.langSlug} value={lang.langSlug}>{lang.lang}</option>
+                                            ))}
                                         </select>
                                         <button
                                             onClick={handleRun}
