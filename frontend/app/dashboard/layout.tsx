@@ -42,9 +42,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation' },
         { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
         { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa' },
+        { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects' },
         { icon: 'mic', label: 'Mock Interview', href: '/dashboard/interview' },
         { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
+        { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
     ];
 
     const simulationMenu: MenuItem[] = [

@@ -9,6 +9,7 @@ import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
 import PlacementRoadmap from '../components/dashboard/prep0/PlacementRoadmap';
+import SynapseWidget from '../components/dashboard/prep0/SynapseWidget';
 import { Sparkles, Target } from 'lucide-react';
 
 interface DashboardStats {
@@ -114,6 +115,11 @@ export default function DashboardPage() {
                                 Start Learning
                             </h3>
                             <QuickAccessGrid />
+                        </div>
+
+                        {/* Synapse Intelligence Widget */}
+                        <div className="h-64">
+                            <SynapseWidget />
                         </div>
                     </div>
 

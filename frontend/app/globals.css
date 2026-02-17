@@ -58,6 +58,24 @@
   .bg-moving-glow {
     background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 161, 22, 0.06), transparent 40%);
   }
+
+  /* Scroll Utilities */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .mask-gradient-right {
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+
+  .mask-gradient-top {
+    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  }
 }
 
 /* ── Animations ── */
