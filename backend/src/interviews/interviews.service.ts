@@ -9,15 +9,21 @@ import { Repository } from 'typeorm';
 import {
     InterviewSession,
     InterviewStatus,
+    InterviewType,
 } from './entities/interview-session.entity';
 import { CreateInterviewDto } from './dto/create-interview.dto';
 import { UpdateInterviewDto } from './dto/update-interview.dto';
+import { User } from '../users/user.entity';
+import { GeminiService } from '../common/gemini.service';
 
 @Injectable()
 export class InterviewsService {
     constructor(
         @InjectRepository(InterviewSession)
         private interviewsRepo: Repository<InterviewSession>,
+        @InjectRepository(User)
+        private usersRepo: Repository<User>,
+        private geminiService: GeminiService,
     ) { }
 
     async create(dto: CreateInterviewDto): Promise<InterviewSession> {
@@ -144,6 +150,85 @@ export class InterviewsService {
         return result;
     }
 
+    // --- Audio Drill & Gemini Methods ---
+
+    async checkAndIncrementLimit(userId: string, type: 'audio' | 'video'): Promise<boolean> {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException('User not found');
+
+        const now = new Date();
+        const lastReset = user.usageLastReset ? new Date(user.usageLastReset) : null;
+
+        // Check if we need to reset limits (new month)
+        if (!lastReset || (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear())) {
+            user.audioDrillUsage = 0;
+            user.videoInterviewUsage = 0;
+            user.drillTopicsRefreshCount = 0; // Reset refresh count too? Maybe per session not month? User said "per profile session". Sticking to monthly reset for simplicity or just track it.
+            user.usageLastReset = now;
+        }
+
+        if (type === 'audio') {
+            if (user.audioDrillUsage >= 15) return false;
+            user.audioDrillUsage++;
+        } else {
+            if (user.videoInterviewUsage >= 2) return false;
+            user.videoInterviewUsage++;
+        }
+
+        await this.usersRepo.save(user);
+        return true;
+    }
+
+    async generateAudioDrill(userId: string, topic: string) {
+        const user = await this.usersRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException('User not found');
+
+        // Check refresh cap (assuming simple counter for now, maybe per login session on frontend, but backend persistence is safer)
+        if (user.drillTopicsRefreshCount >= 20) {
+            // Fallback to simpler or cached content
+            return this.geminiService.generateDrillContent("Common Interview Questions", { userId, isFallback: true });
+        }
+
+        user.drillTopicsRefreshCount++;
+        await this.usersRepo.save(user);
+
+        return this.geminiService.generateDrillContent(topic, { userId });
+    }
+
+    async generateCommunicationDrill(userId: string, topic?: string) {
+        // Optional: Check limits or log usage here if needed
+        return this.geminiService.generateCommunicationDrill(topic);
+    }
+
+    async analyzeAudioDrill(userId: string, audioBase64: string, context: string) {
+        // Check limit
+        const allowed = await this.checkAndIncrementLimit(userId, 'audio');
+        if (!allowed) {
+            throw new BadRequestException('Monthly audio drill limit exhausted (15/15). Upgrade your plan.');
+        }
+
+        // Analyze
+        const analysis = await this.geminiService.analyzeAudio(audioBase64, context);
+
+        // Save session
+        const session = this.interviewsRepo.create({
+            userId,
+            type: InterviewType.TECHNICAL,
+            status: InterviewStatus.COMPLETED,
+            startedAt: new Date(),
+            completedAt: new Date(),
+            overallScore: analysis.overallScore,
+            analysis: analysis.metrics,
+            feedback: analysis.feedback,
+            strengths: analysis.strengths,
+            improvements: analysis.improvements,
+            questions: [{ context }],
+            // audioUrl: ... (TODO: upload to S3/Cloudinary and save URL)
+        });
+
+        return this.interviewsRepo.save(session);
+    }
+
     /**
      * Admin: Get all interviews
      */
@@ -152,5 +237,162 @@ export class InterviewsService {
             order: { createdAt: 'DESC' },
             take: 100,
         });
+    }
+    async submitCommunicationSession(userId: string): Promise<InterviewSession> {
+        // Create initial session with IN_PROGRESS status
+        const session = this.interviewsRepo.create({
+            userId,
+            type: InterviewType.BEHAVIORAL,
+            status: InterviewStatus.IN_PROGRESS,
+            startedAt: new Date(),
+            questions: [{ context: "Communication Drill 3-Part" }]
+        });
+        return this.interviewsRepo.save(session);
+    }
+
+    async performBackgroundAnalysis(sessionId: string, files: Array<Express.Multer.File>, metadata: any) {
+        console.log(`[Service] Starting background analysis for session ${sessionId}`);
+        console.log(`[Service] Files received: ${files.map(f => f.fieldname).join(', ')}`);
+
+        const results = {
+            reading: [] as any[],
+            listening: [] as any[],
+            extempore: null as any,
+            overallScore: 0
+        };
+
+        let totalScoreSum = 0;
+        let itemsCount = 0;
+        const allStrengths: string[] = [];
+        const allImprovements: string[] = [];
+        const allCoaching: string[] = [];
+        let mainPersona = "Assessment Pending";
+
+        // Helper to find file by field name
+        const getFile = (fieldname: string) => files.find(f => f.fieldname === fieldname);
+
+        try {
+            // 2. Analyze Reading Sections
+            if (metadata.reading) {
+                for (let i = 0; i < metadata.reading.length; i++) {
+                    try {
+                        const file = getFile(`reading_${i}`);
+                        if (file) {
+                            console.log(`[Service] Analyzing reading_${i}, buffer size: ${file.buffer.length} bytes`);
+                            if (file.buffer.length < 1000) { // Very rough silence/empty check (1KB)
+                                console.warn(`[Service] reading_${i} buffer too small, skipping AI analysis.`);
+                                continue;
+                            }
+                            const text = metadata.reading[i].text;
+                            const audioBase64 = file.buffer.toString('base64');
+                            const analysis = await this.geminiService.analyzeAudio(audioBase64, `Reading Task: Read this text clearly: "${text}"`);
+                            if (analysis) {
+                                console.log(`[Service] reading_${i} score: ${analysis.overallScore}`);
+                                results.reading.push({ ...analysis, targetText: text }); // Store target text
+                                totalScoreSum += (analysis.overallScore || 0);
+                                itemsCount++;
+                                if (analysis.strengths) allStrengths.push(...analysis.strengths);
+                                if (analysis.improvements) allImprovements.push(...analysis.improvements);
+                                if (analysis.actionableCoaching) allCoaching.push(...analysis.actionableCoaching);
+                            }
+                        } else {
+                            console.warn(`[Service] Missing file for reading_${i}`);
+                        }
+                    } catch (e) {
+                        console.error(`[Service] Failed to analyze reading_${i}`, e);
+                    }
+                }
+            }
+
+            // 3. Analyze Listening Sections
+            if (metadata.listening) {
+                for (let i = 0; i < metadata.listening.length; i++) {
+                    try {
+                        const file = getFile(`listening_${i}`);
+                        if (file) {
+                            console.log(`[Service] Analyzing listening_${i}, buffer size: ${file.buffer.length} bytes`);
+                            if (file.buffer.length < 1000) {
+                                console.warn(`[Service] listening_${i} buffer too small, skipping.`);
+                                continue;
+                            }
+                            const text = metadata.listening[i].text;
+                            const audioBase64 = file.buffer.toString('base64');
+                            const analysis = await this.geminiService.analyzeAudio(audioBase64, `Listening Task: Repeat this sentence exactly: "${text}"`);
+                            if (analysis) {
+                                console.log(`[Service] listening_${i} score: ${analysis.overallScore}`);
+                                results.listening.push({ ...analysis, targetText: text }); // Store target text
+                                totalScoreSum += (analysis.overallScore || 0);
+                                itemsCount++;
+                                if (analysis.strengths) allStrengths.push(...analysis.strengths);
+                                if (analysis.improvements) allImprovements.push(...analysis.improvements);
+                                if (analysis.actionableCoaching) allCoaching.push(...analysis.actionableCoaching);
+                            }
+                        } else {
+                            console.warn(`[Service] Missing file for listening_${i}`);
+                        }
+                    } catch (e) {
+                        console.error(`[Service] Failed to analyze listening_${i}`, e);
+                    }
+                }
+            }
+
+            // 4. Analyze Extempore
+            if (metadata.extempore) {
+                try {
+                    const file = getFile('extempore');
+                    if (file) {
+                        console.log(`[Service] Analyzing extempore, buffer size: ${file.buffer.length} bytes`);
+                        if (file.buffer.length < 1000) {
+                            console.warn(`[Service] extempore buffer too small, skipping.`);
+                        } else {
+                            const topic = metadata.extempore.topic;
+                            const audioBase64 = file.buffer.toString('base64');
+                            const analysis = await this.geminiService.analyzeAudio(audioBase64, `Extempore Task: Speak for 60 seconds on: "${topic}"`);
+                            if (analysis) {
+                                console.log(`[Service] extempore score: ${analysis.overallScore}`);
+                                results.extempore = { ...analysis, targetTopic: topic }; // Store target topic
+                                totalScoreSum += (analysis.overallScore || 0);
+                                itemsCount++;
+                                if (analysis.strengths) allStrengths.push(...analysis.strengths);
+                                if (analysis.improvements) allImprovements.push(...analysis.improvements);
+                                if (analysis.actionableCoaching) allCoaching.push(...analysis.actionableCoaching);
+                                if (analysis.communicationPersona) mainPersona = analysis.communicationPersona;
+                            }
+                        }
+                    } else {
+                        console.warn(`[Service] Missing file for extempore`);
+                    }
+                } catch (e) {
+                    console.error(`[Service] Failed to analyze extempore`, e);
+                }
+            }
+
+            // 5. Aggregate & Update Session
+            const finalScore = itemsCount > 0 ? Math.round(totalScoreSum / itemsCount) : 0;
+
+            const session = await this.interviewsRepo.findOne({ where: { id: sessionId } });
+            if (session) {
+                session.status = InterviewStatus.COMPLETED;
+                session.completedAt = new Date();
+                session.overallScore = finalScore;
+                session.analysis = {
+                    ...results,
+                    allCoaching: Array.from(new Set(allCoaching)),
+                    mainPersona
+                };
+                session.feedback = itemsCount > 0
+                    ? `Full drill analysis completed. Persona: ${mainPersona}`
+                    : "Drill submitted, but analysis failed for all clips.";
+
+                // Keep top unique strengths/improvements
+                session.strengths = Array.from(new Set(allStrengths)).slice(0, 5);
+                session.improvements = Array.from(new Set(allImprovements)).slice(0, 5);
+
+                await this.interviewsRepo.save(session);
+                console.log(`[Service] Completed analysis for session ${sessionId} with ${itemsCount} items.`);
+            }
+        } catch (error) {
+            console.error(`[Service] Background analysis failed for session ${sessionId}`, error);
+        }
     }
 }

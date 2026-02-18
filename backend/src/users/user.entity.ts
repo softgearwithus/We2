@@ -52,6 +52,19 @@ export class User {
     @Column({ nullable: true })
     twoFactorSecret?: string;
 
+    // --- Usage Limits ---
+    @Column({ type: 'timestamp', nullable: true })
+    usageLastReset: Date | null;
+
+    @Column({ default: 0 })
+    audioDrillUsage: number;
+
+    @Column({ default: 0 })
+    videoInterviewUsage: number;
+
+    @Column({ default: 0 })
+    drillTopicsRefreshCount: number;
+
     @CreateDateColumn()
     createdAt: Date;
 

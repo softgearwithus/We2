@@ -9,7 +9,11 @@ import {
     Request,
     HttpCode,
     HttpStatus,
+    UploadedFile,
+    UseInterceptors,
+    UploadedFiles,
 } from '@nestjs/common';
+import { FileInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 import {
     ApiTags,
     ApiOperation,
@@ -111,5 +115,43 @@ export class InterviewsController {
         @Body() dto: UpdateInterviewDto,
     ) {
         return this.interviewsService.update(id, req.user.id, dto);
+    }
+    @Post('audio/generate')
+    async generateAudioDrill(@Body() body: { topic: string }, @Request() req: any) {
+        return this.interviewsService.generateAudioDrill(req.user.id, body.topic);
+    }
+
+    @Post('communication/generate')
+    @ApiOperation({ summary: 'Generate 4-part communication drill' })
+    async generateCommunicationDrill(@Body() body: { topic?: string }, @Request() req: any) {
+        return this.interviewsService.generateCommunicationDrill(req.user.id, body.topic);
+    }
+
+    @Post('audio/analyze')
+    @ApiOperation({ summary: 'Analyze audio drill submission' })
+    async analyzeAudioDrill(@Body() body: { audio: string; context: string }, @Request() req: any) {
+        return this.interviewsService.analyzeAudioDrill(req.user.id, body.audio, body.context);
+    }
+    @Post('communication/submit')
+    @UseInterceptors(AnyFilesInterceptor())
+    @ApiOperation({ summary: 'Submit communication drill audio' })
+    async submitCommunicationDrill(
+        @UploadedFiles() files: Array<Express.Multer.File>,
+        @Body() body: { metadata: string },
+        @Request() req: any
+    ) {
+        try {
+            const metadata = JSON.parse(body.metadata);
+            // 1. Create session immediately (Fast)
+            const session = await this.interviewsService.submitCommunicationSession(req.user.id);
+
+            // 2. Trigger background analysis (Async, don't await)
+            this.interviewsService.performBackgroundAnalysis(session.id, files, metadata);
+
+            // 3. Return the session immediately so UI can show "Processing..."
+            return session;
+        } catch (error) {
+            throw error;
+        }
     }
 }

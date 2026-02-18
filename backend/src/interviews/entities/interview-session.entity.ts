@@ -67,6 +67,9 @@ export class InterviewSession {
     questions: any[] | null; // AI-generated questions
 
     @Column({ type: 'simple-json', nullable: true })
+    analysis: any | null; // Detailed metrics (fluency, grammar, etc.)
+
+    @Column({ type: 'simple-json', nullable: true })
     responses: any[] | null; // User responses
 
     @Column({ type: 'varchar', length: 255, nullable: true })

@@ -3,36 +3,30 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Mic, Square, ArrowRight, Loader2, Timer } from 'lucide-react';
+import { Mic, Square, ArrowRight, Loader2 } from 'lucide-react';
 import { SectionScore } from '../CommunicationAssessment';
-import { motion } from 'framer-motion';
 
 interface ExtemporeSectionProps {
     onComplete: (score: SectionScore) => void;
+    topicContent: { topic: string, keyPoints: string[] };
+    previousRecordings?: {
+        reading?: { level: number, blob: Blob, text: string }[];
+        listening?: { index: number, blob: Blob, text: string }[];
+    };
 }
 
-const TOPICS = [
-    "The impact of social media on society",
-    "Remote work vs Office work",
-    "Is AI a threat to human jobs?",
-    "The importance of continuous learning"
-];
-
-export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) {
-    const [topic, setTopic] = useState("");
+export default function ExtemporeSection({ onComplete, topicContent, previousRecordings }: ExtemporeSectionProps) {
     const [phase, setPhase] = useState<'prep' | 'speak' | 'review'>('prep');
-    const [timeLeft, setTimeLeft] = useState(30); // 30s prep, 60s speak
+    const [timeLeft, setTimeLeft] = useState(30);
 
     const [isRecording, setIsRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<any>(null);
 
     useEffect(() => {
-        setTopic(TOPICS[Math.floor(Math.random() * TOPICS.length)]);
         startTimer(30);
         return () => clearInterval(timerRef.current);
     }, []);
@@ -55,7 +49,7 @@ export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) 
     const handleTimerEnd = () => {
         if (phase === 'prep') {
             setPhase('speak');
-            startRecording(); // Auto start recording? Maybe better to let user click or auto-start. Let's auto-start for pressure.
+            startRecording();
             startTimer(60);
         } else if (phase === 'speak') {
             stopRecording();
@@ -91,39 +85,19 @@ export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) 
             mediaRecorderRef.current.stop();
             setIsRecording(false);
         }
-        clearInterval(timerRef.current); // Stop timer if manually stopped
+        clearInterval(timerRef.current);
         setPhase('review');
     };
 
     const handleSubmit = async () => {
         if (!audioBlob) return;
-        setIsAnalyzing(true);
 
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'extempore.webm');
-        formData.append('type', 'extempore');
-        formData.append('referenceText', topic);
-
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interview/analyze-audio`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) throw new Error("Analysis failed");
-            const data = await response.json();
-
-            onComplete({
-                section: 'Extempore',
-                score: 88, // Mock
-                feedback: data.feedback
-            });
-
-        } catch (err) {
-            console.error(err);
-            alert("Analysis failed.");
-            setIsAnalyzing(false);
-        }
+        onComplete({
+            section: 'Extempore',
+            score: 0,
+            feedback: "",
+            data: { topic: topicContent.topic, blob: audioBlob }
+        });
     };
 
     return (
@@ -135,7 +109,15 @@ export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) 
                     <p className="text-slate-500">Prepare to speak on the following topic. Recording starts automatically in:</p>
                     <div className="text-6xl font-bold text-indigo-600 font-mono">{timeLeft}s</div>
                     <Card className="p-6 bg-indigo-50 border-indigo-100">
-                        <h3 className="text-xl font-bold text-slate-800">"{topic}"</h3>
+                        <h3 className="text-xl font-bold text-slate-800">"{topicContent.topic}"</h3>
+                        {topicContent.keyPoints && (
+                            <div className="mt-4 text-left">
+                                <p className="text-sm font-semibold text-slate-500 mb-2">Key Points to Cover:</p>
+                                <ul className="list-disc pl-5 text-sm text-slate-600">
+                                    {topicContent.keyPoints.map((kp, i) => <li key={i}>{kp}</li>)}
+                                </ul>
+                            </div>
+                        )}
                     </Card>
                     <Button onClick={() => { clearInterval(timerRef.current); handleTimerEnd(); }} variant="outline">Skip Prep</Button>
                 </div>
@@ -145,7 +127,7 @@ export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) 
                 <div className="space-y-6">
                     <p className="text-slate-500">Recording... Speak on the topic!</p>
                     <Card className="p-6 bg-indigo-50 border-indigo-100 mb-6">
-                        <h3 className="text-xl font-bold text-slate-800">"{topic}"</h3>
+                        <h3 className="text-xl font-bold text-slate-800">"{topicContent.topic}"</h3>
                     </Card>
                     <div className="relative h-32 w-32 mx-auto flex items-center justify-center">
                         <div className="absolute inset-0 bg-red-100 rounded-full animate-ping opacity-75"></div>
@@ -158,16 +140,64 @@ export default function ExtemporeSection({ onComplete }: ExtemporeSectionProps) 
             )}
 
             {phase === 'review' && (
-                <div className="space-y-6">
-                    <h3 className="text-xl font-bold text-slate-800">Recording Complete</h3>
-                    <p className="text-slate-500">Ready to submit your speech for analysis?</p>
-                    {audioBlob && <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />}
+                <div className="space-y-8">
+                    <div className="space-y-2">
+                        <h3 className="text-2xl font-bold text-slate-900">Drill Complete</h3>
+                        <p className="text-slate-500 text-sm">Review all your recordings before submitting for final analysis.</p>
+                    </div>
 
-                    <div className="flex justify-center gap-4 pt-4">
-                        <Button variant="outline" onClick={() => window.location.reload()}>Retry (New Topic)</Button>
-                        <Button onClick={handleSubmit} disabled={isAnalyzing} className="bg-indigo-600 hover:bg-indigo-700">
-                            {isAnalyzing ? <Loader2 className="animate-spin mr-2" /> : <ArrowRight className="mr-2" />}
-                            {isAnalyzing ? 'Analyzing...' : 'Generate Final Report'}
+                    <div className="grid grid-cols-1 gap-4 text-left max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        {/* 1. Reading Preview */}
+                        {previousRecordings?.reading && (
+                            <div className="space-y-3">
+                                <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" /> Part 1: Reading
+                                </h4>
+                                {previousRecordings.reading.map((r, i) => (
+                                    <div key={i} className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2">
+                                        <p className="text-[10px] text-slate-400 font-medium">Passage {i + 1}</p>
+                                        <audio controls src={URL.createObjectURL(r.blob)} className="h-8 w-full" />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* 2. Listening Preview */}
+                        {previousRecordings?.listening && (
+                            <div className="space-y-3">
+                                <h4 className="text-xs font-bold text-purple-600 uppercase tracking-widest flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" /> Part 2: Listening
+                                </h4>
+                                {previousRecordings.listening.map((l, i) => (
+                                    <div key={i} className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2">
+                                        <p className="text-[10px] text-slate-400 font-medium">Sentence {i + 1}</p>
+                                        <audio controls src={URL.createObjectURL(l.blob)} className="h-8 w-full" />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* 3. Extempore Preview */}
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-bold text-pink-600 uppercase tracking-widest flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 bg-pink-600 rounded-full" /> Part 3: Extempore
+                            </h4>
+                            <div className="block p-3 bg-indigo-50 rounded-xl border border-indigo-100">
+                                {audioBlob && <audio controls src={URL.createObjectURL(audioBlob)} className="h-10 w-full" />}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4 border-t border-slate-100">
+                        <Button variant="outline" onClick={() => window.location.reload()} className="rounded-xl h-12">
+                            Retry Drill
+                        </Button>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={!audioBlob}
+                            className="bg-indigo-600 hover:bg-indigo-700 h-12 text-lg shadow-lg shadow-indigo-100 rounded-xl flex-1 max-w-sm"
+                        >
+                            Generate Final Report <ArrowRight className="ml-2 w-5 h-5" />
                         </Button>
                     </div>
                 </div>

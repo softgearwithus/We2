@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2 } from 'lucide-react';
-import AudioInterview from './AudioInterview';
+import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2, BarChart3 } from 'lucide-react';
+import CommunicationDrillDashboard from './CommunicationDrillDashboard';
 import PreInterviewInstructions from './PreInterviewInstructions';
 import InterviewSession from './InterviewSession';
 import AssessmentReport, { AssessmentData, SectionScore, VideoMetrics } from './AssessmentReport';
@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface InterviewLandingProps {
 }
 
-type Mode = 'landing' | 'audio' | 'instructions' | 'video_session' | 'result';
+type Mode = 'landing' | 'audio' | 'instructions' | 'video_session' | 'result' | 'analysis';
 
 export default function InterviewLanding({ }: InterviewLandingProps) {
     const [mode, setMode] = useState<Mode>('landing');
@@ -56,7 +56,11 @@ export default function InterviewLanding({ }: InterviewLandingProps) {
     };
 
     if (mode === 'audio') {
-        return <AudioInterview onBack={() => setMode('landing')} onComplete={handleAudioComplete} />;
+        return <CommunicationDrillDashboard onBack={() => setMode('landing')} initialTab="new" />;
+    }
+
+    if (mode === 'analysis') {
+        return <CommunicationDrillDashboard onBack={() => setMode('landing')} initialTab="history" />;
     }
 
     if (mode === 'instructions') {
@@ -139,6 +143,40 @@ export default function InterviewLanding({ }: InterviewLandingProps) {
                                     Enter Simulation <Play size={16} fill="currentColor" />
                                 </>
                             )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Premium Analysis Sub-Section */}
+            <div className="w-full max-w-4xl px-4">
+                <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-1 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/50 via-indigo-50/50 to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6 rounded-[20px] bg-slate-50/50 backdrop-blur-sm">
+                        <div className="flex items-center gap-6 text-center md:text-left">
+                            <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-50 shrink-0">
+                                <BarChart3 size={28} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 justify-center md:justify-start">
+                                    Performance Analytics
+                                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wide">
+                                        Pro Insight
+                                    </span>
+                                </h3>
+                                <p className="text-slate-500 text-sm mt-1 max-w-md">
+                                    Deep dive into your communication history. Track fluency, tone analysis, and AI feedback over time.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setMode('analysis')}
+                            className="shrink-0 px-8 py-3 rounded-xl bg-white text-emerald-700 font-bold border border-slate-200 shadow-sm hover:border-emerald-200 hover:shadow-emerald-100 transition-all flex items-center gap-2 group/btn"
+                        >
+                            View Analysis
+                            <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                         </button>
                     </div>
                 </div>
