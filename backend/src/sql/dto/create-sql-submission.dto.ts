@@ -1,34 +1,34 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEnum, IsOptional, IsInt } from 'class-validator';
-import { SubmissionSource, SubmissionStatus } from '../entities/submission.entity';
+import { SqlSubmissionSource, SqlSubmissionStatus } from '../entities/sql-submission.entity';
 
-export class CreateSubmissionDto {
+export class CreateSqlSubmissionDto {
     @ApiProperty({ example: 'problem-slug or uuid' })
     @IsString()
     problemId: string;
 
-    @ApiProperty({ example: 'javascript', enum: ['javascript', 'python', 'java'] })
+    @ApiProperty({ example: 'sql', enum: ['sql'] })
     @IsString()
     language: string;
 
-    @ApiProperty({ example: 'var twoSum = function(nums, target) { ... }' })
+    @ApiProperty({ example: 'SELECT * FROM products;' })
     @IsString()
     code: string;
 
-    @ApiProperty({ enum: SubmissionStatus, example: SubmissionStatus.ACCEPTED })
-    @IsEnum(SubmissionStatus)
-    status: SubmissionStatus;
+    @ApiProperty({ enum: SqlSubmissionStatus, example: SqlSubmissionStatus.ACCEPTED })
+    @IsEnum(SqlSubmissionStatus)
+    status: SqlSubmissionStatus;
 
-    @ApiProperty({ enum: SubmissionSource, example: SubmissionSource.PRACTICE, required: false })
+    @ApiProperty({ enum: SqlSubmissionSource, example: SqlSubmissionSource.PRACTICE, required: false })
     @IsOptional()
-    @IsEnum(SubmissionSource)
-    source?: SubmissionSource;
+    @IsEnum(SqlSubmissionSource)
+    source?: SqlSubmissionSource;
 
-    @ApiProperty({ example: 3 })
+    @ApiProperty({ example: 1 })
     @IsInt()
     passedTests: number;
 
-    @ApiProperty({ example: 5 })
+    @ApiProperty({ example: 1 })
     @IsInt()
     totalTests: number;
 

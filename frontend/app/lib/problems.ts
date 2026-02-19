@@ -1,3 +1,5 @@
+import API_BASE_URL from './api-config';
+
 export interface TestCase {
     input: string;
     expected: string;
@@ -29,7 +31,7 @@ export interface Problem {
 
 export const fetchProblems = async (): Promise<Problem[]> => {
     try {
-        const response = await fetch('http://localhost:3001/dsa/problems');
+        const response = await fetch(`${API_BASE_URL}/dsa/problems`);
         if (!response.ok) throw new Error('Failed to fetch problems');
         const data = await response.json();
         return data.map((p: any) => ({
@@ -61,7 +63,7 @@ export const fetchProblems = async (): Promise<Problem[]> => {
 
 export const fetchProblemBySlug = async (slug: string): Promise<Problem | null> => {
     try {
-        const response = await fetch(`http://localhost:3001/dsa/problems/slug/${slug}`);
+        const response = await fetch(`${API_BASE_URL}/dsa/problems/slug/${slug}`);
         if (!response.ok) throw new Error('Failed to fetch problem');
         const p = await response.json();
         return {

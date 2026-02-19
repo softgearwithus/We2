@@ -7,9 +7,9 @@ import {
     Index,
 } from 'typeorm';
 
-@Entity('dsa_training_sessions')
+@Entity('sql_training_sessions')
 @Index(['userId'], { unique: true })
-export class DsaTrainingSession {
+export class SqlTrainingSession {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

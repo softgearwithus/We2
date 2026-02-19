@@ -1,32 +1,33 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DsaProblem, Difficulty } from './entities/dsa-problem.entity';
-import { Submission, SubmissionSource, SubmissionStatus } from './entities/submission.entity';
-import { DsaUserState } from './entities/dsa-user-state.entity';
-import { DsaTrainingSession } from './entities/dsa-training-session.entity';
-import { DsaProblemInsight } from './entities/dsa-problem-insight.entity';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CreateDsaProblemDto } from './dto/create-dsa-problem.dto';
-import { CreateSubmissionDto } from './dto/create-submission.dto';
-import { LeetCodeService } from './services/leetcode.service';
+
+import { SqlProblem, SqlDifficulty } from './entities/sql-problem.entity';
+import { SqlSubmission, SqlSubmissionSource, SqlSubmissionStatus } from './entities/sql-submission.entity';
+import { SqlUserState } from './entities/sql-user-state.entity';
+import { SqlTrainingSession } from './entities/sql-training-session.entity';
+import { SqlProblemInsight } from './entities/sql-problem-insight.entity';
+import { CreateSqlProblemDto } from './dto/create-sql-problem.dto';
+import { CreateSqlSubmissionDto } from './dto/create-sql-submission.dto';
+import { LeetCodeService } from '../dsa/services/leetcode.service';
 
 @Injectable()
-export class DsaService {
+export class SqlService {
     constructor(
-        @InjectRepository(DsaProblem)
-        private problemsRepository: Repository<DsaProblem>,
-        @InjectRepository(Submission)
-        private submissionsRepository: Repository<Submission>,
-        @InjectRepository(DsaUserState)
-        private userStatesRepository: Repository<DsaUserState>,
-        @InjectRepository(DsaTrainingSession)
-        private trainingSessionsRepository: Repository<DsaTrainingSession>,
-        @InjectRepository(DsaProblemInsight)
-        private problemInsightsRepository: Repository<DsaProblemInsight>,
+        @InjectRepository(SqlProblem)
+        private problemsRepository: Repository<SqlProblem>,
+        @InjectRepository(SqlSubmission)
+        private submissionsRepository: Repository<SqlSubmission>,
+        @InjectRepository(SqlUserState)
+        private userStatesRepository: Repository<SqlUserState>,
+        @InjectRepository(SqlTrainingSession)
+        private trainingSessionsRepository: Repository<SqlTrainingSession>,
+        @InjectRepository(SqlProblemInsight)
+        private problemInsightsRepository: Repository<SqlProblemInsight>,
         private leetCodeService: LeetCodeService,
         private configService: ConfigService,
     ) { }
@@ -42,6 +43,15 @@ export class DsaService {
             return true;
         }
         return nextReviewAt <= end;
+    }
+
+    private computeNextReviewDate(mastery: number, score: number): Date {
+        const baseDays = score >= 90 ? 8 : score >= 75 ? 5 : score >= 60 ? 3 : 1;
+        const masteryBoost = mastery >= 80 ? 4 : mastery >= 60 ? 2 : mastery >= 40 ? 1 : 0;
+        const days = Math.min(baseDays + masteryBoost, 21);
+        const next = new Date();
+        next.setDate(next.getDate() + days);
+        return next;
     }
 
     private async ensureUserStates(userId: string) {
@@ -75,17 +85,44 @@ export class DsaService {
         }
     }
 
-    private computeNextReviewDate(mastery: number, score: number): Date {
-        const baseDays = score >= 90 ? 8 : score >= 75 ? 5 : score >= 60 ? 3 : 1;
-        const masteryBoost = mastery >= 80 ? 4 : mastery >= 60 ? 2 : mastery >= 40 ? 1 : 0;
-        const days = Math.min(baseDays + masteryBoost, 21);
-        const next = new Date();
-        next.setDate(next.getDate() + days);
-        return next;
+    private isEmptyContent(content?: string | null): boolean {
+        if (!content) return true;
+        const trimmed = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        return trimmed.length === 0 || trimmed.toLowerCase().includes('description not available');
     }
 
-    private buildEvaluationPrompt(problem: DsaProblem, code: string, language: string) {
-        return `You are a strict but fair DSA evaluator.\n\nProblem Title: ${problem.title}\nDifficulty: ${problem.difficulty}\nDescription:\n${problem.description}\n\nEvaluate the student's solution in ${language}.\n- Score 0-100 for correctness and clarity.\n- Provide a concise feedback summary.\n- Determine if the solution is acceptable overall.\nReturn JSON only in this format:\n{\n  "score": number,\n  "status": "accepted" | "rejected",\n  "summary": "short feedback",\n  "strengths": ["..."],\n  "improvements": ["..."]\n}\n\nStudent Code:\n${code}`;
+    private async ensureProblemTemplates(problem: SqlProblem): Promise<SqlProblem> {
+        if ((!problem.languageMeta || !problem.codeTemplates) && problem.leetcodeSlug) {
+            try {
+                const editorData = await this.leetCodeService.fetchEditorData(problem.leetcodeSlug);
+                problem.languageMeta = editorData.languageMeta;
+                problem.codeTemplates = editorData.templates;
+                await this.problemsRepository.save(problem);
+            } catch (error) {
+                // ignore LeetCode fetch failures
+            }
+        }
+
+        if ((this.isEmptyContent(problem.description) || !problem.constraints?.length) && problem.leetcodeSlug) {
+            try {
+                const questionData = await this.leetCodeService.fetchQuestionContent(problem.leetcodeSlug);
+                if (this.isEmptyContent(problem.description) && questionData.content) {
+                    problem.description = questionData.content;
+                }
+                if ((!problem.constraints || problem.constraints.length === 0) && questionData.constraints.length > 0) {
+                    problem.constraints = questionData.constraints;
+                }
+                await this.problemsRepository.save(problem);
+            } catch (error) {
+                // ignore LeetCode fetch failures
+            }
+        }
+
+        return problem;
+    }
+
+    private buildEvaluationPrompt(problem: SqlProblem, code: string) {
+        return `You are a strict but fair SQL evaluator.\n\nProblem Title: ${problem.title}\nDifficulty: ${problem.difficulty}\nDescription:\n${problem.description}\n\nEvaluate the student's SQL query.\n- Score 0-100 for correctness and clarity.\n- Provide a concise feedback summary.\n- Determine if the solution is acceptable overall.\nReturn JSON only in this format:\n{\n  "score": number,\n  "status": "accepted" | "rejected",\n  "summary": "short feedback",\n  "strengths": ["..."],\n  "improvements": ["..."]\n}\n\nStudent SQL:\n${code}`;
     }
 
     private async evaluateWithGemini(prompt: string) {
@@ -120,45 +157,9 @@ export class DsaService {
         return response.text();
     }
 
-    private async ensureProblemTemplates(problem: DsaProblem): Promise<DsaProblem> {
-        if ((!problem.languageMeta || !problem.codeTemplates) && problem.leetcodeSlug) {
-            try {
-                const editorData = await this.leetCodeService.fetchEditorData(problem.leetcodeSlug);
-                problem.languageMeta = editorData.languageMeta;
-                problem.codeTemplates = editorData.templates;
-                await this.problemsRepository.save(problem);
-            } catch (error) {
-                // ignore LeetCode fetch failures
-            }
-        }
-
-        if ((this.isEmptyContent(problem.description) || !problem.constraints?.length) && problem.leetcodeSlug) {
-            try {
-                const questionData = await this.leetCodeService.fetchQuestionContent(problem.leetcodeSlug);
-                if (this.isEmptyContent(problem.description) && questionData.content) {
-                    problem.description = questionData.content;
-                }
-                if ((!problem.constraints || problem.constraints.length === 0) && questionData.constraints.length > 0) {
-                    problem.constraints = questionData.constraints;
-                }
-                await this.problemsRepository.save(problem);
-            } catch (error) {
-                // ignore LeetCode fetch failures
-            }
-        }
-
-        return problem;
-    }
-
-    private isEmptyContent(content?: string | null): boolean {
-        if (!content) return true;
-        const trimmed = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-        return trimmed.length === 0 || trimmed.toLowerCase().includes('description not available');
-    }
-
     // ── Problem Management ────────────────────────────────
 
-    async createProblem(dto: CreateDsaProblemDto): Promise<DsaProblem> {
+    async createProblem(dto: CreateSqlProblemDto): Promise<SqlProblem> {
         let languageMeta = dto.languageMeta || null;
         let codeTemplates = dto.codeTemplates || null;
         const leetcodeSlug = dto.leetcodeSlug || dto.slug;
@@ -183,7 +184,7 @@ export class DsaService {
         return this.problemsRepository.save(problem);
     }
 
-    async getAllProblems(difficulty?: Difficulty): Promise<DsaProblem[]> {
+    async getAllProblems(difficulty?: SqlDifficulty): Promise<SqlProblem[]> {
         const query = this.problemsRepository
             .createQueryBuilder('problem')
             .where('problem.isActive = :isActive', { isActive: true })
@@ -196,25 +197,25 @@ export class DsaService {
         return query.getMany();
     }
 
-    async getProblemBySlug(slug: string): Promise<DsaProblem> {
+    async getProblemBySlug(slug: string): Promise<SqlProblem> {
         const problem = await this.problemsRepository.findOne({
             where: { slug, isActive: true },
         });
 
         if (!problem) {
-            throw new NotFoundException(`Problem with slug ${slug} not found`);
+            throw new NotFoundException(`SQL problem with slug ${slug} not found`);
         }
 
         return problem;
     }
 
-    async getProblemById(id: string): Promise<DsaProblem> {
+    async getProblemById(id: string): Promise<SqlProblem> {
         const problem = await this.problemsRepository.findOne({
             where: { id, isActive: true },
         });
 
         if (!problem) {
-            throw new NotFoundException(`Problem with ID ${id} not found`);
+            throw new NotFoundException(`SQL problem with ID ${id} not found`);
         }
 
         return problem;
@@ -268,124 +269,6 @@ export class DsaService {
         };
     }
 
-    // ── Submission Management ────────────────────────────
-
-    async createSubmission(
-        userId: string,
-        dto: CreateSubmissionDto,
-    ): Promise<Submission> {
-        // Update problem statistics
-        const problem = await this.getProblemById(dto.problemId);
-        problem.submissions += 1;
-        if (dto.status === SubmissionStatus.ACCEPTED) {
-            problem.accepted += 1;
-        }
-        await this.problemsRepository.save(problem);
-
-        const submission = this.submissionsRepository.create({
-            ...dto,
-            userId,
-            source: dto.source || SubmissionSource.PRACTICE,
-        });
-
-        return this.submissionsRepository.save(submission);
-    }
-
-    async getUserSubmissions(userId: string): Promise<Submission[]> {
-        return this.submissionsRepository.find({
-            where: { userId },
-            relations: ['problem'],
-            order: { submittedAt: 'DESC' },
-            take: 50,
-        });
-    }
-
-    async getUserSubmissionsForProblem(
-        userId: string,
-        problemId: string,
-    ): Promise<Submission[]> {
-        return this.submissionsRepository.find({
-            where: { userId, problemId },
-            order: { submittedAt: 'DESC' },
-        });
-    }
-
-    async getUserTrainingSubmissions(userId: string, problemId?: string): Promise<Submission[]> {
-        const where: Record<string, any> = {
-            userId,
-            source: SubmissionSource.TRAINING,
-        };
-        if (problemId) {
-            where.problemId = problemId;
-        }
-
-        return this.submissionsRepository.find({
-            where,
-            relations: ['problem'],
-            order: { submittedAt: 'DESC' },
-            take: problemId ? 50 : 100,
-        });
-    }
-
-    // ── Statistics ────────────────────────────────────────
-
-    async getUserStats(userId: string) {
-        const submissions = await this.submissionsRepository.find({
-            where: { userId },
-            relations: ['problem'],
-        });
-
-        const uniqueSolved = new Set(
-            submissions
-                .filter((s) => s.status === SubmissionStatus.ACCEPTED)
-                .map((s) => s.problemId),
-        ).size;
-
-        const byDifficulty = {
-            easy: 0,
-            medium: 0,
-            hard: 0,
-        };
-
-        submissions
-            .filter((s) => s.status === SubmissionStatus.ACCEPTED)
-            .forEach((s) => {
-                if (s.problem) {
-                    byDifficulty[s.problem.difficulty] =
-                        (byDifficulty[s.problem.difficulty] || 0) + 1;
-                }
-            });
-
-        return {
-            totalSubmissions: submissions.length,
-            problemsSolved: uniqueSolved,
-            byDifficulty,
-            recentSubmissions: submissions.slice(0, 5),
-        };
-    }
-
-    async getLeaderboard(limit: number = 10) {
-        const result = await this.submissionsRepository
-            .createQueryBuilder('submission')
-            .select('submission.userId', 'userId')
-            .addSelect('user.email', 'email')
-            .addSelect('COUNT(DISTINCT submission.problemId)', 'problemsSolved')
-            .addSelect('COUNT(submission.id)', 'totalSubmissions')
-            .leftJoin('submission.user', 'user')
-            .where('submission.status = :status', {
-                status: SubmissionStatus.ACCEPTED,
-            })
-            .groupBy('submission.userId')
-            .addGroupBy('user.email')
-            .orderBy('problemsSolved', 'DESC')
-            .limit(limit)
-            .getRawMany();
-
-        return result;
-    }
-
-    // ── Training Flow ─────────────────────────────────────
-
     async getNextTrainingTask(userId: string) {
         await this.ensureUserStates(userId);
         const end = this.getReviewWindowEnd();
@@ -416,7 +299,7 @@ export class DsaService {
 
         const dueState = await this.userStatesRepository
             .createQueryBuilder('state')
-            .innerJoin(DsaProblem, 'problem', 'problem.id = state.problemId')
+            .innerJoin(SqlProblem, 'problem', 'problem.id = state.problemId')
             .where('state.userId = :userId', { userId })
             .andWhere('(state.nextReviewAt IS NULL OR state.nextReviewAt <= :end)', { end })
             .andWhere('problem.isActive = :isActive', { isActive: true })
@@ -450,6 +333,60 @@ export class DsaService {
         };
     }
 
+    // ── Submissions ────────────────────────────────
+
+    async createSubmission(userId: string, dto: CreateSqlSubmissionDto): Promise<SqlSubmission> {
+        const problem = await this.getProblemById(dto.problemId);
+        problem.submissions += 1;
+        if (dto.status === SqlSubmissionStatus.ACCEPTED) {
+            problem.accepted += 1;
+        }
+        await this.problemsRepository.save(problem);
+
+        const submission = this.submissionsRepository.create({
+            ...dto,
+            userId,
+            source: dto.source || SqlSubmissionSource.PRACTICE,
+        });
+
+        return this.submissionsRepository.save(submission);
+    }
+
+    async getUserSubmissions(userId: string): Promise<SqlSubmission[]> {
+        return this.submissionsRepository.find({
+            where: { userId },
+            relations: ['problem'],
+            order: { submittedAt: 'DESC' },
+            take: 50,
+        });
+    }
+
+    async getUserSubmissionsForProblem(userId: string, problemId: string): Promise<SqlSubmission[]> {
+        return this.submissionsRepository.find({
+            where: { userId, problemId },
+            order: { submittedAt: 'DESC' },
+        });
+    }
+
+    async getUserTrainingSubmissions(userId: string, problemId?: string): Promise<SqlSubmission[]> {
+        const where: Record<string, any> = {
+            userId,
+            source: SqlSubmissionSource.TRAINING,
+        };
+        if (problemId) {
+            where.problemId = problemId;
+        }
+
+        return this.submissionsRepository.find({
+            where,
+            relations: ['problem'],
+            order: { submittedAt: 'DESC' },
+            take: problemId ? 50 : 100,
+        });
+    }
+
+    // ── Training submit / insight ─────────────────
+
     async submitTrainingSolution(userId: string, payload: { sessionId: string; code: string; language: string }) {
         const session = await this.trainingSessionsRepository.findOne({
             where: { id: payload.sessionId, userId },
@@ -481,12 +418,12 @@ export class DsaService {
 
         const problem = await this.getProblemById(session.problemId);
         const evaluation = await this.evaluateWithGemini(
-            this.buildEvaluationPrompt(problem, payload.code, payload.language),
+            this.buildEvaluationPrompt(problem, payload.code),
         );
 
         const score = Math.max(0, Math.min(100, Number(evaluation.score || 0)));
         const accepted = evaluation.status === 'accepted' || score >= 70;
-        const submissionStatus = accepted ? SubmissionStatus.ACCEPTED : SubmissionStatus.WRONG_ANSWER;
+        const submissionStatus = accepted ? SqlSubmissionStatus.ACCEPTED : SqlSubmissionStatus.WRONG_ANSWER;
 
         const masteryDelta = accepted ? Math.max(5, Math.round(score / 20)) : -5;
         const nextMastery = Math.max(0, Math.min(100, userState.mastery + masteryDelta));
@@ -507,7 +444,7 @@ export class DsaService {
             passedTests: 0,
             totalTests: 0,
             score,
-            source: SubmissionSource.TRAINING,
+            source: SqlSubmissionSource.TRAINING,
         });
         savedSubmission.trainingSessionId = session.id;
         savedSubmission.evaluationSummary = evaluation.summary || null;
@@ -543,8 +480,8 @@ export class DsaService {
         }
 
         const problem = await this.getProblemById(problemId);
-        const prompt = `You are an expert DSA mentor. Provide a concise learning guide for this problem.
-Include: key idea, approach outline, time/space complexity, and 1-2 pitfalls.
+        const prompt = `You are an expert SQL mentor. Provide a concise learning guide for this problem.
+Include: key idea, approach outline, and 1-2 pitfalls.
 Return markdown only.
 
 Problem Title: ${problem.title}
@@ -568,21 +505,33 @@ ${problem.description}`;
 
     async seedProblemsFromDataset() {
         const datasetCandidates = [
-            path.resolve(process.cwd(), 'dataset.json'),
-            path.resolve(process.cwd(), '..', 'dataset.json'),
+            path.resolve(process.cwd(), 'sql_dataset.json'),
+            path.resolve(process.cwd(), '..', 'sql_dataset.json'),
         ];
         const datasetPath = datasetCandidates.find((candidate) => fs.existsSync(candidate));
         if (!datasetPath) {
-            return { message: 'dataset.json not found.' };
+            return { message: 'sql_dataset.json not found.' };
         }
 
         const raw = fs.readFileSync(datasetPath, 'utf-8');
-        const dataset = JSON.parse(raw) as Array<any>;
+        const dataset = JSON.parse(raw) as any;
+        const groups = dataset?.data?.studyPlanV2Detail?.planSubGroups || [];
         const created: string[] = [];
         const updated: string[] = [];
 
-        for (const entry of dataset) {
-            const slug = (entry.leetcode_slug || entry.title || '')
+        const questions: Array<any> = [];
+        for (const group of groups) {
+            if (!group?.questions?.length) continue;
+            group.questions.forEach((question: any) => {
+                questions.push({
+                    ...question,
+                    groupName: group.name,
+                });
+            });
+        }
+
+        for (const entry of questions) {
+            const slug = String(entry.titleSlug || entry.title || '')
                 .toLowerCase()
                 .trim()
                 .replace(/[^a-z0-9]+/g, '-')
@@ -593,28 +542,37 @@ ${problem.description}`;
             const rawDifficulty = String(entry.difficulty || 'easy').toLowerCase();
             const difficulty =
                 rawDifficulty === 'hard'
-                    ? Difficulty.HARD
+                    ? SqlDifficulty.HARD
                     : rawDifficulty === 'medium'
-                        ? Difficulty.MEDIUM
-                        : Difficulty.EASY;
+                        ? SqlDifficulty.MEDIUM
+                        : SqlDifficulty.EASY;
+
+            const tags = new Set<string>();
+            if (entry.groupName) tags.add(entry.groupName);
+            if (Array.isArray(entry.topicTags)) {
+                entry.topicTags.forEach((tag: any) => {
+                    if (tag?.name) tags.add(tag.name);
+                });
+            }
+
             const baseProblem = {
                 title: entry.title,
                 slug,
-                leetcodeSlug: entry.leetcode_slug || slug,
-                leetcodeUrl: entry.leetcode_slug ? `https://leetcode.com/problems/${entry.leetcode_slug}/` : null,
+                leetcodeSlug: entry.titleSlug || slug,
+                leetcodeUrl: entry.titleSlug ? `https://leetcode.com/problems/${entry.titleSlug}/` : null,
                 difficulty,
-                description: entry.description || '<p>Description not available yet.</p>',
+                description: '<p>Description not available yet.</p>',
                 examples: [],
                 constraints: [],
-                starterCode: {},
+                starterCode: { sql: '-- Write your SQL query here' },
                 codeTemplates: null,
-                languageMeta: null,
+                languageMeta: [{ lang: 'SQL', langSlug: 'sql' }],
                 testCases: [],
-                categories: entry.patterns || [],
+                categories: Array.from(tags),
                 hints: [],
                 solution: null,
                 isActive: true,
-            } as Partial<DsaProblem>;
+            } as Partial<SqlProblem>;
 
             if (existing) {
                 Object.assign(existing, baseProblem);

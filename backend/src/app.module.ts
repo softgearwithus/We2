@@ -30,6 +30,12 @@ import { Submission } from './dsa/entities/submission.entity';
 import { DsaUserState } from './dsa/entities/dsa-user-state.entity';
 import { DsaTrainingSession } from './dsa/entities/dsa-training-session.entity';
 import { DsaProblemInsight } from './dsa/entities/dsa-problem-insight.entity';
+import { SqlModule } from './sql/sql.module';
+import { SqlProblem } from './sql/entities/sql-problem.entity';
+import { SqlSubmission } from './sql/entities/sql-submission.entity';
+import { SqlUserState } from './sql/entities/sql-user-state.entity';
+import { SqlTrainingSession } from './sql/entities/sql-training-session.entity';
+import { SqlProblemInsight } from './sql/entities/sql-problem-insight.entity';
 import { Interview } from './interview/entities/interview.entity';
 import { CourseContent } from './course-content/entities/course-content.entity';
 import { InterviewModule } from './interview/interview.module';
@@ -71,6 +77,11 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           DsaUserState,
           DsaTrainingSession,
           DsaProblemInsight,
+          SqlProblem,
+          SqlSubmission,
+          SqlUserState,
+          SqlTrainingSession,
+          SqlProblemInsight,
           CourseContent,
           UserGamification,
           Badge,
@@ -110,6 +121,7 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
     CertificationsModule,
     ProjectsModule,
     DsaModule,
+    SqlModule,
     InterviewModule,
     CourseContentModule,
     AiModule,

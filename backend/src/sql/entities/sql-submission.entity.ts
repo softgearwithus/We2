@@ -8,9 +8,9 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/user.entity';
-import { DsaProblem } from './dsa-problem.entity';
+import { SqlProblem } from './sql-problem.entity';
 
-export enum SubmissionStatus {
+export enum SqlSubmissionStatus {
     ACCEPTED = 'accepted',
     WRONG_ANSWER = 'wrong_answer',
     RUNTIME_ERROR = 'runtime_error',
@@ -21,13 +21,13 @@ export enum SubmissionStatus {
     RUNNING = 'running',
 }
 
-export enum SubmissionSource {
+export enum SqlSubmissionSource {
     TRAINING = 'training',
     PRACTICE = 'practice',
 }
 
-@Entity('dsa_submissions')
-export class Submission {
+@Entity('sql_submissions')
+export class SqlSubmission {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -38,16 +38,16 @@ export class Submission {
     problemId: string;
 
     @Column({ type: 'varchar', length: 50 })
-    language: string; // javascript, python, java
+    language: string;
 
     @Column({ type: 'text' })
     code: string;
 
     @Column({ type: 'varchar' })
-    status: SubmissionStatus;
+    status: SqlSubmissionStatus;
 
-    @Column({ type: 'varchar', length: 20, default: SubmissionSource.PRACTICE })
-    source: SubmissionSource;
+    @Column({ type: 'varchar', length: 20, default: SqlSubmissionSource.PRACTICE })
+    source: SqlSubmissionSource;
 
     @Column({ type: 'int', default: 0 })
     passedTests: number;
@@ -103,14 +103,13 @@ export class Submission {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    // Relationships
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @ManyToOne(() => DsaProblem, (problem) => problem.userSubmissions, {
+    @ManyToOne(() => SqlProblem, (problem) => problem.userSubmissions, {
         onDelete: 'CASCADE',
     })
     @JoinColumn({ name: 'problemId' })
-    problem: DsaProblem;
+    problem: SqlProblem;
 }

@@ -8,17 +8,17 @@ import { ArrowRight, Clock, RefreshCcw, Info, Sparkles, ArrowLeft, ListFilter, G
 import ReactMarkdown from 'react-markdown';
 
 import ProblemDescription from '@/app/components/dsa/ProblemDescription';
-import SubmissionsTab from '@/app/components/dsa/SubmissionsTab';
+import SqlSubmissionsTab from '@/app/components/sql/SqlSubmissionsTab';
 import {
-    fetchTrainingInsight,
-    fetchTrainingSubmissions,
-    fetchTrainingTask,
-    generateTrainingInsight,
-    submitTrainingTask,
-    TrainingSubmission,
-    TrainingSubmitResult,
-    TrainingTask,
-} from '@/app/lib/dsa-training';
+    fetchSqlTrainingInsight,
+    fetchSqlTrainingSubmissions,
+    fetchSqlTrainingTask,
+    generateSqlTrainingInsight,
+    submitSqlTrainingTask,
+    SqlTrainingSubmission,
+    SqlTrainingSubmitResult,
+    SqlTrainingTask,
+} from '@/app/lib/sql-training';
 
 const Editor = dynamic(
     () => import('@monaco-editor/react').then((mod) => mod.Editor),
@@ -28,24 +28,37 @@ const Editor = dynamic(
 type Theme = 'light' | 'vs-dark';
 type MaximizedSection = 'description' | 'editor' | 'submissions' | 'learn' | null;
 
-export default function DsaTrainingPage() {
-    const [task, setTask] = useState<TrainingTask | null>(null);
+export default function SqlTrainingPage() {
+    const [task, setTask] = useState<SqlTrainingTask | null>(null);
     const [taskMessage, setTaskMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
-    const [language, setLanguage] = useState('cpp');
+    const [language, setLanguage] = useState('sql');
     const [code, setCode] = useState('');
-    const [submitResult, setSubmitResult] = useState<TrainingSubmitResult | null>(null);
+    const [submitResult, setSubmitResult] = useState<SqlTrainingSubmitResult | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [theme, setTheme] = useState<Theme>('light');
     const [insight, setInsight] = useState<string | null>(null);
     const [insightNotice, setInsightNotice] = useState<string | null>(null);
     const [insightLoading, setInsightLoading] = useState(false);
-    const [trainingSubmissions, setTrainingSubmissions] = useState<TrainingSubmission[]>([]);
+    const [trainingSubmissions, setTrainingSubmissions] = useState<SqlTrainingSubmission[]>([]);
     const [submissionsLoading, setSubmissionsLoading] = useState(false);
     const [maximizedSection, setMaximizedSection] = useState<MaximizedSection>(null);
 
     const problem = task?.problem;
     const canSubmit = task?.canSubmit ?? false;
+
+    const resolveTemplate = (source: any, lang: string) => {
+        if (!source) return '-- Write your SQL query here';
+        const templates = source.codeTemplates || {};
+        const starters = source.starterCode || {};
+        const direct = templates[lang] || starters[lang];
+        if (direct) return direct;
+        const fallbackKey = Object.keys(templates)[0] || Object.keys(starters)[0];
+        if (fallbackKey) {
+            return templates[fallbackKey] || starters[fallbackKey] || '-- Write your SQL query here';
+        }
+        return '-- Write your SQL query here';
+    };
 
     const normalizedProblem = useMemo(() => {
         if (!problem) return null;
@@ -53,33 +66,30 @@ export default function DsaTrainingPage() {
         const difficulty = difficultyRaw
             ? `${difficultyRaw.charAt(0).toUpperCase()}${difficultyRaw.slice(1)}`
             : 'Easy';
-        const languageLabelMap: Record<string, string> = {
-            cpp: 'C++',
-            java: 'Java',
-            python: 'Python',
-            javascript: 'JavaScript',
-            typescript: 'TypeScript',
-            csharp: 'C#',
-            go: 'Go',
-            rust: 'Rust',
-            kotlin: 'Kotlin',
-            swift: 'Swift',
-            ruby: 'Ruby',
-            php: 'PHP',
-        };
-
         const fallbackLangs = Object.keys(problem.codeTemplates || problem.starterCode || {});
         const languageMeta = problem.languageMeta?.length
             ? problem.languageMeta
             : fallbackLangs.map((langSlug: string) => ({
-                lang: languageLabelMap[langSlug] || langSlug,
+                lang: langSlug.toUpperCase(),
                 langSlug,
             }));
+
+        const normalizedLanguageMeta = languageMeta.map((meta: any) => ({
+            ...meta,
+            langSlug: String(meta.langSlug || '').toLowerCase().includes('sql') ? 'sql' : meta.langSlug,
+            lang: meta.lang || 'SQL',
+        }));
+        const uniqueLanguageMeta = normalizedLanguageMeta.reduce((acc: any[], item: any) => {
+            if (!acc.some((entry) => entry.langSlug === item.langSlug)) {
+                acc.push(item);
+            }
+            return acc;
+        }, []);
 
         return {
             ...problem,
             difficulty,
-            languageMeta,
+            languageMeta: uniqueLanguageMeta.length ? uniqueLanguageMeta : [{ lang: 'SQL', langSlug: 'sql' }],
             examples: problem.examples || [],
             constraints: problem.constraints || [],
         };
@@ -90,7 +100,7 @@ export default function DsaTrainingPage() {
         try {
             setLoading(true);
             const token = localStorage.getItem('accessToken') || '';
-            const data = await fetchTrainingTask(token);
+            const data = await fetchSqlTrainingTask(token);
             if ('message' in data) {
                 setTaskMessage(data.message);
                 setTask(null);
@@ -102,14 +112,13 @@ export default function DsaTrainingPage() {
             setInsightNotice(null);
             const languageMeta = data.problem?.languageMeta || [];
             const fallbackLangs = Object.keys(data.problem?.codeTemplates || data.problem?.starterCode || {});
-            const firstLang = languageMeta?.[0]?.langSlug || fallbackLangs?.[0] || 'cpp';
-            setLanguage(firstLang);
-            const template = data.problem?.codeTemplates?.[firstLang]
-                || data.problem?.starterCode?.[firstLang]
-                || '';
+            const firstLang = String(languageMeta?.[0]?.langSlug || fallbackLangs?.[0] || 'sql');
+            const normalizedLang = firstLang.toLowerCase().includes('sql') ? 'sql' : firstLang;
+            setLanguage(normalizedLang);
+            const template = resolveTemplate(data.problem, normalizedLang);
             setCode(template);
         } catch (error) {
-            setTaskMessage('Failed to load training task.');
+            setTaskMessage('Failed to load SQL training task.');
         } finally {
             setLoading(false);
         }
@@ -124,12 +133,11 @@ export default function DsaTrainingPage() {
         loadTrainingSubmissions(problem.id);
     }, [problem?.id]);
 
-
     useEffect(() => {
         setSubmitResult(null);
         if (!problem) return;
-        const saved = localStorage.getItem(`dsa_training_${problem.id}_${language}`);
-        const template = problem.codeTemplates?.[language] || problem.starterCode?.[language] || '';
+        const saved = localStorage.getItem(`sql_training_${problem.id}_${language}`);
+        const template = resolveTemplate(problem, language);
         setCode(saved || template);
     }, [problem?.id, language]);
 
@@ -137,7 +145,7 @@ export default function DsaTrainingPage() {
         if (!problem) return;
         if (!code) return;
         const handle = setTimeout(() => {
-            localStorage.setItem(`dsa_training_${problem.id}_${language}`, code);
+            localStorage.setItem(`sql_training_${problem.id}_${language}`, code);
         }, 600);
         return () => clearTimeout(handle);
     }, [code, problem?.id, language]);
@@ -147,13 +155,12 @@ export default function DsaTrainingPage() {
         handleLoadInsight();
     }, [problem?.id]);
 
-
     const handleSubmit = async () => {
         if (!task?.sessionId || !problem || !canSubmit || isSubmitting) return;
         try {
             setIsSubmitting(true);
             const token = localStorage.getItem('accessToken') || '';
-            const result = await submitTrainingTask(token, {
+            const result = await submitSqlTrainingTask(token, {
                 sessionId: task.sessionId,
                 code,
                 language,
@@ -177,7 +184,7 @@ export default function DsaTrainingPage() {
         try {
             setInsightLoading(true);
             const token = localStorage.getItem('accessToken') || '';
-            const data = await fetchTrainingInsight(token, problem.id);
+            const data = await fetchSqlTrainingInsight(token, problem.id);
             if (data?.content) {
                 setInsight(data.content);
                 setInsightNotice(null);
@@ -201,7 +208,7 @@ export default function DsaTrainingPage() {
         try {
             setInsightLoading(true);
             const token = localStorage.getItem('accessToken') || '';
-            const data = await generateTrainingInsight(token, problem.id);
+            const data = await generateSqlTrainingInsight(token, problem.id);
             if (data?.content) {
                 setInsight(data.content);
                 setInsightNotice(null);
@@ -221,7 +228,7 @@ export default function DsaTrainingPage() {
         try {
             setSubmissionsLoading(true);
             const token = localStorage.getItem('accessToken') || '';
-            const data = await fetchTrainingSubmissions(token, problemId);
+            const data = await fetchSqlTrainingSubmissions(token, problemId);
             setTrainingSubmissions(data || []);
         } catch (error) {
             setTrainingSubmissions([]);
@@ -242,9 +249,8 @@ export default function DsaTrainingPage() {
         };
     }, [task]);
 
-
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center text-slate-500">Loading training task...</div>;
+        return <div className="min-h-screen flex items-center justify-center text-slate-500">Loading SQL training task...</div>;
     }
 
     if (!task || !problem) {
@@ -260,7 +266,7 @@ export default function DsaTrainingPage() {
                         <RefreshCcw size={16} /> Refresh
                     </button>
                     <Link
-                        href="/dashboard/dsa/all"
+                        href="/dashboard/sql/all"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700"
                     >
                         <ListFilter size={16} /> Browse All Questions
@@ -272,14 +278,13 @@ export default function DsaTrainingPage() {
 
     return (
         <div className="h-[calc(100vh-6rem)] w-full bg-slate-50 flex flex-col font-sans overflow-hidden">
-            {/* Top Bar */}
             <div className="h-12 shrink-0 flex items-center justify-between px-4 border-b border-slate-200 bg-white shadow-sm z-20">
                 <div className="flex items-center gap-3 text-sm text-slate-500">
                     <Link href="/dashboard" className="flex items-center hover:text-indigo-600 transition-colors">
                         <ArrowLeft size={16} /> <span className="ml-1">Dashboard</span>
                     </Link>
                     <span className="text-slate-300">/</span>
-                    <span className="font-bold text-slate-700">DSA Training</span>
+                    <span className="font-bold text-slate-700">SQL Training</span>
                     {task?.mode === 'manual' && (
                         <span className="ml-2 text-[10px] font-bold uppercase bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Manual</span>
                     )}
@@ -294,7 +299,7 @@ export default function DsaTrainingPage() {
                         </div>
                     )}
                     <Link
-                        href="/dashboard/dsa/all"
+                        href="/dashboard/sql/all"
                         className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-indigo-600 border border-indigo-200 rounded-full hover:bg-indigo-50"
                     >
                         <ListFilter size={12} /> All Questions
@@ -304,7 +309,6 @@ export default function DsaTrainingPage() {
 
             <div className="flex-1 w-full overflow-hidden relative">
                 <Group orientation="horizontal" className="flex h-full w-full">
-                    {/* LEFT PANEL */}
                     {(maximizedSection === null || maximizedSection === 'description') && (
                         <Panel
                             defaultSize={maximizedSection === 'description' ? 100 : 45}
@@ -338,7 +342,6 @@ export default function DsaTrainingPage() {
                         <Separator className="w-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
                     )}
 
-                    {/* RIGHT PANEL */}
                     {(maximizedSection === null || maximizedSection === 'editor' || maximizedSection === 'submissions' || maximizedSection === 'learn') && (
                         <Panel
                             defaultSize={maximizedSection && maximizedSection !== 'description' ? 100 : 55}
@@ -354,7 +357,7 @@ export default function DsaTrainingPage() {
                                     >
                                         <div className="h-10 border-b border-slate-200 bg-slate-50 flex items-center justify-between px-3 shrink-0">
                                             <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-                                                Training Editor
+                                                SQL Editor
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <button
@@ -380,10 +383,7 @@ export default function DsaTrainingPage() {
                                                     className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
                                                 >
                                                     {(normalizedProblem?.languageMeta || [
-                                                        { lang: 'C++', langSlug: 'cpp' },
-                                                        { lang: 'Java', langSlug: 'java' },
-                                                        { lang: 'Python', langSlug: 'python' },
-                                                        { lang: 'JavaScript', langSlug: 'javascript' },
+                                                        { lang: 'SQL', langSlug: 'sql' },
                                                     ]).map((lang: any) => (
                                                         <option key={lang.langSlug} value={lang.langSlug}>{lang.lang}</option>
                                                     ))}
@@ -399,7 +399,7 @@ export default function DsaTrainingPage() {
                                         <div className="flex-1 overflow-hidden relative flex flex-col">
                                             <Editor
                                                 height="100%"
-                                                language={language}
+                                                language="sql"
                                                 value={code}
                                                 onChange={(value) => setCode(value || '')}
                                                 theme={theme}
@@ -467,7 +467,7 @@ export default function DsaTrainingPage() {
                                                                 : 'Submission locked.'}
                                                     </div>
                                                     <div className="flex-1 overflow-y-auto custom-scrollbar bg-slate-50">
-                                                        <SubmissionsTab submissions={trainingSubmissions} loading={submissionsLoading} />
+                                                        <SqlSubmissionsTab submissions={trainingSubmissions} loading={submissionsLoading} />
                                                     </div>
                                                 </Panel>
                                             )}

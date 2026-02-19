@@ -7,9 +7,9 @@ import {
     Index,
 } from 'typeorm';
 
-@Entity('dsa_training_sessions')
-@Index(['userId'], { unique: true })
-export class DsaTrainingSession {
+@Entity('sql_user_states')
+@Index(['userId', 'problemId'], { unique: true })
+export class SqlUserState {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -19,17 +19,17 @@ export class DsaTrainingSession {
     @Column({ type: 'uuid' })
     problemId: string;
 
-    @Column({ type: 'varchar', length: 20, default: 'srs' })
-    mode: 'srs' | 'manual';
-
-    @Column({ type: 'timestamp' })
-    assignedAt: Date;
+    @Column({ type: 'int', default: 0 })
+    mastery: number;
 
     @Column({ type: 'timestamp', nullable: true })
-    expiresAt: Date | null;
+    nextReviewAt: Date | null;
 
-    @Column({ type: 'boolean', default: false })
-    submitted: boolean;
+    @Column({ type: 'timestamp', nullable: true })
+    lastReviewedAt: Date | null;
+
+    @Column({ type: 'int', nullable: true })
+    lastScore: number | null;
 
     @CreateDateColumn()
     createdAt: Date;

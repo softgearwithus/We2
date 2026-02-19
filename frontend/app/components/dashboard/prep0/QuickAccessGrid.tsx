@@ -2,18 +2,27 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Video, FileText, MonitorPlay, ChevronRight } from 'lucide-react';
+import { Code2, Database, Video, FileText, MonitorPlay, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 const modules = [
     {
         title: 'DSA Training',
         desc: 'IDE & 5000+ Problems',
-        icon: Code2,
+        icon: Database,
         href: '/dashboard/dsa',
         color: 'text-blue-400',
         bg: 'bg-blue-500/10',
         border: 'border-blue-500/20'
+    },
+    {
+        title: 'SQL Training',
+        desc: 'SQL50 Practice Set',
+        icon: Code2,
+        href: '/dashboard/sql',
+        color: 'text-sky-500',
+        bg: 'bg-sky-500/10',
+        border: 'border-sky-500/20'
     },
     {
         title: 'Mock Interview',

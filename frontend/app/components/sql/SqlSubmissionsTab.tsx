@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import type { TrainingSubmission } from '@/app/lib/dsa-training';
+import type { SqlTrainingSubmission } from '@/app/lib/sql-training';
 
-type SubmissionsTabProps = {
-    submissions: TrainingSubmission[];
+type SqlSubmissionsTabProps = {
+    submissions: SqlTrainingSubmission[];
     loading?: boolean;
 };
 
@@ -22,23 +22,15 @@ const formatStatus = (status: string) => {
 
 const formatLanguage = (lang: string) => {
     const map: Record<string, string> = {
-        cpp: 'C++',
-        java: 'Java',
-        python: 'Python',
-        javascript: 'JavaScript',
-        typescript: 'TypeScript',
-        csharp: 'C#',
-        go: 'Go',
-        rust: 'Rust',
-        kotlin: 'Kotlin',
-        swift: 'Swift',
-        ruby: 'Ruby',
-        php: 'PHP',
+        sql: 'SQL',
+        mysql: 'MySQL',
+        postgresql: 'PostgreSQL',
+        sqlite: 'SQLite',
     };
     return map[lang] || lang;
 };
 
-export default function SubmissionsTab({ submissions, loading = false }: SubmissionsTabProps) {
+export default function SqlSubmissionsTab({ submissions, loading = false }: SqlSubmissionsTabProps) {
     if (loading) {
         return <div className="p-6 text-sm text-slate-500">Loading submissions...</div>;
     }

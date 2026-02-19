@@ -1,6 +1,6 @@
 import API_BASE_URL from './api-config';
 
-export type TrainingTask = {
+export type SqlTrainingTask = {
     sessionId: string;
     problem: any;
     mastery: number;
@@ -9,7 +9,7 @@ export type TrainingTask = {
     mode?: 'srs' | 'manual';
 };
 
-export type TrainingSubmission = {
+export type SqlTrainingSubmission = {
     id: string;
     problemId: string;
     language: string;
@@ -23,7 +23,7 @@ export type TrainingSubmission = {
     submittedAt: string;
 };
 
-export type TrainingSubmitResult = {
+export type SqlTrainingSubmitResult = {
     status: 'accepted' | 'rejected';
     score: number;
     summary: string;
@@ -33,32 +33,32 @@ export type TrainingSubmitResult = {
     mastery: number;
 };
 
-export const fetchTrainingTask = async (token: string): Promise<TrainingTask | { message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/dsa-training/task`, {
+export const fetchSqlTrainingTask = async (token: string): Promise<SqlTrainingTask | { message: string }> => {
+    const response = await fetch(`${API_BASE_URL}/sql-training/task`, {
         headers: {
             'Authorization': `Bearer ${token}`,
         },
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch training task');
+        throw new Error('Failed to fetch SQL training task');
     }
 
     return response.json();
 };
 
-export const fetchTrainingTaskForProblem = async (
+export const fetchSqlTrainingTaskForProblem = async (
     token: string,
     problemId: string,
-): Promise<TrainingTask> => {
-    const response = await fetch(`${API_BASE_URL}/dsa-training/task/${problemId}`, {
+): Promise<SqlTrainingTask> => {
+    const response = await fetch(`${API_BASE_URL}/sql-training/task/${problemId}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
         },
     });
 
     if (!response.ok) {
-        let errorMessage = 'Failed to fetch selected training task';
+        let errorMessage = 'Failed to fetch selected SQL training task';
         try {
             const data = await response.json();
             if (data?.message) {
@@ -73,11 +73,11 @@ export const fetchTrainingTaskForProblem = async (
     return response.json();
 };
 
-export const submitTrainingTask = async (
+export const submitSqlTrainingTask = async (
     token: string,
     payload: { sessionId: string; code: string; language: string },
-): Promise<TrainingSubmitResult | { message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/dsa-training/submit`, {
+): Promise<SqlTrainingSubmitResult | { message: string }> => {
+    const response = await fetch(`${API_BASE_URL}/sql-training/submit`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -87,28 +87,28 @@ export const submitTrainingTask = async (
     });
 
     if (!response.ok) {
-        throw new Error('Failed to submit training task');
+        throw new Error('Failed to submit SQL training task');
     }
 
     return response.json();
 };
 
-export const fetchTrainingInsight = async (token: string, problemId: string) => {
-    const response = await fetch(`${API_BASE_URL}/dsa-training/learn/${problemId}`, {
+export const fetchSqlTrainingInsight = async (token: string, problemId: string) => {
+    const response = await fetch(`${API_BASE_URL}/sql-training/learn/${problemId}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
         },
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch learning insight');
+        throw new Error('Failed to fetch SQL learning insight');
     }
 
     return response.json();
 };
 
-export const generateTrainingInsight = async (token: string, problemId: string) => {
-    const response = await fetch(`${API_BASE_URL}/dsa-training/learn/${problemId}`, {
+export const generateSqlTrainingInsight = async (token: string, problemId: string) => {
+    const response = await fetch(`${API_BASE_URL}/sql-training/learn/${problemId}`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -116,16 +116,16 @@ export const generateTrainingInsight = async (token: string, problemId: string) 
     });
 
     if (!response.ok) {
-        throw new Error('Failed to generate learning insight');
+        throw new Error('Failed to generate SQL learning insight');
     }
 
     return response.json();
 };
 
-export const fetchTrainingSubmissions = async (token: string, problemId?: string): Promise<TrainingSubmission[]> => {
+export const fetchSqlTrainingSubmissions = async (token: string, problemId?: string): Promise<SqlTrainingSubmission[]> => {
     const url = problemId
-        ? `${API_BASE_URL}/dsa-training/submissions/${problemId}`
-        : `${API_BASE_URL}/dsa-training/submissions`;
+        ? `${API_BASE_URL}/sql-training/submissions/${problemId}`
+        : `${API_BASE_URL}/sql-training/submissions`;
     const response = await fetch(url, {
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -133,7 +133,7 @@ export const fetchTrainingSubmissions = async (token: string, problemId?: string
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch training submissions');
+        throw new Error('Failed to fetch SQL training submissions');
     }
 
     return response.json();

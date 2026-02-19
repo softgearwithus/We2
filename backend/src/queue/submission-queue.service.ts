@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DsaProblem } from '../dsa/entities/dsa-problem.entity';
-import { Submission, SubmissionStatus } from '../dsa/entities/submission.entity';
+import { Submission, SubmissionSource, SubmissionStatus } from '../dsa/entities/submission.entity';
 import { CreateSubmissionDto } from '../dsa/dto/create-submission.dto';
 import { addCodeExecutionJob } from './code-execution.queue';
 
@@ -38,6 +38,7 @@ export class SubmissionQueueService {
             code: dto.code,
             status: SubmissionStatus.QUEUED,
             totalTests: problem.testCases.length,
+            source: dto.source || SubmissionSource.PRACTICE,
         } as unknown as Submission);
 
         const savedSubmission = await this.submissionsRepository.save(submission);

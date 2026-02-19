@@ -42,6 +42,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation' },
         { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
         { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa' },
+        { icon: 'database', label: 'SQL Training', href: '/dashboard/sql' },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects' },
         {
             icon: 'mic',
