@@ -5,7 +5,7 @@ import { CheckCircle2, XCircle } from 'lucide-react';
 import type { TrainingSubmission } from '@/app/lib/dsa-training';
 
 type SubmissionsTabProps = {
-    submissions: TrainingSubmission[];
+    submissions?: TrainingSubmission[];
     loading?: boolean;
 };
 
@@ -38,7 +38,7 @@ const formatLanguage = (lang: string) => {
     return map[lang] || lang;
 };
 
-export default function SubmissionsTab({ submissions, loading = false }: SubmissionsTabProps) {
+export default function SubmissionsTab({ submissions = [], loading = false }: SubmissionsTabProps) {
     if (loading) {
         return <div className="p-6 text-sm text-slate-500">Loading submissions...</div>;
     }
