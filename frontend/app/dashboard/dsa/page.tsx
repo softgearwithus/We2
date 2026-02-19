@@ -341,8 +341,8 @@ export default function DsaTrainingPage() {
                     {/* RIGHT PANEL */}
                     {(maximizedSection === null || maximizedSection === 'editor' || maximizedSection === 'submissions' || maximizedSection === 'learn') && (
                         <Panel
-                            defaultSize={maximizedSection && maximizedSection !== 'description' ? 100 : 55}
-                            minSize={maximizedSection && maximizedSection !== 'description' ? 100 : 30}
+                            defaultSize={maximizedSection ? 100 : 55}
+                            minSize={maximizedSection ? 100 : 30}
                             className="h-full flex flex-col"
                         >
                             <Group orientation="vertical" className="flex flex-col h-full w-full">
