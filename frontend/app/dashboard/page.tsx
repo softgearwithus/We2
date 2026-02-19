@@ -8,7 +8,6 @@ import SimulationDashboard from '../components/dashboard/SimulationDashboard';
 import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
-import PlacementRoadmap from '../components/dashboard/prep0/PlacementRoadmap';
 import SynapseWidget from '../components/dashboard/prep0/SynapseWidget';
 import { Sparkles, Target } from 'lucide-react';
 
@@ -105,9 +104,6 @@ export default function DashboardPage() {
                         {/* Readiness Panel */}
                         <ReadinessPanel />
 
-                        {/* Placement Roadmap - REMOVED per user request */}
-                        {/* <PlacementRoadmap /> */}
-
                         {/* Quick Access Grid */}
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -116,11 +112,6 @@ export default function DashboardPage() {
                             </h3>
                             <QuickAccessGrid />
                         </div>
-
-                        {/* Synapse Intelligence Widget */}
-                        <div className="h-64">
-                            <SynapseWidget />
-                        </div>
                     </div>
 
                     {/* Right Column (4/12) */}
@@ -128,8 +119,10 @@ export default function DashboardPage() {
                         {/* Radar Chart */}
                         <RadarSkillChart />
 
-                        {/* Placement Roadmap */}
-                        <PlacementRoadmap />
+                        {/* Synapse Intelligence Widget */}
+                        <div className="h-64">
+                            <SynapseWidget />
+                        </div>
                     </div>
                 </div>
             </div>

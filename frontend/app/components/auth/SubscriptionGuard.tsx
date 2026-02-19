@@ -7,18 +7,22 @@ import { useAuth } from '@/app/context/AuthContext';
 
 interface SubscriptionGuardProps {
     children: React.ReactNode;
-    requiredPlan: 'placement_plus' | 'industry_plus' | 'we2_max';
+    requiredPlan: 'placement_plus' | 'industry_plus' | 'we2_max' | 'standard_tier' | 'pro_tier';
     featureName?: string;
 }
 
 const PLAN_HIERARCHY = {
     'free': 0,
-    'placement_plus': 1,
-    'industry_plus': 2,
-    'we2_max': 3
+    'standard_tier': 1,
+    'pro_tier': 2,
+    'placement_plus': 3,
+    'industry_plus': 4,
+    'we2_max': 5
 };
 
 const PLAN_NAMES = {
+    'standard_tier': 'Standard',
+    'pro_tier': 'Pro',
     'placement_plus': 'Placement Plus',
     'industry_plus': 'Industry Plus',
     'we2_max': 'We2 Max'

@@ -18,79 +18,59 @@ const TABS = [
     { id: 'companies', label: 'For Companies', icon: Building },
 ];
 
-const PLACEMENT_PLUS = {
-    title: 'Prep0: Placement Readiness',
+const STANDARD_PLAN = {
+    title: 'Standard: Access Everything',
+    price: '₹449',
+    period: 'month',
+    description: 'Perfect for maintaining skills & light practice.',
+    features: [
+        { text: 'Full Stack Placement Bootcamp', included: true },
+        { text: 'Virtual Internship Projects', included: true },
+        { text: '5 AI Voice Interviews (FAANG Mode)', included: true },
+        { text: '1 Full AI Video Interview', included: true },
+        { text: '3 ATS Resume Scans / mo', included: true },
+        { text: '24/7 AI Doubt Solving (Basic)', included: true },
+    ],
+    ctaText: 'Start Standard',
+    variant: 'default' as const,
+    planId: 'standard_tier',
+    savings: 'Effective: ₹15/day'
+};
+
+const PRO_PLAN = {
+    title: 'Pro: High Capacity',
     price: '₹799',
     period: 'month',
-    description: 'Master Data Structures & Algorithms and crack technical interviews.',
+    description: 'For serious job seekers who need intense practice.',
     features: [
-        { text: 'Full DSA Prep Dashboard', included: true },
-        { text: '100+ Top Company Problems', included: true },
-        { text: 'AI Hints & Optimization', included: true },
-        { text: 'Unlimited IDE Submissions', included: true },
-        { text: 'Mock Technical Interviews', included: true },
-        { text: 'Resume Analytics', included: true },
-        { text: 'Progress Tracking', included: true },
-        { text: 'Placement Readiness Score', included: true },
-    ],
-    ctaText: 'Start Prep',
-    variant: 'default' as const,
-    planId: 'placement_plus',
-};
-
-const INDUSTRY_PLUS = {
-    title: 'We2Hub: Industrial Simulation',
-    price: '₹999',
-    period: 'month',
-    description: 'Experience real-world software development in a simulated corporate environment.',
-    features: [
-        { text: '21-Day Industry Simulation', included: true },
-        { text: 'Agile Workflow Training', included: true },
-        { text: 'Real-world Feature Dev', included: true },
-        { text: 'Bug Fixing & Production Issues', included: true },
-        { text: 'Code Review Experience', included: true },
-        { text: 'Team Collaboration Sims', included: true },
-        { text: 'Project Presentation Grading', included: true },
-        { text: 'Verified Experience Cert', included: true },
-    ],
-    ctaText: 'Start Simulation',
-    variant: 'default' as const,
-    planId: 'industry_plus',
-};
-
-const ULTIMATE_PACK = {
-    title: 'We2 Max: Ultimate Career',
-    price: '₹1499',
-    period: 'month',
-    description: 'The complete package. Master coding and gain industry experience together.',
-    features: [
-        { text: 'Everything in Placement Plus', included: true },
-        { text: 'Everything in Industry Plus', included: true },
+        { text: 'Everything in Standard', included: true },
+        { text: '15 AI Voice Interviews / mo', included: true },
+        { text: '3 Full AI Video Interviews / mo', included: true },
+        { text: '10 ATS Resume Scans / mo', included: true },
+        { text: 'Unlimited AI Pair Programmer', included: true },
+        { text: 'Verified Internship Certificate', included: true },
         { text: 'Recruiter Visibility Badge', included: true },
-        { text: 'Advanced AI Mentor', included: true },
-        { text: 'Combined Analytics Dashboard', included: true },
-        { text: 'Priority Support', included: true },
-        { text: 'Exclusive Hiring Challenges', included: true },
-        { text: 'Early Access to Features', included: true },
     ],
-    ctaText: 'Get Ultimate Access',
+    ctaText: 'Get Pro Access',
     variant: 'premium' as const,
-    savings: 'Save ₹300/mo',
-    badgeText: 'Highest Success Rate',
-    planId: 'we2_max',
+    savings: 'Effective: ₹26/day',
+    badgeText: 'Best Value',
+    planId: 'pro_tier',
 };
+
+const PLANS = [STANDARD_PLAN, PRO_PLAN];
 
 const ALL_FEATURES = [
-    { category: 'Preparation', name: 'DSA Dashboard', p: true, i: false, u: true },
-    { category: 'Preparation', name: 'Company Problems', p: true, i: false, u: true },
-    { category: 'Preparation', name: 'AI Hints', p: true, i: false, u: true },
-    { category: 'Simulation', name: 'Industry Simulation', p: false, i: true, u: true },
-    { category: 'Simulation', name: 'Agile Workflow', p: false, i: true, u: true },
-    { category: 'Simulation', name: 'Code Reviews', p: false, i: true, u: true },
-    { category: 'Career', name: 'Resume Analytics', p: true, i: false, u: true },
-    { category: 'Career', name: 'Recruiter Badge', p: false, i: false, u: true },
-    { category: 'Career', name: 'Verified Certificate', p: true, i: true, u: true },
-    { category: 'Support', name: 'Priority Support', p: false, i: false, u: true },
+    { category: 'Preparation', name: 'DSA Placement Bootcamp', std: true, pro: true },
+    { category: 'Preparation', name: 'Virtual Internship', std: true, pro: true },
+    { category: 'Preparation', name: 'Company-Specific Problems', std: true, pro: true },
+    { category: 'AI Practice', name: 'AI Voice Interviews', std: '5/mo', pro: '15/mo' },
+    { category: 'AI Practice', name: 'AI Video Interviews', std: '1/mo', pro: '3/mo' },
+    { category: 'Career', name: 'ATS Resume Scans', std: '3/mo', pro: '10/mo' },
+    { category: 'Career', name: 'AI Copy Mentor', std: 'Limited', pro: 'Unlimited' },
+    { category: 'Career', name: 'Verified Certificate', std: false, pro: true },
+    { category: 'Career', name: 'Recruiter Badge', std: false, pro: true },
+    { category: 'Support', name: 'Priority Support', std: false, pro: true },
 ];
 
 export default function PricingPage() {
@@ -179,8 +159,8 @@ export default function PricingPage() {
                                     </div>
 
                                     {/* Pricing Cards */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-4">
-                                        {[PLACEMENT_PLUS, INDUSTRY_PLUS, ULTIMATE_PACK].map((plan, idx) => (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch pt-4 max-w-5xl mx-auto">
+                                        {PLANS.map((plan, idx) => (
                                             <PricingCard
                                                 key={plan.title}
                                                 {...plan}
@@ -215,18 +195,24 @@ export default function PricingPage() {
                                                             <thead>
                                                                 <tr className="border-b border-gray-100">
                                                                     <th className="py-3 font-medium text-gray-500">Feature</th>
-                                                                    <th className="py-3 font-bold text-brand-black text-center">Prep0</th>
-                                                                    <th className="py-3 font-bold text-brand-black text-center">We2Hub</th>
-                                                                    <th className="py-3 font-bold text-brand-orange text-center">We2 Max</th>
+                                                                    <th className="py-3 font-bold text-brand-black text-center">Standard</th>
+                                                                    <th className="py-3 font-bold text-brand-orange text-center">Pro</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {ALL_FEATURES.map((feat, i) => (
                                                                     <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
                                                                         <td className="py-3 font-medium text-gray-700">{feat.name}</td>
-                                                                        <td className="py-3 text-center text-gray-500">{feat.p ? <Check size={16} className="mx-auto text-emerald-500" /> : <MinusIcon />}</td>
-                                                                        <td className="py-3 text-center text-gray-500">{feat.i ? <Check size={16} className="mx-auto text-emerald-500" /> : <MinusIcon />}</td>
-                                                                        <td className="py-3 text-center text-gray-500">{feat.u ? <Check size={16} className="mx-auto text-brand-orange" /> : <MinusIcon />}</td>
+                                                                        <td className="py-3 text-center text-gray-500">
+                                                                            {typeof feat.std === 'string' ? (
+                                                                                <span className="font-semibold text-slate-700">{feat.std}</span>
+                                                                            ) : (feat.std ? <Check size={16} className="mx-auto text-emerald-500" /> : <MinusIcon />)}
+                                                                        </td>
+                                                                        <td className="py-3 text-center text-gray-500">
+                                                                            {typeof feat.pro === 'string' ? (
+                                                                                <span className="font-bold text-brand-orange">{feat.pro}</span>
+                                                                            ) : (feat.pro ? <Check size={16} className="mx-auto text-brand-orange" /> : <MinusIcon />)}
+                                                                        </td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>

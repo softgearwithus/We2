@@ -1,6 +1,5 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { InterviewService } from './interview.service';
-import { VapiPayloadDto } from './dto/vapi.dto';
 
 @Controller('interview/vapi')
 export class VapiController {
@@ -18,6 +17,39 @@ export class VapiController {
             return {
                 assistant: {
                     firstMessage: "Hello! I am your AI Interviewer. Shall we start with a brief introduction?",
+                    analysisPlan: {
+                        summaryPlan: {
+                            enabled: true,
+                        },
+                        structuredDataPlan: {
+                            enabled: true,
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    metrics: {
+                                        type: "object",
+                                        properties: {
+                                            overallScore: { type: "number", minimum: 0, maximum: 100 },
+                                            technical: { type: "number", minimum: 0, maximum: 100 },
+                                            communication: { type: "number", minimum: 0, maximum: 100 },
+                                            problemSolving: { type: "number", minimum: 0, maximum: 100 },
+                                        },
+                                        required: ["overallScore", "technical", "communication", "problemSolving"],
+                                    },
+                                    strengths: {
+                                        type: "array",
+                                        items: { type: "string" },
+                                    },
+                                    improvements: {
+                                        type: "array",
+                                        items: { type: "string" },
+                                    },
+                                    feedback: { type: "string" },
+                                },
+                                required: ["metrics", "strengths", "improvements", "feedback"],
+                            },
+                        },
+                    },
                     model: {
                         provider: "custom-llm",
                         url: `${process.env.BASE_URL || 'https://<YOUR_NGROK_URL>'}/interview/vapi/chat`, // Use env for ngrok
@@ -34,6 +66,16 @@ export class VapiController {
                     }
                 }
             };
+        }
+
+        if (payload.message && payload.message.type === 'call-started') {
+            const callId = payload.message.call?.id;
+            const userId = payload.message.call?.metadata?.userId;
+            const assistantId = payload.message.call?.assistantId;
+            if (callId && userId) {
+                await this.interviewService.registerVapiCall(userId, callId, { assistantId });
+            }
+            return { status: 'ok' };
         }
 
         // 2. End of Call Handshake

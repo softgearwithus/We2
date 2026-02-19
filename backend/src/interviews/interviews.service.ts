@@ -150,42 +150,65 @@ export class InterviewsService {
         return result;
     }
 
-    // --- Audio Drill & Gemini Methods ---
-
-    async checkAndIncrementLimit(userId: string, type: 'audio' | 'video'): Promise<boolean> {
+    async checkAndIncrementLimit(userId: string, type: 'audio' | 'video'): Promise<{ allowed: boolean, limit: number, usage: number }> {
         const user = await this.usersRepo.findOne({ where: { id: userId } });
         if (!user) throw new NotFoundException('User not found');
 
         const now = new Date();
         const lastReset = user.usageLastReset ? new Date(user.usageLastReset) : null;
 
-        // Check if we need to reset limits (new month)
+        // Reset limits if new month
         if (!lastReset || (now.getMonth() !== lastReset.getMonth() || now.getFullYear() !== lastReset.getFullYear())) {
             user.audioDrillUsage = 0;
             user.videoInterviewUsage = 0;
-            user.drillTopicsRefreshCount = 0; // Reset refresh count too? Maybe per session not month? User said "per profile session". Sticking to monthly reset for simplicity or just track it.
+            user.drillTopicsRefreshCount = 0;
             user.usageLastReset = now;
         }
 
+        const plan = user.subscriptionPlan || 'free';
+        let audioLimit = 2; // Default/Free
+        let videoLimit = 0; // Default/Free
+
+        switch (plan) {
+            case 'standard_tier':
+                audioLimit = 5;
+                videoLimit = 1;
+                break;
+            case 'pro_tier':
+                audioLimit = 15;
+                videoLimit = 3;
+                break;
+            case 'placement_plus':
+            case 'industry_plus':
+            case 'we2_max':
+                audioLimit = 50;
+                videoLimit = 10;
+                break;
+        }
+
+        const limit = (type === 'audio') ? audioLimit : videoLimit;
+        const currentUsage = (type === 'audio') ? user.audioDrillUsage : user.videoInterviewUsage;
+
+        if (currentUsage >= limit) {
+            return { allowed: false, limit, usage: currentUsage };
+        }
+
         if (type === 'audio') {
-            if (user.audioDrillUsage >= 15) return false;
             user.audioDrillUsage++;
         } else {
-            if (user.videoInterviewUsage >= 2) return false;
             user.videoInterviewUsage++;
         }
 
         await this.usersRepo.save(user);
-        return true;
+        return { allowed: true, limit, usage: currentUsage + 1 };
     }
 
     async generateAudioDrill(userId: string, topic: string) {
         const user = await this.usersRepo.findOne({ where: { id: userId } });
         if (!user) throw new NotFoundException('User not found');
 
-        // Check refresh cap (assuming simple counter for now, maybe per login session on frontend, but backend persistence is safer)
+        // Check refresh cap
         if (user.drillTopicsRefreshCount >= 20) {
-            // Fallback to simpler or cached content
             return this.geminiService.generateDrillContent("Common Interview Questions", { userId, isFallback: true });
         }
 
@@ -196,19 +219,21 @@ export class InterviewsService {
     }
 
     async generateCommunicationDrill(userId: string, topic?: string) {
-        // Optional: Check limits or log usage here if needed
         return this.geminiService.generateCommunicationDrill(topic);
     }
 
     async analyzeAudioDrill(userId: string, audioBase64: string, context: string) {
         // Check limit
-        const allowed = await this.checkAndIncrementLimit(userId, 'audio');
+        const { allowed, limit, usage } = await this.checkAndIncrementLimit(userId, 'audio');
         if (!allowed) {
-            throw new BadRequestException('Monthly audio drill limit exhausted (15/15). Upgrade your plan.');
+            throw new BadRequestException(`Monthly audio drill limit exhausted (${usage}/${limit}). Please upgrade your plan for more.`);
         }
 
         // Analyze
         const analysis = await this.geminiService.analyzeAudio(audioBase64, context);
+        if (!analysis || typeof analysis.overallScore !== 'number') {
+            throw new BadRequestException('AI analysis failed. Please try again.');
+        }
 
         // Save session
         const session = this.interviewsRepo.create({
@@ -218,12 +243,12 @@ export class InterviewsService {
             startedAt: new Date(),
             completedAt: new Date(),
             overallScore: analysis.overallScore,
+            analysisProvider: 'gemini',
             analysis: analysis.metrics,
             feedback: analysis.feedback,
             strengths: analysis.strengths,
             improvements: analysis.improvements,
             questions: [{ context }],
-            // audioUrl: ... (TODO: upload to S3/Cloudinary and save URL)
         });
 
         return this.interviewsRepo.save(session);
@@ -238,14 +263,14 @@ export class InterviewsService {
             take: 100,
         });
     }
-    async submitCommunicationSession(userId: string): Promise<InterviewSession> {
+    async submitCommunicationSession(userId: string, theme?: string): Promise<InterviewSession> {
         // Create initial session with IN_PROGRESS status
         const session = this.interviewsRepo.create({
             userId,
             type: InterviewType.BEHAVIORAL,
             status: InterviewStatus.IN_PROGRESS,
             startedAt: new Date(),
-            questions: [{ context: "Communication Drill 3-Part" }]
+            questions: [{ context: theme || "Communication Drill 3-Part" }]
         });
         return this.interviewsRepo.save(session);
     }
@@ -258,7 +283,7 @@ export class InterviewsService {
             reading: [] as any[],
             listening: [] as any[],
             extempore: null as any,
-            overallScore: 0
+            overallScore: null as number | null
         };
 
         let totalScoreSum = 0;
@@ -267,6 +292,7 @@ export class InterviewsService {
         const allImprovements: string[] = [];
         const allCoaching: string[] = [];
         let mainPersona = "Assessment Pending";
+        let analysisFailed = false;
 
         // Helper to find file by field name
         const getFile = (fieldname: string) => files.find(f => f.fieldname === fieldname);
@@ -368,21 +394,33 @@ export class InterviewsService {
             }
 
             // 5. Aggregate & Update Session
-            const finalScore = itemsCount > 0 ? Math.round(totalScoreSum / itemsCount) : 0;
+            const finalScore = itemsCount > 0 ? Math.round(totalScoreSum / itemsCount) : null;
+            results.overallScore = finalScore;
 
             const session = await this.interviewsRepo.findOne({ where: { id: sessionId } });
             if (session) {
                 session.status = InterviewStatus.COMPLETED;
                 session.completedAt = new Date();
-                session.overallScore = finalScore;
-                session.analysis = {
-                    ...results,
-                    allCoaching: Array.from(new Set(allCoaching)),
-                    mainPersona
-                };
-                session.feedback = itemsCount > 0
-                    ? `Full drill analysis completed. Persona: ${mainPersona}`
-                    : "Drill submitted, but analysis failed for all clips.";
+                session.analysisProvider = 'gemini';
+                if (itemsCount > 0) {
+                    session.overallScore = finalScore;
+                    session.analysis = {
+                        ...results,
+                        allCoaching: Array.from(new Set(allCoaching)),
+                        mainPersona
+                    };
+                    session.analysisProvider = 'gemini';
+                    session.feedback = `Full drill analysis completed. Persona: ${mainPersona}`;
+                } else {
+                    session.overallScore = null;
+                    session.analysis = {
+                        ...results,
+                        allCoaching: Array.from(new Set(allCoaching)),
+                        mainPersona
+                    };
+                    session.analysisProvider = 'gemini';
+                    session.feedback = "Drill submitted, but analysis failed for all clips.";
+                }
 
                 // Keep top unique strengths/improvements
                 session.strengths = Array.from(new Set(allStrengths)).slice(0, 5);
@@ -393,6 +431,17 @@ export class InterviewsService {
             }
         } catch (error) {
             console.error(`[Service] Background analysis failed for session ${sessionId}`, error);
+            analysisFailed = true;
+        } finally {
+            if (analysisFailed) {
+                const session = await this.interviewsRepo.findOne({ where: { id: sessionId } });
+                if (session) {
+                    session.status = InterviewStatus.COMPLETED;
+                    session.completedAt = new Date();
+                    session.feedback = "Drill submitted, but analysis failed. Please retry.";
+                    await this.interviewsRepo.save(session);
+                }
+            }
         }
     }
 }

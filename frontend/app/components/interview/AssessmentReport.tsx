@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, AlertCircle, BarChart3, Download, RefreshCcw, Home, Calendar, Clock, Mic, Video, Share2, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, AlertCircle, BarChart3, Download, RefreshCcw, Calendar, Clock, Mic, Video, Share2, ArrowLeft, Copy, FileText } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 // Types shared across the module
@@ -17,6 +17,10 @@ export interface VideoMetrics {
     problemSolving: number;
     overall: number;
     feedback: Array<{ type: 'strength' | 'improvement', text: string }>;
+    transcript?: string;
+    summary?: string;
+    logs?: any;
+    logUrl?: string;
 }
 
 export type AssessmentData =
@@ -60,8 +64,8 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                         <ArrowLeft size={16} /> Back to Dashboard
                     </Button>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="gap-2"> <Download size={14} /> PDF </Button>
-                        <Button variant="outline" size="sm" className="gap-2"> <Share2 size={14} /> Share </Button>
+                         <Button variant="outline" size="sm" className="gap-2"> <Download size={14} /> PDF </Button>
+                         <Button variant="outline" size="sm" className="gap-2"> <Share2 size={14} /> Share </Button>
                     </div>
                 </div>
 
@@ -125,7 +129,9 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                         ) : (
                             // VIDEO METRICS
                             <div className="grid grid-cols-3 gap-4 h-full">
-                                {Object.entries(data.metrics).filter(([k]) => k !== 'overall' && k !== 'feedback').map(([key, val], i) => (
+                                {Object.entries(data.metrics)
+                                    .filter(([key, val]) => key !== 'overall' && typeof val === 'number')
+                                    .map(([key, val], i) => (
                                     <Card key={key} className="p-6 flex flex-col items-center justify-center border-slate-200 shadow-sm hover:border-indigo-200 transition-colors">
                                         <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center font-black text-slate-900 mb-3 border border-slate-100">
                                             {val as number}
@@ -188,6 +194,98 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                         </Card>
                     </div>
                 </div>
+
+                {data.type === 'video' && (data.metrics.summary || data.metrics.transcript || data.metrics.logs || data.metrics.logUrl) && (
+                    <div className="space-y-6 mb-12">
+                        <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <BarChart3 className="text-indigo-600" /> Session Intelligence
+                        </h3>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {data.metrics.summary && (
+                                <Card className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h4 className="text-sm font-bold text-slate-700">Executive Summary</h4>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-full">Insight</span>
+                                    </div>
+                                    <p className="text-sm text-slate-600 leading-relaxed">{data.metrics.summary}</p>
+                                </Card>
+                            )}
+                            {data.metrics.logUrl && (
+                                <Card className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h4 className="text-sm font-bold text-slate-700">Diagnostics</h4>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">Vapi</span>
+                                    </div>
+                                    <p className="text-xs text-slate-500 mb-4">Open the raw Vapi log stream for full telemetry.</p>
+                                    <a
+                                        className="text-sm text-indigo-600 hover:text-indigo-700 underline break-all"
+                                        href={data.metrics.logUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        {data.metrics.logUrl}
+                                    </a>
+                                </Card>
+                            )}
+                        </div>
+
+                        {data.metrics.transcript && (
+                            <Card className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <FileText size={16} className="text-slate-500" />
+                                        <h4 className="text-sm font-bold text-slate-700">Transcript</h4>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-900"
+                                        onClick={() => {
+                                            if (typeof navigator === 'undefined') return;
+                                            if (navigator.clipboard?.writeText) {
+                                                navigator.clipboard.writeText(data.metrics.transcript || '');
+                                                return;
+                                            }
+                                            try {
+                                                const textarea = document.createElement('textarea');
+                                                textarea.value = data.metrics.transcript || '';
+                                                textarea.style.position = 'fixed';
+                                                textarea.style.opacity = '0';
+                                                document.body.appendChild(textarea);
+                                                textarea.focus();
+                                                textarea.select();
+                                                document.execCommand('copy');
+                                                document.body.removeChild(textarea);
+                                            } catch (error) {
+                                                console.warn('Clipboard copy failed', error);
+                                            }
+                                        }}
+                                    >
+                                        <Copy size={12} /> Copy
+                                    </button>
+                                </div>
+                                <div className="max-h-72 overflow-y-auto pr-2 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                    {data.metrics.transcript}
+                                </div>
+                            </Card>
+                        )}
+
+                        {data.metrics.logs && (
+                            <Card className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <BarChart3 size={16} className="text-slate-500" />
+                                        <h4 className="text-sm font-bold text-slate-700">Conversation Timeline</h4>
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 border border-slate-200 px-2 py-1 rounded-full">Raw</span>
+                                </div>
+                                <div className="max-h-72 overflow-y-auto rounded-xl bg-slate-900 text-slate-100 text-xs p-4">
+                                    <pre className="whitespace-pre-wrap">{typeof data.metrics.logs === 'string' ? data.metrics.logs : JSON.stringify(data.metrics.logs, null, 2)}</pre>
+                                </div>
+                            </Card>
+                        )}
+                    </div>
+                )}
 
                 <div className="flex justify-center">
                     <Button onClick={onRetry} size="lg" className="rounded-full px-8 h-14 bg-slate-900 text-white hover:bg-slate-800 font-bold shadow-xl transition-transform hover:-translate-y-1">

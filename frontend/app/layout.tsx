@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'We2 | Prep0 + We2Hub — The #1 Career Readiness Platform',
-    template: '%s | We2'
+    default: 'Emble | Prep0 + We2Hub — The #1 Career Readiness Platform',
+    template: '%s | Emble'
   },
   description: 'Prep0 for placement prep. We2Hub for industry experience. Master DSA, practice with AI interviewers, and gain real-world software development experience.',
   keywords: ['We2', 'Prep0', 'We2Hub', 'DSA Preparation', 'Coding Interview', 'System Design', 'Industry Simulation', 'Mock Interviews', 'Full Stack Development'],

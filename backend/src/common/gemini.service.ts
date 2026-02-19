@@ -5,8 +5,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 @Injectable()
 export class GeminiService {
     private readonly logger = new Logger(GeminiService.name);
-    private genAI: GoogleGenerativeAI;
+    private genAI: GoogleGenerativeAI | null = null;
     private model: any;
+    private defaultModelName: string | null = null;
 
     constructor() {
         try {
@@ -17,7 +18,8 @@ export class GeminiService {
                 this.genAI = new GoogleGenerativeAI(apiKey);
                 const modelName = (process.env.GEMINI_MODEL && process.env.GEMINI_MODEL !== 'gemini-pro')
                     ? process.env.GEMINI_MODEL
-                    : 'gemini-1.5-flash';
+                    : 'gemini-2.5-flash';
+                this.defaultModelName = modelName;
                 this.model = this.genAI.getGenerativeModel({ model: modelName });
             }
         } catch (error) {
@@ -26,9 +28,9 @@ export class GeminiService {
     }
 
     async generateDrillContent(topic: string, userContext?: any) {
-        if (!this.model) {
-            this.logger.warn('Gemini model not initialized. Returning mock drill content.');
-            return [];
+        if (!this.genAI) {
+            this.logger.warn('Gemini model not initialized. Cannot generate drill content.');
+            throw new Error('Gemini API not configured');
         }
         try {
             const prompt = `
@@ -45,11 +47,12 @@ export class GeminiService {
             Ensure the content is professional and suitable for interview preparation.
             `;
 
-            const result = await this.model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
-
-            return this.parseJSON(text);
+            const { text } = await this.generateContentWithFallback([prompt]);
+            const parsed = this.parseJSON(text);
+            if (!Array.isArray(parsed)) {
+                throw new Error('Invalid drill content response: expected JSON array');
+            }
+            return parsed;
         } catch (error) {
             this.logger.error('Error generating drill content', error);
             throw error;
@@ -57,10 +60,9 @@ export class GeminiService {
     }
 
     async generateCommunicationDrill(topic?: string) {
-        // If model is not initialized (missing key), go straight to fallback
-        if (!this.model) {
-            this.logger.warn('Gemini model not initialized. Skipping API call and using fallback.');
-            throw new Error('Gemini model not initialized');
+        if (!this.genAI) {
+            this.logger.warn('Gemini model not initialized. Cannot generate communication drill.');
+            throw new Error('Gemini API not configured');
         }
 
         try {
@@ -108,68 +110,12 @@ export class GeminiService {
             Return ONLY the valid JSON.
             `;
 
-            // Robust Model Selection: Prioritize verified models from diagnostics
-            const modelsToTry = [
-                process.env.GEMINI_MODEL,
-                'gemini-2.5-flash',
-                'gemini-2.0-flash',
-            ].filter(m => m && m !== 'gemini-pro') as string[];
-
-            let lastError;
-            let successResult;
-
-            for (const modelName of modelsToTry) {
-                try {
-                    this.logger.log(`Attempting to generate with model: ${modelName}`);
-                    const model = this.genAI.getGenerativeModel({ model: modelName });
-                    const result = await model.generateContent(prompt);
-                    const response = await result.response;
-                    const text = response.text();
-
-                    const parsed = this.parseJSON(text);
-                    successResult = { ...parsed, metadata: { source: 'Gemini AI', model: modelName } };
-                    this.logger.log(`Successfully generated content using: ${modelName}`);
-                    break;
-                } catch (error) {
-                    this.logger.warn(`Model ${modelName} failed: ${error.message}`);
-                    lastError = error;
-
-                    // If it's a quota error (429), don't bother trying other models as they likely share quota
-                    if (error.message.includes('429') || error.message.includes('Quota exceeded')) {
-                        this.logger.error(`Quota exceeded for ${modelName}. Stopping fallback attempts.`);
-                        break;
-                    }
-                }
-            }
-
-            if (successResult) {
-                return successResult;
-            }
-
-            // If all models fail, throw the last error to trigger general fallback
-            throw lastError;
+            const { text, modelName } = await this.generateContentWithFallback([prompt]);
+            const parsed = this.parseJSON(text);
+            return { ...parsed, metadata: { source: 'Gemini AI', model: modelName } };
         } catch (error) {
             this.logger.error('All Gemini models failed', error);
-            // Fallback content to unblock user if AI fails
-            this.logger.warn('Returning fallback drill content due to error.');
-            return {
-                metadata: { source: 'Fallback (Offline)', model: 'None' },
-                theme: topic || "Effective Communication in Crisis",
-                reading: [
-                    { level: "Easy", text: "Communication during a crisis is about clarity and speed. Leaders must convey information accurately to prevent panic. It is essential to be transparent about what is known and what is unknown." },
-                    { level: "Medium", text: "In high-pressure situations, non-verbal cues become as important as verbal ones. A calm demeanor can reassure a team more effectively than words alone. However, silence can be misinterpreted as negligence, so consistent updates are vital." },
-                    { level: "Hard", text: "The complexity of crisis communication lies in balancing transparency with containment. Over-sharing can lead to hysteria, while withholding information breeds distrust. Strategic ambiguity is sometimes employed, but it carries significant ethical risks in a digital age where information spreads instantly." }
-                ],
-                listening: [
-                    "Transparency builds trust even when the news is bad.",
-                    "Active listening is the most underrated skill in conflict resolution.",
-                    "Your body language speaks louder than your words during a negotiation."
-                ],
-                extempore: {
-                    "topic": "Is remote work killing team culture?",
-                    "keyPoints": ["Impact on organic collaboration", "Role of digital tools", "Mental health implications"]
-                }
-            };
+            throw error;
         }
     }
 
@@ -234,11 +180,12 @@ export class GeminiService {
                 }
             };
 
-            const result = await this.model.generateContent([prompt, part]);
-            const response = await result.response;
-            const text = response.text();
-
-            return this.parseJSON(text);
+            const { text } = await this.generateContentWithFallback([prompt, part]);
+            const parsed = this.parseJSON(text);
+            if (!parsed || typeof parsed.overallScore !== 'number') {
+                throw new Error('Invalid analysis response: missing overallScore');
+            }
+            return parsed;
 
         } catch (error) {
             this.logger.error('Error analyzing audio', error);
@@ -251,20 +198,85 @@ export class GeminiService {
             throw new Error('Empty response from AI model');
         }
         try {
-            // Find the first '{' and last '}'
-            const start = text.indexOf('{');
-            const end = text.lastIndexOf('}');
+            const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-            if (start === -1 || end === -1) {
-                throw new Error(`No JSON object found in response: ${text.substring(0, 100)}...`);
+            if (cleaned.startsWith('{') || cleaned.startsWith('[')) {
+                return JSON.parse(cleaned);
             }
 
-            const jsonStr = text.substring(start, end + 1);
+            const firstObject = cleaned.indexOf('{');
+            const firstArray = cleaned.indexOf('[');
+            const start = [firstObject, firstArray].filter((i) => i >= 0).sort((a, b) => a - b)[0];
+            if (start === undefined) {
+                throw new Error(`No JSON object found in response: ${cleaned.substring(0, 100)}...`);
+            }
+
+            const isArray = cleaned[start] === '[';
+            const end = isArray ? cleaned.lastIndexOf(']') : cleaned.lastIndexOf('}');
+            if (end === -1) {
+                throw new Error(`No JSON object found in response: ${cleaned.substring(0, 100)}...`);
+            }
+
+            const jsonStr = cleaned.substring(start, end + 1);
             return JSON.parse(jsonStr);
         } catch (e) {
             this.logger.error('Failed to parse Gemini JSON response', e);
             this.logger.error('Raw text received:', text);
             throw new Error(`Invalid AI response format: ${e.message}`);
         }
+    }
+
+    private getModelCandidates(): string[] {
+        const candidates = [
+            process.env.GEMINI_MODEL,
+            this.defaultModelName,
+            'gemini-2.5-flash',
+            'gemini-2.0-flash',
+            'gemini-1.5-flash',
+        ]
+            .filter((m): m is string => !!m && m !== 'gemini-pro');
+
+        return Array.from(new Set(candidates));
+    }
+
+    private isQuotaError(error: any): boolean {
+        const message = (error?.message || '').toString();
+        return message.includes('429') || message.toLowerCase().includes('quota');
+    }
+
+    private async generateContentWithFallback(parts: any[]): Promise<{ text: string; modelName: string }> {
+        if (!this.genAI) {
+            throw new Error('Gemini API not configured');
+        }
+
+        const modelsToTry = this.getModelCandidates();
+        if (modelsToTry.length === 0) {
+            throw new Error('No Gemini models configured');
+        }
+
+        let lastError: any;
+        for (const modelName of modelsToTry) {
+            try {
+                this.logger.log(`Attempting to generate with model: ${modelName}`);
+                const model = this.genAI.getGenerativeModel({ model: modelName });
+                const result = await model.generateContent(parts);
+                const response = await result.response;
+                const text = response.text();
+                if (!text) {
+                    throw new Error('Empty response from Gemini');
+                }
+                this.logger.log(`Successfully generated content using: ${modelName}`);
+                return { text, modelName };
+            } catch (error) {
+                lastError = error;
+                this.logger.warn(`Model ${modelName} failed: ${error.message}`);
+                if (this.isQuotaError(error)) {
+                    this.logger.error(`Quota exceeded for ${modelName}. Stopping fallback attempts.`);
+                    break;
+                }
+            }
+        }
+
+        throw lastError || new Error('Gemini generation failed');
     }
 }

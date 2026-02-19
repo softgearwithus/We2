@@ -43,7 +43,14 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
         { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa' },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects' },
-        { icon: 'mic', label: 'Mock Interview', href: '/dashboard/interview' },
+        {
+            icon: 'mic',
+            label: 'Mock Interview',
+            href: '/dashboard/interview',
+            subItems: [
+                { label: 'Mock Analysis', href: '/dashboard/interview?mode=analysis', icon: 'analytics' }
+            ]
+        },
         { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },

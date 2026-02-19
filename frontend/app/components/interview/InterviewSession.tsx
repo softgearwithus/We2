@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, PhoneOff, Volume2, Loader2, Play, Clock, ChevronLeft } from 'lucide-react';
 import { useVapi } from '@/app/hooks/useVapi';
 import { cn } from '@/app/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VideoMetrics } from './AssessmentReport';
+import { useRouter } from 'next/navigation';
 
 interface InterviewSessionProps {
     interviewId?: string;
@@ -13,13 +14,17 @@ interface InterviewSessionProps {
 }
 
 export default function InterviewSession({ interviewId = `mock-${Date.now()}`, onEnd, onCancel }: InterviewSessionProps) {
-    const { status, isMuted, volumeLevel, messages, startInterview, stopInterview, toggleMute } = useVapi();
+    const { status, isMuted, volumeLevel, messages, callId, error: vapiError, startInterview, stopInterview, toggleMute } = useVapi();
     const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID || '';
+    const [analysisError, setAnalysisError] = useState<string | null>(null);
+    const [analysisHint, setAnalysisHint] = useState<string | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [cameraActive, setCameraActive] = useState(false);
     const [sessionState, setSessionState] = useState<'idle' | 'active' | 'processing'>('idle');
-    const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+    const [timeLeft, setTimeLeft] = useState(600); // 10 minutes (600 seconds)
+    const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const router = useRouter();
 
     // Timer Logic
     useEffect(() => {
@@ -28,7 +33,9 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
             interval = setInterval(() => {
                 setTimeLeft((prev) => {
                     if (prev <= 1) {
-                        handleEnd();
+                        clearInterval(interval);
+                        // Trigger end on next tick to avoid render loops
+                        setTimeout(() => handleEnd(), 0);
                         return 0;
                     }
                     return prev - 1;
@@ -37,6 +44,18 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
         }
         return () => clearInterval(interval);
     }, [sessionState]);
+
+    // Handle Vapi Errors / Ejections
+    useEffect(() => {
+        if (vapiError && sessionState === 'active') {
+            console.warn("Vapi session interrupted:", vapiError);
+            handleEnd(); // Auto-finalize session on remote termination
+        }
+    }, [vapiError, sessionState]);
+
+    const [permissionsGranted, setPermissionsGranted] = useState(false);
+
+    // ... existing refs ...
 
     // Auto-scroll chat
     useEffect(() => {
@@ -54,56 +73,141 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
         }
     };
 
-    const startCamera = async () => {
+    const requestPermissions = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); // Audio handled by Vapi
+            // Request both to trigger the browser prompt for both as requested
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+            // We only need video for the preview, Vapi handles its own audio stream usually, 
+            // but requesting it here ensures the user has granted permission.
+            // We can keep the video track and stop the audio track to avoid echo/conflict if needed,
+            // or just mute the video element (which is already muted).
+
             if (videoRef.current) {
-                videoRef.current.srcObject = stream;
+                videoRef.current.srcObject = new MediaStream(stream.getVideoTracks());
                 setCameraActive(true);
+                setPermissionsGranted(true);
             }
+
+            // We can stop the audio track from this specific stream since Vapi will likely request its own
+            // or we can leave it. To be safe/clean, let's stop the audio track we just got 
+            // since we only wanted to trigger the permission prompt and get the video.
+            // *correction*: keeping it might be safer to prove access, but Vapi usually creates a new stream.
+            // Let's stop the audio tracks to prevent feedback loops in case Vapi echoes it.
+            stream.getAudioTracks().forEach(track => track.stop());
+
         } catch (err) {
-            console.error("Error accessing camera:", err);
-            // alert("Please allow camera access to continue.");
+            console.error("Error accessing media devices:", err);
+            alert("Camera and Microphone access is required for the interview. Please enable them in your browser settings.");
         }
     };
 
+    // Cleanup on unmount
     useEffect(() => {
-        startCamera();
-        return () => stopCamera();
+        return () => {
+            stopCamera();
+            if (pollTimeoutRef.current) {
+                clearTimeout(pollTimeoutRef.current);
+            }
+        };
     }, []);
+
+    const startAnalysisPolling = useCallback(async () => {
+        if (!callId) {
+            setAnalysisError('We could not find the call id yet. Please wait a moment and try again.');
+            setAnalysisHint('You can also open the analysis dashboard and check later.');
+            return;
+        }
+
+        setAnalysisError(null);
+        setAnalysisHint('Vapi is preparing your report. This can take a few minutes.');
+
+        const token = localStorage.getItem('accessToken');
+        const tryFetchAnalysis = async () => {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interview/vapi/analysis`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ callId })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch Vapi analysis');
+            }
+
+            return response.json();
+        };
+
+        let attempts = 0;
+        const maxAttempts = 24;
+        const startTime = Date.now();
+        const timeoutMs = 6 * 60 * 1000;
+
+        const poll = async () => {
+            try {
+                const session = await tryFetchAnalysis();
+                const metrics = session?.analysis?.metrics || {};
+                const feedback = Array.isArray(session?.analysis?.feedback) ? session.analysis.feedback : [];
+
+                if (session?.analysisProvider !== 'vapi' || !session?.analysis?.raw) {
+                    throw new Error('Analysis not ready');
+                }
+
+                const finalMetrics: VideoMetrics = {
+                    overall: typeof session?.overallScore === 'number' ? session.overallScore : 0,
+                    technical: typeof metrics.technical === 'number' ? metrics.technical : 0,
+                    communication: typeof metrics.communication === 'number' ? metrics.communication : 0,
+                    problemSolving: typeof metrics.problemSolving === 'number' ? metrics.problemSolving : 0,
+                    feedback,
+                    transcript: session?.analysis?.transcript || session?.analysis?.raw?.transcript,
+                    summary: session?.analysis?.summary || session?.feedback || session?.analysis?.raw?.summary,
+                    logs: session?.analysis?.logs || session?.analysis?.raw?.messages || session?.analysis?.raw?.conversation,
+                    logUrl: session?.analysis?.logUrl
+                };
+
+                onEnd(finalMetrics);
+            } catch (error) {
+                attempts += 1;
+                if (Date.now() - startTime > timeoutMs) {
+                    console.error('Timed out waiting for Vapi analysis', error);
+                    setAnalysisError('Analysis is taking longer than expected. Check your analysis dashboard in a few minutes.');
+                    setAnalysisHint('We will keep it synced once Vapi finishes.');
+                    return;
+                }
+                const delay = attempts >= maxAttempts ? 3500 : 2500;
+                pollTimeoutRef.current = setTimeout(poll, delay);
+            }
+        };
+
+        poll();
+    }, [callId, onEnd]);
 
     const handleStart = async () => {
         if (!assistantId) return alert('System Error: Missing Assistant ID');
         try {
-            await startInterview(assistantId);
+            const userId = localStorage.getItem('userId');
+            const metadata = userId ? { userId } : undefined;
+            await startInterview(assistantId, metadata);
             setSessionState('active');
         } catch (e) {
             console.error("Failed to start:", e);
         }
     };
 
-    const handleEnd = () => {
+    const handleEnd = async () => {
+        // TTS Announcement
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance("Interview Ended");
+            window.speechSynthesis.speak(utterance);
+        }
+
         stopInterview();
         stopCamera();
         setSessionState('processing');
-
-        // Mock generation of report data
-        // in real app, this would come from backend analysis of transcript
-        setTimeout(() => {
-            const mockMetrics: VideoMetrics = {
-                overall: 82,
-                technical: 85,
-                communication: 78,
-                problemSolving: 88,
-                feedback: [
-                    { type: 'strength', text: "Excellent usage of technical terminology related to React." },
-                    { type: 'strength', text: "Clear structuring of the system design approach." },
-                    { type: 'improvement', text: "Could improve on eye contact and pacing during complex explanations." },
-                    { type: 'improvement', text: "Missed some edge cases in the error handling discussion." }
-                ]
-            };
-            onEnd(mockMetrics);
-        }, 3000);
+        setAnalysisError(null);
+        startAnalysisPolling();
     };
 
     if (sessionState === 'processing') {
@@ -117,6 +221,24 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">Analyzing Performance</h2>
                 <p className="text-slate-500">Prep0 AI is generating your detailed scorecard...</p>
+                {analysisHint && (
+                    <div className="mt-4 text-xs text-slate-500">{analysisHint}</div>
+                )}
+                {analysisError && (
+                    <div className="mt-6 text-sm text-amber-700 bg-amber-50 border border-amber-100 px-4 py-2 rounded-xl">
+                        {analysisError}
+                    </div>
+                )}
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <Button onClick={startAnalysisPolling} className="h-10 px-4 rounded-xl">Check Again</Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => router.push('/dashboard/interview?mode=analysis')}
+                        className="h-10 px-4 rounded-xl"
+                    >
+                        Open Analysis Dashboard
+                    </Button>
+                </div>
             </div>
         );
     }
@@ -231,25 +353,44 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                             className="w-full h-full object-cover transform -scale-x-100"
                         />
 
-                        {/* Start Overlay */}
+                        {/* Start Overlay / Permissions Modal */}
                         {sessionState === 'idle' && (
                             <div className="absolute inset-0 z-20 bg-white/30 backdrop-blur-md flex flex-col items-center justify-center p-8">
-                                <motion.div
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md border border-slate-100"
-                                >
-                                    <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-indigo-600">
-                                        <Play size={32} fill="currentColor" />
-                                    </div>
-                                    <h2 className="text-2xl font-[900] text-slate-900 mb-3">Ready to Begin?</h2>
-                                    <p className="text-slate-500 mb-8 leading-relaxed">
-                                        You're about to start a 10-minute technical screening with our AI. Speak clearly and take your time.
-                                    </p>
-                                    <Button onClick={handleStart} className="w-full h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30">
-                                        Start Interview
-                                    </Button>
-                                </motion.div>
+                                {!permissionsGranted ? (
+                                    <motion.div
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md border border-slate-100"
+                                    >
+                                        <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-600">
+                                            <Mic size={32} fill="currentColor" />
+                                        </div>
+                                        <h2 className="text-2xl font-[900] text-slate-900 mb-3">Permissions Required</h2>
+                                        <p className="text-slate-500 mb-8 leading-relaxed">
+                                            Please enable your camera and microphone to proceed with the AI interview.
+                                        </p>
+                                        <Button onClick={requestPermissions} className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-600/30">
+                                            Enable Camera & Mic
+                                        </Button>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md border border-slate-100"
+                                    >
+                                        <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-indigo-600">
+                                            <Play size={32} fill="currentColor" />
+                                        </div>
+                                        <h2 className="text-2xl font-[900] text-slate-900 mb-3">Ready to Begin?</h2>
+                                        <p className="text-slate-500 mb-8 leading-relaxed">
+                                            You're about to start a 10-minute technical screening with our AI. Speak clearly and take your time.
+                                        </p>
+                                        <Button onClick={handleStart} className="w-full h-14 text-lg bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/30">
+                                            Start Interview
+                                        </Button>
+                                    </motion.div>
+                                )}
                             </div>
                         )}
 

@@ -15,7 +15,7 @@ export default function Footer() {
                                 <Terminal size={18} className="text-white" strokeWidth={3} />
                             </div>
                             <span className="text-xl font-bold tracking-tight text-brand-black">
-                                We2
+                                Emble
                             </span>
                         </Link>
                         <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
@@ -70,7 +70,7 @@ export default function Footer() {
                 </div>
 
                 <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-medium text-gray-400 uppercase tracking-widest">
-                    <p>© 2025 We2 Technologies. All rights reserved.</p>
+                    <p>© 2025 Emble Technologies. All rights reserved.</p>
                     <div className="flex gap-8">
                         <Link href="#" className="hover:text-brand-black transition-colors"><Linkedin size={18} /></Link>
                         <Link href="#" className="hover:text-brand-black transition-colors"><Twitter size={18} /></Link>

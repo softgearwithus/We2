@@ -89,7 +89,7 @@ export default function Navbar() {
                         <Terminal size={18} className="text-white" strokeWidth={3} />
                     </div>
                     <span className="text-lg font-bold tracking-tight text-brand-black">
-                        We2
+                        Emble
                     </span>
                 </Link>
 

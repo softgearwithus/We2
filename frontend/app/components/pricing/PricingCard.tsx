@@ -44,7 +44,7 @@ export default function PricingCard({
 }: PricingCardProps) {
     const isPopular = variant === 'popular';
     const isPremium = variant === 'premium';
-    const { login, user } = useAuth();
+    const { login, updateUser, user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleUpgrade = async () => {
@@ -74,15 +74,17 @@ export default function PricingCard({
             if (response.ok) {
                 const updatedUser = await response.json();
                 // Update local auth state with new subscription details
-                login(token, updatedUser);
+                updateUser(updatedUser);
                 alert(`Successfully upgraded to ${title}!`);
                 if (onCtaClick) onCtaClick();
             } else {
-                alert('Upgrade failed. Please try again.');
+                const errorText = await response.text();
+                console.error('Upgrade failed:', response.status, errorText);
+                alert(`Upgrade failed: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
             console.error('Upgrade error:', error);
-            alert('An error occurred during upgrade.');
+            alert('An error occurred during upgrade. Please check console for details.');
         } finally {
             setIsLoading(false);
         }
@@ -95,19 +97,19 @@ export default function PricingCard({
             transition={{ duration: 0.5, delay: delay * 0.1 }}
             className={cn(
                 "relative flex flex-col p-8 rounded-3xl transition-all duration-300 group h-full bg-white",
-                (isPopular || isPremium) && "scale-105 z-10 shadow-2xl",
+                (isPopular || isPremium) && "scale-105 z-10 shadow-2xl ring-1 ring-black/5",
                 isPopular && "border-2 border-indigo-600 shadow-indigo-100",
-                isPremium && "border-2 border-purple-500 shadow-purple-200 bg-gradient-to-b from-white to-purple-50/30",
+                isPremium && "border-2 border-brand-orange shadow-orange-100 bg-gradient-to-b from-white to-orange-50/20",
                 variant === 'default' && "border border-slate-200 hover:border-slate-300 hover:shadow-xl hover:-translate-y-1"
             )}
         >
             {(isPopular || isPremium) && (
                 <div className={cn(
                     "absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-1",
-                    isPremium ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white ring-4 ring-white" : "bg-indigo-600 text-white"
+                    isPremium ? "bg-gradient-to-r from-brand-orange to-amber-500 text-white ring-4 ring-white" : "bg-indigo-600 text-white"
                 )}>
-                    {isPremium ? <Sparkles size={12} className="fill-current" /> : <Crown size={12} className="fill-current" />}
-                    {badgeText || (isPremium ? "Best Value" : "Most Popular")}
+                    {isPremium ? <Crown size={12} className="fill-current" /> : <Sparkles size={12} className="fill-current" />}
+                    {badgeText || (isPremium ? "Best Choice" : "Most Popular")}
                 </div>
             )}
 
@@ -115,25 +117,13 @@ export default function PricingCard({
                 <div className="flex items-center gap-3 mb-4">
                     <div className={cn(
                         "p-3 rounded-xl",
-                        isPremium ? "bg-purple-100 text-purple-600" : (isPopular ? "bg-indigo-50 text-indigo-600" : "bg-slate-50 text-slate-600")
+                        isPremium ? "bg-orange-100 text-brand-orange" : (isPopular ? "bg-indigo-50 text-indigo-600" : "bg-slate-50 text-slate-600")
                     )}>
                         {icon || <Zap size={24} />}
                     </div>
                     <div>
                         <h3 className="text-xl font-extrabold text-slate-900 leading-tight">
-                            {title.includes(':') ? (
-                                <>
-                                    <span className={cn(
-                                        isPremium ? "text-purple-600" : "text-brand-orange",
-                                        "font-black shadow-sm"
-                                    )}>
-                                        {title.split(':')[0]}
-                                    </span>
-                                    <span className="text-slate-400 font-bold text-sm block md:inline md:ml-1 md:text-lg">
-                                        <span className="hidden md:inline">:</span> {title.split(':')[1]}
-                                    </span>
-                                </>
-                            ) : title}
+                            {title}
                         </h3>
                         <p className="text-[13px] text-slate-500 font-medium leading-relaxed mt-1">{description}</p>
                     </div>
@@ -145,9 +135,11 @@ export default function PricingCard({
                         <span className="text-slate-500 font-bold">/{period}</span>
                     </div>
                     {savings && (
-                        <span className="text-xs font-bold text-emerald-600 mt-1 bg-emerald-50 px-2 py-1 rounded-md w-fit">
-                            {savings}
-                        </span>
+                        <div className="flex items-center gap-2 mt-2">
+                            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
+                                {savings}
+                            </span>
+                        </div>
                     )}
                 </div>
             </div>
@@ -156,14 +148,17 @@ export default function PricingCard({
                 {features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3 text-sm">
                         <div className={cn(
-                            "mt-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full",
+                            "mt-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full shrink-0",
                             feature.included
-                                ? (isPremium ? "bg-purple-100 text-purple-600" : "bg-emerald-100 text-emerald-600")
+                                ? (isPremium ? "bg-orange-100 text-brand-orange" : "bg-indigo-50 text-indigo-600")
                                 : "bg-slate-100 text-slate-400"
                         )}>
                             {feature.included ? <Check size={12} strokeWidth={3} /> : <div className="w-1.5 h-1.5 bg-slate-300 rounded-full" />}
                         </div>
-                        <span className={cn("font-medium", feature.included ? "text-slate-700" : "text-slate-400 line-through decoration-slate-300")}>
+                        <span className={cn(
+                            "font-medium flex-1",
+                            feature.included ? "text-slate-700" : "text-slate-400 line-through decoration-slate-300"
+                        )}>
                             {feature.text}
                         </span>
                     </div>
@@ -176,7 +171,7 @@ export default function PricingCard({
                 className={cn(
                     "w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2",
                     isPremium
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-purple-200 hover:shadow-purple-300 hover:scale-[1.02]"
+                        ? "bg-gradient-to-r from-brand-orange to-amber-600 text-white shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]"
                         : (isPopular
                             ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 hover:-translate-y-0.5"
                             : "bg-white text-slate-700 border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50"),

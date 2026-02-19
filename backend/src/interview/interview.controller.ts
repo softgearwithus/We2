@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, UseGuards, Request } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InterviewService } from './interview.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('interview')
 export class InterviewController {
@@ -41,5 +42,11 @@ export class InterviewController {
   @Post(':id/end')
   endSession(@Param('id') id: string) {
     return this.interviewService.endSession(id);
+  }
+
+  @Post('vapi/analysis')
+  @UseGuards(JwtAuthGuard)
+  async getVapiAnalysis(@Body('callId') callId: string, @Request() req: any) {
+    return this.interviewService.getVapiAnalysis(callId, req.user?.id);
   }
 }

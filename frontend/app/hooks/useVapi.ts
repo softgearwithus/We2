@@ -10,10 +10,18 @@ export const useVapi = () => {
     const [isMuted, setIsMuted] = useState(false);
     const [volumeLevel, setVolumeLevel] = useState(0); // 0 to 1
     const [messages, setMessages] = useState<any[]>([]);
+    const [callId, setCallId] = useState<string | null>(null);
+
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         // Event Listeners
-        vapi.on('call-start', () => setStatus('active'));
+        vapi.on('call-start', (payload) => {
+            setStatus('active');
+            setError(null);
+            const id = payload?.call?.id || payload?.id;
+            if (id) setCallId(id);
+        });
         vapi.on('call-end', () => setStatus('idle'));
 
         vapi.on('speech-start', () => setStatus('speaking')); // User or AI speaking? Vapi events can distinguish, usually generic speech-start
@@ -23,6 +31,11 @@ export const useVapi = () => {
 
         vapi.on('message', (message) => {
             // console.log('Vapi Message:', message); 
+
+            const messageCallId = message?.call?.id || message?.callId;
+            if (messageCallId) {
+                setCallId(prev => prev || messageCallId);
+            }
 
             // Only use transcript for immediate user feedback if it's new
             if (message.type === 'transcript' && message.transcriptType === 'final') {
@@ -54,6 +67,13 @@ export const useVapi = () => {
         vapi.on('error', (e) => {
             console.error('Vapi Error:', e);
             setStatus('idle');
+            // Check for specific "ejection" or common Vapi errors
+            const errorMessage = typeof e === 'string' ? e : (e?.message || JSON.stringify(e));
+            if (errorMessage.includes('ejection') || errorMessage.includes('ended')) {
+                setError('Call ended remotely.');
+            } else {
+                setError(errorMessage);
+            }
         });
 
         return () => {
@@ -61,13 +81,15 @@ export const useVapi = () => {
         };
     }, []);
 
-    const startInterview = useCallback(async (assistantId: string) => {
+    const startInterview = useCallback(async (assistantId: string, metadata?: Record<string, any>) => {
         setStatus('loading');
+        setError(null);
         try {
-            await vapi.start(assistantId);
-        } catch (error) {
+            await vapi.start(assistantId, metadata ? { metadata } : undefined);
+        } catch (error: any) {
             console.error('Failed to start Vapi:', error);
             setStatus('idle');
+            setError(error.message || 'Failed to start interview');
         }
     }, []);
 
@@ -86,6 +108,8 @@ export const useVapi = () => {
         isMuted,
         volumeLevel,
         messages,
+        callId,
+        error,
         startInterview,
         stopInterview,
         toggleMute

@@ -1,0 +1,2141 @@
+[
+  {
+    "id": "lc-1",
+    "title": "Two Sum",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [
+      "Array",
+      "Hash Table"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-07",
+    "history": [
+      {
+        "date": "2026-01-17",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(n) solution using hash map. Minor C++ improvements possible."
+      },
+      {
+        "date": "2026-01-24",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(n) solution using unordered_map. Clean and idiomatic C++."
+      }
+    ],
+    "leetcode_slug": "two-sum"
+  },
+  {
+    "id": "lc-2",
+    "title": "Add Two Numbers",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Linked List",
+      "Math",
+      "Recursion"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-17",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Incorrect return value; returned dummy node instead of result list head."
+      },
+      {
+        "date": "2026-01-18",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct logic. Manually handled linked list traversal and new node creation correctly. Minor: Used manual carry management instead of cleaner sum/10 logic inside loop."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal solution using clean sum/carry logic inside the loop. Code is concise and correct."
+      }
+    ],
+    "leetcode_slug": "add-two-numbers"
+  },
+  {
+    "id": "lc-3",
+    "title": "Longest Substring Without Repeating Characters",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Sliding Window",
+      "Hash Set",
+      "String"
+    ],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-17",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Perfect implementation of the sliding window pattern."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Sliding Window and frequency vector. Clean and efficient."
+      }
+    ],
+    "leetcode_slug": "longest-substring-without-repeating-characters"
+  },
+  {
+    "id": "lc-4",
+    "title": "Median of Two Sorted Arrays",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-17",
+        "result": "Failed",
+        "score": 1,
+        "notes": "Incomplete solution. Attempted binary search on partition but logic was incorrect and had out-of-bounds errors."
+      },
+      {
+        "date": "2026-01-18",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal logic, but scheduling tightened to 3 days due to previous failure and use of std::function/non-standard headers."
+      },
+      {
+        "date": "2026-01-21",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(log(m+n)) solution using Binary Search on partition. Handled edge cases (INT_MIN/INT_MAX) correctly. Code is slightly verbose but correct."
+      },
+      {
+        "date": "2026-01-27",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log(min(m,n))) solution using Binary Search on Partition. Correctly handled edge cases with INT_MIN/INT_MAX and array swapping."
+      }
+    ],
+    "leetcode_slug": "median-of-two-sorted-arrays"
+  },
+  {
+    "id": "lc-5",
+    "title": "Longest Palindromic Substring",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Dynamic Programming",
+      "Two Pointers"
+    ],
+    "mastery_score": 95,
+    "next_review": "2026-02-21",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct DP solution (O(n^2)). Optimal time, but space could be O(1) with expand-around-center."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Okay",
+        "score": 3,
+        "notes": "Used O(N^2) space DP again, ignoring the prompt to use 'Expand Around Center'. Used non-standard VLA (bool dp[n][n])."
+      },
+      {
+        "date": "2026-02-07",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N^2) time, O(1) space solution using Expand Around Center pattern. Significant improvement over previous DP approach."
+      }
+    ],
+    "leetcode_slug": "longest-palindromic-substring"
+  },
+  {
+    "id": "lc-518",
+    "title": "Coin Change II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Dynamic Programming"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Confused Permutations with Combinations. Recursion counted different orderings of same coins. Need to learn the iterative outer-loop-coins pattern."
+      },
+      {
+        "date": "2026-01-19",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct top-down DP solution. Successfully handled combinations vs permutations. Space complexity O(N*A) could be improved to O(A)."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N*Amount) time, O(Amount) space solution. Correct loop order for combinations (coins outer, amount inner)."
+      }
+    ],
+    "leetcode_slug": "coin-change-ii"
+  },
+  {
+    "id": "lc-7",
+    "title": "Reverse Integer",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Math"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal solution handling overflow explicitly. Code structure could be cleaner."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Correct and clean solution. Handled overflow using INT_MAX/10 check before multiplication, adhering to the 32-bit environment constraint."
+      }
+    ],
+    "leetcode_slug": "reverse-integer"
+  },
+  {
+    "id": "lc-1448",
+    "title": "Count Good Nodes in Binary Tree",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal DFS solution (O(N) time, O(H) space). Logic was concise and correct."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal DFS (O(N) time, O(H) space). Correctly tracked max value. Clean use of recursive lambda."
+      }
+    ],
+    "leetcode_slug": "count-good-nodes-in-binary-tree"
+  },
+  {
+    "id": "lc-10",
+    "title": "Regular Expression Matching",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [
+      "Dynamic Programming",
+      "Recursion"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(S*P) time/space complexity using Memoization (Top-down DP). Logic is sound and handles edge cases."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Top-Down DP solution. Logic is concise and correctly handles the '*' wildcard complexity using recursive lambda."
+      }
+    ],
+    "leetcode_slug": "regular-expression-matching"
+  },
+  {
+    "id": "lc-11",
+    "title": "Container With Most Water",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(n) solution using Two Pointers pattern. Correctly identified and implemented the greedy choice of moving the shorter line."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(n) solution using Two Pointers. Clean implementation."
+      }
+    ],
+    "leetcode_slug": "container-with-most-water"
+  },
+  {
+    "id": "lc-994",
+    "title": "Rotting Oranges",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Hard",
+        "score": 2,
+        "notes": "BFS logic correct but syntax errors in assignment (== instead of =) prevented compilation. Needs careful review of basic C++ syntax."
+      },
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Multi-source BFS implementation. Logic is sound and handles edge cases correctly."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Multi-source BFS. Logic failed on edge case [[0]] (no fresh, no rotten) returning -1 instead of 0. Handled [[2]] correctly."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Multi-source BFS. Logic failed on edge case [[0]] (no fresh, no rotten) returning -1 instead of 0. Handled [[2]] correctly."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Correct Multi-source BFS logic. Handled edge cases like no fresh oranges [[0]] by initial check."
+      }
+    ],
+    "leetcode_slug": "rotting-oranges"
+  },
+  {
+    "id": "lc-15",
+    "title": "3Sum",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Two Pointers",
+      "Sorting"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Partial Success",
+        "score": 2,
+        "notes": "Incomplete implementation. Started with sorting and three pointers structure but loop logic and duplicate handling were unfinished."
+      },
+      {
+        "date": "2026-01-19",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N^2) solution. Correctly handled duplicate skipping for both the outer loop (i) and inner pointers (j, k)."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Clean O(N^2) implementation. Correctly handled all duplicate skipping logic."
+      }
+    ],
+    "leetcode_slug": "3sum"
+  },
+  {
+    "id": "lc-17",
+    "title": "Letter Combinations of a Phone Number",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Backtracking",
+      "String",
+      "Recursion"
+    ],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal backtracking solution. Correctly handled mapping and recursion."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal backtracking (O(4^^N) time/space). Clean recursive lambda usage."
+      }
+    ],
+    "leetcode_slug": "letter-combinations-of-a-phone-number"
+  },
+  {
+    "id": "lc-19",
+    "title": "Remove Nth Node From End of List",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Two Pointers",
+      "Linked List"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct logic using dummy node and two-pass (count then traversal) approach. Optimal one-pass solution uses two pointers with a gap."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal one-pass solution implemented correctly. Excellent C++ memory management (deleting removed node and dummy)."
+      }
+    ],
+    "leetcode_slug": "remove-nth-node-from-end-of-list"
+  },
+  {
+    "id": "lc-20",
+    "title": "Valid Parentheses",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [
+      "Stack",
+      "String"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-10",
+    "history": [
+      {
+        "date": "2026-01-18",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct stack implementation. Handled all edge cases correctly."
+      },
+      {
+        "date": "2026-01-27",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(n) solution using stack and hash map. Clean and correct."
+      }
+    ],
+    "leetcode_slug": "valid-parentheses"
+  },
+  {
+    "id": "lc-22",
+    "title": "Generate Parentheses",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Backtracking",
+      "Recursion"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct backtracking solution. Minimal and readable code. Used 'o' and 'c' counters effectively."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal backtracking solution with efficient string management (push/pop). Used modern C++ generic recursive lambda."
+      }
+    ],
+    "leetcode_slug": "generate-parentheses"
+  },
+  {
+    "id": "lc-23",
+    "title": "Merge k Sorted Lists",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [
+      "Linked List",
+      "Heap",
+      "Divide and Conquer"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct logic using queue as index tracker (not a priority queue). Time complexity O(N*K) not optimal compared to O(N*logK) with Min-Heap."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N log K) solution using Min-Heap. Clean implementation with lambda comparator."
+      }
+    ],
+    "leetcode_slug": "merge-k-sorted-lists"
+  },
+  {
+    "id": "lc-25",
+    "title": "Reverse Nodes in k-Group",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-05",
+    "history": [
+      {
+        "date": "2026-01-22",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal recursive solution (O(N) time). Handled k-group checks and reversals correctly."
+      }
+    ],
+    "leetcode_slug": "reverse-nodes-in-k-group"
+  },
+  {
+    "id": "lc-543",
+    "title": "Diameter of Binary Tree",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-22",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct logic using post-order DFS. Minus one point for significant memory leak (creating new Details objects on heap without deletion)."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) time and O(H) space solution. Used an elegant recursive lambda to calculate height and update diameter simultaneously. No memory leaks in the Solution class."
+      }
+    ],
+    "leetcode_slug": "diameter-of-binary-tree"
+  },
+  {
+    "id": "lc-33",
+    "title": "Search in Rotated Sorted Array",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Binary Search",
+      "Array"
+    ],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Failed",
+        "score": 1,
+        "notes": "Logic error: simplified condition `nums[low] > target` fails to account for rotation pivot properly (e.g., [5,1,2], target=1). Needs standard 2-check approach."
+      },
+      {
+        "date": "2026-01-20",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Logic error on pivot check: used '<' instead of '<=' for left-sorted check. Fails on 2-element arrays like [3, 1]."
+      },
+      {
+        "date": "2026-01-21",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log N) solution. Correctly identified sorted halves using nums[mid] >= nums[low] and checked ranges properly."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log N) solution. Correctly identified sorted halves using nums[low] <= nums[mid] and handled range checks perfectly."
+      }
+    ],
+    "leetcode_slug": "search-in-rotated-sorted-array"
+  },
+  {
+    "id": "lc-36",
+    "title": "Valid Sudoku",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Hash Table",
+      "Array",
+      "Matrix"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-10",
+    "history": [
+      {
+        "date": "2026-01-19",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Used O(1) space boolean arrays but logic had subtle off-by-one or indexing issues (implicit). More importantly, the problem requires just checking VALIDITY, not solving it. The 'Hard' score reflects that while the logic *looks* correct, simpler HashSets would have been less error-prone and cleaner for a first attempt."
+      },
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(1) space solution. Correct indexing logic for sub-boxes."
+      },
+      {
+        "date": "2026-01-27",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(1) space solution using boolean arrays. Correct sub-box logic."
+      }
+    ],
+    "leetcode_slug": "valid-sudoku"
+  },
+  {
+    "id": "lc-39",
+    "title": "Combination Sum",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Backtracking",
+      "Array"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-05",
+    "history": [
+      {
+        "date": "2026-01-22",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal backtracking using pick/no-pick pattern. Correctly used recursive lambda."
+      }
+    ],
+    "leetcode_slug": "combination-sum"
+  },
+  {
+    "id": "lc-40",
+    "title": "Combination Sum II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-22",
+    "history": [
+      {
+        "date": "2026-01-24",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal backtracking solution using sorted array and duplicate skipping logic (i > idx && nums[i] == nums[i-1])."
+      },
+      {
+        "date": "2026-02-08",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Clean backtracking implementation with optimal pruning and duplicate handling. Used modern C++ recursive lambda."
+      }
+    ],
+    "leetcode_slug": "combination-sum-ii"
+  },
+  {
+    "id": "lc-42",
+    "title": "Trapping Rain Water",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-10",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Two Pointers / Prefix Max approach (O(n) time, O(n) space). Logic is sound."
+      },
+      {
+        "date": "2026-01-27",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Two Pointers pattern. Clean implementation of the min(maxLeft, maxRight) logic."
+      }
+    ],
+    "leetcode_slug": "trapping-rain-water"
+  },
+  {
+    "id": "lc-43",
+    "title": "Multiply Strings",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-07",
+    "history": [
+      {
+        "date": "2026-01-24",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(MN) simulation using array and [i+j, i+j+1] index mapping pattern."
+      }
+    ],
+    "leetcode_slug": "multiply-strings"
+  },
+  {
+    "id": "lc-45",
+    "title": "Jump Game II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Greedy",
+      "Array"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-05",
+    "history": [
+      {
+        "date": "2026-01-22",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Greedy BFS pattern. Correctly tracked maxReach and current jump boundary."
+      }
+    ],
+    "leetcode_slug": "jump-game-ii"
+  },
+  {
+    "id": "lc-46",
+    "title": "Permutations",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Backtracking"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Backtracking solution. Used 'visited' array to track usage. Could be improved with 'swap' pattern."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal logic using recursive lambda. Deducted one point for using VLA (Variable Length Array) which is non-standard C++."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Backtracking solution using 'swap' approach (space optimized, no 'visited' array). Clean recursive lambda."
+      }
+    ],
+    "leetcode_slug": "permutations"
+  },
+  {
+    "id": "lc-48",
+    "title": "Rotate Image",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Matrix Rotation"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(n^2) time, O(1) space. Used Reverse + Transpose method."
+      },
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Clean and idiomatic C++ implementation of the Reverse + Transpose pattern."
+      }
+    ],
+    "leetcode_slug": "rotate-image"
+  },
+  {
+    "id": "lc-49",
+    "title": "Group Anagrams",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct solution using Frequency Map key. Time O(N*K), Space O(N*K)."
+      },
+      {
+        "date": "2026-01-27",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(N*K) solution using frequency count key. Key generation string concatenation was slightly verbose but correct."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N*K) solution using frequency key (string representation). Handled hashing correctly."
+      }
+    ],
+    "leetcode_slug": "group-anagrams"
+  },
+  {
+    "id": "lc-50",
+    "title": "Pow(x, n)",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Math",
+      "Recursion"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-07",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Logic error for negative odd powers. Recursive structure inverted the result incorrectly. Needs to handle negative n upfront."
+      },
+      {
+        "date": "2026-01-24",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log N) iterative solution using Binary Exponentiation. Correctly handled INT_MIN overflow using long long."
+      }
+    ],
+    "leetcode_slug": "powx-n"
+  },
+  {
+    "id": "lc-51",
+    "title": "N-Queens",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [
+      "Backtracking"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-06",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N!) Backtracking solution. Used efficient boolean arrays for columns/diagonals instead of iterating. Code structure with recursive lambda was clean."
+      }
+    ],
+    "leetcode_slug": "n-queens"
+  },
+  {
+    "id": "lc-53",
+    "title": "Maximum Subarray",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Kadane's Algorithm",
+      "Dynamic Programming"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-06",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Kadane's Algorithm. Correctly handled negative numbers by resetting currSum only when it drops below zero."
+      }
+    ],
+    "leetcode_slug": "maximum-subarray"
+  },
+  {
+    "id": "lc-54",
+    "title": "Spiral Matrix",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Simulation",
+      "Matrix"
+    ],
+    "mastery_score": 80,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct simulation using direction vectors and visited array. O(MN) time/space. Space could be optimized to O(1) by calculating boundaries."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(MN) time simulation. Correct use of direction vectors. Space complexity is O(MN) due to visited matrix; could be optimized to O(1) by using boundary pointers (top, bottom, left, right)."
+      }
+    ],
+    "leetcode_slug": "spiral-matrix"
+  },
+  {
+    "id": "lc-55",
+    "title": "Jump Game",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-10",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Good",
+        "score": 4,
+        "notes": "Optimal O(n) greedy solution keeping track of max reach."
+      },
+      {
+        "date": "2026-01-27",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Greedy Reachable Range pattern. Correctly tracked maxReach."
+      }
+    ],
+    "leetcode_slug": "jump-game"
+  },
+  {
+    "id": "lc-56",
+    "title": "Merge Intervals",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Logic error in while loop: unconditional i++ after erase skips subsequent overlaps (e.g., [1,6] vs [5,10]). Fails on chained overlaps."
+      },
+      {
+        "date": "2026-01-21",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N log N) solution. Used the Sort & Merge pattern perfectly. Correctly handled the empty result vector case."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N log N) solution using Sort & Merge. Clean implementation."
+      }
+    ],
+    "leetcode_slug": "merge-intervals"
+  },
+  {
+    "id": "lc-57",
+    "title": "Insert Interval",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-20",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Logic error: Helper function assumes sorted input. Delayed insertion of newInterval causes start-time data loss if newInterval starts before the current interval."
+      },
+      {
+        "date": "2026-01-21",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) linear scan solution. Correctly handled the three phases (left, merge, right)."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) linear scan. Cleanly implemented the 3-phase strategy (Left, Overlap, Right)."
+      }
+    ],
+    "leetcode_slug": "insert-interval"
+  },
+  {
+    "id": "lc-567",
+    "title": "Permutation in String",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-22",
+    "history": [
+      {
+        "date": "2026-01-24",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Sliding Window and fixed-size frequency array. Implemented duplicate count optimization logic correctly."
+      },
+      {
+        "date": "2026-02-08",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Sliding Window. Very efficient C++ logic using post-increments."
+      }
+    ],
+    "leetcode_slug": "permutation-in-string"
+  },
+  {
+    "id": "lc-572",
+    "title": "Subtree of Another Tree",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-22",
+    "history": [
+      {
+        "date": "2026-01-24",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal recursive DFS solution. Used helper function isSameTree logic correctly."
+      },
+      {
+        "date": "2026-02-08",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal recursive DFS solution (O(M*N)). Logic is clean and correct."
+      }
+    ],
+    "leetcode_slug": "subtree-of-another-tree"
+  },
+  {
+    "id": "lc-62",
+    "title": "Unique Paths",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-25",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Top-Down DP solution (O(MN) Time/Space). Optimal logic, but space could be optimized to O(N) or O(1) using Combinatorics."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal DP (O(MN) time/space). Cleaner implementation than previous."
+      }
+    ],
+    "leetcode_slug": "unique-paths"
+  },
+  {
+    "id": "lc-66",
+    "title": "Plus One",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "plus-one"
+  },
+  {
+    "id": "lc-70",
+    "title": "Climbing Stairs",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [
+      "Dynamic Programming",
+      "Math"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-28",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) time O(1) space solution. Implemented the Fibonacci approach cleanly."
+      }
+    ],
+    "leetcode_slug": "climbing-stairs"
+  },
+  {
+    "id": "lc-72",
+    "title": "Edit Distance",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Dynamic Programming"
+    ],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-26",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Top-Down DP logic using memoization. Base cases (i==m, j==n) were handled recursively (O(N) depth) instead of O(1) arithmetic difference."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Top-Down DP solution (O(MN) time/space). Used recursive lambda with memoization efficiently."
+      }
+    ],
+    "leetcode_slug": "edit-distance"
+  },
+  {
+    "id": "lc-73",
+    "title": "Set Matrix Zeroes",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Matrix In-Place Flagging"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-09",
+    "history": [
+      {
+        "date": "2026-01-26",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(1) space logic using first row/col as headers. Corrected previous boolean logic issues."
+      }
+    ],
+    "leetcode_slug": "set-matrix-zeroes"
+  },
+  {
+    "id": "lc-74",
+    "title": "Search a 2D Matrix",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 100,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-21",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log(m*n)) solution. Perfectly mapped the 2D matrix indices to a 1D range for standard binary search."
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log(MN)) solution. Correctly mapped 2D indices to 1D."
+      }
+    ],
+    "leetcode_slug": "search-a-2d-matrix"
+  },
+  {
+    "id": "lc-76",
+    "title": "Minimum Window Substring",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-05",
+    "history": [
+      {
+        "date": "2026-01-21",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Sliding Window and Hash Map. Correctly handled window expansion and contraction logic."
+      },
+      {
+        "date": "2026-01-21",
+        "result": "Partial Success",
+        "score": 2,
+        "notes": "Logic bug: failed to update answer inside the shrinking loop. Incorrect result for s='ab', t='b'. Downgraded to Hard."
+      },
+      {
+        "date": "2026-01-22",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using sliding window and character array. Fixed previous logic bug in shrinking phase."
+      }
+    ],
+    "leetcode_slug": "minimum-window-substring"
+  },
+  {
+    "id": "lc-78",
+    "title": "Subsets",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "subsets"
+  },
+  {
+    "id": "lc-79",
+    "title": "Word Search",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Backtracking",
+      "DFS"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-06",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Backtracking/DFS solution. Correctly handled visited state and backtracking. Used recursive lambda."
+      }
+    ],
+    "leetcode_slug": "word-search"
+  },
+  {
+    "id": "lc-84",
+    "title": "Largest Rectangle in Histogram",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [
+      "Monotonic Stack"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-06",
+    "history": [
+      {
+        "date": "2026-01-21",
+        "result": "Failed",
+        "score": 1,
+        "notes": "Skipped immediately. User requested to learn directly."
+      },
+      {
+        "date": "2026-01-21",
+        "result": "Failed",
+        "score": 1,
+        "notes": "Incomplete solution. Attempted to implement Monotonic Stack but left the function body essentially empty."
+      },
+      {
+        "date": "2026-01-23",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Monotonic Stack. Correctly handled 'Next Smaller Element' logic for both left and right boundaries."
+      }
+    ],
+    "leetcode_slug": "largest-rectangle-in-histogram"
+  },
+  {
+    "id": "lc-90",
+    "title": "Subsets II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "subsets-ii"
+  },
+  {
+    "id": "lc-91",
+    "title": "Decode Ways",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "decode-ways"
+  },
+  {
+    "id": "lc-2013",
+    "title": "Detect Squares",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "detect-squares"
+  },
+  {
+    "id": "lc-97",
+    "title": "Interleaving String",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "interleaving-string"
+  },
+  {
+    "id": "lc-98",
+    "title": "Validate Binary Search Tree",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-06",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) recursive solution. Correctly maintained valid range (min, max) for each node."
+      }
+    ],
+    "leetcode_slug": "validate-binary-search-tree"
+  },
+  {
+    "id": "lc-100",
+    "title": "Same Tree",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "same-tree"
+  },
+  {
+    "id": "lc-102",
+    "title": "Binary Tree Level Order Traversal",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "binary-tree-level-order-traversal"
+  },
+  {
+    "id": "lc-1046",
+    "title": "Last Stone Weight",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "last-stone-weight"
+  },
+  {
+    "id": "lc-104",
+    "title": "Maximum Depth of Binary Tree",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "maximum-depth-of-binary-tree"
+  },
+  {
+    "id": "lc-105",
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "construct-binary-tree-from-preorder-and-inorder-traversal"
+  },
+  {
+    "id": "lc-621",
+    "title": "Task Scheduler",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Greedy",
+      "Math"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-28",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using the Greedy/Math formula. Very clean and efficient."
+      }
+    ],
+    "leetcode_slug": "task-scheduler"
+  },
+  {
+    "id": "lc-110",
+    "title": "Balanced Binary Tree",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "balanced-binary-tree"
+  },
+  {
+    "id": "lc-115",
+    "title": "Distinct Subsequences",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "distinct-subsequences"
+  },
+  {
+    "id": "lc-121",
+    "title": "Best Time to Buy and Sell Stock",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "best-time-to-buy-and-sell-stock"
+  },
+  {
+    "id": "lc-124",
+    "title": "Binary Tree Maximum Path Sum",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "binary-tree-maximum-path-sum"
+  },
+  {
+    "id": "lc-125",
+    "title": "Valid Palindrome",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "valid-palindrome"
+  },
+  {
+    "id": "lc-127",
+    "title": "Word Ladder",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "word-ladder"
+  },
+  {
+    "id": "lc-128",
+    "title": "Longest Consecutive Sequence",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "longest-consecutive-sequence"
+  },
+  {
+    "id": "lc-130",
+    "title": "Surrounded Regions",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "surrounded-regions"
+  },
+  {
+    "id": "lc-131",
+    "title": "Palindrome Partitioning",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "palindrome-partitioning"
+  },
+  {
+    "id": "lc-133",
+    "title": "Clone Graph",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "clone-graph"
+  },
+  {
+    "id": "lc-134",
+    "title": "Gas Station",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "gas-station"
+  },
+  {
+    "id": "lc-647",
+    "title": "Palindromic Substrings",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "palindromic-substrings"
+  },
+  {
+    "id": "lc-136",
+    "title": "Single Number",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "single-number"
+  },
+  {
+    "id": "lc-138",
+    "title": "Copy List with Random Pointer",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "copy-list-with-random-pointer"
+  },
+  {
+    "id": "lc-139",
+    "title": "Word Break",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 90,
+    "next_review": "2026-02-18",
+    "history": [
+      {
+        "date": "2026-01-24",
+        "result": "Good",
+        "score": 4,
+        "notes": "Correct Bottom-Up DP solution. Used VLA (bool dp[size]) which is non-standard; advised to use vector<bool> instead. Logic is optimal O(N^3)"
+      },
+      {
+        "date": "2026-02-04",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Bottom-Up DP (O(N^^3) time). Clean implementation using unordered_set."
+      }
+    ],
+    "leetcode_slug": "word-break"
+  },
+  {
+    "id": "lc-141",
+    "title": "Linked List Cycle",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "linked-list-cycle"
+  },
+  {
+    "id": "lc-143",
+    "title": "Reorder List",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "reorder-list"
+  },
+  {
+    "id": "lc-146",
+    "title": "LRU Cache",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "lru-cache"
+  },
+  {
+    "id": "lc-150",
+    "title": "Evaluate Reverse Polish Notation",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "evaluate-reverse-polish-notation"
+  },
+  {
+    "id": "lc-152",
+    "title": "Maximum Product Subarray",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "maximum-product-subarray"
+  },
+  {
+    "id": "lc-153",
+    "title": "Find Minimum in Rotated Sorted Array",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Binary Search",
+      "Array"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-05",
+    "history": [
+      {
+        "date": "2026-01-21",
+        "result": "Failed",
+        "score": 1,
+        "notes": "Logic error: low += mid caused infinite loops and incorrect index arithmetic. Failed on [2,1] case. Needs standard binary search logic."
+      },
+      {
+        "date": "2026-01-22",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log N) solution. Correctly handled rotation pivot detection using 'mid' vs 'high' comparison."
+      }
+    ],
+    "leetcode_slug": "find-minimum-in-rotated-sorted-array"
+  },
+  {
+    "id": "lc-155",
+    "title": "Min Stack",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "min-stack"
+  },
+  {
+    "id": "lc-678",
+    "title": "Valid Parenthesis String",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "valid-parenthesis-string"
+  },
+  {
+    "id": "lc-167",
+    "title": "Two Sum II - Input Array Is Sorted",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "two-sum-ii-input-array-is-sorted"
+  },
+  {
+    "id": "lc-1584",
+    "title": "Min Cost to Connect All Points",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "min-cost-to-connect-all-points"
+  },
+  {
+    "id": "lc-684",
+    "title": "Redundant Connection",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Union-Find"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-28",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N alpha(N)) solution using Union-Find. Implemented path compression and union by size correctly."
+      }
+    ],
+    "leetcode_slug": "redundant-connection"
+  },
+  {
+    "id": "lc-695",
+    "title": "Max Area of Island",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "max-area-of-island"
+  },
+  {
+    "id": "lc-190",
+    "title": "Reverse Bits",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "reverse-bits"
+  },
+  {
+    "id": "lc-191",
+    "title": "Number of 1 Bits",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "number-of-1-bits"
+  },
+  {
+    "id": "lc-198",
+    "title": "House Robber",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "house-robber"
+  },
+  {
+    "id": "lc-199",
+    "title": "Binary Tree Right Side View",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "binary-tree-right-side-view"
+  },
+  {
+    "id": "lc-200",
+    "title": "Number of Islands",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-06",
+    "history": [
+      {
+        "date": "2026-01-23",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal BFS solution. Used lambda for clean BFS encapsulation. Modified grid in-place to save space (visited set)."
+      }
+    ],
+    "leetcode_slug": "number-of-islands"
+  },
+  {
+    "id": "lc-202",
+    "title": "Happy Number",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "happy-number"
+  },
+  {
+    "id": "lc-206",
+    "title": "Reverse Linked List",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "reverse-linked-list"
+  },
+  {
+    "id": "lc-207",
+    "title": "Course Schedule",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "course-schedule"
+  },
+  {
+    "id": "lc-208",
+    "title": "Implement Trie (Prefix Tree)",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "implement-trie-prefix-tree"
+  },
+  {
+    "id": "lc-210",
+    "title": "Course Schedule II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "course-schedule-ii"
+  },
+  {
+    "id": "lc-211",
+    "title": "Design Add and Search Words Data Structure",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "design-add-and-search-words-data-structure"
+  },
+  {
+    "id": "lc-212",
+    "title": "Word Search II",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "word-search-ii"
+  },
+  {
+    "id": "lc-213",
+    "title": "House Robber II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "house-robber-ii"
+  },
+  {
+    "id": "lc-215",
+    "title": "Kth Largest Element in an Array",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [
+      "Heap",
+      "QuickSelect",
+      "Sorting"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-05",
+    "history": [
+      {
+        "date": "2026-01-22",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N log K) solution using Min-Heap."
+      }
+    ],
+    "leetcode_slug": "kth-largest-element-in-an-array"
+  },
+  {
+    "id": "lc-217",
+    "title": "Contains Duplicate",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [
+      "Hash Table",
+      "Sorting"
+    ],
+    "mastery_score": 50,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-28",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using Unordered Set. Clean and concise."
+      }
+    ],
+    "leetcode_slug": "contains-duplicate"
+  },
+  {
+    "id": "lc-226",
+    "title": "Invert Binary Tree",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "invert-binary-tree"
+  },
+  {
+    "id": "lc-739",
+    "title": "Daily Temperatures",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "daily-temperatures"
+  },
+  {
+    "id": "lc-1143",
+    "title": "Longest Common Subsequence",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "longest-common-subsequence"
+  },
+  {
+    "id": "lc-230",
+    "title": "Kth Smallest Element in a BST",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "kth-smallest-element-in-a-bst"
+  },
+  {
+    "id": "lc-743",
+    "title": "Network Delay Time",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-12",
+    "history": [
+      {
+        "date": "2026-01-29",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Dijkstra implementation using Min-Heap. Logic is flawless."
+      }
+    ],
+    "leetcode_slug": "network-delay-time"
+  },
+  {
+    "id": "lc-235",
+    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "lowest-common-ancestor-of-a-binary-search-tree"
+  },
+  {
+    "id": "lc-746",
+    "title": "Min Cost Climbing Stairs",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "min-cost-climbing-stairs"
+  },
+  {
+    "id": "lc-238",
+    "title": "Product of Array Except Self",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "product-of-array-except-self"
+  },
+  {
+    "id": "lc-239",
+    "title": "Sliding Window Maximum",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "sliding-window-maximum"
+  },
+  {
+    "id": "lc-242",
+    "title": "Valid Anagram",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "valid-anagram"
+  },
+  {
+    "id": "lc-252",
+    "title": "Meeting Rooms",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "meeting-rooms"
+  },
+  {
+    "id": "lc-253",
+    "title": "Meeting Rooms II",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "meeting-rooms-ii"
+  },
+  {
+    "id": "lc-763",
+    "title": "Partition Labels",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "partition-labels"
+  },
+  {
+    "id": "lc-261",
+    "title": "Graph Valid Tree",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "graph-valid-tree"
+  },
+  {
+    "id": "lc-268",
+    "title": "Missing Number",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 50,
+    "next_review": "2026-02-11",
+    "history": [
+      {
+        "date": "2026-01-27",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) solution using XOR approach (O(1) space). Clean implementation."
+      }
+    ],
+    "leetcode_slug": "missing-number"
+  },
+  {
+    "id": "lc-269",
+    "title": "Alien Dictionary",
+    "description": "",
+    "difficulty": "Hard",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "alien-dictionary"
+  },
+  {
+    "id": "lc-271",
+    "title": "Encode and Decode Strings",
+    "description": "",
+    "difficulty": "Medium",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "encode-and-decode-strings"
+  },
+  {
+    "id": "lc-703",
+    "title": "Kth Largest Element in a Stream",
+    "description": "",
+    "difficulty": "Easy",
+    "patterns": [],
+    "mastery_score": 0,
+    "next_review": "2026-01-14",
+    "history": [],
+    "leetcode_slug": "kth-largest-element-in-a-stream"
+  }
+]

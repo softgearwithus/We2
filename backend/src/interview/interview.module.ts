@@ -4,9 +4,10 @@ import { InterviewService } from './interview.service';
 import { InterviewController } from './interview.controller';
 import { VapiController } from './vapi.controller';
 import { Interview } from './entities/interview.entity';
+import { InterviewSession } from '../interviews/entities/interview-session.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Interview])],
+  imports: [TypeOrmModule.forFeature([Interview, InterviewSession])],
   controllers: [InterviewController, VapiController],
   providers: [InterviewService],
 })

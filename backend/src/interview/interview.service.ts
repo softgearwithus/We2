@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Interview } from './entities/interview.entity';
+import { InterviewSession, InterviewStatus, InterviewType } from '../interviews/entities/interview-session.entity';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 
 @Injectable()
@@ -12,6 +13,8 @@ export class InterviewService {
   constructor(
     @InjectRepository(Interview)
     private interviewRepository: Repository<Interview>,
+    @InjectRepository(InterviewSession)
+    private interviewSessionsRepo: Repository<InterviewSession>,
   ) {
     // Initialize Gemini
     // WARNING: Ensure GEMINI_API_KEY is allowed in your environment
@@ -175,9 +178,7 @@ export class InterviewService {
       const data = await response.json();
       console.log(`Analysis received for ${callId}:`, data.analysis);
 
-      // Map Vapi analysis (summary, transcript, success evaluation) 
-      // back to our Interview record if we can find it by some tag or logic
-      // Vapi can send 'metadata' which we can include in assistant-request
+      await this.saveVapiAnalysis(callId, data);
 
       return data;
     } catch (error) {
@@ -194,5 +195,167 @@ export class InterviewService {
     // generating feedback could happen here
     await this.interviewRepository.save(interview);
     return { message: "Interview ended" };
+  }
+
+  async fetchVapiAnalysisNow(callId: string) {
+    return this.fetchVapiAnalysis(callId);
+  }
+
+  async registerVapiCall(userId: string, callId: string, metadata?: { assistantId?: string }) {
+    const session = this.interviewSessionsRepo.create({
+      userId,
+      type: InterviewType.TECHNICAL,
+      status: InterviewStatus.IN_PROGRESS,
+      startedAt: new Date(),
+      aiInterviewerId: metadata?.assistantId || 'Vapi',
+      externalCallId: callId,
+      analysisProvider: 'vapi',
+      questions: [{ context: 'Video Simulation' }],
+    });
+
+    return this.interviewSessionsRepo.save(session);
+  }
+
+  async getVapiAnalysis(callId: string, userId?: string) {
+    let session = await this.interviewSessionsRepo.findOne({ where: { externalCallId: callId } });
+
+    if (!session && userId) {
+      await this.registerVapiCall(userId, callId);
+      session = await this.interviewSessionsRepo.findOne({ where: { externalCallId: callId } });
+    }
+
+    if (!session) throw new NotFoundException('Vapi session not found');
+    if (userId && session.userId !== userId) throw new NotFoundException('Vapi session not found');
+
+    const needsRefresh = !session.analysis?.raw
+      || (!session.analysis?.logs && !!session.analysis?.logUrl)
+      || (!session.analysis?.summary && !!session.feedback);
+
+    if (!session.analysis || needsRefresh) {
+      await this.fetchVapiAnalysisNow(callId);
+      const refreshed = await this.interviewSessionsRepo.findOne({ where: { externalCallId: callId } });
+      if (refreshed) return refreshed;
+    }
+    return session;
+  }
+
+  private normalizeVapiScores(analysis: any) {
+    if (!analysis) return null;
+    const scores = analysis.scores || analysis.scoring || analysis.evaluation || analysis.metrics || {};
+
+    const overall = typeof scores.overall === 'number'
+      ? scores.overall
+      : (typeof scores.overallScore === 'number'
+        ? scores.overallScore
+        : (typeof analysis.overallScore === 'number'
+          ? analysis.overallScore
+          : (typeof analysis.score === 'number' ? analysis.score : null)));
+
+    const technical = scores.technical
+      ?? scores.tech
+      ?? analysis.technicalScore
+      ?? (typeof analysis.technical === 'number' ? analysis.technical : null);
+    const communication = scores.communication
+      ?? scores.comm
+      ?? analysis.communicationScore
+      ?? (typeof analysis.communication === 'number' ? analysis.communication : null);
+    const problemSolving = scores.problemSolving
+      ?? scores.problem_solving
+      ?? analysis.problemSolvingScore
+      ?? (typeof analysis.problemSolving === 'number' ? analysis.problemSolving : null);
+
+    const normalized = {
+      overallScore: overall,
+      metrics: {
+        technical,
+        communication,
+        problemSolving,
+      },
+    };
+
+    return normalized;
+  }
+
+  private normalizeVapiFeedback(analysis: any) {
+    const feedback: Array<{ type: 'strength' | 'improvement'; text: string }> = [];
+    const strengths = analysis?.strengths || analysis?.positive || [];
+    const improvements = analysis?.improvements || analysis?.negative || [];
+
+    if (Array.isArray(strengths)) {
+      strengths.forEach((text) => feedback.push({ type: 'strength', text }));
+    }
+    if (Array.isArray(improvements)) {
+      improvements.forEach((text) => feedback.push({ type: 'improvement', text }));
+    }
+
+    return feedback;
+  }
+
+  private async saveVapiAnalysis(callId: string, data: any) {
+    const session = await this.interviewSessionsRepo.findOne({ where: { externalCallId: callId } });
+    if (!session) return;
+
+    const callData = data || {};
+    const analysis = callData?.analysis || callData?.summary || null;
+    const artifact = callData?.artifact || {};
+    const transcript = artifact?.transcript || analysis?.transcript || callData?.transcript || null;
+    const logUrl = artifact?.logUrl || callData?.logUrl || analysis?.logUrl || null;
+    let logs = artifact?.messages
+      || callData?.messages
+      || callData?.conversation
+      || analysis?.logs
+      || analysis?.messages
+      || null;
+    const structuredData = analysis?.structuredData || null;
+    const structuredMetrics = structuredData?.metrics || null;
+    const metricsSource = structuredMetrics && typeof structuredMetrics === 'object'
+      ? structuredMetrics
+      : (structuredData || analysis);
+    const feedbackSource = structuredData || analysis;
+    const normalizedScores = this.normalizeVapiScores(metricsSource);
+    const feedback = this.normalizeVapiFeedback(feedbackSource);
+    const summary = analysis?.summary
+      || feedbackSource?.feedback
+      || analysis?.feedback
+      || null;
+
+    if (!logs && logUrl) {
+      try {
+        const logResponse = await fetch(logUrl);
+        if (logResponse.ok) {
+          const contentType = logResponse.headers.get('content-type') || '';
+          logs = contentType.includes('application/json')
+            ? await logResponse.json()
+            : await logResponse.text();
+        }
+      } catch (error) {
+        console.warn('Failed to fetch Vapi log URL', error);
+      }
+    }
+
+    session.status = InterviewStatus.COMPLETED;
+    session.completedAt = new Date();
+    session.analysisProvider = 'vapi';
+
+    if (normalizedScores?.overallScore !== null && normalizedScores?.overallScore !== undefined) {
+      session.overallScore = Math.round(normalizedScores.overallScore);
+    }
+
+    session.analysis = {
+      provider: 'vapi',
+      raw: callData,
+      summary,
+      metrics: normalizedScores?.metrics,
+      transcript,
+      feedback,
+      logs,
+      logUrl,
+    };
+
+    session.feedback = summary || session.feedback;
+    session.strengths = feedbackSource?.strengths || analysis?.strengths || session.strengths;
+    session.improvements = feedbackSource?.improvements || analysis?.improvements || session.improvements;
+
+    await this.interviewSessionsRepo.save(session);
   }
 }

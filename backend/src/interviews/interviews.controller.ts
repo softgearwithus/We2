@@ -142,8 +142,9 @@ export class InterviewsController {
     ) {
         try {
             const metadata = JSON.parse(body.metadata);
+            const theme = metadata?.theme;
             // 1. Create session immediately (Fast)
-            const session = await this.interviewsService.submitCommunicationSession(req.user.id);
+            const session = await this.interviewsService.submitCommunicationSession(req.user.id, theme);
 
             // 2. Trigger background analysis (Async, don't await)
             this.interviewsService.performBackgroundAnalysis(session.id, files, metadata);

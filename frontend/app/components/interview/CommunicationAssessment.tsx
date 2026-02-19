@@ -29,7 +29,7 @@ export interface DrillContent {
 
 interface CommunicationAssessmentProps {
     onBack: () => void;
-    onComplete?: (scores: SectionScore[]) => void;
+    onComplete?: (result: any) => void;
     drillContent: DrillContent;
 }
 
@@ -94,6 +94,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
 
             // Append Metadata
             const metadata = {
+                theme: drillContent.theme,
                 reading: readingMeta,
                 listening: listeningMeta,
                 extempore: { topic: fullData.extempore.topic }
@@ -112,16 +113,45 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
             if (!response.ok) throw new Error('Submission failed');
 
             const result = await response.json();
+            if (!result || !result.id) {
+                throw new Error('Invalid submission response');
+            }
             setFinalResult(result);
-            if (onComplete) onComplete(scores); // Notify parent (Dashboard) of completion
+            // Wait for user to click "Go to Analysis"
 
         } catch (error) {
             console.error("Final submission error", error);
-            alert("Failed to generate final report. Please try again.");
+            alert("Failed to submit drill. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
     }
+
+    const fetchSessionDetails = async (sessionId: string) => {
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/${sessionId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch analysis');
+        }
+
+        return response.json();
+    };
+
+    const fetchWithRetry = async (sessionId: string, attempts: number = 8) => {
+        for (let i = 0; i < attempts; i++) {
+            const session = await fetchSessionDetails(sessionId);
+            if (session?.analysis && (session.analysis.reading || session.analysis.listening || session.analysis.extempore)) {
+                return session;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+        throw new Error('Analysis still processing');
+    };
 
     return (
         <div className="w-full max-w-5xl mx-auto min-h-[70vh] flex flex-col items-center justify-center p-4">
@@ -233,7 +263,19 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                     <Button onClick={onBack} variant="outline" size="lg" className="rounded-xl px-8">
                                         Home
                                     </Button>
-                                    <Button onClick={() => { if (onComplete) onComplete(scores); }} size="lg" className="bg-indigo-600 text-white rounded-xl px-8 shadow-lg shadow-indigo-100 flex items-center gap-2">
+                                    <Button
+                                        onClick={async () => {
+                                            try {
+                                                const session = await fetchWithRetry(finalResult.id);
+                                                if (onComplete) onComplete(session);
+                                            } catch (err) {
+                                                console.error(err);
+                                                alert('Analysis is still processing. Please try again shortly.');
+                                            }
+                                        }}
+                                        size="lg"
+                                        className="bg-indigo-600 text-white rounded-xl px-8 shadow-lg shadow-indigo-100 flex items-center gap-2"
+                                    >
                                         Go to Mocks Analysis <ArrowRight size={18} />
                                     </Button>
                                 </div>
@@ -256,7 +298,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                     },
                                     {
                                         section: 'Extempore',
-                                        score: finalResult.overallScore || 0,
+                                        score: typeof finalResult.overallScore === 'number' ? finalResult.overallScore : 0,
                                         feedback: finalResult.analysis?.extempore?.feedback || finalResult.feedback || "",
                                         data: finalResult.analysis?.extempore
                                     }

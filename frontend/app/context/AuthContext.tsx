@@ -17,6 +17,7 @@ interface AuthContextType {
     user: User | null;
     login: (token: string, userData: User) => void;
     logout: () => void;
+    updateUser: (userData: User) => void;
     isLoading: boolean;
 }
 
@@ -51,6 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 })
                 .then(userData => {
                     setUser(userData);
+                    if (userData?.id) {
+                        localStorage.setItem('userId', userData.id);
+                    }
                 })
                 .catch(() => {
                     localStorage.removeItem('accessToken');
@@ -67,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = (token: string, userData: User) => {
         localStorage.setItem('accessToken', token);
         localStorage.setItem('accessTokenSetAt', String(Date.now()));
+        localStorage.setItem('userId', userData.id);
         setUser(userData);
         router.push('/dashboard');
     };
@@ -74,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('accessTokenSetAt');
+        localStorage.removeItem('userId');
         setUser(null);
         router.push('/login');
     };
@@ -82,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         login,
         logout,
+        updateUser: setUser,
         isLoading
     }), [user, isLoading]);
 

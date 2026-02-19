@@ -1,22 +1,49 @@
 'use client';
 
-import { useState } from 'react';
-import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2, BarChart3 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2, BarChart3, Sparkles } from 'lucide-react';
 import CommunicationDrillDashboard from './CommunicationDrillDashboard';
 import PreInterviewInstructions from './PreInterviewInstructions';
 import InterviewSession from './InterviewSession';
 import AssessmentReport, { AssessmentData, SectionScore, VideoMetrics } from './AssessmentReport';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { InterviewsService } from '@/app/services/InterviewsService';
 
 interface InterviewLandingProps {
+    initialMode?: Mode;
 }
 
 type Mode = 'landing' | 'audio' | 'instructions' | 'video_session' | 'result' | 'analysis';
 
-export default function InterviewLanding({ }: InterviewLandingProps) {
-    const [mode, setMode] = useState<Mode>('landing');
+export default function InterviewLanding({ initialMode = 'landing' }: InterviewLandingProps) {
+    const [mode, setMode] = useState<Mode>(initialMode);
     const [isLoading, setIsLoading] = useState(false);
     const [assessmentData, setAssessmentData] = useState<AssessmentData | null>(null);
+    const [latestScore, setLatestScore] = useState<number | null>(null);
+    const interviewsService = useRef(new InterviewsService());
+
+    // Sync mode when initialMode prop changes (e.g. navigation)
+    useEffect(() => {
+        setMode(initialMode);
+    }, [initialMode]);
+
+    useEffect(() => {
+        if (mode !== 'landing') return;
+
+        const loadLatest = async () => {
+            try {
+                const sessions = await interviewsService.current.getSessions();
+                const latest = sessions.find((s) => typeof s.overallScore === 'number')?.overallScore ?? null;
+                setLatestScore(latest);
+            } catch (err) {
+                console.error('Failed to load latest score', err);
+            }
+        };
+
+        loadLatest();
+    }, [mode]);
 
     const handleStartVideoFlow = () => {
         setMode('instructions');
@@ -82,114 +109,159 @@ export default function InterviewLanding({ }: InterviewLandingProps) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-12">
-            <div className="space-y-6 max-w-3xl">
-                <div className="inline-flex items-center justify-center p-2 px-4 bg-indigo-50 rounded-full text-indigo-600 text-sm font-bold mb-4 border border-indigo-100">
-                    ✨ Now with AI Audio Analysis
-                </div>
-                <h1 className="text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                    Master Your Interview Skills
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mt-2">
-                        With Real-Time Prep0 AI Feedback
-                    </span>
-                </h1>
-                <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                    Choose your path to perfection. Practice with our audio-focused drills or simulate a full pressure video interview environment.
-                </p>
-            </div>
+        <div className="flex flex-col min-h-screen bg-slate-50/50 p-6 md:p-12 font-sans selection:bg-violet-200 selection:text-violet-900">
+            <div className="max-w-7xl mx-auto w-full space-y-12">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl px-4">
-                {/* Audio Mode Card */}
-                <div className="group relative p-8 bg-white rounded-3xl border border-slate-200 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
-                    <div className="relative z-10 flex flex-col items-center">
-                        <div className="h-20 w-20 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 transition-transform">
-                            <Mic size={32} />
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-200 pb-8">
+                    <div className="space-y-4 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-bold uppercase tracking-wider border border-violet-200">
+                            <Sparkles size={12} className="fill-violet-700" />
+                            <span>Prep0 Ultra Interface</span>
                         </div>
-                        <h3 className="text-2xl font-bold text-slate-900 mb-2">Audio Drill</h3>
-                        <p className="text-slate-500 mb-8 text-sm">
-                            Focus on your verbal delivery. Answer rapid-fire questions and get instant analysis on your tone and clarity.
+                        <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
+                            Mock Interview <br className="hidden md:block" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">Simulation Lab</span>
+                        </h1>
+                        <p className="text-lg text-slate-600 leading-relaxed max-w-xl">
+                            Refine your communication and behavioral skills with our AI-powered assessment suite. Choose a module to begin.
                         </p>
-                        <button
-                            onClick={handleStartAudioFlow}
-                            className="w-full py-3 rounded-xl bg-white text-indigo-600 font-bold border-2 border-indigo-100 group-hover:border-indigo-600 transition-all flex items-center justify-center gap-2"
-                        >
-                            Start Audio Practice <ArrowRight size={16} />
-                        </button>
+                    </div>
+
+                    <div className="flex gap-8 text-sm font-medium text-slate-500 bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl font-bold text-slate-900">1.5<span className="text-violet-500">s</span></span>
+                            <span className="text-[10px] uppercase tracking-wide">Avg Latency</span>
+                        </div>
+                        <div className="w-px h-10 bg-slate-100"></div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl font-bold text-slate-900">98<span className="text-emerald-500">%</span></span>
+                            <span className="text-[10px] uppercase tracking-wide">Uptime</span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Video Mode Card */}
-                <div className="group relative p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative z-10 flex flex-col items-center">
-                        <div className="h-20 w-20 bg-slate-800 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform shadow-inner shadow-black/50">
-                            <Video size={32} />
-                        </div>
-                        <h3 className="text-2xl font-bold text-white mb-2">Live Video Sim</h3>
-                        <p className="text-slate-400 mb-8 text-sm">
-                            The full experience. Test your body language, eye contact, and nerve in a realistic face-to-face AI interview.
-                        </p>
-                        <button
-                            onClick={handleStartVideoFlow}
-                            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold shadow-lg group-hover:shadow-indigo-500/50 transition-all flex items-center justify-center gap-2"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="animate-spin" size={20} /> initializing...
-                                </>
-                            ) : (
-                                <>
-                                    Enter Simulation <Play size={16} fill="currentColor" />
-                                </>
-                            )}
-                        </button>
-                    </div>
-                </div>
-            </div>
+                {/* Dashboard Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
 
-            {/* Premium Analysis Sub-Section */}
-            <div className="w-full max-w-4xl px-4">
-                <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-1 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/50 via-indigo-50/50 to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Audio Drill Card (Half Width) */}
+                    <div className="md:col-span-6 group relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200 shadow-xl shadow-slate-200/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-200/50 hover:border-violet-200 flex flex-col">
+                        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-fuchsia-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6 rounded-[20px] bg-slate-50/50 backdrop-blur-sm">
-                        <div className="flex items-center gap-6 text-center md:text-left">
-                            <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-50 shrink-0">
-                                <BarChart3 size={28} />
+                        <div className="relative p-8 md:p-10 flex-1 flex flex-col justify-between h-full">
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-start">
+                                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-50 flex items-center justify-center text-violet-600 shadow-sm border border-violet-100 group-hover:scale-110 transition-transform duration-300">
+                                        <Mic size={32} />
+                                    </div>
+                                    <div className="flex -space-x-2">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                                                A{i}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-3xl font-bold text-slate-900 mb-3">Audio Drill</h3>
+                                    <p className="text-slate-500 leading-relaxed">
+                                        Focus on vocal delivery. Rapid-fire questions with instant AI feedback on key parameters.
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 justify-center md:justify-start">
-                                    Performance Analytics
-                                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wide">
-                                        Pro Insight
+
+                            <div className="mt-8 pt-8 border-t border-slate-100">
+                                <Button
+                                    onClick={handleStartAudioFlow}
+                                    className="w-full bg-slate-900 hover:bg-violet-600 text-white rounded-xl py-6 text-base font-bold shadow-lg shadow-slate-200 hover:shadow-violet-200 transition-all duration-300 flex justify-between items-center px-6"
+                                >
+                                    Start Drill <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                                <div className="flex gap-3 text-xs font-bold text-slate-400 mt-4 justify-center">
+                                    <span className="flex items-center gap-1"><CheckCircle2 size={12} className="text-emerald-500" /> Reading</span>
+                                    <span className="flex items-center gap-1"><CheckCircle2 size={12} className="text-emerald-500" /> Listening</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Video Sim Card (Half Width) */}
+                    <div className="md:col-span-6 group relative overflow-hidden rounded-[2.5rem] bg-slate-900 text-white shadow-2xl shadow-slate-300 transition-all duration-300 hover:shadow-violet-300/50 flex flex-col">
+                        {/* Background Effects */}
+                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                        <div className="absolute -right-20 -top-20 w-80 h-80 bg-violet-600/20 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/30 transition-colors" />
+                        <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-fuchsia-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-fuchsia-600/20 transition-colors" />
+
+                        <div className="relative z-10 p-8 md:p-10 flex-1 flex flex-col justify-between h-full">
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-start">
+                                    <div className="h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                                        <Video size={32} />
+                                    </div>
+                                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
+                                        Beta Access
                                     </span>
-                                </h3>
-                                <p className="text-slate-500 text-sm mt-1 max-w-md">
-                                    Deep dive into your communication history. Track fluency, tone analysis, and AI feedback over time.
-                                </p>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-3xl font-bold mb-3 text-white">Video Simulation</h3>
+                                    <p className="text-slate-400 leading-relaxed">
+                                        Face our AI avatar in a realistic environment.
+                                        Get feedback on body language & confidence.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 pt-8 border-t border-slate-800">
+                                <Button
+                                    onClick={handleStartVideoFlow}
+                                    className="w-full bg-white text-slate-900 hover:bg-emerald-400 hover:text-emerald-950 rounded-xl py-6 text-base font-bold shadow-xl hover:shadow-emerald-500/20 transition-all duration-300 flex justify-between items-center px-6"
+                                >
+                                    {isLoading ? <Loader2 className="animate-spin" /> : (
+                                        <>Enter Lobby <Play size={18} fill="currentColor" /></>
+                                    )}
+                                </Button>
+                                <div className="flex gap-3 text-xs font-bold text-slate-500 mt-4 justify-center">
+                                    <span className="flex items-center gap-1"><CheckCircle2 size={12} className="text-slate-600" /> Camera</span>
+                                    <span className="flex items-center gap-1"><CheckCircle2 size={12} className="text-slate-600" /> Microphone</span>
+                                </div>
                             </div>
                         </div>
-
-                        <button
-                            onClick={() => setMode('analysis')}
-                            className="shrink-0 px-8 py-3 rounded-xl bg-white text-emerald-700 font-bold border border-slate-200 shadow-sm hover:border-emerald-200 hover:shadow-emerald-100 transition-all flex items-center gap-2 group/btn"
-                        >
-                            View Analysis
-                            <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                        </button>
                     </div>
-                </div>
-            </div>
 
-            <div className="flex gap-8 text-sm text-slate-400 font-medium">
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Prep0 AI Online
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-purple-500" />
-                    Gemini Flash 1.5 Ready
+                    {/* Stats/Analysis Card (Full Width Banner) */}
+                    <div className="md:col-span-12">
+                        <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white p-1 shadow-xl shadow-violet-200 cursor-pointer" onClick={() => setMode('analysis')}>
+                            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
+                            <div className="relative bg-slate-900/10 backdrop-blur-[2px] rounded-[1.8rem] p-6 md:px-10 md:py-8 flex flex-col md:flex-row items-center justify-between gap-6 hover:bg-white/5 transition-colors">
+                                <div className="flex items-center gap-6">
+                                    <div className="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+                                        <BarChart3 size={32} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-bold">Performance Analytics</h3>
+                                        <p className="text-violet-100 opacity-90 text-sm">
+                                            Deep dive into your communication history and track improvement over time.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4 bg-black/20 rounded-xl p-2 pl-4 border border-white/10">
+                                    <div className="text-right">
+                                        <div className="text-xs font-medium text-violet-200 uppercase tracking-wider">Latest Score</div>
+                                        <div className="font-bold font-mono text-xl">
+                                            {typeof latestScore === 'number' ? `${latestScore} / 100` : '-- / 100'}
+                                        </div>
+                                    </div>
+                                    <div className="h-10 w-10 bg-white text-violet-600 rounded-lg flex items-center justify-center transform group-hover:translate-x-1 transition-transform">
+                                        <ArrowRight size={20} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
