@@ -1,7 +1,13 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Vapi from '@vapi-ai/web';
 
 const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || '');
+
+type VapiEventHandler = (...args: any[]) => void;
+
+const onVapiEvent = (event: string, handler: VapiEventHandler) => {
+    (vapi as unknown as { on: (event: string, handler: VapiEventHandler) => void }).on(event, handler);
+};
 
 export type VapiStatus = 'idle' | 'loading' | 'active' | 'speaking' | 'listening';
 
@@ -16,20 +22,20 @@ export const useVapi = () => {
 
     useEffect(() => {
         // Event Listeners
-        vapi.on('call-start', (payload) => {
+        onVapiEvent('call-start', (payload) => {
             setStatus('active');
             setError(null);
             const id = payload?.call?.id || payload?.id;
             if (id) setCallId(id);
         });
-        vapi.on('call-end', () => setStatus('idle'));
+        onVapiEvent('call-end', () => setStatus('idle'));
 
-        vapi.on('speech-start', () => setStatus('speaking')); // User or AI speaking? Vapi events can distinguish, usually generic speech-start
-        vapi.on('speech-end', () => setStatus('active'));
+        onVapiEvent('speech-start', () => setStatus('speaking')); // User or AI speaking? Vapi events can distinguish, usually generic speech-start
+        onVapiEvent('speech-end', () => setStatus('active'));
 
-        vapi.on('volume-level', (level) => setVolumeLevel(level));
+        onVapiEvent('volume-level', (level) => setVolumeLevel(level));
 
-        vapi.on('message', (message) => {
+        onVapiEvent('message', (message) => {
             // console.log('Vapi Message:', message); 
 
             const messageCallId = message?.call?.id || message?.callId;
@@ -64,7 +70,7 @@ export const useVapi = () => {
             }
         });
 
-        vapi.on('error', (e) => {
+        onVapiEvent('error', (e) => {
             console.error('Vapi Error:', e);
             setStatus('idle');
             // Check for specific "ejection" or common Vapi errors
