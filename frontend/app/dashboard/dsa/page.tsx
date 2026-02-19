@@ -516,7 +516,7 @@ export default function DsaTrainingPage() {
                                                         {insightLoading ? (
                                                             <div className="text-sm text-slate-500">Loading insight...</div>
                                                         ) : insight ? (
-                                                            <div className="prose prose-slate max-w-none text-sm">
+                                                            <div className="prose prose-slate max-w-none text-sm whitespace-pre-wrap break-words">
                                                                 <ReactMarkdown>{insight}</ReactMarkdown>
                                                             </div>
                                                         ) : (

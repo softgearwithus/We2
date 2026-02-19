@@ -54,14 +54,14 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
                 )}
 
                 <div
-                    className="prose prose-slate max-w-none text-sm leading-relaxed mb-8"
+                    className="prose prose-slate max-w-none text-sm leading-relaxed mb-8 whitespace-pre-wrap break-words"
                     dangerouslySetInnerHTML={{ __html: problem.description }}
                 />
 
                 {problem.examples.map((ex, i) => (
                     <div key={i} className="mb-6">
                         <h3 className="text-sm font-bold text-slate-900 mb-2">Example {i + 1}:</h3>
-                        <div className="bg-slate-50 border-l-4 border-slate-200 p-3 rounded-r-lg font-mono text-xs text-slate-700">
+                        <div className="bg-slate-50 border-l-4 border-slate-200 p-3 rounded-r-lg font-mono text-xs text-slate-700 whitespace-pre-wrap break-words">
                             <div className="mb-1"><span className="font-bold text-slate-900">Input:</span> {ex.input}</div>
                             <div className="mb-1"><span className="font-bold text-slate-900">Output:</span> {ex.output}</div>
                             {ex.explanation && (
@@ -73,13 +73,13 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
 
                 <div className="mb-8">
                     <h3 className="text-sm font-bold text-slate-900 mb-2">Constraints:</h3>
-                    <ul className="list-disc pl-5 mt-2 space-y-1">
-                        {problem.constraints.map((c, i) => (
-                            <li key={i} className="text-xs font-mono text-slate-600 bg-slate-50 w-fit px-2 py-0.5 rounded">
-                                {c}
-                            </li>
-                        ))}
-                    </ul>
+                        <ul className="list-disc pl-5 mt-2 space-y-1">
+                            {problem.constraints.map((c, i) => (
+                                <li key={i} className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded whitespace-pre-wrap break-words">
+                                    {c}
+                                </li>
+                            ))}
+                        </ul>
                 </div>
             </div>
         </div>

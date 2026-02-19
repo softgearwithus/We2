@@ -64,7 +64,7 @@ export default function SqlSubmissionsTab({ submissions, loading = false }: SqlS
                                         {new Date(sub.submittedAt).toLocaleString()} • {formatLanguage(sub.language)}
                                     </div>
                                     {sub.evaluationSummary && (
-                                        <div className="mt-2 text-xs text-slate-600">{sub.evaluationSummary}</div>
+                                        <div className="mt-2 text-xs text-slate-600 whitespace-pre-wrap break-words">{sub.evaluationSummary}</div>
                                     )}
                                 </div>
                             </div>
@@ -80,7 +80,7 @@ export default function SqlSubmissionsTab({ submissions, loading = false }: SqlS
                                         <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Strengths</div>
                                         <ul className="list-disc pl-4 space-y-1">
                                             {sub.evaluationStrengths.map((item, idx) => (
-                                                <li key={`strength-${sub.id}-${idx}`}>{item}</li>
+                                                <li key={`strength-${sub.id}-${idx}`} className="whitespace-pre-wrap break-words">{item}</li>
                                             ))}
                                         </ul>
                                     </div>
@@ -90,7 +90,7 @@ export default function SqlSubmissionsTab({ submissions, loading = false }: SqlS
                                         <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">Improvements</div>
                                         <ul className="list-disc pl-4 space-y-1">
                                             {sub.evaluationImprovements.map((item, idx) => (
-                                                <li key={`improve-${sub.id}-${idx}`}>{item}</li>
+                                                <li key={`improve-${sub.id}-${idx}`} className="whitespace-pre-wrap break-words">{item}</li>
                                             ))}
                                         </ul>
                                     </div>
