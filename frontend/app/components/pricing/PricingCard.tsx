@@ -128,7 +128,7 @@ export default function PricingCard({
                     }
                 },
                 prefill: {
-                    name: user?.name || 'Student',
+                    name: user?.firstName ? `${user.firstName}${user.lastName ? ' ' + user.lastName : ''}` : 'Student',
                     email: user?.email || '',
                 },
                 theme: {
