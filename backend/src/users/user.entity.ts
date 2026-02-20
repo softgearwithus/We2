@@ -52,6 +52,9 @@ export class User {
     @Column({ nullable: true })
     twoFactorSecret?: string;
 
+    @Column({ type: 'uuid', nullable: true })
+    collegeId?: string | null;
+
     // --- Usage Limits ---
     @Column({ type: 'timestamp', nullable: true })
     usageLastReset: Date | null;

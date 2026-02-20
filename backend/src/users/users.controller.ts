@@ -23,6 +23,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminCreateUserDto } from './dto/admin-create-user.dto';
 
 @ApiTags('users')
 @ApiBearerAuth('JWT-auth')
@@ -74,8 +75,30 @@ export class UsersController {
     @ApiOperation({ summary: 'Upgrade user subscription plan' })
     @ApiBody({ schema: { type: 'object', properties: { plan: { type: 'string', example: 'placement_plus' } } } })
     @ApiResponse({ status: 200, description: 'Subscription upgraded successfully' })
-    async upgradeSubscription(@Request() req: any, @Body('plan') plan: string) {
-        return this.usersService.upgradeSubscription(req.user.id, plan);
+    async upgradeSubscription(
+        @Request() req: any,
+        @Body('plan') plan: string,
+        @Body('billingCycle') billingCycle?: 'monthly' | 'yearly',
+    ) {
+        return this.usersService.upgradeSubscription(req.user.id, plan, billingCycle || 'monthly');
+    }
+
+    @Post('admin/create')
+    @Roles(UserRole.SUPER_ADMIN)
+    @HttpCode(HttpStatus.CREATED)
+    @ApiOperation({ summary: 'Create user account (Admin only)' })
+    @ApiResponse({ status: 201, description: 'User created successfully' })
+    @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+    async adminCreateUser(@Request() req: any, @Body() body: AdminCreateUserDto) {
+        return this.usersService.create(
+            body.email,
+            body.password,
+            body.role,
+            'free',
+            body.firstName,
+            body.lastName,
+            body.collegeId,
+        );
     }
 
     @Get(':id')

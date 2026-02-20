@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LeaderBoard } from "@/components/institute/Reports/LeaderBoard";
+import type { Student } from "@/lib/institute/types";
+import { fetchInstituteStudents } from "@/lib/institute/client";
 import { ExportModal } from "@/components/institute/Reports/ExportModal";
 import { Printer, CalendarRange } from "lucide-react";
 import { motion } from "framer-motion";
@@ -23,6 +25,18 @@ const item = {
 
 export default function ReportsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [students, setStudents] = useState<Student[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadStudents = async () => {
+            setLoading(true);
+            const data = await fetchInstituteStudents({ limit: 120 });
+            setStudents(data.data);
+            setLoading(false);
+        };
+        loadStudents();
+    }, []);
 
     return (
         <motion.div
@@ -53,7 +67,11 @@ export default function ReportsPage() {
 
             {/* Leaderboard Section */}
             <motion.div variants={item} className="h-[600px]">
-                <LeaderBoard />
+                {loading ? (
+                    <div className="h-full flex items-center justify-center text-slate-400">Loading leaderboard...</div>
+                ) : (
+                    <LeaderBoard students={students} />
+                )}
             </motion.div>
 
             {/* Modal */}

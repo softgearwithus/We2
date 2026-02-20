@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/app/lib/utils';
@@ -21,10 +21,17 @@ export default function Navbar() {
     const userMenuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        let ticking = false;
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 0);
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    setIsScrolled(window.scrollY > 0);
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
 
         // Click outside handler for user menu
         const handleClickOutside = (event: MouseEvent) => {
@@ -40,40 +47,40 @@ export default function Navbar() {
         };
     }, []);
 
-    const guestNavItems = [
-        { label: 'Prep0', href: '/prep0' },
-        { label: 'We2Hub', href: '/we2hub' },
+    const guestNavItems = useMemo(() => [
+        { label: 'Bootcamp', href: '/prep0' }, // Keeping href for now, will redirect later
+        { label: 'Job Simulation', href: '/we2hub' }, // Keeping href for now
         { label: 'How it Works', href: '/how-it-works' },
         { label: 'Pricing', href: '/pricing' }
-    ];
+    ], []);
 
-    const authNavItems = [
+    const authNavItems = useMemo(() => [
         { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { label: 'Problems', href: '/dsa', icon: Code2 },
         { label: 'Interview', href: '/dashboard/interview', icon: Video },
         { label: 'Simulations', href: '/simulations', icon: Terminal },
         { label: 'Pricing', href: '/pricing', icon: null } // Kept for upgrades
-    ];
+    ], []);
 
     const currentNavItems = user ? authNavItems : guestNavItems;
 
     // Items to show specifically when INSIDE the dashboard layout (context is present)
-    const dashboardNavItems = [
+    const dashboardNavItems = useMemo(() => [
         {
-            label: 'Prep0',
+            label: 'Learn',
             action: () => { dashboardContext?.setMode('prep'); router.push('/dashboard'); },
             active: dashboardContext?.mode === 'prep',
             icon: School
         },
         {
-            label: 'We2Hub',
+            label: 'Work',
             action: () => { dashboardContext?.setMode('work'); router.push('/dashboard'); },
             active: dashboardContext?.mode === 'work',
             icon: CircuitBoard
         },
         { label: 'Roadmap', href: '/dashboard/roadmap', icon: Map },
         { label: 'Pricing', href: '/pricing', icon: null }
-    ];
+    ], [dashboardContext, router]);
 
 
     return (

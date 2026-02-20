@@ -21,11 +21,12 @@ const PLAN_HIERARCHY = {
 };
 
 const PLAN_NAMES = {
-    'standard_tier': 'Standard',
-    'pro_tier': 'Pro',
-    'placement_plus': 'Placement Plus',
-    'industry_plus': 'Industry Plus',
-    'we2_max': 'We2 Max'
+    'standard_tier': 'Emble Standard',
+    'pro_tier': 'Emble Pro',
+    // Legacy mapping
+    'placement_plus': 'Emble Standard',
+    'industry_plus': 'Emble Standard',
+    'we2_max': 'Emble Pro'
 };
 
 export default function SubscriptionGuard({ children, requiredPlan, featureName = 'Premium Feature' }: SubscriptionGuardProps) {
@@ -35,7 +36,10 @@ export default function SubscriptionGuard({ children, requiredPlan, featureName 
         return <div className="animate-pulse bg-slate-100 h-96 rounded-xl w-full"></div>;
     }
 
-    const userPlan = user?.subscriptionPlan || 'free';
+    const endDate = user?.subscriptionEndDate ? new Date(user.subscriptionEndDate) : null;
+    const isExpired = endDate && !Number.isNaN(endDate.getTime()) && endDate.getTime() <= Date.now();
+    const isActive = user?.subscriptionStatus === 'active' && !isExpired;
+    const userPlan = isActive ? (user?.subscriptionPlan || 'free') : 'free';
     const userLevel = PLAN_HIERARCHY[userPlan as keyof typeof PLAN_HIERARCHY] || 0;
     const requiredLevel = PLAN_HIERARCHY[requiredPlan];
 

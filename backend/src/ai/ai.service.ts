@@ -1,9 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { GeminiService } from '../common/gemini.service';
+import { PlatformKnowledgeService } from './platform-knowledge.service';
+
 @Injectable()
 export class AiService {
-    constructor(private configService: ConfigService) { }
+    constructor(
+        private configService: ConfigService,
+        private geminiService: GeminiService,
+        private knowledgeService: PlatformKnowledgeService
+    ) { }
+
+    async chat(message: string, history: any[]) {
+        const knowledge = await this.knowledgeService.getKnowledge();
+        return this.geminiService.chatWithContext(message, history, knowledge);
+    }
 
     async generateContent(topicId: string, topicTitle: string): Promise<string> {
         const expertContent: Record<string, string> = {

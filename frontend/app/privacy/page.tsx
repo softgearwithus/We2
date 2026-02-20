@@ -23,7 +23,7 @@ const sections = [
     {
         id: "usage",
         title: "2. How We Use Data",
-        content: "Your data is used to personalize your curriculum, track your progress in We2Hub simulations, provide AI-assisted insights in Prep0, and improve our platform's overall efficiency. We do not sell your personal data to third parties."
+        content: "Your data is used to personalize your curriculum, track your progress in Emble Simulations, provide AI-assisted insights in Emble Bootcamp, and improve our platform's overall efficiency. We do not sell your personal data to third parties."
     },
     {
         id: "sharing",
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
                             animate={{ opacity: 1, y: 0 }}
                             className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8"
                         >
-                            Privacy at <span className="text-brand-orange underline decoration-white/20 underline-offset-8">We2.</span>
+                            Privacy at <span className="text-brand-orange underline decoration-white/20 underline-offset-8">Emble.</span>
                         </motion.h1>
 
                         <motion.p

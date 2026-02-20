@@ -4,7 +4,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Star, Quote } from 'lucide-react';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function AdminLayout({
     children,
@@ -13,10 +14,14 @@ export default function AdminLayout({
 }) {
     const pathname = usePathname();
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const { user } = useAuth();
+    const role = user?.role || 'super_admin';
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['all'] },
         { icon: BookOpen, label: 'Course Content', href: '/admin/content', roles: ['all'] },
+        { icon: Star, label: 'Reviews', href: '/admin/reviews', roles: ['super_admin'] },
+        { icon: Quote, label: 'Testimonials', href: '/admin/testimonials', roles: ['super_admin'] },
         { icon: Users, label: 'Students', href: '/admin/students', roles: ['all'] },
         { icon: Building2, label: 'Colleges', href: '/admin/colleges', roles: ['super_admin'] },
         { icon: Building2, label: 'Companies', href: '/admin/companies', roles: ['super_admin'] },
@@ -25,6 +30,8 @@ export default function AdminLayout({
         { icon: Shield, label: 'Access Control', href: '/admin/access', roles: ['super_admin'] },
         { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['all'] },
     ];
+
+    const visibleItems = menuItems.filter((item) => item.roles.includes('all') || item.roles.includes(role));
 
     return (
         <div className="min-h-screen bg-slate-100 flex font-sans">
@@ -43,7 +50,7 @@ export default function AdminLayout({
                 </div>
 
                 <nav className="flex-1 py-6 px-3 space-y-1">
-                    {menuItems.map((item) => {
+                    {visibleItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link
@@ -67,8 +74,8 @@ export default function AdminLayout({
                             <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Admin" alt="Admin" />
                         </div>
                         <div className={`overflow-hidden transition-all duration-300 ${!sidebarOpen && 'hidden w-0'}`}>
-                            <p className="text-sm font-bold">Super Admin</p>
-                            <p className="text-xs text-slate-500">admin@platform.com</p>
+                            <p className="text-sm font-bold capitalize">{role.replace('_', ' ')}</p>
+                            <p className="text-xs text-slate-500">{user?.email || 'admin@platform.com'}</p>
                         </div>
                     </div>
                 </div>

@@ -42,4 +42,40 @@ export class UpdateUserDto {
     @IsOptional()
     @MinLength(8)
     password?: string;
+
+    @ApiProperty({
+        example: 'pro_tier',
+        description: 'Subscription plan identifier',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    subscriptionPlan?: string;
+
+    @ApiProperty({
+        example: 'active',
+        description: 'Subscription status',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    subscriptionStatus?: string;
+
+    @ApiProperty({
+        example: '2027-02-20T00:00:00.000Z',
+        description: 'Subscription end date (ISO string)',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    subscriptionEndDate?: string;
+
+    @ApiProperty({
+        example: 'a1b2c3d4-5678-9012-3456-7890abcd1234',
+        description: 'College/Institute identifier',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    collegeId?: string;
 }

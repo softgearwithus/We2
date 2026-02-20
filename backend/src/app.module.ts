@@ -52,6 +52,13 @@ import { McqsModule } from './mcqs/mcqs.module';
 import { McqQuestion } from './mcqs/entities/mcq-question.entity';
 import { WriteXModule } from './writex/writex.module';
 import { WriteXQuestion } from './writex/entities/writex-question.entity';
+import { PaymentsModule } from './payments/payments.module';
+import { CollegesModule } from './colleges/colleges.module';
+import { College } from './colleges/college.entity';
+import { ReviewsModule } from './reviews/reviews.module';
+import { Review } from './reviews/review.entity';
+import { TestimonialsModule } from './testimonials/testimonials.module';
+import { Testimonial } from './testimonials/testimonial.entity';
 
 @Module({
   imports: [
@@ -89,6 +96,9 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           Resume,
           McqQuestion,
           WriteXQuestion,
+          College,
+          Review,
+          Testimonial,
         ];
 
         if (dbType === 'postgres') {
@@ -130,6 +140,10 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
     ResumeModule,
     McqsModule,
     WriteXModule,
+    PaymentsModule,
+    CollegesModule,
+    ReviewsModule,
+    TestimonialsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

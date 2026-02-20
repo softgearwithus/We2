@@ -17,7 +17,7 @@ export default function CollegeRegisterPage() {
             }
         >
             <Suspense fallback={<div>Loading...</div>}>
-                <RegisterForm role="college" roleValue="college_admin" redirectPath="/dashboard/college" />
+                <RegisterForm role="college" roleValue="college_admin" redirectPath="/institute" />
             </Suspense>
         </AuthLayout>
     );

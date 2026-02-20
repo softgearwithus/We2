@@ -15,7 +15,8 @@ import {
 interface ModuleContent {
     topicId: string;
     title: string;
-    content: string; // Markdown content
+    content: string; // Markdown content or JSON document
+    isPremium?: boolean;
 }
 
 export default function GenericModulePage() {
@@ -26,6 +27,7 @@ export default function GenericModulePage() {
 
     const [moduleData, setModuleData] = useState<ModuleContent | null>(null);
     const [parsedGenerata, setParsedData] = useState<{ theory: string; mindMap: string; revision: string }>({ theory: '', mindMap: '', revision: '' });
+    const [sections, setSections] = useState<Array<{ type: string; title?: string; body?: string; language?: string }>>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'theory' | 'mindmap' | 'revision'>('theory');
 
@@ -33,7 +35,7 @@ export default function GenericModulePage() {
         const fetchModule = async () => {
             try {
                 const dbTopicId = `${trackId}-${topicId}-${moduleId}`;
-                const response = await fetch(`http://localhost:3001/course-content/${dbTopicId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/course-content/${dbTopicId}`);
 
                 if (response.ok) {
                     const text = await response.text();
@@ -42,13 +44,21 @@ export default function GenericModulePage() {
                         setModuleData({
                             topicId: data.topicId,
                             title: data.title,
-                            content: data.content
+                            content: data.content,
+                            isPremium: data.isPremium,
                         });
 
                         // Attempt to parse content as JSON for new verified structure
                         try {
                             const jsonContent = JSON.parse(data.content);
-                            if (jsonContent.theory) {
+                            if (jsonContent.sections) {
+                                setSections(jsonContent.sections || []);
+                                setParsedData({
+                                    theory: jsonContent.sections?.map((section: any) => section.body || '').join('\n\n') || '',
+                                    mindMap: jsonContent.mindMap || '',
+                                    revision: jsonContent.revision || ''
+                                });
+                            } else if (jsonContent.theory) {
                                 setParsedData({
                                     theory: jsonContent.theory,
                                     mindMap: jsonContent.mindMap || '',
@@ -96,6 +106,23 @@ export default function GenericModulePage() {
                 <Link href={`/dashboard/skillforge/${trackId}/${topicId}`} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
                     Back to Syllabus
                 </Link>
+            </div>
+        );
+    }
+
+    if (moduleData.isPremium) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+                <div className="max-w-xl bg-white border border-slate-200 rounded-3xl p-10 shadow-xl">
+                    <div className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3">Premium Module</div>
+                    <h2 className="text-3xl font-black text-slate-900 mb-4">Upgrade to unlock this Skill Forge lesson</h2>
+                    <p className="text-slate-500 mb-8">
+                        This module is part of the premium curriculum. Upgrade to Standard or Pro to access the full learning path.
+                    </p>
+                    <Link href="/pricing" className="inline-flex items-center justify-center bg-gradient-to-r from-brand-orange to-red-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg">
+                        Upgrade Now
+                    </Link>
+                </div>
             </div>
         );
     }
@@ -158,48 +185,83 @@ export default function GenericModulePage() {
                         transition={{ duration: 0.3 }}
                     >
                         {activeTab === 'theory' && (
-                            <div className="prose prose-slate prose-lg max-w-none 
-                            prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
-                            prose-p:text-slate-600 prose-p:leading-relaxed
-                            prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
-                            prose-strong:text-slate-800 prose-strong:font-bold
-                            prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
-                            prose-pre:bg-slate-900 prose-pre:text-slate-50 prose-pre:rounded-2xl prose-pre:p-0
-                            ">
-                                <ReactMarkdown
-                                    components={{
-                                        code({ node, inline, className, children, ...props }: any) {
-                                            const match = /language-(\w+)/.exec(className || '');
-                                            return !inline && match ? (
-                                                <div className="relative group">
-                                                    <div className="absolute top-0 right-0 px-4 py-2 text-xs font-bold text-slate-500 bg-slate-800 rounded-bl-xl rounded-tr-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        {match[1]}
-                                                    </div>
-                                                    <SyntaxHighlighter
-                                                        style={vscDarkPlus}
-                                                        language={match[1]}
-                                                        PreTag="div"
-                                                        customStyle={{
-                                                            margin: 0,
-                                                            borderRadius: '1rem',
-                                                            padding: '1.5rem',
-                                                            backgroundColor: '#0f172a',
-                                                        }}
-                                                        {...props}
-                                                    >
-                                                        {String(children).replace(/\n$/, '')}
-                                                    </SyntaxHighlighter>
+                            <div className="space-y-8">
+                                {sections.length > 0 ? (
+                                    sections.map((section, idx) => (
+                                        <div key={`${section.type}-${idx}`} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                                            {section.title && (
+                                                <h3 className="text-xl font-black text-slate-900 mb-4">{section.title}</h3>
+                                            )}
+                                            {section.type === 'code' ? (
+                                                <SyntaxHighlighter
+                                                    style={vscDarkPlus}
+                                                    language={section.language || 'typescript'}
+                                                    PreTag="div"
+                                                    customStyle={{
+                                                        margin: 0,
+                                                        borderRadius: '1rem',
+                                                        padding: '1.5rem',
+                                                        backgroundColor: '#0f172a',
+                                                    }}
+                                                >
+                                                    {section.body || ''}
+                                                </SyntaxHighlighter>
+                                            ) : section.type === 'callout' ? (
+                                                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-slate-700">
+                                                    <ReactMarkdown>{section.body || ''}</ReactMarkdown>
                                                 </div>
                                             ) : (
-                                                <code className={className} {...props}>
-                                                    {children}
-                                                </code>
-                                            );
-                                        }
-                                    }}
-                                >
-                                    {parsedGenerata.theory}
-                                </ReactMarkdown>
+                                                <div className="prose prose-slate prose-lg max-w-none">
+                                                    <ReactMarkdown>{section.body || ''}</ReactMarkdown>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="prose prose-slate prose-lg max-w-none 
+                                    prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
+                                    prose-p:text-slate-600 prose-p:leading-relaxed
+                                    prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
+                                    prose-strong:text-slate-800 prose-strong:font-bold
+                                    prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+                                    prose-pre:bg-slate-900 prose-pre:text-slate-50 prose-pre:rounded-2xl prose-pre:p-0
+                                    ">
+                                        <ReactMarkdown
+                                            components={{
+                                                code({ node, inline, className, children, ...props }: any) {
+                                                    const match = /language-(\w+)/.exec(className || '');
+                                                    return !inline && match ? (
+                                                        <div className="relative group">
+                                                            <div className="absolute top-0 right-0 px-4 py-2 text-xs font-bold text-slate-500 bg-slate-800 rounded-bl-xl rounded-tr-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                {match[1]}
+                                                            </div>
+                                                            <SyntaxHighlighter
+                                                                style={vscDarkPlus}
+                                                                language={match[1]}
+                                                                PreTag="div"
+                                                                customStyle={{
+                                                                    margin: 0,
+                                                                    borderRadius: '1rem',
+                                                                    padding: '1.5rem',
+                                                                    backgroundColor: '#0f172a',
+                                                                }}
+                                                                {...props}
+                                                            >
+                                                                {String(children).replace(/\n$/, '')}
+                                                            </SyntaxHighlighter>
+                                                        </div>
+                                                    ) : (
+                                                        <code className={className} {...props}>
+                                                            {children}
+                                                        </code>
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            {parsedGenerata.theory}
+                                        </ReactMarkdown>
+                                    </div>
+                                )}
                             </div>
                         )}
 

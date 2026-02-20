@@ -1,14 +1,32 @@
 import Link from 'next/link';
-import DualModeSection from './components/home/DualModeSection';
+import dynamic from 'next/dynamic';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import TrustedBy from './components/home/TrustedBy';
-import Testimonials from './components/home/Testimonials';
-import ProcessTimeline from './components/home/ProcessTimeline';
-import StatsSection from './components/home/StatsSection';
-import FAQ from './components/home/FAQ';
-import ComparisonSection from './components/home/ComparisonSection';
-import RoadmapPreview from './components/home/RoadmapPreview';
+
+const TrustedBy = dynamic(() => import('./components/home/TrustedBy'), {
+  loading: () => <div className="h-16" />
+});
+const ProcessTimeline = dynamic(() => import('./components/home/ProcessTimeline'), {
+  loading: () => <div className="h-64" />
+});
+const DualModeSection = dynamic(() => import('./components/home/DualModeSection'), {
+  loading: () => <div className="h-64" />
+});
+const ComparisonSection = dynamic(() => import('./components/home/ComparisonSection'), {
+  loading: () => <div className="h-64" />
+});
+const RoadmapPreview = dynamic(() => import('./components/home/RoadmapPreview'), {
+  loading: () => <div className="h-64" />
+});
+const StatsSection = dynamic(() => import('./components/home/StatsSection'), {
+  loading: () => <div className="h-48" />
+});
+const Testimonials = dynamic(() => import('./components/home/Testimonials'), {
+  loading: () => <div className="h-64" />
+});
+const FAQ = dynamic(() => import('./components/home/FAQ'), {
+  loading: () => <div className="h-64" />
+});
 
 export default function Home() {
   return (
@@ -39,40 +57,40 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-orange"></span>
               </span>
-              <span className="text-sm font-bold text-orange-800 tracking-tight">Empowering 5,000+ Engineers</span>
+              <span className="text-sm font-bold text-brand-black tracking-tight">The Full Stack Ecosystem</span>
             </div>
 
             {/* Headline - Balanced & Vibrant */}
             <h1 className="text-5xl md:text-7xl lg:text-[80px] font-[900] tracking-tight text-brand-black mb-8 leading-[1.1] text-balance">
               The Complete <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-600 to-purple-600 pb-2">
-                Placement Ecosystem.
+                Career Accelerator.
               </span>
             </h1>
 
             {/* Subtext - Optimized for Readability */}
             <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed max-w-xl mb-10 text-balance">
-              Don't just code. <span className="text-brand-black font-bold">Prep0</span> handles your DSA & Mocks, while <span className="text-brand-black font-bold">We2Hub</span> delivers real-world JIRA experience.
+              We bridge the gap between academic theory and industry reality. <span className="text-brand-black font-bold">Emble</span> transforms you into a hireable engineer by combining rigorous bootcamp training with actual work experience.
             </p>
 
             {/* CTAs - Polished & Tactile */}
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
               <Link href="/register" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95">
-                Start Prep0 Free
+                Start for Free
                 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
               </Link>
-              <Link href="/simulations" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
+              <Link href="/how-it-works" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
                 <span className="material-symbols-outlined text-brand-orange group-hover:scale-110 transition-transform filled-icon">play_circle</span>
-                Explore We2Hub
+                See How It Works
               </Link>
             </div>
 
             {/* Social Proof - Subtle & Trustworthy */}
             <div className="flex items-center gap-4">
               <div className="flex -space-x-4">
-                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="User" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="User" width={40} height={40} loading="lazy" decoding="async" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="User" width={40} height={40} loading="lazy" decoding="async" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="User" width={40} height={40} loading="lazy" decoding="async" />
                 <div className="w-10 h-10 rounded-full border-[3px] border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shadow-sm">+2k</div>
               </div>
               <div className="h-8 w-px bg-gray-200 mx-2"></div>
@@ -169,7 +187,7 @@ export default function Home() {
             Start Your <br /> <span className="text-gradient">Story Today.</span>
           </h2>
           <p className="text-gray-400 text-2xl max-w-3xl mx-auto font-medium opacity-80 leading-relaxed">
-            Join 2,000+ students already mastering their future with We2.
+            Join 2,000+ students already mastering their future with Emble.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6 pt-10">
             <Link href="/register" className="h-[72px] px-16 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-[900] text-xl transition-all shadow-2xl hover:shadow-brand-orange/20 hover:-translate-y-2 flex items-center justify-center active:scale-95">

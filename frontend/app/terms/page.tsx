@@ -16,7 +16,7 @@ const sections = [
     {
         id: "acceptance",
         title: "1. Acceptance of Terms",
-        content: "By accessing or using the We2 platform (including Prep0 and We2Hub), you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use our services."
+        content: "By accessing or using the Emble platform (including Emble Bootcamp and Job Simulation), you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use our services."
     },
     {
         id: "eligibility",
@@ -25,23 +25,23 @@ const sections = [
     },
     {
         id: "accounts",
-        title: "3. User Accounts",
-        content: "You are responsible for maintaining the confidentiality of your account credentials. You agree to notify us immediately of any unauthorized use of your account. We2 reserves the right to suspend or terminate accounts that violate our community guidelines."
+        title: "3. Account Security",
+        content: "You are responsible for maintaining the confidentiality of your account credentials. You agree to notify us immediately of any unauthorized use of your account. Emble reserves the right to suspend or terminate accounts that violate our community guidelines."
     },
     {
         id: "subscriptions",
-        title: "4. Subscriptions & Payments",
-        content: "Payments for Prep0, We2Hub, or We2 Max are non-refundable unless otherwise specified in our Refund Policy. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period."
+        title: "4. Subscription & Refunds",
+        content: "Payments for Emble products are non-refundable unless otherwise specified in our Refund Policy. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period."
     },
     {
         id: "conduct",
         title: "5. User Conduct",
-        content: "Users are expected to maintain professional conduct during industrial simulations. Harassment, plagiarism, or any form of cheating in DSA problems or simulations will result in immediate termination of access without refund."
+        content: "Harassment, plagiarism, or any form of cheating in DSA problems or simulations will result in immediate termination of access without refund."
     },
     {
         id: "ip",
         title: "6. Intellectual Property",
-        content: "All content on the We2 platform, including curriculum, code simulations, and proprietary tools, is the property of We2 and is protected by copyright laws. You may not reproduce or distribute our content without written permission."
+        content: "All content on the Emble platform, including curriculum, code simulations, and proprietary tools, is the property of Emble and is protected by copyright laws. You may not reproduce or distribute our content without written permission."
     }
 ];
 
@@ -91,7 +91,7 @@ export default function TermsPage() {
                             transition={{ delay: 0.1 }}
                             className="text-xl text-gray-400 max-w-2xl font-medium"
                         >
-                            Please read these terms carefully. They govern your use of the We2 ecosystem and help us maintain a professional, high-impact environment for everyone.
+                            Please read these terms carefully. They govern your use of the Emble ecosystem and help us maintain a professional, high-impact environment for everyone.
                         </motion.p>
                     </div>
                 </div>

@@ -11,7 +11,7 @@ export class AuthService {
     ) { }
 
     async register(registerDto: RegisterDto) {
-        const { email, password, role, subscriptionPlan, firstName, lastName } = registerDto;
+        const { email, password, role, subscriptionPlan, firstName, lastName, collegeId } = registerDto;
         const user = await this.usersService.create(
             email,
             password,
@@ -19,6 +19,7 @@ export class AuthService {
             subscriptionPlan,
             firstName,
             lastName,
+            collegeId,
         );
         return {
             id: user.id,
@@ -29,6 +30,7 @@ export class AuthService {
             subscriptionEndDate: user.subscriptionEndDate,
             firstName: user.firstName,
             lastName: user.lastName,
+            collegeId: user.collegeId,
         };
     }
 
@@ -53,7 +55,7 @@ export class AuthService {
         if (role && user.role !== role) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const payload = { sub: user.id, email: user.email, role: user.role, collegeId: user.collegeId };
         const accessToken = await this.jwtService.signAsync(payload);
 
         return {
@@ -67,6 +69,7 @@ export class AuthService {
                 subscriptionEndDate: user.subscriptionEndDate,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                collegeId: user.collegeId,
             },
         };
     }

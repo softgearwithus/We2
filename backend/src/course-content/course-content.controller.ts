@@ -10,8 +10,9 @@ export class CourseContentController {
         @Param('topicId') topicId: string,
         @Body('title') title: string,
         @Body('content') content: string,
+        @Body('isPremium') isPremium?: boolean,
     ) {
-        return this.courseContentService.createOrUpdate(topicId, title, content);
+        return this.courseContentService.createOrUpdate(topicId, title, content, !!isPremium);
     }
 
     @Get(':topicId')

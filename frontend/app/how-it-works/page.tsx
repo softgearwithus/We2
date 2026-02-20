@@ -24,7 +24,7 @@ export default function HowItWorksPage() {
                             <span className="text-brand-orange">Software Engineer.</span>
                         </h1>
                         <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                            We2 bridges the gap between academic theory and industrial application through a proven 4-step process.
+                            Emble bridges the gap between academic theory and industrial application through a proven 4-step process.
                         </p>
                     </div>
 

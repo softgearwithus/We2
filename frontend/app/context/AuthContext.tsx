@@ -11,6 +11,7 @@ interface User {
     subscriptionEndDate?: string;
     firstName?: string | null;
     lastName?: string | null;
+    collegeId?: string | null;
 }
 
 interface AuthContextType {
@@ -55,6 +56,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     if (userData?.id) {
                         localStorage.setItem('userId', userData.id);
                     }
+                    if (userData?.collegeId) {
+                        localStorage.setItem('collegeId', userData.collegeId);
+                    } else {
+                        localStorage.removeItem('collegeId');
+                    }
                 })
                 .catch(() => {
                     localStorage.removeItem('accessToken');
@@ -73,13 +79,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('accessTokenSetAt', String(Date.now()));
         localStorage.setItem('userId', userData.id);
         setUser(userData);
-        router.push('/dashboard');
     };
 
     const logout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('accessTokenSetAt');
         localStorage.removeItem('userId');
+        localStorage.removeItem('collegeId');
         setUser(null);
         router.push('/login');
     };

@@ -28,7 +28,7 @@ export default function ChapterPage() {
             try {
                 // Fetch content for this chapter
                 const topicId = `programming-${languageId}-${chapterId}`;
-                const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/course-content/${topicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

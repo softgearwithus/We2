@@ -153,7 +153,7 @@ export default function MissionPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Prep0 Card */}
+                        {/* Bootcamp Card */}
                         <motion.div
                             whileHover={{ y: -8 }}
                             className="p-10 rounded-3xl bg-emerald-50/50 border border-emerald-100 group transition-all"
@@ -161,16 +161,16 @@ export default function MissionPage() {
                             <div className="w-14 h-14 rounded-2xl bg-white text-emerald-600 flex items-center justify-center border border-emerald-100 mb-8 shadow-sm group-hover:scale-110 transition-transform">
                                 <BookOpen size={28} />
                             </div>
-                            <h3 className="text-3xl font-bold text-brand-black mb-4">Prep<span className="text-emerald-500 font-extrabold">0</span></h3>
+                            <h3 className="text-3xl font-bold text-brand-black mb-4">Boot<span className="text-emerald-500 font-extrabold">camp</span></h3>
                             <p className="text-gray-600 mb-8 leading-relaxed">
-                                Designed for end-to-end foundation building. We focus on the complete technical stack: **DSA, System Design, DBMS, OS**, and automated resume optimization. Prep0 ensures you are technically invincible.
+                                Designed for end-to-end foundation building. We focus on the complete technical stack: **DSA, System Design, DBMS, OS**, and automated resume optimization. The Bootcamp ensures you are technically invincible.
                             </p>
                             <Link href="/pricing" className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:gap-3 transition-all">
-                                Explore Prep0 <ArrowRight size={18} />
+                                Explore Bootcamp <ArrowRight size={18} />
                             </Link>
                         </motion.div>
 
-                        {/* We2Hub Card */}
+                        {/* Job Simulation Card */}
                         <motion.div
                             whileHover={{ y: -8 }}
                             className="p-10 rounded-3xl bg-brand-black border border-gray-800 group transition-all"
@@ -178,12 +178,12 @@ export default function MissionPage() {
                             <div className="w-14 h-14 rounded-2xl bg-gray-900 text-brand-orange flex items-center justify-center border border-gray-800 mb-8 shadow-sm group-hover:scale-110 transition-transform">
                                 <Briefcase size={28} />
                             </div>
-                            <h3 className="text-3xl font-bold text-white mb-4">We2<span className="text-brand-orange font-extrabold">Hub</span></h3>
+                            <h3 className="text-3xl font-bold text-white mb-4">Job <span className="text-brand-orange font-extrabold">Simulation</span></h3>
                             <p className="text-gray-400 mb-8 leading-relaxed">
-                                Designed for real-world mastery. Join virtual tech teams, work on JIRA tickets, submit PRs, and ship production-grade code. We2Hub gives you the experience of a 6-month internship in 21 days.
+                                Designed for real-world mastery. Join virtual tech teams, work on JIRA tickets, submit PRs, and ship production-grade code. The Simulation gives you the experience of a 6-month internship in 21 days.
                             </p>
                             <Link href="/pricing" className="inline-flex items-center gap-2 text-brand-orange font-bold hover:gap-3 transition-all">
-                                Explore We2Hub <ArrowRight size={18} />
+                                Explore Simulation <ArrowRight size={18} />
                             </Link>
                         </motion.div>
                     </div>

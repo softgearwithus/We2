@@ -1,8 +1,7 @@
 "use client";
 
-import { Student } from "@/lib/institute/mockData";
+import type { Student } from "@/lib/institute/types";
 import { X, Mail, Phone, Calendar, Download, Trophy, GraduationCap, Github, Linkedin, ExternalLink } from "lucide-react";
-import { ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
 
@@ -17,13 +16,16 @@ interface ModalProps {
 }
 
 export function StudentProfileModal({ student, onClose }: ModalProps) {
+    const attendanceValue = student.attendance ?? 0;
+    const attendanceDisplay = student.attendance ?? "--";
+    const cgpaDisplay = student.cgpa ?? "--";
     const chartData = [
         { subject: 'Coding', A: student.skills.coding, fullMark: 100 },
         { subject: 'Aptitude', A: student.skills.aptitude, fullMark: 100 },
         { subject: 'Comm', A: student.skills.communication, fullMark: 100 },
         { subject: 'Core', A: student.skills.core, fullMark: 100 },
         { subject: 'Projects', A: (student.skills.coding + student.skills.core) / 2, fullMark: 100 }, // Derived
-        { subject: 'Consistency', A: student.attendance, fullMark: 100 },
+        { subject: 'Consistency', A: attendanceValue, fullMark: 100 },
     ];
 
     return (
@@ -61,7 +63,7 @@ export function StudentProfileModal({ student, onClose }: ModalProps) {
                             </div>
                             <div className="flex-1 mb-2">
                                 <h2 className="text-4xl font-[900] text-gray-900 tracking-tighter mb-1">{student.name}</h2>
-                                <p className="text-gray-500 font-medium text-xl">{student.department} • Batch 2026</p>
+                                <p className="text-gray-500 font-medium text-xl">{student.department ?? 'Unknown'} • Batch 2026</p>
                                 <div className="flex gap-6 mt-6">
                                     <a href="#" className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-orange transition-colors font-semibold"><Mail className="w-4 h-4" /> {student.name.toLowerCase().replace(' ', '.')}@college.edu</a>
                                     <a href="#" className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-orange transition-colors font-semibold"><Phone className="w-4 h-4" /> +91 98765 43210</a>
@@ -82,11 +84,13 @@ export function StudentProfileModal({ student, onClose }: ModalProps) {
                                     <div className="space-y-5">
                                         <div className="flex items-center justify-between">
                                             <span className="text-gray-500 text-sm font-semibold">Current CGPA</span>
-                                            <span className="text-2xl font-[900] text-gray-900 font-mono">{student.cgpa}</span>
+                                            <span className="text-2xl font-[900] text-gray-900 font-mono">{cgpaDisplay}</span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-gray-500 text-sm font-semibold">Attendance</span>
-                                            <span className={`text-2xl font-[900] ${student.attendance > 75 ? 'text-green-600' : 'text-red-500'} font-mono`}>{student.attendance}%</span>
+                                            <span className={`text-2xl font-[900] ${attendanceValue > 75 ? 'text-green-600' : 'text-red-500'} font-mono`}>
+                                                {attendanceDisplay}{typeof attendanceDisplay === "number" ? "%" : ""}
+                                            </span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-gray-500 text-sm font-semibold">Backlogs</span>
@@ -108,9 +112,7 @@ export function StudentProfileModal({ student, onClose }: ModalProps) {
                             <div className="bg-white rounded-3xl border border-gray-100 p-6 flex flex-col shadow-sm">
                                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">Skill Radar</h4>
                                 <div className="flex-1 w-full min-h-[250px]">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <StudentRadarChart data={chartData} studentName={student.name} />
-                                    </ResponsiveContainer>
+                                    <StudentRadarChart data={chartData} studentName={student.name} />
                                 </div>
                                 <div className="text-center mt-4">
                                     <span className="text-4xl font-[900] text-gray-900">{student.placementReadiness}</span>

@@ -1,6 +1,8 @@
 "use client";
 
-import { mockDepartmentStats, mockStudents } from "@/lib/institute/mockData";
+import { useEffect, useMemo, useState } from "react";
+import type { DepartmentStats, Student } from "@/lib/institute/types";
+import { fetchInstituteDashboard } from "@/lib/institute/client";
 import { StatsCards } from "@/components/institute/Dashboard/StatsCards";
 import { DepartmentPerformance } from "@/components/institute/Dashboard/DepartmentPerformance";
 import { motion } from "framer-motion";
@@ -27,9 +29,48 @@ const item = {
 };
 
 export default function InstituteDashboard() {
-    const totalStudents = mockStudents.length;
-    const placedStudents = mockStudents.filter(s => s.status === 'Placed').length;
-    const placementRate = ((placedStudents / totalStudents) * 100).toFixed(1);
+    const [topStudents, setTopStudents] = useState<Student[]>([]);
+    const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);
+    const [totalStudents, setTotalStudents] = useState(0);
+    const [placementRate, setPlacementRate] = useState(0);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadDashboard = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchInstituteDashboard();
+                const fallbackStudents = data.students || [];
+                const total = data.totalStudents ?? fallbackStudents.length;
+                const rate = data.placementRate
+                    ?? (total
+                        ? Math.round(((data.placedStudents ?? fallbackStudents.filter((s) => s.status === 'Placed').length) / total) * 1000) / 10
+                        : 0);
+                const top = data.topStudents
+                    ?? [...fallbackStudents].sort((a, b) => b.placementReadiness - a.placementReadiness).slice(0, 3);
+
+                setTotalStudents(total);
+                setPlacementRate(rate);
+                setTopStudents(top);
+                setDepartmentStats(data.departmentStats || []);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadDashboard();
+    }, []);
+
+    const normalizedTopStudents = useMemo(() => {
+        return topStudents.slice(0, 3);
+    }, [topStudents]);
+
+    if (loading) {
+        return (
+            <div className="min-h-[60vh] flex items-center justify-center text-gray-400">
+                Loading dashboard...
+            </div>
+        );
+    }
 
     return (
         <motion.div
@@ -59,7 +100,7 @@ export default function InstituteDashboard() {
             <motion.div variants={item}>
                 <StatsCards
                     totalStudents={totalStudents}
-                    placementRate={parseFloat(placementRate)}
+                    placementRate={placementRate}
                     avgPackage="₹6.5 LPA"
                     activeCompanies={32}
                 />
@@ -70,7 +111,7 @@ export default function InstituteDashboard() {
                     <PlacementChart />
                 </motion.div>
                 <motion.div variants={item} className="h-full">
-                    <DepartmentPerformance stats={mockDepartmentStats} />
+                    <DepartmentPerformance stats={departmentStats} />
                 </motion.div>
             </div>
 
@@ -97,7 +138,7 @@ export default function InstituteDashboard() {
                 <motion.div variants={item} className="rounded-3xl bg-white border border-gray-100 p-8 shadow-[0_2px_20px_rgb(0,0,0,0.04)]">
                     <h3 className="text-xl font-[900] text-gray-900 tracking-tight mb-6">Top Performers</h3>
                     <div className="space-y-4">
-                        {mockStudents.slice(0, 3).map((student, i) => (
+                        {normalizedTopStudents.map((student, i) => (
                             <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-md transition-all group hover:border-brand-orange/20">
                                 <div className="flex items-center gap-5">
                                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-[900] text-white shadow-lg ${i === 0 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-purple-500 to-indigo-600'}`}>

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { mockStudents } from "@/lib/institute/mockData";
+import { useEffect, useMemo, useState } from "react";
+import type { Student } from "@/lib/institute/types";
+import { fetchInstituteStudents } from "@/lib/institute/client";
 import { StudentFilter } from "@/components/institute/Students/StudentFilter";
 import { StudentTable } from "@/components/institute/Students/StudentTable";
 import { StudentProfileModal } from "@/components/institute/Students/StudentProfileModal";
 import { Search, Download, FileSpreadsheet } from "lucide-react";
-import { Student } from "@/lib/institute/mockData";
 import { motion } from "framer-motion";
 
 const container = {
@@ -27,6 +27,11 @@ const item = {
 export default function StudentAnalyticsPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+    const [students, setStudents] = useState<Student[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(25);
+    const [total, setTotal] = useState(0);
     const [filters, setFilters] = useState<{
         year: number | null;
         department: string | null;
@@ -37,17 +42,31 @@ export default function StudentAnalyticsPage() {
         status: null,
     });
 
-    const filteredStudents = mockStudents.filter((student) => {
-        // Search
-        if (searchTerm && !student.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    useEffect(() => {
+        const loadStudents = async () => {
+            setLoading(true);
+            const data = await fetchInstituteStudents({
+                query: searchTerm,
+                department: filters.department,
+                year: filters.year,
+                status: filters.status,
+                page,
+                limit: pageSize,
+            });
+            setStudents(data.data);
+            setTotal(data.total);
+            setPage(data.page);
+            setPageSize(data.pageSize);
+            setLoading(false);
+        };
+        loadStudents();
+    }, [page, pageSize, searchTerm, filters.department, filters.year, filters.status]);
 
-        // Filters
-        if (filters.year && student.year !== filters.year) return false;
-        if (filters.department && student.department !== filters.department) return false;
-        if (filters.status && student.status !== filters.status) return false;
+    useEffect(() => {
+        setPage(0);
+    }, [searchTerm, filters.department, filters.year, filters.status]);
 
-        return true;
-    });
+    const filteredStudents = useMemo(() => students, [students]);
 
     return (
         <motion.div
@@ -101,7 +120,14 @@ export default function StudentAnalyticsPage() {
                         <StudentTable
                             students={filteredStudents}
                             onViewProfile={setSelectedStudent}
+                            page={page}
+                            total={total}
+                            pageSize={pageSize}
+                            onPageChange={setPage}
                         />
+                        {loading && (
+                            <div className="mt-4 text-sm text-gray-400">Loading students...</div>
+                        )}
                     </motion.div>
                 </div>
             </div>

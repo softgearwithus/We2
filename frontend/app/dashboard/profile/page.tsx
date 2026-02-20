@@ -1,17 +1,53 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
     Trophy, Medal, Star, Zap, Target, User, MapPin,
     Calendar, TrendingUp, Award, Code, Briefcase,
-    CheckCircle2, Flame
+    CheckCircle2, Flame, Crown, ShieldCheck
 } from 'lucide-react';
+import { useAuth } from '@/app/context/AuthContext';
+
+const PLAN_LABELS: Record<string, string> = {
+    standard_tier: 'Standard',
+    pro_tier: 'Pro',
+    placement_plus: 'Placement Plus',
+    industry_plus: 'Industry Plus',
+    we2_max: 'We2 Max',
+};
 
 export default function ProfilePage() {
+    const { user: authUser } = useAuth();
+    const subscriptionPlan = authUser?.subscriptionPlan || 'free';
+    const subscriptionStatus = authUser?.subscriptionStatus || 'inactive';
+
+    const planLabel = PLAN_LABELS[subscriptionPlan] || subscriptionPlan;
+    const isActive = subscriptionStatus === 'active' && !!authUser?.subscriptionEndDate;
+    const isPremium = isActive && subscriptionPlan !== 'free';
+
+    const expiresAt = useMemo(() => {
+        if (!authUser?.subscriptionEndDate) return null;
+        const date = new Date(authUser.subscriptionEndDate);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }, [authUser?.subscriptionEndDate]);
+
+    const daysLeft = useMemo(() => {
+        if (!expiresAt) return null;
+        const diffMs = expiresAt.getTime() - Date.now();
+        return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    }, [expiresAt]);
+
+    const isExpired = expiresAt ? expiresAt.getTime() <= Date.now() : false;
+
+    const displayName = authUser?.firstName || authUser?.lastName
+        ? `${authUser?.firstName || ''} ${authUser?.lastName || ''}`.trim()
+        : (authUser?.email?.split('@')[0] || 'Learner');
+
     const user = {
-        name: 'Alex Johnson',
+        name: displayName,
         role: 'Full Stack Aspirant',
         level: 42,
         xp: 12500,
@@ -41,17 +77,17 @@ export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-slate-50 p-6 lg:p-10 space-y-8">
             {/* Header / Banner */}
-            <div className="relative rounded-3xl overflow-hidden bg-slate-900 text-white shadow-xl shadow-slate-200">
+            <div className={`relative rounded-3xl overflow-hidden text-white shadow-xl shadow-slate-200 ${isPremium ? 'bg-gradient-to-br from-[#1f1a0a] via-[#2a2008] to-[#1b1b1b]' : 'bg-slate-900'}`}>
                 {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-20">
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
+                <div className={`absolute inset-0 opacity-20 ${isPremium ? 'mix-blend-screen' : ''}`}>
+                    <div className={`absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl ${isPremium ? 'bg-amber-500' : 'bg-indigo-500'}`}></div>
+                    <div className={`absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl ${isPremium ? 'bg-orange-400' : 'bg-purple-500'}`}></div>
                 </div>
 
                 <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-8">
                     {/* Avatar */}
                     <div className="relative shrink-0">
-                        <div className="w-32 h-32 rounded-full border-4 border-white/20 overflow-hidden shadow-2xl relative bg-slate-800">
+                        <div className={`w-32 h-32 rounded-full overflow-hidden shadow-2xl relative bg-slate-800 ${isPremium ? 'border-4 border-amber-300/50 shadow-amber-200/30' : 'border-4 border-white/20'}`}>
                             <Image
                                 src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
                                 alt="Avatar"
@@ -59,15 +95,26 @@ export default function ProfilePage() {
                                 className="object-cover"
                             />
                         </div>
-                        <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 p-2 rounded-full border-4 border-slate-900 shadow-lg" title="Current Rank">
-                            <Trophy size={20} className="text-white fill-white" />
+                        <div className={`absolute -bottom-2 -right-2 p-2 rounded-full border-4 shadow-lg ${isPremium ? 'bg-gradient-to-r from-amber-400 to-orange-500 border-[#1f1a0a]' : 'bg-gradient-to-r from-amber-400 to-orange-500 border-slate-900'}`} title="Current Rank">
+                            {isPremium ? <Crown size={20} className="text-white fill-white" /> : <Trophy size={20} className="text-white fill-white" />}
                         </div>
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 text-center md:text-left space-y-4">
                         <div>
-                            <h1 className="text-3xl font-extrabold tracking-tight">{user.name}</h1>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <h1 className="text-3xl font-extrabold tracking-tight">{user.name}</h1>
+                                {isPremium ? (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-amber-500/20 text-amber-200 border border-amber-300/30">
+                                        <Crown size={12} /> Premium
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-slate-800/60 text-slate-300 border border-white/10">
+                                        Free Plan
+                                    </span>
+                                )}
+                            </div>
                             <p className="text-slate-400 font-medium flex items-center justify-center md:justify-start gap-2">
                                 {user.role} •
                                 <span className="flex items-center gap-1 text-emerald-400"><MapPin size={14} /> {user.location}</span>
@@ -94,6 +141,60 @@ export default function ProfilePage() {
                         <div>
                             <div className="text-2xl font-black text-white">{user.streak} Days</div>
                             <div className="text-xs font-bold text-slate-400 uppercase">Current Streak</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className={`rounded-2xl border p-5 shadow-sm ${isPremium ? 'bg-gradient-to-r from-amber-50 via-white to-white border-amber-100' : 'bg-white border-slate-100'}`}>
+                    <div className="flex items-start gap-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isPremium ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                            <ShieldCheck size={20} />
+                        </div>
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Subscription</div>
+                            <div className="text-lg font-extrabold text-slate-900">{planLabel}</div>
+                            <div className="text-xs text-slate-500 font-medium">
+                                {isActive && expiresAt
+                                    ? `Active • ${daysLeft ?? 0} days left`
+                                    : isExpired
+                                        ? 'Expired'
+                                        : 'Inactive'}
+                            </div>
+                        </div>
+                        <div className="ml-auto">
+                            {isPremium && isActive ? (
+                                <Link
+                                    href="/pricing"
+                                    className="inline-flex items-center gap-2 text-xs font-bold text-amber-700 bg-amber-100 px-3 py-2 rounded-lg border border-amber-200 hover:bg-amber-200"
+                                >
+                                    Manage Plan
+                                </Link>
+                            ) : (
+                                <Link
+                                    href="/pricing"
+                                    className="inline-flex items-center gap-2 text-xs font-bold text-white bg-gradient-to-r from-brand-orange to-red-500 px-3 py-2 rounded-lg shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/40"
+                                >
+                                    Upgrade
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                    <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                            <Calendar size={20} />
+                        </div>
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Renewal</div>
+                            <div className="text-lg font-extrabold text-slate-900">
+                                {expiresAt ? expiresAt.toLocaleDateString() : '—'}
+                            </div>
+                            <div className="text-xs text-slate-500 font-medium">
+                                {expiresAt ? 'Next billing date' : 'No active plan'}
+                            </div>
                         </div>
                     </div>
                 </div>

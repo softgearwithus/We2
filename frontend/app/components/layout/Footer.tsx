@@ -19,7 +19,7 @@ export default function Footer() {
                             </span>
                         </Link>
                         <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
-                            <strong className="text-brand-black">Prep0</strong> for placement prep. <strong className="text-brand-black">We2Hub</strong> for industry experience. One platform, two powerful paths.
+                            <strong className="text-brand-black">Bootcamp</strong> for placement prep. <strong className="text-brand-black">Simulation</strong> for industry experience. One unified career accelerator.
                         </p>
                     </div>
 
@@ -28,8 +28,8 @@ export default function Footer() {
                         {
                             title: 'Product',
                             links: [
-                                { label: 'Prep0', href: '/prep0' },
-                                { label: 'We2Hub', href: '/we2hub' },
+                                { label: 'Bootcamp', href: '/#bootcamp' },
+                                { label: 'Job Simulation', href: '/#simulation' },
                                 { label: 'How it Works', href: '/how-it-works' },
                                 { label: 'Pricing', href: '/pricing' },
                                 { label: 'AI Mentors', href: '/ai-mentors' }

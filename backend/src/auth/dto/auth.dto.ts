@@ -56,6 +56,15 @@ export class RegisterDto {
     role?: string;
 
     @ApiProperty({
+        example: 'a1b2c3d4-5678-9012-3456-7890abcd1234',
+        description: 'College/Institute identifier (optional)',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    collegeId?: string;
+
+    @ApiProperty({
         example: 'placement_plus',
         description: 'Selected subscription plan',
         required: false,

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Terminal } from 'lucide-react';
 
 interface AuthLayoutProps {
     children: ReactNode;
@@ -36,10 +37,10 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
 
                 <div className="relative z-10 max-w-xl">
                     <Link href="/" className="inline-flex items-center gap-2 mb-12 group">
-                        <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white font-bold text-xl border border-white/20 group-hover:scale-105 transition-transform">
-                            W2
+                        <div className="w-12 h-12 bg-gradient-to-br from-brand-orange to-red-500 rounded-xl flex items-center justify-center shadow-lg shadow-brand-orange/20 mb-6">
+                            <Terminal className="text-white" size={24} strokeWidth={3} />
                         </div>
-                        <span className="font-bold text-xl text-white tracking-tight">We2<span className="text-brand-orange">.Target</span></span>
+                        <span className="font-bold text-xl text-white tracking-tight">Emble<span className="text-brand-orange">.Target</span></span>
                     </Link>
 
                     <h2 className="text-5xl font-black mb-6 leading-tight tracking-tight">
@@ -68,7 +69,9 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                 {/* Mobile Header */}
                 <div className="lg:hidden absolute top-8 left-8">
                     <Link href="/" className="flex items-center gap-2 font-bold text-brand-black">
-                        <div className="w-8 h-8 bg-brand-black rounded-lg flex items-center justify-center text-white text-sm">W2</div>
+                        <div className="w-8 h-8 bg-brand-black rounded-lg flex items-center justify-center text-white text-sm">
+                            <Terminal size={16} strokeWidth={3} />
+                        </div>
                         We2
                     </Link>
                 </div>

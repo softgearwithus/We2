@@ -1,5 +1,6 @@
 
 import { Injectable, Logger } from '@nestjs/common';
+import { EM_PLATFORM_KNOWLEDGE } from '../ai/platform-knowledge';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
@@ -278,5 +279,53 @@ export class GeminiService {
         }
 
         throw lastError || new Error('Gemini generation failed');
+    }
+    async chatWithContext(userMessage: string, history: any[] = [], platformKnowledge?: string): Promise<string> {
+        if (!this.genAI) {
+            throw new Error('Gemini API not configured');
+        }
+
+        try {
+            const systemPrompt = `
+            You are "Emble AI", a senior engineering mentor and platform guide for the Emble ecosystem.
+            
+            YOUR CONTEXT (PLATFORM KNOWLEDGE):
+            ${platformKnowledge || EM_PLATFORM_KNOWLEDGE}
+
+            YOUR PERSONA:
+            - You are a Senior Staff Engineer at a FAANG company who mentors students.
+            - You are precise, encouraging, and technically deep.
+            - You NEVER mention you are an AI unless explicitly asked. You are a "Mentor".
+            - If a user asks about pricing, explain the value first, then the cost.
+            - If a user receives a coding question, guide them with hints (Socratic method), don't just dump the answer.
+            
+            CURRENT CONVERSATION:
+            The user is asking a question. Use the context above to answer accurately.
+            `;
+
+            const model = this.genAI.getGenerativeModel({ model: this.defaultModelName || 'gemini-2.5-flash' });
+
+            const chat = model.startChat({
+                history: [
+                    {
+                        role: "user",
+                        parts: [{ text: systemPrompt }],
+                    },
+                    {
+                        role: "model",
+                        parts: [{ text: "Understood. I am Emble AI, ready to mentor." }],
+                    },
+                    ...history
+                ],
+            });
+
+            const result = await chat.sendMessage(userMessage);
+            const response = await result.response;
+            return response.text();
+
+        } catch (error) {
+            this.logger.error('Chat generation failed', error);
+            return "I'm having trouble connecting to the neural link right now. Please try again in a moment.";
+        }
     }
 }

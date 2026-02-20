@@ -26,7 +26,7 @@ export default function LanguageCoursePage() {
                 // Fetch the chapter list for this language
                 // E.g., topicId: 'programming-python-chapters'
                 const topicId = `programming-${languageId}-chapters`;
-                const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/course-content/${topicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

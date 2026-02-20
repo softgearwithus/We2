@@ -34,7 +34,11 @@ async function bootstrap() {
   );
 
   // Enable CORS
-  const defaultOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+  const defaultOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://192.168.1.65:3000',
+  ];
   const envOrigins = (process.env.FRONTEND_URL || '')
     .split(',')
     .map((origin) => origin.trim())
@@ -44,6 +48,10 @@ async function bootstrap() {
   app.enableCors({
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      const isLocalNetwork = /^http:\/\/(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(origin);
+      if (isLocalNetwork) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by CORS'), false);

@@ -12,6 +12,22 @@ export class UsersService {
         private usersRepository: Repository<User>,
     ) { }
 
+    private getSubscriptionEndDate(billingCycle: 'monthly' | 'yearly') {
+        const durationDays = billingCycle === 'yearly' ? 365 : 30;
+        return new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
+    }
+
+    private async markExpiredIfNeeded(user: User) {
+        if (user.subscriptionStatus === 'active' && user.subscriptionEndDate) {
+            const isExpired = user.subscriptionEndDate.getTime() <= Date.now();
+            if (isExpired) {
+                user.subscriptionStatus = 'expired';
+                await this.usersRepository.save(user);
+            }
+        }
+        return user;
+    }
+
     async create(
         email: string,
         password: string,
@@ -19,6 +35,7 @@ export class UsersService {
         subscriptionPlan?: string,
         firstName?: string,
         lastName?: string,
+        collegeId?: string,
     ): Promise<User> {
         const normalizedEmail = email.toLowerCase().trim();
         const existing = await this.usersRepository.findOne({ where: { email: normalizedEmail } });
@@ -32,7 +49,7 @@ export class UsersService {
 
         if (subscriptionPlan && subscriptionPlan !== 'free') {
             initialStatus = 'active';
-            endDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+            endDate = this.getSubscriptionEndDate('monthly');
         }
 
         const user = this.usersRepository.create({
@@ -44,13 +61,14 @@ export class UsersService {
             subscriptionEndDate: endDate as Date,
             firstName: firstName?.trim() || null,
             lastName: lastName?.trim() || null,
+            collegeId: collegeId || null,
         });
         return this.usersRepository.save(user);
     }
 
     async findByEmail(email: string): Promise<User | null> {
         const normalizedEmail = email.toLowerCase().trim();
-        return this.usersRepository.findOne({
+        const user = await this.usersRepository.findOne({
             where: { email: normalizedEmail },
             select: [
                 'id',
@@ -63,8 +81,11 @@ export class UsersService {
                 'subscriptionEndDate',
                 'firstName',
                 'lastName',
+                'collegeId',
             ],
         });
+        if (!user) return null;
+        return this.markExpiredIfNeeded(user);
     }
 
     async findById(id: string): Promise<User> {
@@ -72,7 +93,7 @@ export class UsersService {
         if (!user) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
-        return user;
+        return this.markExpiredIfNeeded(user);
     }
 
     async findAll(): Promise<User[]> {
@@ -96,6 +117,10 @@ export class UsersService {
 
         if (updateUserDto.password) {
             user.password = await bcrypt.hash(updateUserDto.password, 12);
+        }
+
+        if (updateUserDto.collegeId !== undefined) {
+            user.collegeId = updateUserDto.collegeId || null;
         }
 
         return this.usersRepository.save(user);
@@ -126,11 +151,19 @@ export class UsersService {
         };
     }
 
-    async upgradeSubscription(id: string, plan: string): Promise<User> {
+    async upgradeSubscription(id: string, plan: string, billingCycle: 'monthly' | 'yearly' = 'monthly'): Promise<User> {
         const user = await this.findById(id);
         user.subscriptionPlan = plan;
         user.subscriptionStatus = 'active';
-        user.subscriptionEndDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1)); // 1 year from now
+        user.subscriptionEndDate = this.getSubscriptionEndDate(billingCycle);
+        return this.usersRepository.save(user);
+    }
+
+    async activateSubscription(id: string, plan: string, billingCycle: 'monthly' | 'yearly') {
+        const user = await this.findById(id);
+        user.subscriptionPlan = plan;
+        user.subscriptionStatus = 'active';
+        user.subscriptionEndDate = this.getSubscriptionEndDate(billingCycle);
         return this.usersRepository.save(user);
     }
 }

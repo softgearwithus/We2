@@ -25,6 +25,7 @@ interface PricingCardProps {
     delay?: number;
     savings?: string;
     planId?: string; // e.g., 'placement_plus', 'industry_plus', 'we2_max'
+    billingCycle?: 'monthly' | 'yearly';
 }
 
 export default function PricingCard({
@@ -40,7 +41,8 @@ export default function PricingCard({
     icon,
     delay = 0,
     savings,
-    planId
+    planId,
+    billingCycle = 'monthly',
 }: PricingCardProps) {
     const isPopular = variant === 'popular';
     const isPremium = variant === 'premium';
@@ -62,26 +64,106 @@ export default function PricingCard({
                 return;
             }
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/upgrade`, {
+            if (typeof window === 'undefined') return;
+            const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+            const keyRes = await fetch(`${apiBase}/payments/razorpay/key`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!keyRes.ok) {
+                throw new Error('Failed to load payment key');
+            }
+            const keyData = await keyRes.json();
+
+            const orderRes = await fetch(`${apiBase}/payments/razorpay/order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ plan: planId })
+                body: JSON.stringify({ plan: planId, billingCycle })
+            });
+            if (!orderRes.ok) {
+                const errorText = await orderRes.text();
+                throw new Error(`Order failed: ${orderRes.status} ${errorText}`);
+            }
+
+            const order = await orderRes.json();
+            const [firstName, lastName] = [user?.firstName || '', user?.lastName || ''].filter(Boolean);
+            const displayName = `${firstName} ${lastName}`.trim();
+
+            const loadRazorpay = () => new Promise<boolean>((resolve) => {
+                if ((window as any).Razorpay) {
+                    resolve(true);
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+                script.async = true;
+                script.onload = () => resolve(true);
+                script.onerror = () => resolve(false);
+                document.body.appendChild(script);
             });
 
-            if (response.ok) {
-                const updatedUser = await response.json();
-                // Update local auth state with new subscription details
-                updateUser(updatedUser);
-                alert(`Successfully upgraded to ${title}!`);
-                if (onCtaClick) onCtaClick();
-            } else {
-                const errorText = await response.text();
-                console.error('Upgrade failed:', response.status, errorText);
-                alert(`Upgrade failed: ${response.status} ${response.statusText}`);
+            const loaded = await loadRazorpay();
+            if (!loaded) {
+                throw new Error('Failed to load payment checkout');
             }
+
+            const options = {
+                key: keyData.keyId,
+                amount: order.amount,
+                currency: order.currency,
+                name: 'Emble',
+                description: `${title} (${billingCycle})`,
+                order_id: order.id,
+                prefill: {
+                    name: displayName || user?.email,
+                    email: user?.email,
+                },
+                theme: {
+                    color: '#F97316',
+                },
+                notes: {
+                    plan: planId,
+                    billingCycle,
+                },
+                handler: async (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+                    const verifyRes = await fetch(`${apiBase}/payments/razorpay/verify`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            orderId: response.razorpay_order_id,
+                            paymentId: response.razorpay_payment_id,
+                            signature: response.razorpay_signature,
+                            plan: planId,
+                            billingCycle,
+                        })
+                    });
+
+                    if (!verifyRes.ok) {
+                        const errorText = await verifyRes.text();
+                        throw new Error(`Verification failed: ${verifyRes.status} ${errorText}`);
+                    }
+
+                    const verifyData = await verifyRes.json();
+                    if (verifyData?.valid && verifyData?.user) {
+                        updateUser(verifyData.user);
+                        alert(`Successfully upgraded to ${title}!`);
+                        if (onCtaClick) onCtaClick();
+                    } else {
+                        throw new Error('Payment verification failed');
+                    }
+                },
+                modal: {
+                    ondismiss: () => setIsLoading(false),
+                },
+            } as any;
+
+            const rz = new (window as any).Razorpay(options);
+            rz.open();
         } catch (error) {
             console.error('Upgrade error:', error);
             alert('An error occurred during upgrade. Please check console for details.');

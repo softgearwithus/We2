@@ -23,20 +23,20 @@ const targetCompanies = [
 
 const faqs = [
     {
-        q: "When should I start preparing for placements using Prep0?",
+        q: "When should I start preparing for placements using Emble Bootcamp?",
         a: "We recommend starting at least 3-6 months before your campus recruitment season. This gives you enough time to master DSA fundamentals and polish your resume through multiple AI optimization cycles."
     },
     {
-        q: "What technical topics are covered in the Prep0 curriculum?",
+        q: "What technical topics are covered in the Emble curriculum?",
         a: "Our curriculum is hyper-focused on what recruiters ask: Data Structures and Algorithms (DSA), System Design, Object-Oriented Programming (OOPS), Database Management Systems (DBMS), and Operating Systems (OS)."
     },
     {
         q: "How does the AI Resume Optimizer work?",
-        a: "Prep0 uses advanced LLMs to scan your resume against 50,000+ successful job applications. It identifies keyword gaps, suggests impact-driven phrasing, and ensures your resume is ATS-friendly for top-tier MNCs."
+        a: "Emble uses advanced LLMs to scan your resume against 50,000+ successful job applications. It identifies keyword gaps, suggests impact-driven phrasing, and ensures your resume is ATS-friendly for top-tier MNCs."
     },
     {
-        q: "Is Prep0 suitable for both on-campus and off-campus placements?",
-        a: "Absolutely. While on-campus drives often have specific patterns, off-campus interviews at FAANG+ companies require a deeper mastery of problem-solving. Prep0 bridges both needs with specialized modules."
+        q: "Is Emble suitable for both on-campus and off-campus placements?",
+        a: "Absolutely. While on-campus drives often have specific patterns, off-campus interviews at FAANG+ companies require a deeper mastery of problem-solving. Emble bridges both needs with specialized modules."
     },
     {
         q: "What programming languages are supported for coding rounds?",
@@ -158,7 +158,7 @@ export default function Prep0Page() {
                             The Full-Stack <span className="text-emerald-600">Placement Engine.</span>
                         </h2>
                         <p className="text-gray-500 max-w-2xl mx-auto font-medium">
-                            We don't just stop at coding. Prep0 covers every dimension of the modern engineering interview.
+                            We don't just stop at coding. Emble covers every dimension of the modern engineering interview.
                         </p>
                     </div>
 
@@ -264,7 +264,7 @@ export default function Prep0Page() {
                 <div className="max-w-4xl mx-auto px-6">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-extrabold text-brand-black mb-4">Frequently Asked Questions</h2>
-                        <p className="text-gray-500 font-medium italic">Everything you need to know about starting your career with Prep0.</p>
+                        <p className="text-gray-500 font-medium italic">Everything you need to know about starting your career with Emble.</p>
                     </div>
 
                     <div className="space-y-2">
@@ -280,7 +280,7 @@ export default function Prep0Page() {
                 <div className="max-w-4xl mx-auto px-6 text-center">
                     <h2 className="text-4xl font-black mb-6">Don't leave your career to chance.</h2>
                     <p className="text-emerald-100 text-lg mb-10 max-w-2xl mx-auto font-medium">
-                        Join 5,000+ students from top IITs and NITs who used Prep0 to land their dream offers.
+                        Join 5,000+ students from top IITs and NITs who used Emble to land their dream offers.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/register" className="h-14 px-8 bg-white text-emerald-700 font-bold rounded-xl flex items-center gap-2 hover:bg-emerald-50 transition-all shadow-xl">

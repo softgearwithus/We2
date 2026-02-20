@@ -49,9 +49,15 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 }
 
                 login(result.accessToken, result.user);
+                if (result.user?.collegeId) {
+                    localStorage.setItem('collegeId', result.user.collegeId);
+                } else {
+                    localStorage.removeItem('collegeId');
+                }
                 router.push(redirectPath);
             } else {
-                alert('Login failed. Please check your credentials.');
+                const errorText = await response.text();
+                alert(errorText || 'Login failed. Please check your credentials.');
             }
         } catch (error) {
             console.error('Login error:', error);

@@ -45,14 +45,19 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                     body: JSON.stringify({ email: data.email, password: data.password }),
                 });
 
-                if (loginResponse.ok) {
-                    const loginData = await loginResponse.json();
-                    login(loginData.accessToken, loginData.user);
-                    // Redirect to dashboard (or specific onboarding)
-                    router.push(redirectPath);
-                } else {
-                    router.push(`/login/${role}`);
-                }
+                    if (loginResponse.ok) {
+                        const loginData = await loginResponse.json();
+                        login(loginData.accessToken, loginData.user);
+                        if (loginData.user?.collegeId) {
+                            localStorage.setItem('collegeId', loginData.user.collegeId);
+                        } else {
+                            localStorage.removeItem('collegeId');
+                        }
+                        // Redirect to dashboard (or specific onboarding)
+                        router.push(redirectPath);
+                    } else {
+                        router.push(`/login/${role}`);
+                    }
             } else {
                 const errorData = await response.json();
                 alert(`Registration failed: ${errorData.message || 'Unknown error'}`);

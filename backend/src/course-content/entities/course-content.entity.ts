@@ -14,6 +14,9 @@ export class CourseContent {
     @Column('text')
     content: string;
 
+    @Column({ default: false })
+    isPremium: boolean;
+
     @UpdateDateColumn()
     lastUpdated: Date;
 }

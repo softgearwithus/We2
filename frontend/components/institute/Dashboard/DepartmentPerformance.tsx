@@ -22,8 +22,9 @@ export function DepartmentPerformance({ stats }: { stats: DeptMetric[] }) {
                     <motion.div
                         key={i}
                         initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: '-40px' }}
+                        transition={{ delay: i * 0.06 }}
                         className="group p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-brand-orange/20 hover:bg-white hover:shadow-md transition-all cursor-default relative overflow-hidden"
                     >
                         <div className="flex justify-between items-start mb-4 relative z-10">
@@ -43,8 +44,9 @@ export function DepartmentPerformance({ stats }: { stats: DeptMetric[] }) {
                                 <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${dept.avgReadiness}%` }}
-                                        transition={{ duration: 1, delay: 0.5 }}
+                                        whileInView={{ width: `${dept.avgReadiness}%` }}
+                                        viewport={{ once: true, margin: '-40px' }}
+                                        transition={{ duration: 0.8, delay: 0.2 }}
                                         className="h-full bg-purple-500 rounded-full"
                                     />
                                 </div>

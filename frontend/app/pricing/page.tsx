@@ -3,12 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, ShieldCheck, HelpCircle, Code2, Building, School, ArrowRight, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, HelpCircle, Code2, Building, School, ArrowRight, X, Check, ChevronDown, ChevronUp, Zap, Rocket } from 'lucide-react';
 import { cn } from '@/app/lib/utils';
 
 import PricingCard from '@/app/components/pricing/PricingCard';
 import LeadForm from '@/app/components/pricing/LeadForm';
-import DotBackground from '@/app/components/ui/DotBackground';
 import Navbar from '@/app/components/layout/Navbar';
 import Footer from '@/app/components/layout/Footer';
 
@@ -19,17 +18,17 @@ const TABS = [
 ];
 
 const STANDARD_PLAN = {
-    title: 'Standard: Access Everything',
+    title: 'Emble Standard',
     price: '₹449',
     period: 'month',
-    description: 'Perfect for maintaining skills & light practice.',
+    description: 'The essential full-stack career starter.',
     features: [
         { text: 'Full Stack Placement Bootcamp', included: true },
-        { text: 'Virtual Internship Projects', included: true },
-        { text: '5 AI Voice Interviews (FAANG Mode)', included: true },
-        { text: '1 Full AI Video Interview', included: true },
+        { text: 'Job Simulation (Basic Access)', included: true },
+        { text: '5 AI Voice Interviews / mo', included: true },
+        { text: '1 Full AI Video Interview / mo', included: true },
         { text: '3 ATS Resume Scans / mo', included: true },
-        { text: '24/7 AI Doubt Solving (Basic)', included: true },
+        { text: 'Basic Project Reviews', included: true },
     ],
     ctaText: 'Start Standard',
     variant: 'default' as const,
@@ -38,38 +37,36 @@ const STANDARD_PLAN = {
 };
 
 const PRO_PLAN = {
-    title: 'Pro: High Capacity',
+    title: 'Emble Pro',
     price: '₹799',
     period: 'month',
-    description: 'For serious job seekers who need intense practice.',
+    description: 'Maximum impact. Unlimited simulations & priority access.',
     features: [
         { text: 'Everything in Standard', included: true },
+        { text: 'Unlimited Job Simulation Access', included: true },
         { text: '15 AI Voice Interviews / mo', included: true },
         { text: '3 Full AI Video Interviews / mo', included: true },
         { text: '10 ATS Resume Scans / mo', included: true },
-        { text: 'Unlimited AI Pair Programmer', included: true },
-        { text: 'Verified Internship Certificate', included: true },
-        { text: 'Recruiter Visibility Badge', included: true },
+        { text: 'Senior Dev Project Reviews', included: true },
+        { text: 'Verified Experience Certificate', included: true },
     ],
     ctaText: 'Get Pro Access',
     variant: 'premium' as const,
     savings: 'Effective: ₹26/day',
-    badgeText: 'Best Value',
+    badgeText: 'Most Popular',
     planId: 'pro_tier',
 };
 
 const PLANS = [STANDARD_PLAN, PRO_PLAN];
 
 const ALL_FEATURES = [
-    { category: 'Preparation', name: 'DSA Placement Bootcamp', std: true, pro: true },
-    { category: 'Preparation', name: 'Virtual Internship', std: true, pro: true },
-    { category: 'Preparation', name: 'Company-Specific Problems', std: true, pro: true },
+    { category: 'Core Curriculum', name: 'Placement Bootcamp', std: true, pro: true },
+    { category: 'Experience', name: 'Job Simulation Access', std: 'Basic', pro: 'Unlimited' },
+    { category: 'Experience', name: 'Verified Certificate', std: false, pro: true },
     { category: 'AI Practice', name: 'AI Voice Interviews', std: '5/mo', pro: '15/mo' },
     { category: 'AI Practice', name: 'AI Video Interviews', std: '1/mo', pro: '3/mo' },
-    { category: 'Career', name: 'ATS Resume Scans', std: '3/mo', pro: '10/mo' },
-    { category: 'Career', name: 'AI Copy Mentor', std: 'Limited', pro: 'Unlimited' },
-    { category: 'Career', name: 'Verified Certificate', std: false, pro: true },
-    { category: 'Career', name: 'Recruiter Badge', std: false, pro: true },
+    { category: 'Career Tools', name: 'ATS Resume Scans', std: '3/mo', pro: '10/mo' },
+    { category: 'Mentorship', name: 'Project Reviews', std: 'Automated', pro: 'Senior Dev' },
     { category: 'Support', name: 'Priority Support', std: false, pro: true },
 ];
 
@@ -87,14 +84,14 @@ export default function PricingPage() {
                     {/* Header */}
                     <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in-up">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-6">
-                            Invest In Your Career
+                            Invest In Your Future
                         </div>
                         <h1 className="text-5xl md:text-6xl font-extrabold text-brand-black tracking-tight mb-6 leading-tight">
-                            Plans that pay for <br />
-                            <span className="text-brand-orange">themselves.</span>
+                            One Subscription. <br />
+                            <span className="text-brand-orange">Complete Career Acceleration.</span>
                         </h1>
                         <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                            Choose the path that fits your goals. From cracking interviews to mastering industrial workflows.
+                            From learning the basics to shipping production code in our job simulation. Everything you need to get hired.
                         </p>
                     </div>
 
@@ -154,7 +151,7 @@ export default function PricingPage() {
                                     {/* ROI Message */}
                                     <div className="text-center mb-10">
                                         <p className="text-sm font-medium text-gray-500 bg-white inline-block px-4 py-2 rounded-full shadow-subtle border border-gray-100">
-                                            💡 <span className="text-brand-orange font-bold">ROI Fact:</span> Less than the cost of a weekend outing, but builds a career that pays for a lifetime.
+                                            💡 <span className="text-brand-orange font-bold">Emble Promise:</span> Master the stack, get the experience, land the job.
                                         </p>
                                     </div>
 
@@ -167,6 +164,7 @@ export default function PricingPage() {
                                                 price={billingCycle === 'yearly' ? `₹${Math.round(parseInt(plan.price.replace('₹', '')) * 12 * 0.8)}` : plan.price}
                                                 period={billingCycle === 'yearly' ? 'year' : 'month'}
                                                 delay={idx}
+                                                billingCycle={billingCycle}
                                                 onCtaClick={() => console.log('Clicked', plan.title)}
                                             />
                                         ))}
@@ -248,11 +246,11 @@ export default function PricingPage() {
                                             Institutional Partner Program
                                         </div>
                                         <h2 className="text-4xl md:text-5xl font-bold text-brand-black leading-tight">
-                                            Transform your Campus into a <br />
-                                            <span className="text-brand-orange bg-orange-50 px-2 rounded-lg -ml-2">Tech Talent Hub</span>
+                                            Empower Your Campus with <br />
+                                            <span className="text-brand-orange bg-orange-50 px-2 rounded-lg -ml-2">Emble</span>
                                         </h2>
                                         <p className="text-lg text-gray-500 leading-relaxed">
-                                            Give your students the edge they need. Integrate our industry-grade simulations directly into your curriculum.
+                                            Integrate our job simulation and placement prep directly into your curriculum.
                                         </p>
                                         <ul className="space-y-4 pt-4">
                                             {[
@@ -282,11 +280,11 @@ export default function PricingPage() {
                                             Corporate Hiring Solutions
                                         </div>
                                         <h2 className="text-4xl md:text-5xl font-bold text-brand-black leading-tight">
-                                            Hire Vetted Developers <br />
+                                            Hire Emble Vetted Developers <br />
                                             <span className="text-brand-orange bg-orange-50 px-2 rounded-lg -ml-2">Zero Friction</span>
                                         </h2>
                                         <p className="text-lg text-gray-500 leading-relaxed">
-                                            Skip the resume screening. Access a pool of candidates who have already proven their skills in realistic industry simulations.
+                                            Access candidates who have proven themselves in our realistic job simulations.
                                         </p>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-premium group hover:-translate-y-1 transition-transform cursor-default">

@@ -22,7 +22,7 @@ export default function ProgrammingPage() {
         const fetchLanguages = async () => {
             try {
                 // Fetch the 'programming-languages' topic which contains our metadata
-                const response = await fetch('http://localhost:3001/course-content/programming-languages');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/course-content/programming-languages`);
                 if (response.ok) {
                     const text = await response.text();
                     if (text) {

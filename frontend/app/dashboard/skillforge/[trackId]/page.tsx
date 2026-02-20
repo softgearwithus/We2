@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/app/context/AuthContext';
 import {
     Code2, Terminal, Cpu, ArrowRight, Loader2, Globe, Zap,
     Database, Layout, Server, BrainCircuit, Activity, Calculator,
-    Puzzle, Book, Bitcoin, GitBranch, Shield, Box, List
+    Puzzle, Book, Bitcoin, GitBranch, Shield, Box, List, Sparkles, Lock
 } from 'lucide-react';
 
 interface Topic {
@@ -22,6 +23,7 @@ interface Topic {
 export default function GenericTrackPage() {
     const params = useParams();
     const trackId = params.trackId as string;
+    const { user } = useAuth();
 
     // Map URL friendly track IDs to database topic IDs
     const trackMapping: Record<string, string> = {
@@ -52,6 +54,7 @@ export default function GenericTrackPage() {
 
     const [topics, setTopics] = useState<Topic[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showUpgrade, setShowUpgrade] = useState(false);
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -62,7 +65,7 @@ export default function GenericTrackPage() {
             }
 
             try {
-                const response = await fetch(`http://localhost:3001/course-content/${dbTopicId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/course-content/${dbTopicId}`);
                 if (response.ok) {
                     const text = await response.text();
                     if (text) {
@@ -138,7 +141,8 @@ export default function GenericTrackPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 lg:p-10 max-w-[1600px] mx-auto">
+        <>
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 lg:p-10 max-w-[1600px] mx-auto">
             <div className="mb-12">
                 <Link href="/dashboard/skillforge" className="text-sm font-bold text-slate-500 hover:text-indigo-600 mb-4 inline-block transition-colors">
                     ← Back to Skill Forge
@@ -151,8 +155,18 @@ export default function GenericTrackPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {topics.map((topic, index) => (
+            {(() => {
+                const endDate = user?.subscriptionEndDate ? new Date(user.subscriptionEndDate) : null;
+                const isExpired = endDate && !Number.isNaN(endDate.getTime()) && endDate.getTime() <= Date.now();
+                const isActive = user?.subscriptionStatus === 'active' && !isExpired;
+                const isPremium = isActive && user?.subscriptionPlan && user.subscriptionPlan !== 'free';
+                const preview = isPremium ? topics : topics.slice(0, 3);
+                const locked = isPremium ? [] : topics.slice(3);
+
+                return (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {preview.map((topic, index) => (
                     <motion.div
                         key={topic.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -187,8 +201,82 @@ export default function GenericTrackPage() {
                             </div>
                         </Link>
                     </motion.div>
-                ))}
+                            ))}
+                        </div>
+
+                        {!isPremium && locked.length > 0 && (
+                            <div className="mt-8 relative">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 blur-[2px] pointer-events-none select-none">
+                                    {locked.map((topic) => (
+                                        <div key={topic.id} className="bg-white h-full p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-slate-100 text-slate-400 mb-6">
+                                                <Lock size={28} />
+                                            </div>
+                                            <h2 className="text-2xl font-bold text-slate-900 mb-3">{topic.name}</h2>
+                                            <p className="text-slate-500 font-medium leading-relaxed mb-8">{topic.description}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={() => setShowUpgrade(true)}
+                                    className="absolute inset-0 flex items-center justify-center"
+                                >
+                                    <div className="max-w-sm text-center bg-white/90 border border-slate-200 rounded-2xl px-6 py-5 shadow-xl">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-3">
+                                            <Lock size={12} /> Premium Access
+                                        </div>
+                                        <div className="text-lg font-black text-slate-900 mb-1">Only 3 free topics. The rest are locked.</div>
+                                        <div className="text-xs text-slate-500 font-medium mb-4">Upgrade to Standard or Pro to unlock all Skill Forge topics.</div>
+                                        <div className="inline-flex items-center gap-2 text-xs font-bold text-white bg-gradient-to-r from-brand-orange to-red-500 px-4 py-2 rounded-lg shadow-lg">
+                                            <Sparkles size={14} /> Upgrade Now
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        )}
+                    </>
+                );
+            })()}
             </div>
-        </div>
+            {showUpgrade && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6"
+                    onClick={() => setShowUpgrade(false)}
+                >
+                    <div
+                        className="relative w-full max-w-lg rounded-2xl bg-white border border-slate-200 p-8 text-center shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowUpgrade(false)}
+                            className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                        >
+                            ×
+                        </button>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-4">
+                            Skill Forge Premium
+                        </div>
+                        <h3 className="text-3xl font-black text-slate-900 mb-3">Unlock every topic and module</h3>
+                        <p className="text-slate-600 font-medium mb-6">
+                            You have a 3-topic preview. Upgrade to Standard or Pro to access full Skill Forge coverage.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <Link
+                                href="/pricing"
+                                className="flex-1 bg-gradient-to-r from-brand-orange to-red-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                            >
+                                <Sparkles size={18} /> Upgrade Now
+                            </Link>
+                            <button
+                                onClick={() => setShowUpgrade(false)}
+                                className="flex-1 bg-white text-slate-700 font-bold py-3.5 px-6 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                            >
+                                Maybe Later
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

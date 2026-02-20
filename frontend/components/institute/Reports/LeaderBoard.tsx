@@ -1,18 +1,20 @@
 "use client";
 
-import { mockStudents } from "@/lib/institute/mockData";
+import type { Student } from "@/lib/institute/types";
 import { Trophy, Medal, Star, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function LeaderBoard() {
-    const topStudents = [...mockStudents]
+export function LeaderBoard({ students }: { students: Student[] }) {
+    const topStudents = [...students]
         .sort((a, b) => b.placementReadiness - a.placementReadiness)
         .slice(0, 5);
 
     const departments = ['Computer Science', 'Mechanical', 'Electronics', 'Civil'];
     const deptPerformance = departments.map(dept => {
-        const studs = mockStudents.filter(s => s.department === dept);
-        const avg = studs.reduce((acc, s) => acc + s.placementReadiness, 0) / studs.length;
+        const studs = students.filter(s => s.department === dept);
+        const avg = studs.length
+            ? studs.reduce((acc, s) => acc + s.placementReadiness, 0) / studs.length
+            : 0;
         return { name: dept, score: avg };
     }).sort((a, b) => b.score - a.score);
 
@@ -33,8 +35,9 @@ export function LeaderBoard() {
                         <motion.div
                             key={student.id}
                             initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            transition={{ delay: i * 0.1 }}
+                            whileInView={{ x: 0, opacity: 1 }}
+                            viewport={{ once: true, margin: '-40px' }}
+                            transition={{ delay: i * 0.06 }}
                             className="flex items-center justify-between p-4 rounded-xl bg-slate-800/30 border border-slate-800 relative overflow-hidden group hover:bg-slate-800/50 transition-colors"
                         >
                             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -88,8 +91,9 @@ export function LeaderBoard() {
                             <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                                 <motion.div
                                     initial={{ width: 0 }}
-                                    animate={{ width: `${dept.score}%` }}
-                                    transition={{ duration: 1, delay: 0.5 + (i * 0.1) }}
+                                    whileInView={{ width: `${dept.score}%` }}
+                                    viewport={{ once: true, margin: '-40px' }}
+                                    transition={{ duration: 0.8, delay: 0.2 + (i * 0.05) }}
                                     className={`h-full rounded-full ${i === 0 ? 'bg-indigo-500' : 'bg-slate-600'}`}
                                 />
                             </div>

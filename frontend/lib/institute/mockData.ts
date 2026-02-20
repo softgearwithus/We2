@@ -1,52 +1,63 @@
-import { faker } from '@faker-js/faker';
-
-// Types
-export interface Student {
-    id: string;
-    name: string;
-    department: 'Computer Science' | 'Mechanical' | 'Electronics' | 'Civil';
-    year: 1 | 2 | 3 | 4;
-    cgpa: number;
-    attendance: number;
-    placementReadiness: number; // 0-100
-    skills: {
-        coding: number;
-        aptitude: number;
-        communication: number;
-        core: number;
-    };
-    status: 'Placed' | 'Looking' | 'Higher Studies' | 'At Risk';
-}
-
-export interface DepartmentStats {
-    name: string;
-    studentCount: number;
-    avgAttendance: number;
-    avgReadiness: number;
-    placementRate: number;
-}
+import type { Student, DepartmentStats, PlacementMetrics } from './types';
 
 // Helpers
 const DEPARTMENTS = ['Computer Science', 'Mechanical', 'Electronics', 'Civil'] as const;
+const FIRST_NAMES = [
+    'Aarav', 'Aditi', 'Ananya', 'Arjun', 'Dev',
+    'Diya', 'Ishaan', 'Kavya', 'Meera', 'Neha',
+    'Nikhil', 'Priya', 'Rahul', 'Riya', 'Rohan',
+    'Sanya', 'Sneha', 'Tanvi', 'Varun', 'Yash'
+];
+const LAST_NAMES = [
+    'Sharma', 'Patel', 'Gupta', 'Kumar', 'Reddy',
+    'Mehta', 'Iyer', 'Singh', 'Bose', 'Kapoor',
+    'Jain', 'Verma', 'Das', 'Nair', 'Joshi',
+    'Chopra', 'Rao', 'Saxena', 'Malhotra', 'Menon'
+];
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const toOneDecimal = (value: number) => Math.round(value * 10) / 10;
+
+const buildName = (index: number) => {
+    const first = FIRST_NAMES[index % FIRST_NAMES.length];
+    const last = LAST_NAMES[Math.floor(index / FIRST_NAMES.length) % LAST_NAMES.length];
+    return `${first} ${last}`;
+};
+
+const resolveStatus = (readiness: number, attendance: number): Student['status'] => {
+    if (readiness >= 80) return 'Placed';
+    if (readiness >= 65) return 'Looking';
+    if (attendance < 65) return 'At Risk';
+    return 'Higher Studies';
+};
 
 // Generator Functions
-export const generateStudents = (count: number = 100): Student[] => {
-    return Array.from({ length: count }).map(() => ({
-        id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        department: faker.helpers.arrayElement(DEPARTMENTS),
-        year: faker.helpers.arrayElement([1, 2, 3, 4]),
-        cgpa: faker.number.float({ min: 5, max: 10, fractionDigits: 1 }),
-        attendance: faker.number.int({ min: 50, max: 100 }),
-        placementReadiness: faker.number.int({ min: 30, max: 98 }),
-        skills: {
-            coding: faker.number.int({ min: 20, max: 95 }),
-            aptitude: faker.number.int({ min: 30, max: 95 }),
-            communication: faker.number.int({ min: 40, max: 90 }),
-            core: faker.number.int({ min: 30, max: 90 }),
-        },
-        status: faker.helpers.arrayElement(['Placed', 'Looking', 'Higher Studies', 'At Risk']),
-    }));
+export const generateStudents = (count: number = 120): Student[] => {
+    return Array.from({ length: count }).map((_, index) => {
+        const seed = index + 1;
+        const collegeId = `college_${(seed % 3) + 1}`;
+        const attendance = clamp(60 + (seed * 7) % 41, 50, 100);
+        const placementReadiness = clamp(32 + (seed * 11) % 67, 30, 98);
+        const skills = {
+            coding: clamp(30 + (seed * 9) % 66, 20, 95),
+            aptitude: clamp(28 + (seed * 7) % 70, 30, 95),
+            communication: clamp(35 + (seed * 5) % 56, 40, 90),
+            core: clamp(30 + (seed * 6) % 61, 30, 90),
+        };
+
+        return {
+            id: `stu_${seed.toString().padStart(4, '0')}`,
+            name: buildName(index),
+            department: DEPARTMENTS[seed % DEPARTMENTS.length],
+            year: ((seed % 4) + 1) as Student['year'],
+            cgpa: toOneDecimal(5.5 + (seed % 46) * 0.1),
+            attendance,
+            placementReadiness,
+            skills,
+            status: resolveStatus(placementReadiness, attendance),
+            collegeId,
+        };
+    });
 };
 
 export const getDepartmentStats = (students: Student[]): DepartmentStats[] => {
@@ -69,7 +80,26 @@ export const getDepartmentStats = (students: Student[]): DepartmentStats[] => {
     });
 };
 
+export const getPlacementMetrics = (students: Student[]): PlacementMetrics => {
+    if (!students.length) {
+        return { coding: 0, aptitude: 0, communication: 0, core: 0 };
+    }
+    const totals = students.reduce((acc, student) => {
+        acc.coding += student.skills.coding;
+        acc.aptitude += student.skills.aptitude;
+        acc.communication += student.skills.communication;
+        acc.core += student.skills.core;
+        return acc;
+    }, { coding: 0, aptitude: 0, communication: 0, core: 0 });
+
+    return {
+        coding: toOneDecimal(totals.coding / students.length),
+        aptitude: toOneDecimal(totals.aptitude / students.length),
+        communication: toOneDecimal(totals.communication / students.length),
+        core: toOneDecimal(totals.core / students.length)
+    };
+};
+
 // Initial Mock Data
-faker.seed(123); // Ensure deterministic data for SSR/Hydration consistency
-export const mockStudents = generateStudents(500);
+export const mockStudents = generateStudents(120);
 export const mockDepartmentStats = getDepartmentStats(mockStudents);

@@ -10,28 +10,28 @@ export interface DocArticle {
 export const docsData: Record<string, DocArticle> = {
     "platform-overview": {
         title: "Platform Overview",
-        description: "Welcome to We2. Understand our dual-pathway ecosystem: Prep0 and We2Hub.",
+        description: "Welcome to Emble. Understand our dual-pathway ecosystem: Bootcamp and Simulation.",
         category: "Getting Started",
         lastUpdated: "Feb 2024",
         content: `
-# Welcome to We2
+# Welcome to Emble
 
-We2 is the world's first hybrid career platform designed for modern software engineering. Our ecosystem is built on two core pillars:
+Emble is the world's first hybrid career platform designed for modern software engineering. Our ecosystem is built on two core pillars:
 
-## 1. Prep0 (Placement Readiness)
-Prep0 is designed for students who are in the middle of their placement cycles. It focuses on:
+## 1. Emble Bootcamp (Placement Readiness)
+Emble Bootcamp is designed for students who are in the middle of their placement cycles. It focuses on:
 - **DSA Mastery**: 450+ curated problems from FAANG interviews.
 - **System Design**: Both HLD and LLD fundamentals for modern engineering.
 - **CS Fundamentals**: Deep dives into OS, DBMS, and Computer Networks.
 - **AI Mentorship**: Use our AI mentors to clarify doubts instantly.
 
-## 2. We2Hub (Industrial Simulation)
-We2Hub is where learning turns into professional experience. Instead of tutorials, you join a **Simulation Sprint**:
+## 2. Emble Simulation (Industrial Experience)
+Emble Simulation is where learning turns into professional experience. Instead of tutorials, you join a **Simulation Sprint**:
 - **21-Day Cycles**: Work in a team of 5-8 people on a real production-grade project.
 - **Professional Workflows**: Use JIRA for tasks, Slack for comms, and GitHub for PR reviews.
 - **Agile Methodology**: Participate in standups, grooming sessions, and retrospectives.
 
-[Explore Prep0](/prep0) | [Explore We2Hub](/we2hub)
+[Explore Bootcamp](/prep0) | [Explore Simulation](/we2hub)
         `,
         relatedLinks: [
             { label: "Account Setup", href: "/docs/account-setup" },
@@ -41,7 +41,7 @@ We2Hub is where learning turns into professional experience. Instead of tutorial
     "dsa-roadmap-2024": {
         title: "DSA Roadmap 2024",
         description: "The definitive 20-week guide to mastering Data Structures and Algorithms.",
-        category: "Prep0: DSA & Interviews",
+        category: "Bootcamp: DSA & Interviews",
         lastUpdated: "Feb 2024",
         content: `
 # DSA Roadmap 2024
@@ -72,13 +72,13 @@ Mastering DSA isn't about memorizing 1000 problems. It's about recognizing patte
     },
     "sprint-methodology": {
         title: "Sprint Methodology",
-        description: "How we simulate elite engineering cycles inside We2Hub.",
-        category: "We2Hub: Simulations",
+        description: "How we simulate elite engineering cycles inside Emble Simulation.",
+        category: "Simulation: Methodologies",
         lastUpdated: "Feb 2024",
         content: `
 # Sprint Methodology (21-Day Cycle)
 
-At We2Hub, we replicate the workflow of companies like Uber and Google. Here is how your 21-day simulation will look:
+At Emble Simulation, we replicate the workflow of companies like Uber and Google. Here is how your 21-day simulation will look:
 
 ## Week 1: Onboarding & Architecture
 - **Day 1**: System Walkthrough & Tech Stack Setup (Docker, K8s).
@@ -102,7 +102,7 @@ At We2Hub, we replicate the workflow of companies like Uber and Google. Here is 
     },
     "account-setup": {
         title: "Account Setup",
-        description: "Your first steps to becoming a We2 builder.",
+        description: "Your first steps to becoming an Emble builder.",
         category: "Getting Started",
         lastUpdated: "Feb 2024",
         content: `
@@ -115,8 +115,8 @@ Sign up using your college email or a professional Gmail account. We recommend u
 
 ## 2. Preference Selection
 Choose your primary goal:
-- **Placement Readiness**: Focus on Prep0 features.
-- **Industry Experience**: Join We2Hub simulations.
+- **Placement Readiness**: Focus on Emble Bootcamp features.
+- **Industry Experience**: Join Emble simulations.
 
 ## 3. Profile Completion
 Upload 2-3 projects you've worked on. Our AI will analyze these to provide personalized mentors and curriculum recommendations.
@@ -157,12 +157,12 @@ Connect with specialized AI mentors for **System Design**, **DSA**, or **Behavio
     "resume-lab-instructions": {
         title: "Resume Lab Instructions",
         description: "Use our AI-powered Resume Lab to beat the ATS 100%.",
-        category: "Prep0: DSA & Interviews",
+        category: "Bootcamp: DSA & Interviews",
         lastUpdated: "Feb 2024",
         content: `
 # Resume Lab Instructions
 
-The Resume Lab is part of **Prep0: Placement Readiness**. It helps you build a resume that hiring managers love.
+The Resume Lab is part of **Emble Bootcamp: Placement Readiness**. It helps you build a resume that hiring managers love.
 
 ## 1. Upload & Scan
 Upload your current resume (PDF). Our AI will score it across:
@@ -186,12 +186,12 @@ Export your high-fidelity, polished resume in professional LaTeX-based formattin
     "agile-jira-guide": {
         title: "Agile & JIRA Guide",
         description: "Master industry project management workflows.",
-        category: "We2Hub: Simulations",
+        category: "Simulation: Methodologies",
         lastUpdated: "Feb 2024",
         content: `
 # Agile & JIRA Guide
 
-In a **We2Hub Simulation**, you don't just "do projects". You follow Agile.
+In an **Emble Simulation**, you don't just "do projects". You follow Agile.
 
 ## 1. The Backlog
 Every feature is broken down into **User Stories**. You'll pick tasks from the "To Do" column and move them to "In Progress".
@@ -217,7 +217,7 @@ Track your team's velocity. Our dashboard provides a real-time burn-down chart d
         content: `
 # Docker & Containers
 
-Modern apps run in containers. At We2, all simulations require you to containerize your features.
+Modern apps run in containers. At Emble, all simulations require you to containerize your features.
 
 ## 1. Dockerfile Basics
 Learn to write optimized Dockerfiles:

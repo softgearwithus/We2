@@ -10,12 +10,13 @@ export class CourseContentService {
         private contentRepository: Repository<CourseContent>,
     ) { }
 
-    async createOrUpdate(topicId: string, title: string, content: string) {
+    async createOrUpdate(topicId: string, title: string, content: string, isPremium = false) {
         let existing = await this.contentRepository.findOne({ where: { topicId } });
 
         if (existing) {
             existing.title = title;
             existing.content = content;
+            existing.isPremium = isPremium;
             return this.contentRepository.save(existing);
         }
 
@@ -23,6 +24,7 @@ export class CourseContentService {
             topicId,
             title,
             content,
+            isPremium,
         });
         return this.contentRepository.save(newContent);
     }

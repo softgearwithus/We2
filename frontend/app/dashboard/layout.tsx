@@ -54,6 +54,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         },
         { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
+        { icon: 'rate_review', label: 'Reviews', href: '/dashboard/reviews' },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
     ];
 

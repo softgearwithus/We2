@@ -30,15 +30,15 @@ const techStack = [
 
 const faqs = [
     {
-        q: "What exactly is an industry simulation at We2Hub?",
+        q: "What exactly is an industry simulation at Emble?",
         a: "It's a high-fidelity recreation of a real tech company environment. You're assigned to a virtual squad, given a project in a professional repository, and expected to ship features via PRs, participate in stand-ups, and handle JIRA tickets."
     },
     {
-        q: "Does We2Hub experience count as professional experience on my resume?",
+        q: "Does Emble simulation experience count as professional experience on my resume?",
         a: "Yes. While it's a simulation, the workflow and challenges are identical to a real software engineering internship. We provide a 'Simulation Completion Certificate' and a portfolio of production-grade code that you can showcase to recruiters."
     },
     {
-        q: "How long is the We2Hub program and what's the commitment?",
+        q: "How long is the Emble Simulation and what's the commitment?",
         a: "Our core sprint is 21 days. We recommend 2-4 hours of commitment daily, mimicking the pace of a real software development lifecycle (SDLC). It's intensive, immersive, and designed to make you 'Day-1 Ready'."
     },
     {
@@ -204,7 +204,7 @@ export default function We2HubPage() {
                             </div>
                             <div className="absolute bottom-6 left-6 right-6 p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
                                 <p className="text-sm font-medium italic text-gray-300">
-                                    &quot;I learned more about real Git workflows in 2 weeks at We2Hub than in 4 years of college.&quot;
+                                    &quot;I learned more about real Git workflows in 2 weeks at Emble Simulation than in 4 years of college.&quot;
                                 </p>
                                 <p className="text-xs font-bold text-brand-orange mt-2">&mdash; Sneha R., Software Engineer at Microsoft</p>
                             </div>
@@ -218,7 +218,7 @@ export default function We2HubPage() {
                 <div className="max-w-4xl mx-auto px-6">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-extrabold text-brand-black mb-4">Common Questions</h2>
-                        <p className="text-gray-500 font-medium italic">Everything you should know about the We2Hub simulation experience.</p>
+                        <p className="text-gray-500 font-medium italic">Everything you should know about the Emble Simulation experience.</p>
                     </div>
 
                     <div className="space-y-2">

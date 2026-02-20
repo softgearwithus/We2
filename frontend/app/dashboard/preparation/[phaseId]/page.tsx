@@ -94,7 +94,7 @@ export default function TopicPage() {
         setShowDetails(true);
         setLoadingDetails(true);
         try {
-            const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/course-content/${topicId}`);
             if (response.ok) {
                 const data = await response.json();
                 setDetailedContent(data);

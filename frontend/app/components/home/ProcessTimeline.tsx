@@ -17,9 +17,14 @@ const steps = [
     },
     {
         icon: Code2,
-        title: "Prep0: Mastery",
+        title: "Bootcamp: Mastery",
         desc: "Comprehensive training suite to clear every screening round with precise focus.",
-        features: ["200+ Company-Picked Ques", "CS Core (OS, DBMS, CN)", "ATS Resume Builder", "AI Mock Interviews"],
+        features: [
+            "DSA & SQL Training",
+            "AI Video Interviews",
+            "ATS Resume Builder",
+            "200+ Company-Picked Ques"
+        ],
         color: "text-orange-600",
         bg: "bg-orange-50",
         border: "border-orange-100",
@@ -28,7 +33,7 @@ const steps = [
     },
     {
         icon: Briefcase,
-        title: "We2Hub: Simulation",
+        title: "Simulation: Industry",
         desc: "Step into industry-grade work modules. Ship production features on real tickets.",
         features: ["Virtual Experience", "Real JIRA Tickets", "Senior Dev AI Reviews", "Git Mastery"],
         color: "text-purple-600",
@@ -62,7 +67,7 @@ export default function ProcessTimeline() {
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="text-center max-w-3xl mx-auto mb-24">
                     <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-100 inline-block mb-8 shadow-sm">
-                        The we2 journey
+                        The Emble Journey
                     </span>
                     <h2 className="text-5xl md:text-7xl font-[1000] text-brand-black tracking-tighter mb-8 leading-[0.95] drop-shadow-sm">
                         From Campus to <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Corporate in 4 Steps.</span>
@@ -74,15 +79,7 @@ export default function ProcessTimeline() {
 
                 <div className="relative">
                     {/* Connecting Line (Desktop) */}
-                    <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[3px] bg-slate-200/50 rounded-full overflow-hidden z-0">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: '100%' }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.5, ease: "easeInOut" }}
-                            className="h-full bg-gradient-to-r from-blue-400 via-orange-400 to-purple-500"
-                        />
-                    </div>
+                    <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[3px] bg-gradient-to-r from-blue-200 via-orange-200 to-purple-200 rounded-full z-0"></div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
                         {steps.map((step, i) => (
@@ -90,14 +87,14 @@ export default function ProcessTimeline() {
                                 key={i}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.15, duration: 0.6 }}
+                                viewport={{ once: true, margin: '-80px' }}
+                                transition={{ delay: i * 0.08, duration: 0.5 }}
                             >
                                 <div className="flex flex-col items-center group h-full">
                                     {/* Icon Container with Halo */}
                                     <div className="relative mb-8">
                                         <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${step.gradient} blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500`}></div>
-                                        <div className={`relative w-24 h-24 rounded-3xl bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2`}>
+                                        <div className={`relative w-24 h-24 rounded-3xl bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-1`}>
                                             <div className={`p-4 rounded-2xl ${step.bg}`}>
                                                 <step.icon size={32} className={step.color} strokeWidth={2.5} />
                                             </div>
@@ -111,7 +108,7 @@ export default function ProcessTimeline() {
                                     <div className={`
                                         flex-1 w-full bg-white/60 backdrop-blur-xl border border-white/60 p-8 rounded-[2rem]
                                         hover:bg-white/80 hover:border-white hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] 
-                                        transition-all duration-500 flex flex-col items-start text-left relative overflow-hidden group/card
+                                        transition-all duration-300 flex flex-col items-start text-left relative overflow-hidden group/card
                                     `}>
                                         <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${step.gradient} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}></div>
 

@@ -1,6 +1,8 @@
 "use client";
 
-import { mockStudents } from "@/lib/institute/mockData";
+import { useEffect, useState } from "react";
+import type { PlacementMetrics } from "@/lib/institute/types";
+import { fetchPlacementMetrics } from "@/lib/institute/client";
 import { ReadinessMetrics } from "@/components/institute/Placements/ReadinessMetrics";
 import { FileDown } from "lucide-react";
 import { motion } from "framer-motion";
@@ -32,6 +34,24 @@ const item = {
 };
 
 export default function PlacementPage() {
+    const [metrics, setMetrics] = useState<PlacementMetrics>({
+        coding: 0,
+        aptitude: 0,
+        communication: 0,
+        core: 0,
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadMetrics = async () => {
+            setLoading(true);
+            const data = await fetchPlacementMetrics();
+            setMetrics(data);
+            setLoading(false);
+        };
+        loadMetrics();
+    }, []);
+
     return (
         <motion.div
             variants={container}
@@ -52,7 +72,7 @@ export default function PlacementPage() {
 
             {/* Top Metrics Grid */}
             <motion.div variants={item}>
-                <ReadinessMetrics students={mockStudents} />
+                <ReadinessMetrics metrics={metrics} isLoading={loading} />
             </motion.div>
 
             {/* Charts Grid */}

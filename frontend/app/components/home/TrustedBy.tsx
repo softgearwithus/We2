@@ -1,10 +1,8 @@
-'use client';
-
-import { motion } from 'framer-motion';
-
 const companies = [
     'Google', 'Microsoft', 'Amazon', 'Meta', 'Netflix', 'Uber', 'Airbnb', 'Stripe', 'Coinbase', 'Spotify'
 ];
+
+const marqueeCompanies = [...companies, ...companies];
 
 export default function TrustedBy() {
     return (
@@ -17,28 +15,9 @@ export default function TrustedBy() {
 
             <div className="relative flex overflow-x-hidden group">
                 <div className="animate-marquee whitespace-nowrap flex gap-16 items-center">
-                    {/* First set of logos */}
-                    {companies.map((company, index) => (
+                    {marqueeCompanies.map((company, index) => (
                         <span
-                            key={index}
-                            className="text-2xl font-bold text-gray-300 hover:text-brand-black transition-colors duration-300 cursor-default"
-                        >
-                            {company}
-                        </span>
-                    ))}
-                    {/* Duplicate set for seamless loop */}
-                    {companies.map((company, index) => (
-                        <span
-                            key={`dup-${index}`}
-                            className="text-2xl font-bold text-gray-300 hover:text-brand-black transition-colors duration-300 cursor-default"
-                        >
-                            {company}
-                        </span>
-                    ))}
-                    {/* Triplicate set for seamless loop on wide screens */}
-                    {companies.map((company, index) => (
-                        <span
-                            key={`trip-${index}`}
+                            key={`${company}-${index}`}
                             className="text-2xl font-bold text-gray-300 hover:text-brand-black transition-colors duration-300 cursor-default"
                         >
                             {company}

@@ -1,25 +1,24 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from './context/AuthContext';
+import GlobalAiAssistant from './components/ai/GlobalAiAssistant';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Emble | Prep0 + We2Hub — The #1 Career Readiness Platform',
-    template: '%s | Emble'
-  },
-  description: 'Prep0 for placement prep. We2Hub for industry experience. Master DSA, practice with AI interviewers, and gain real-world software development experience.',
-  keywords: ['We2', 'Prep0', 'We2Hub', 'DSA Preparation', 'Coding Interview', 'System Design', 'Industry Simulation', 'Mock Interviews', 'Full Stack Development'],
+  title: 'Emble | Career Accelerator — Learn. Build. Work.',
+  description: 'The unified career accelerator. Master DSA in the Bootcamp, then gain real-world experience in the Job Simulation.',
+  keywords: ['Emble', 'Career Accelerator', 'Job Simulation', 'DSA Preparation', 'Coding Interview', 'Full Stack Development', 'Work Experience'],
   openGraph: {
-    title: 'We2 | Bridge the Gap Between Education and Industry',
-    description: 'Prep0 for placement prep. We2Hub for industry experience. Transform your coding career with real-world simulations and AI-powered mentorship.',
-    url: 'https://we2.in',
-    siteName: 'We2',
+    title: 'Emble | The Career Accelerator',
+    description: 'Master coding interviews and real-world dev skills on one platform.',
+    url: 'https://emble.in',
+    siteName: 'Emble',
     images: [
       {
-        url: 'https://we2.in/og-image.jpg',
+        url: 'https://emble.in/og-image.jpg',
         width: 1200,
         height: 630,
       },
@@ -29,9 +28,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'We2 | Prep0 + We2Hub — Career Readiness Platform',
-    description: 'Master coding interviews and real-world dev skills.',
-    images: ['https://we2.in/twitter-image.jpg'],
+    title: 'Emble | Career Accelerator',
+    description: 'From Learning to Leading. The complete path to your dream engineering career.',
+    images: ['https://emble.in/twitter-image.jpg'],
   },
 };
 
@@ -48,8 +47,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
-        <AuthProvider>{children}</AuthProvider>
+      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-slate-900 bg-white`} suppressHydrationWarning>
+        <AuthProvider>
+          {children}
+          <GlobalAiAssistant />
+        </AuthProvider>
       </body>
     </html>
   );

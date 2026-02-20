@@ -1,14 +1,29 @@
 "use client";
 
-import { Student } from "@/lib/institute/mockData";
+import { useMemo } from "react";
+import type { Student } from "@/lib/institute/types";
 import { BadgeCheck, Clock, ShieldAlert, ShieldCheck, Eye } from "lucide-react";
 
 interface TableProps {
     students: Student[];
     onViewProfile: (student: Student) => void;
+    page: number;
+    total: number;
+    pageSize: number;
+    onPageChange: (page: number) => void;
 }
 
-export function StudentTable({ students, onViewProfile }: TableProps) {
+export function StudentTable({ students, onViewProfile, page, total, pageSize, onPageChange }: TableProps) {
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const { startIndex, endIndex } = useMemo(() => {
+        if (!total) {
+            return { startIndex: 0, endIndex: 0 };
+        }
+        const safePage = Math.min(page, totalPages - 1);
+        const start = safePage * pageSize;
+        const end = Math.min(start + pageSize, total);
+        return { startIndex: start, endIndex: end };
+    }, [page, pageSize, total, totalPages]);
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'Placed': return <span className="flex items-center w-fit text-xs font-bold text-green-700 bg-green-50 px-3 py-1.5 rounded-full border border-green-200"><BadgeCheck className="w-3.5 h-3.5 mr-1.5" />Placed</span>;
@@ -104,10 +119,26 @@ export function StudentTable({ students, onViewProfile }: TableProps) {
 
             {/* Pagination Placeholder */}
             <div className="p-5 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500 font-bold bg-gray-50/50">
-                <span className="uppercase tracking-widest">Showing {students.length} students</span>
+                <span className="uppercase tracking-widest">
+                    {total
+                        ? `Showing ${startIndex + 1}-${endIndex} of ${total} students`
+                        : 'Showing 0 students'}
+                </span>
                 <div className="flex gap-3">
-                    <button className="px-5 py-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors disabled:opacity-50 font-bold">Previous</button>
-                    <button className="px-5 py-2.5 rounded-xl bg-brand-black text-white hover:bg-gray-800 transition-colors font-bold shadow-lg">Next</button>
+                    <button
+                        onClick={() => onPageChange(Math.max(0, page - 1))}
+                        disabled={page === 0}
+                        className="px-5 py-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors disabled:opacity-50 font-bold"
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={() => onPageChange(Math.min(totalPages - 1, page + 1))}
+                        disabled={page >= totalPages - 1}
+                        className="px-5 py-2.5 rounded-xl bg-brand-black text-white hover:bg-gray-800 transition-colors font-bold shadow-lg disabled:opacity-60"
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>

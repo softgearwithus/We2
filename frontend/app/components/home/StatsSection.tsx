@@ -14,22 +14,28 @@ function Counter({ value, suffix }: { value: number, suffix: string }) {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
-        let start = 0;
-        const end = value;
-        const duration = 2000;
-        const stepTime = Math.abs(Math.floor(duration / end));
+        let frameId: number | null = null;
+        const duration = 1800;
+        const start = performance.now();
 
-        const timer = setInterval(() => {
-            start += Math.ceil(end / 100);
-            if (start >= end) {
-                setCount(end);
-                clearInterval(timer);
-            } else {
-                setCount(start);
+        const step = (now: number) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(eased * value));
+            if (progress < 1) {
+                frameId = requestAnimationFrame(step);
             }
-        }, 20);
+        };
 
-        return () => clearInterval(timer);
+        if (typeof window !== 'undefined') {
+            frameId = requestAnimationFrame(step);
+        } else {
+            setCount(value);
+        }
+        return () => {
+            if (frameId) cancelAnimationFrame(frameId);
+        };
     }, [value]);
 
     return (

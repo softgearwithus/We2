@@ -29,7 +29,7 @@ async function seed() {
             email,
             password: hashedPassword,
             role: UserRole.SUPER_ADMIN,
-            subscriptionPlan: 'we2_max',
+            subscriptionPlan: 'pro_tier',
             subscriptionStatus: 'active',
         });
 

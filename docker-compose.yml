@@ -1,7 +1,7 @@
 services:
   backend:
     build:
-      context: ./backend
+      context: ./.worktrees/institute-analytics/backend
       dockerfile: Dockerfile
     container_name: college_prep_backend
     ports:
@@ -16,7 +16,7 @@ services:
       REDIS_PORT: 6379
       NEST_CLI_CONFIG: /app/nest-cli.json
     volumes:
-      - ./backend:/app
+      - ./.worktrees/institute-analytics/backend:/app
       - ./dataset.json:/app/dataset.json:ro
       - ./sql_dataset.json:/app/sql_dataset.json:ro
       - backend_node_modules:/app/node_modules

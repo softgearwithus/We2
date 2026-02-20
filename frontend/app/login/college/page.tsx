@@ -21,7 +21,7 @@ export default function CollegeLoginPage() {
                 </div>
             }
         >
-            <LoginForm role="college" redirectPath="/dashboard/college" />
+            <LoginForm role="college" redirectPath="/institute" />
         </AuthLayout>
     );
 }

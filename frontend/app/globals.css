@@ -179,6 +179,28 @@
   animation-play-state: paused;
 }
 
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-slow {
+  animation: marquee 45s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 52s linear infinite;
+}
+
+.mask-linear-fade {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
 @keyframes bounce-slow {
 
   0%,
