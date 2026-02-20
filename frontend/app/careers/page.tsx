@@ -108,7 +108,7 @@ export default function CareersPage() {
                             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-6 border border-white/10"
                         >
                             <span className="w-1.5 h-1.5 rounded-full bg-brand-orange animate-pulse" />
-                            Careers at We2
+                            Careers at EMBLE
                         </motion.div>
 
                         <motion.h1

@@ -6,17 +6,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle2, Briefcase, BookOpen, Zap, Sparkles, Code2, Target } from 'lucide-react';
 
 const prepFeatures = [
-    { icon: Target, label: 'Resume Scanning & Optimization' },
-    { icon: Code2, label: '200+ Company-Picked Questions' },
-    { icon: BookOpen, label: 'Aptitude & Logic Drills' },
-    { icon: Sparkles, label: 'AI Mock Technical Interviews' },
+    { icon: Sparkles, label: 'AI Mock Interviews (Voice & Video)' },
+    { icon: Code2, label: '200+ Hand-picked DSA Questions' },
+    { icon: BookOpen, label: 'SQL & Database Challenges' },
+    { icon: Target, label: 'Resume & Skills AI Audit' },
+    { icon: Target, label: 'Logic & Aptitude Drills' },
+    { icon: Sparkles, label: 'Hand-picked Concept Sheets' },
 ];
 
 const hubFeatures = [
-    { icon: Code2, label: 'Real-world JIRA Tickets' },
-    { icon: Zap, label: 'Git & CI/CD Pipelines' },
-    { icon: Sparkles, label: 'Code Reviews by Senior AI Devs' },
-    { icon: Target, label: 'Industrial Work Experience Cert' },
+    { icon: Zap, label: 'Industry Sprint Board' },
+    { icon: Code2, label: 'Senior AI Code Reviews' },
+    { icon: Sparkles, label: 'GitHub & Industry Standards' },
+    { icon: Target, label: 'Professional Engineering Tag' },
+    { icon: Zap, label: 'Production System Design' },
+    { icon: Code2, label: 'Industrial Work Certificates' },
 ];
 
 export default function DualModeSection() {
@@ -41,38 +45,38 @@ export default function DualModeSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="text-center max-w-3xl mx-auto mb-20"
+                    className="text-center max-w-3xl mx-auto mb-16"
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[11px] font-[900] uppercase tracking-[0.25em] mb-8">
-                        One platform. Two powerhouses.
+                        The transformation
                     </div>
                     <h2 className="text-5xl md:text-7xl font-[1000] text-brand-black tracking-tighter mb-8 leading-[0.95]">
-                        Choose Your <br /> <span className="text-gradient">Career Pathway.</span>
+                        Your Journey to <br /> <span className="text-gradient">Top Tech Companies.</span>
                     </h2>
                     <p className="text-xl text-gray-500 font-medium max-w-xl mx-auto">
-                        Whether you need to crack your dream offer or gain industry experience, we have the right path for you.
+                        From cracking the placement interviews to gaining real industry experience, we guide you every step of the way.
                     </p>
                 </motion.div>
 
                 {/* Cards Container */}
                 <div
-                    className="flex flex-col lg:flex-row gap-8 h-auto lg:min-h-[640px]"
+                    className="flex flex-col lg:flex-row gap-8 h-auto lg:min-h-[600px] items-center justify-center"
                     onMouseLeave={() => setHoveredMode(null)}
                 >
-                    {/* ─── Prep0 Card ─── */}
+                    {/* ─── Placement Ecosystem (Prep0) ─── */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
+                        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
                         className={`
-                            relative rounded-[3rem] overflow-hidden cursor-default
-                            transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]
-                            ${hoveredMode === 'work' ? 'lg:flex-[0.6] opacity-40 blur-[2px]' : 'lg:flex-1'}
-                            ${hoveredMode === 'prep' ? 'lg:flex-[1.4]' : ''}
+                            relative rounded-[3rem] overflow-hidden w-full lg:w-1/2
+                            transition-all duration-500 ease-out will-change-transform
+                            ${hoveredMode === 'work' ? 'opacity-50 scale-[0.98]' : 'scale-100'}
+                            ${hoveredMode === 'prep' ? 'shadow-emerald-200/50 -translate-y-2' : ''}
                             bg-white flex flex-col group
                             border border-gray-200/60 hover:border-emerald-200
-                            shadow-2xl hover:shadow-emerald-100/50
+                            shadow-2xl
                         `}
                         onMouseEnter={() => setHoveredMode('prep')}
                     >
@@ -86,32 +90,32 @@ export default function DualModeSection() {
                                     <BookOpen size={30} strokeWidth={2.5} />
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600/60 mb-1">Starting At</div>
-                                    <div className="text-3xl font-[1000] text-brand-black">₹799<span className="text-sm font-bold text-gray-400">/mo</span></div>
+                                    <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold tracking-widest uppercase">
+                                        Step 1
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Brand Name */}
                             <div className="mb-auto">
-                                <h3 className="text-5xl font-[1000] text-brand-black mb-2 tracking-tighter transition-colors duration-300 group-hover:text-emerald-700">
-                                    Prep<span className="text-emerald-500">0</span>
+                                <h3 className="text-4xl md:text-5xl font-[1000] text-brand-black mb-2 tracking-tighter transition-colors duration-300 group-hover:text-emerald-700">
+                                    Placement Accelerator
                                 </h3>
                                 <p className="text-xs font-black uppercase tracking-[0.3em] text-emerald-600/70 mb-8">
-                                    Placement Readiness
+                                    Solve the rejection problem
                                 </p>
                                 <p className="text-gray-500 text-lg leading-relaxed mb-10 max-w-md font-medium">
-                                    Master the technical screening. Ace your resume, aptitude tests, and technical interviews with zero fluff.
+                                    Are you clearing the technical rounds? We bridge the logic gap that video lectures miss, ensuring you're ready for every screening.
                                 </p>
 
-                                {/* Features */}
-                                <ul className="space-y-4">
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                                     {prepFeatures.map((item, i) => (
                                         <motion.li
                                             key={i}
-                                            className="flex items-center gap-4 text-brand-black font-extrabold text-sm"
+                                            className="flex items-center gap-3 text-brand-black font-extrabold text-[13px]"
                                         >
-                                            <div className="w-7 h-7 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                                                <CheckCircle2 className="text-emerald-500" size={16} strokeWidth={3} />
+                                            <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                                                <CheckCircle2 className="text-emerald-500" size={12} strokeWidth={3} />
                                             </div>
                                             {item.label}
                                         </motion.li>
@@ -125,26 +129,33 @@ export default function DualModeSection() {
                                     href="/register/student"
                                     className="w-full flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-emerald-50 text-emerald-700 font-[900] text-lg hover:bg-emerald-600 hover:text-white transition-all duration-300 border border-emerald-100 shadow-sm"
                                 >
-                                    Launch Prep0 <ArrowRight size={20} strokeWidth={3} />
+                                    Explore Placement Mode <ArrowRight size={20} strokeWidth={3} />
                                 </Link>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* ─── We2Hub Card ─── */}
+                    {/* Arrow Divider */}
+                    <div className="hidden lg:flex flex-col items-center justify-center -mx-4 z-20">
+                        <div className="w-12 h-12 rounded-full bg-white shadow-xl shadow-brand-orange/20 border border-gray-100 flex items-center justify-center text-brand-orange">
+                            <ArrowRight size={24} strokeWidth={3} />
+                        </div>
+                    </div>
+
+                    {/* ─── Simulation Journey (We2Hub) ─── */}
                     <motion.div
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
                         className={`
-                            relative rounded-[3rem] overflow-hidden cursor-default
-                            transition-all duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]
-                            ${hoveredMode === 'prep' ? 'lg:flex-[0.6] opacity-40 blur-[2px]' : 'lg:flex-1'}
-                            ${hoveredMode === 'work' ? 'lg:flex-[1.4]' : ''}
-                            bg-brand-black text-white flex flex-col group
-                            border border-gray-800 hover:border-brand-orange/30
-                            shadow-2xl hover:shadow-brand-orange/20
+                            relative rounded-[3rem] overflow-hidden w-full lg:w-1/2
+                            transition-all duration-500 ease-out will-change-transform
+                            ${hoveredMode === 'prep' ? 'opacity-50 scale-[0.98]' : 'scale-100'}
+                            ${hoveredMode === 'work' ? 'shadow-brand-orange/20 -translate-y-2' : ''}
+                            bg-[#0B0F19] text-white flex flex-col group
+                            border border-white/5 hover:border-brand-orange/20
+                            shadow-2xl
                         `}
                         onMouseEnter={() => setHoveredMode('work')}
                     >
@@ -158,32 +169,32 @@ export default function DualModeSection() {
                                     <Briefcase size={30} strokeWidth={2.5} />
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-orange/60 mb-1">Starting At</div>
-                                    <div className="text-3xl font-[1000] text-white">₹999<span className="text-sm font-bold text-gray-500">/mo</span></div>
+                                    <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-orange-900/40 text-brand-orange text-xs font-bold tracking-widest uppercase border border-brand-orange/20">
+                                        Step 2
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Brand Name */}
                             <div className="mb-auto">
-                                <h3 className="text-5xl font-[1000] text-white mb-2 tracking-tighter transition-colors duration-300 group-hover:text-brand-orange">
-                                    We2<span className="text-brand-orange">Hub</span>
+                                <h3 className="text-4xl md:text-5xl font-[1000] text-white mb-2 tracking-tighter transition-colors duration-300 group-hover:text-brand-orange">
+                                    Industrial Simulation
                                 </h3>
                                 <p className="text-xs font-black uppercase tracking-[0.3em] text-brand-orange/70 mb-8">
-                                    Industrial Connect
+                                    Solve the "No Experience" problem
                                 </p>
-                                <p className="text-gray-400 text-lg leading-relaxed mb-10 max-w-md font-medium">
-                                    Get the "Experience" tag. Work on production code, attend meetings, and ship features that matter.
+                                <p className="text-gray-300/80 text-lg leading-relaxed mb-10 max-w-md font-medium">
+                                    Stop being just another "fresher". Build the industrial proof-of-work that top engineering teams actually respect.
                                 </p>
 
-                                {/* Features */}
-                                <ul className="space-y-4">
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                                     {hubFeatures.map((item, i) => (
                                         <motion.li
                                             key={i}
-                                            className="flex items-center gap-4 text-gray-200 font-extrabold text-sm"
+                                            className="flex items-center gap-3 text-gray-300 font-extrabold text-[13px]"
                                         >
-                                            <div className="w-7 h-7 rounded-xl bg-gray-900 flex items-center justify-center shrink-0 border border-gray-800 group-hover:border-brand-orange/30">
-                                                <Zap className="text-brand-orange" size={16} strokeWidth={3} />
+                                            <div className="w-6 h-6 rounded-lg bg-white/[0.03] flex items-center justify-center shrink-0 border border-white/10 group-hover:border-brand-orange/30">
+                                                <Zap className="text-brand-orange" size={12} strokeWidth={3} />
                                             </div>
                                             {item.label}
                                         </motion.li>

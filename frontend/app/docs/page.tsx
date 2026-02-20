@@ -25,7 +25,7 @@ import Footer from '@/app/components/layout/Footer';
 const categories = [
     {
         title: "Getting Started",
-        desc: "Everything you need to know to begin your journey at We2.",
+        desc: "Everything you need to know to begin your journey at EMBLE.",
         icon: PlayCircle,
         color: "blue",
         links: [
@@ -35,7 +35,7 @@ const categories = [
         ]
     },
     {
-        title: "Prep0: DSA & Interviews",
+        title: "Placement Mode: DSA & Interviews",
         desc: "Master the technical interview roadmap and resume building.",
         icon: Code2,
         color: "orange",
@@ -46,7 +46,7 @@ const categories = [
         ]
     },
     {
-        title: "We2Hub: Simulations",
+        title: "Job Simulation: Simulations",
         desc: "Deep dive into our 21-day industrial simulator workflows.",
         icon: Terminal,
         color: "emerald",

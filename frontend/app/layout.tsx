@@ -7,21 +7,22 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Emble | Prep0 + We2Hub — The #1 Career Readiness Platform',
-    template: '%s | Emble'
+    default: 'EMBLE | Placement Mode + Job Simulation — The #1 Career Readiness Platform',
+    template: '%s | EMBLE'
   },
-  description: 'Prep0 for placement prep. We2Hub for industry experience. Master DSA, practice with AI interviewers, and gain real-world software development experience.',
-  keywords: ['We2', 'Prep0', 'We2Hub', 'DSA Preparation', 'Coding Interview', 'System Design', 'Industry Simulation', 'Mock Interviews', 'Full Stack Development'],
+  description: 'Placement Mode for placement prep. Job Simulation for industry experience. Master DSA, practice with AI interviewers, and gain real-world software development experience.',
+  keywords: ['EMBLE', 'Placement Mode', 'Job Simulation', 'DSA Preparation', 'Coding Interview', 'System Design', 'Industry Simulation', 'Mock Interviews', 'Full Stack Development'],
   openGraph: {
-    title: 'We2 | Bridge the Gap Between Education and Industry',
-    description: 'Prep0 for placement prep. We2Hub for industry experience. Transform your coding career with real-world simulations and AI-powered mentorship.',
-    url: 'https://we2.in',
-    siteName: 'We2',
+    title: 'EMBLE | Bridge the Gap Between Education and Industry',
+    description: 'Placement Mode for placement prep. Job Simulation for industry experience. Transform your coding career with real-world simulations and AI-powered mentorship.',
+    url: 'https://emble.in',
+    siteName: 'EMBLE',
     images: [
       {
-        url: 'https://we2.in/og-image.jpg',
+        url: 'https://emble.in/og-image.jpg',
         width: 1200,
         height: 630,
+        alt: 'EMBLE Open Graph Image',
       },
     ],
     locale: 'en_US',
@@ -29,9 +30,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'We2 | Prep0 + We2Hub — Career Readiness Platform',
+    title: 'EMBLE | Placement Mode + Job Simulation — Career Readiness Platform',
     description: 'Master coding interviews and real-world dev skills.',
-    images: ['https://we2.in/twitter-image.jpg'],
+    images: ['https://emble.in/twitter-image.jpg'],
   },
 };
 

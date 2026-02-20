@@ -2,13 +2,14 @@
 
 import { motion } from 'framer-motion';
 import { Target, Code2, Briefcase, Trophy, ChevronRight, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 
 const steps = [
     {
         icon: Target,
         title: "Skill Diagnostics",
         desc: "We analyze your baseline logic and technical proficiency through adaptive testing.",
-        features: ["Logic Assessment", "Coding Baseline", "Comm Skills Analysis"],
+        features: ["Skill Check", "Coding Assessment", "Communication Analysis"],
         color: "text-blue-600",
         bg: "bg-blue-50",
         border: "border-blue-100",
@@ -17,9 +18,9 @@ const steps = [
     },
     {
         icon: Code2,
-        title: "Prep0: Mastery",
+        title: "Placement Accelerator",
         desc: "Comprehensive training suite to clear every screening round with precise focus.",
-        features: ["200+ Company-Picked Ques", "CS Core (OS, DBMS, CN)", "ATS Resume Builder", "AI Mock Interviews"],
+        features: ["200+ DSA Questions", "CS Core Fundamentals", "Resume Builder", "AI Mock Interviews"],
         color: "text-orange-600",
         bg: "bg-orange-50",
         border: "border-orange-100",
@@ -28,10 +29,10 @@ const steps = [
     },
     {
         icon: Briefcase,
-        title: "We2Hub: Simulation",
-        desc: "Step into industry-grade work modules. Ship production features on real tickets.",
-        features: ["Virtual Experience", "Real JIRA Tickets", "Senior Dev AI Reviews", "Git Mastery"],
-        color: "text-purple-600",
+        title: "Industrial Simulation",
+        desc: "Apply your skills in a virtual internship. Build production-level software under the guidance of our AI Engineering Lead.",
+        features: ["Industry Sprint", "Real-world Projects", "Senior AI Reviews", "GitHub Mastery"],
+        color: "brand-orange-600",
         bg: "bg-purple-50",
         border: "border-purple-100",
         shadow: "shadow-purple-500/10",
@@ -62,7 +63,7 @@ export default function ProcessTimeline() {
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="text-center max-w-3xl mx-auto mb-24">
                     <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-100 inline-block mb-8 shadow-sm">
-                        The we2 journey
+                        The Emble journey
                     </span>
                     <h2 className="text-5xl md:text-7xl font-[1000] text-brand-black tracking-tighter mb-8 leading-[0.95] drop-shadow-sm">
                         From Campus to <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Corporate in 4 Steps.</span>
@@ -112,6 +113,7 @@ export default function ProcessTimeline() {
                                         flex-1 w-full bg-white/60 backdrop-blur-xl border border-white/60 p-8 rounded-[2rem]
                                         hover:bg-white/80 hover:border-white hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] 
                                         transition-all duration-500 flex flex-col items-start text-left relative overflow-hidden group/card
+                                        min-h-[380px]
                                     `}>
                                         <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${step.gradient} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}></div>
 
@@ -145,10 +147,10 @@ export default function ProcessTimeline() {
                 </div>
 
                 <div className="mt-20 flex justify-center">
-                    <button className="group flex items-center gap-3 px-10 py-5 bg-brand-black text-white rounded-full font-bold text-lg transition-all hover:pr-12 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 active:scale-95">
+                    <Link href="/curriculum" className="group flex items-center gap-3 px-10 py-5 bg-brand-black text-white rounded-full font-bold text-lg transition-all hover:pr-12 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 active:scale-95">
                         Explore Full Curriculum
                         <ChevronRight className="transition-transform group-hover:translate-x-2" size={20} strokeWidth={3} />
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

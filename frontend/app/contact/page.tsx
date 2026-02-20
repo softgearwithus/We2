@@ -23,7 +23,7 @@ import Footer from '@/app/components/layout/Footer';
 const supportChannels = [
     {
         title: "General Support",
-        desc: "For questions about the Prep0 dashboard or existing subscriptions.",
+        desc: "For questions about the Placement Mode dashboard or existing subscriptions.",
         icon: Mail,
         contact: "support@we2.in",
         color: "emerald"
@@ -214,8 +214,8 @@ export default function ContactPage() {
                                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Subject / Category</label>
                                             <select className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium appearance-none">
                                                 <option>General Inquiry</option>
-                                                <option>Prep0 Dashboard Help</option>
-                                                <option>We2Hub Simulation Access</option>
+                                                <option>Placement Mode Dashboard Help</option>
+                                                <option>Job Simulation Simulation Access</option>
                                                 <option>Billing & Payments</option>
                                                 <option>Technical Support</option>
                                                 <option>Partnerships</option>

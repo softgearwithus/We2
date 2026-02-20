@@ -39,7 +39,7 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                         <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white font-bold text-xl border border-white/20 group-hover:scale-105 transition-transform">
                             W2
                         </div>
-                        <span className="font-bold text-xl text-white tracking-tight">We2<span className="text-brand-orange">.Target</span></span>
+                        <span className="font-bold text-xl text-white tracking-tight">EMBLE<span className="text-brand-orange">.Target</span></span>
                     </Link>
 
                     <h2 className="text-5xl font-black mb-6 leading-tight tracking-tight">
@@ -69,7 +69,7 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                 <div className="lg:hidden absolute top-8 left-8">
                     <Link href="/" className="flex items-center gap-2 font-bold text-brand-black">
                         <div className="w-8 h-8 bg-brand-black rounded-lg flex items-center justify-center text-white text-sm">W2</div>
-                        We2
+                        EMBLE
                     </Link>
                 </div>
 

@@ -220,7 +220,7 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                     </div>
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">Analyzing Performance</h2>
-                <p className="text-slate-500">Prep0 AI is generating your detailed scorecard...</p>
+                <p className="text-slate-500">Placement Mode AI is generating your detailed scorecard...</p>
                 {analysisHint && (
                     <div className="mt-4 text-xs text-slate-500">{analysisHint}</div>
                 )}
@@ -258,7 +258,7 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                         <h1 className="text-lg font-bold text-slate-900">Mock Interview #402</h1>
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                            <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest">Prep0 AI Live</span>
+                            <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest">Placement Mode AI Live</span>
                         </div>
                     </div>
                 </div>
@@ -290,7 +290,7 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                                 <Volume2 className={cn("w-10 h-10 text-white transition-opacity", status === 'speaking' ? "opacity-100" : "opacity-50")} />
                             </div>
                             <h3 className="font-bold text-lg text-slate-900">Sophia</h3>
-                            <p className="text-xs font-medium text-indigo-600 uppercase tracking-widest">Prep0 AI Lead</p>
+                            <p className="text-xs font-medium text-indigo-600 uppercase tracking-widest">Placement Mode AI Lead</p>
                         </div>
 
                         {/* Audio Waveform */}

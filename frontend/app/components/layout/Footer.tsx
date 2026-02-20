@@ -15,11 +15,11 @@ export default function Footer() {
                                 <Terminal size={18} className="text-white" strokeWidth={3} />
                             </div>
                             <span className="text-xl font-bold tracking-tight text-brand-black">
-                                Emble
+                                EMBLE
                             </span>
                         </Link>
                         <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
-                            <strong className="text-brand-black">Prep0</strong> for placement prep. <strong className="text-brand-black">We2Hub</strong> for industry experience. One platform, two powerful paths.
+                            The complete <strong className="text-brand-black">Full-Stack Bootcamp</strong>. Bridge the gap between academic learning and industry expectations in one unified platform.
                         </p>
                     </div>
 
@@ -28,8 +28,7 @@ export default function Footer() {
                         {
                             title: 'Product',
                             links: [
-                                { label: 'Prep0', href: '/prep0' },
-                                { label: 'We2Hub', href: '/we2hub' },
+                                { label: 'Bootcamp Curriculum', href: '/curriculum' },
                                 { label: 'How it Works', href: '/how-it-works' },
                                 { label: 'Pricing', href: '/pricing' },
                                 { label: 'AI Mentors', href: '/ai-mentors' }
@@ -70,7 +69,7 @@ export default function Footer() {
                 </div>
 
                 <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-medium text-gray-400 uppercase tracking-widest">
-                    <p>© 2025 Emble Technologies. All rights reserved.</p>
+                    <p>© 2025 EMBLE Technologies. All rights reserved.</p>
                     <div className="flex gap-8">
                         <Link href="#" className="hover:text-brand-black transition-colors"><Linkedin size={18} /></Link>
                         <Link href="#" className="hover:text-brand-black transition-colors"><Twitter size={18} /></Link>

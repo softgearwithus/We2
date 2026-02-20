@@ -25,7 +25,7 @@ const PLAN_NAMES = {
     'pro_tier': 'Pro',
     'placement_plus': 'Placement Plus',
     'industry_plus': 'Industry Plus',
-    'we2_max': 'We2 Max'
+    'we2_max': 'EMBLE Max'
 };
 
 export default function SubscriptionGuard({ children, requiredPlan, featureName = 'Premium Feature' }: SubscriptionGuardProps) {

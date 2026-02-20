@@ -62,7 +62,7 @@ export default function LoginSelectionPage() {
                     <div className="w-10 h-10 bg-brand-black rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-orange/20 group-hover:scale-105 transition-transform">
                         W2
                     </div>
-                    <span className="font-bold text-xl text-brand-black tracking-tight">We2<span className="text-brand-orange">.Target</span></span>
+                    <span className="font-bold text-xl text-brand-black tracking-tight">EMBLE<span className="text-brand-orange">.Target</span></span>
                 </Link>
                 <Link
                     href="/"

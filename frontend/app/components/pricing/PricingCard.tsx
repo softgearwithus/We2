@@ -6,6 +6,12 @@ import { Check, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/app/lib/utils';
 import { useAuth } from '@/app/context/AuthContext';
 
+declare global {
+    interface Window {
+        Razorpay: any;
+    }
+}
+
 interface PricingFeature {
     text: string;
     included: boolean;
@@ -47,6 +53,20 @@ export default function PricingCard({
     const { login, updateUser, user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            if (typeof window !== 'undefined' && window.Razorpay) {
+                resolve(true);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     const handleUpgrade = async () => {
         if (!planId) {
             if (onCtaClick) onCtaClick();
@@ -62,30 +82,71 @@ export default function PricingCard({
                 return;
             }
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/upgrade`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ plan: planId })
-            });
-
-            if (response.ok) {
-                const updatedUser = await response.json();
-                // Update local auth state with new subscription details
-                updateUser(updatedUser);
-                alert(`Successfully upgraded to ${title}!`);
-                if (onCtaClick) onCtaClick();
-            } else {
-                const errorText = await response.text();
-                console.error('Upgrade failed:', response.status, errorText);
-                alert(`Upgrade failed: ${response.status} ${response.statusText}`);
+            const res = await loadRazorpayScript();
+            if (!res) {
+                alert('Razorpay SDK failed to load. Are you online?');
+                setIsLoading(false);
+                return;
             }
+
+            const amountInPaise = parseInt(price.replace(/[^0-9]/g, '')) * 100; // in paise
+
+            const options: any = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SI6zIPLAXQkeMw', // Using provided test key
+                amount: amountInPaise,
+                currency: 'INR',
+                name: 'EMBLE',
+                description: `Upgrade to ${title}`,
+                // Note: In a production app, order_id must be generated on the backend and passed here.
+                handler: async function (response: any) {
+                    try {
+                        const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/upgrade`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ plan: planId, paymentId: response.razorpay_payment_id })
+                        });
+
+                        if (upgradeResponse.ok) {
+                            const updatedUser = await upgradeResponse.json();
+                            // Update local auth state with new subscription details
+                            updateUser(updatedUser);
+                            alert(`Successfully upgraded to ${title}!`);
+                            if (onCtaClick) onCtaClick();
+                        } else {
+                            const errorText = await upgradeResponse.text();
+                            console.error('Upgrade failed:', upgradeResponse.status, errorText);
+                            alert(`Payment successful, but upgrade failed: ${upgradeResponse.status} ${upgradeResponse.statusText}. Please contact support.`);
+                        }
+                    } catch (err) {
+                        console.error('Upgrade error after payment:', err);
+                        alert('Upgrade error after payment. Please contact support.');
+                    } finally {
+                        setIsLoading(false);
+                    }
+                },
+                prefill: {
+                    name: user?.name || 'Student',
+                    email: user?.email || '',
+                },
+                theme: {
+                    color: '#059669', // Emerald color for EMBLE
+                },
+                modal: {
+                    ondismiss: function () {
+                        setIsLoading(false);
+                    }
+                }
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+
         } catch (error) {
             console.error('Upgrade error:', error);
             alert('An error occurred during upgrade. Please check console for details.');
-        } finally {
             setIsLoading(false);
         }
     };

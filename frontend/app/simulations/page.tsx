@@ -48,14 +48,14 @@ export default function SimulationsPage() {
                     {/* Header */}
                     <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in-up">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-6">
-                            We2Hub — Virtual Internship
+                            Job Simulation — Virtual Internship
                         </div>
                         <h1 className="text-5xl md:text-6xl font-extrabold text-brand-black tracking-tight mb-6 leading-tight">
                             Experience the
                             <span className="text-brand-orange"> Real World.</span>
                         </h1>
                         <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                            Don&apos;t just write code. Build software. We2Hub simulations mimic the tools, workflows, and pressure of a real tech company.
+                            Don&apos;t just write code. Build software. Job Simulation simulations mimic the tools, workflows, and pressure of a real tech company.
                         </p>
                     </div>
 

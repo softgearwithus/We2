@@ -117,7 +117,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                     <div className="space-y-4 max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-bold uppercase tracking-wider border border-violet-200">
                             <Sparkles size={12} className="fill-violet-700" />
-                            <span>Prep0 Ultra Interface</span>
+                            <span>Placement Mode Ultra Interface</span>
                         </div>
                         <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
                             Mock Interview <br className="hidden md:block" />

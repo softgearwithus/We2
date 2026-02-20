@@ -27,9 +27,9 @@ const successStories = [
         role: "Software Engineer",
         company: "Google",
         previous: "Final Year Student",
-        path: "Prep0",
+        path: "Placement Mode",
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop",
-        quote: "The mock interviews on Prep0 were incredibly realistic. I converted my internship at Google into a full-time role thanks to the system design modules.",
+        quote: "The mock interviews on Placement Mode were incredibly realistic. I converted my internship at Google into a full-time role thanks to the system design modules.",
         tags: ["FAANG", "DSA Intensive"],
         hike: "New Grad"
     },
@@ -38,9 +38,9 @@ const successStories = [
         role: "Frontend Lead",
         company: "Zomato",
         previous: "Junior Developer",
-        path: "We2Hub",
+        path: "Job Simulation",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&h=200&auto=format&fit=crop",
-        quote: "We2Hub's 21-day simulation taught me more about professional Git workflows and JIRA than my previous job did in a year.",
+        quote: "Job Simulation's 21-day simulation taught me more about professional Git workflows and JIRA than my previous job did in a year.",
         tags: ["Product Based", "Simulation"],
         hike: "120% Hike"
     },
@@ -49,9 +49,9 @@ const successStories = [
         role: "Systems Engineer",
         company: "Microsoft",
         previous: "Tier-3 College Student",
-        path: "Prep0",
+        path: "Placement Mode",
         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&h=200&auto=format&fit=crop",
-        quote: "Coming from a tier-3 college, I always felt the gap. Prep0 gave me the same level of preparation as IITians. I landed Microsoft off-campus!",
+        quote: "Coming from a tier-3 college, I always felt the gap. Placement Mode gave me the same level of preparation as IITians. I landed Microsoft off-campus!",
         tags: ["MNC", "Off-Campus"],
         hike: "MAANG"
     },
@@ -60,7 +60,7 @@ const successStories = [
         role: "Backend Dev",
         company: "Uber",
         previous: "Non-CS Background",
-        path: "We2Hub",
+        path: "Job Simulation",
         image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop",
         quote: "Transitioning from Civil to IT was scary. The end-to-end curriculum on DBMS and OS made me feel confident in technical rounds.",
         tags: ["Transition", "Backend"],
@@ -71,9 +71,9 @@ const successStories = [
         role: "DevOps Engineer",
         company: "Adobe",
         previous: "Support Engineer",
-        path: "We2Hub",
+        path: "Job Simulation",
         image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=200&h=200&auto=format&fit=crop",
-        quote: "The infrastructure simulation at We2Hub, specifically the Kubernetes modules, was exactly what Adobe was looking for in my technical round.",
+        quote: "The infrastructure simulation at Job Simulation, specifically the Kubernetes modules, was exactly what Adobe was looking for in my technical round.",
         tags: ["Infrastructure", "Simulation"],
         hike: "90% Hike"
     },
@@ -82,7 +82,7 @@ const successStories = [
         role: "SDE-II",
         company: "Amazon",
         previous: "QA Engineer",
-        path: "Prep0",
+        path: "Placement Mode",
         image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&h=200&auto=format&fit=crop",
         quote: "The DSA roadmap is unmatched. I finally broke through the mid-level barrier and landed a senior role at Amazon.",
         tags: ["Promotion", "Amazon"],
@@ -184,7 +184,7 @@ export default function StoriesPage() {
                             transition={{ delay: 0.1 }}
                             className="text-xl text-gray-500 font-medium"
                         >
-                            From tier-3 colleges to global tech giants. Meet the builders who transformed their careers with We2.
+                            From tier-3 colleges to global tech giants. Meet the builders who transformed their careers with EMBLE.
                         </motion.p>
                     </div>
 
@@ -217,7 +217,7 @@ export default function StoriesPage() {
             <section className="py-12 border-y border-gray-100 sticky top-16 bg-white/80 backdrop-blur-md z-40">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="flex flex-wrap items-center justify-center gap-3">
-                        {['All', 'Prep0', 'We2Hub', 'FAANG', 'MNC', 'Transition'].map((tag) => (
+                        {['All', 'Placement Mode', 'Job Simulation', 'FAANG', 'MNC', 'Transition'].map((tag) => (
                             <button
                                 key={tag}
                                 onClick={() => setFilter(tag)}

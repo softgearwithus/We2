@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Briefcase } from 'lucide-react';
 
 export default function AdminLayout({
     children,
@@ -16,13 +16,10 @@ export default function AdminLayout({
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['all'] },
-        { icon: BookOpen, label: 'Course Content', href: '/admin/content', roles: ['all'] },
         { icon: Users, label: 'Students', href: '/admin/students', roles: ['all'] },
         { icon: Building2, label: 'Colleges', href: '/admin/colleges', roles: ['super_admin'] },
-        { icon: Building2, label: 'Companies', href: '/admin/companies', roles: ['super_admin'] },
-        { icon: School, label: 'Placements', href: '/admin/placements', roles: ['all'] },
+        { icon: Briefcase, label: 'Companies', href: '/admin/companies', roles: ['super_admin'] },
         { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['all'] },
-        { icon: Shield, label: 'Access Control', href: '/admin/access', roles: ['super_admin'] },
         { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['all'] },
     ];
 

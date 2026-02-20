@@ -19,37 +19,45 @@ const TABS = [
 ];
 
 const STANDARD_PLAN = {
-    title: 'Standard: Access Everything',
+    title: 'EMBLE Standard',
+    internalName: 'placement_plus',
     price: '₹449',
     period: 'month',
     description: 'Perfect for maintaining skills & light practice.',
     features: [
-        { text: 'Full Stack Placement Bootcamp', included: true },
-        { text: 'Virtual Internship Projects', included: true },
-        { text: '5 AI Voice Interviews (FAANG Mode)', included: true },
+        { text: 'Advanced Audio & Logic Drills', included: true },
+        { text: 'Curated FAANG-Level Coding', included: true },
+        { text: '5 Interactive AI Voice Interviews', included: true },
         { text: '1 Full AI Video Interview', included: true },
-        { text: '3 ATS Resume Scans / mo', included: true },
-        { text: '24/7 AI Doubt Solving (Basic)', included: true },
+        { text: 'Precision ATS Resume Scans', included: true },
+        { text: 'Personalized AI Roadmaps', included: true },
+        { text: 'Company-Specific Problem Sets', included: true },
+        { text: 'Official Solutions & Explanations', included: true },
+        { text: 'Advanced Analytics Dashboard', included: true },
     ],
-    ctaText: 'Start Standard',
+    ctaText: 'Get Standard Access',
     variant: 'default' as const,
     planId: 'standard_tier',
     savings: 'Effective: ₹15/day'
 };
 
 const PRO_PLAN = {
-    title: 'Pro: High Capacity',
+    title: 'EMBLE Pro',
+    internalName: 'we2_max',
     price: '₹799',
     period: 'month',
     description: 'For serious job seekers who need intense practice.',
     features: [
         { text: 'Everything in Standard', included: true },
-        { text: '15 AI Voice Interviews / mo', included: true },
-        { text: '3 Full AI Video Interviews / mo', included: true },
-        { text: '10 ATS Resume Scans / mo', included: true },
-        { text: 'Unlimited AI Pair Programmer', included: true },
-        { text: 'Verified Internship Certificate', included: true },
+        { text: 'Immersive AI Simulation Environment', included: true },
+        { text: 'Real-world Project Workflows', included: true },
+        { text: 'Unlimited AI Pair Programming', included: true },
+        { text: 'Code Reviews by Senior AI Devs', included: true },
         { text: 'Recruiter Visibility Badge', included: true },
+        { text: '10x Faster Code Execution', included: true },
+        { text: 'Unlimited Coding Playgrounds', included: true },
+        { text: '24/7 Priority AI Doubt Support', included: true },
+        { text: 'Elite AI Coding Agent Access', included: true },
     ],
     ctaText: 'Get Pro Access',
     variant: 'premium' as const,
@@ -195,8 +203,8 @@ export default function PricingPage() {
                                                             <thead>
                                                                 <tr className="border-b border-gray-100">
                                                                     <th className="py-3 font-medium text-gray-500">Feature</th>
-                                                                    <th className="py-3 font-bold text-brand-black text-center">Standard</th>
-                                                                    <th className="py-3 font-bold text-brand-orange text-center">Pro</th>
+                                                                    <th className="py-3 font-bold text-brand-black text-center">Ignite</th>
+                                                                    <th className="py-3 font-bold text-brand-orange text-center">Nexus</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>

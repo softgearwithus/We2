@@ -237,7 +237,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                             <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
                                 <Loader2 className="w-16 h-16 text-indigo-500 animate-spin" />
                                 <h2 className="text-2xl font-bold text-slate-800">Uploading Drill...</h2>
-                                <p className="text-slate-500">Sending your recordings to Prep0 AI for analysis.</p>
+                                <p className="text-slate-500">Sending your recordings to Placement Mode AI for analysis.</p>
                             </div>
                         ) : finalResult && finalResult.status === 'in_progress' ? (
                             <motion.div

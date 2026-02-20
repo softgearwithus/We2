@@ -19,6 +19,7 @@ export default function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const isDarkBg = !isScrolled && !mobileMenuOpen && pathname === '/curriculum';
 
     useEffect(() => {
         const handleScroll = () => {
@@ -41,8 +42,7 @@ export default function Navbar() {
     }, []);
 
     const guestNavItems = [
-        { label: 'Prep0', href: '/prep0' },
-        { label: 'We2Hub', href: '/we2hub' },
+        { label: 'Bootcamp Curriculum', href: '/curriculum' },
         { label: 'How it Works', href: '/how-it-works' },
         { label: 'Pricing', href: '/pricing' }
     ];
@@ -60,13 +60,13 @@ export default function Navbar() {
     // Items to show specifically when INSIDE the dashboard layout (context is present)
     const dashboardNavItems = [
         {
-            label: 'Prep0',
+            label: 'Placement Mode',
             action: () => { dashboardContext?.setMode('prep'); router.push('/dashboard'); },
             active: dashboardContext?.mode === 'prep',
             icon: School
         },
         {
-            label: 'We2Hub',
+            label: 'Job Simulation',
             action: () => { dashboardContext?.setMode('work'); router.push('/dashboard'); },
             active: dashboardContext?.mode === 'work',
             icon: CircuitBoard
@@ -88,13 +88,19 @@ export default function Navbar() {
                     <div className="w-8 h-8 bg-brand-orange rounded flex items-center justify-center transition-transform group-hover:rotate-12">
                         <Terminal size={18} className="text-white" strokeWidth={3} />
                     </div>
-                    <span className="text-lg font-bold tracking-tight text-brand-black">
-                        Emble
+                    <span className={cn(
+                        "text-lg font-bold tracking-tight transition-colors",
+                        isDarkBg ? "text-white" : "text-brand-black"
+                    )}>
+                        EMBLE
                     </span>
                 </Link>
 
                 {/* Desktop Nav */}
-                <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
+                <div className={cn(
+                    "hidden md:flex items-center gap-8 text-sm font-medium transition-colors",
+                    isDarkBg ? "text-white/80" : "text-gray-500"
+                )}>
                     {isDashboardLayout ? (
                         // Dashboard Mode Items
                         dashboardNavItems.map((item) => (
@@ -129,7 +135,9 @@ export default function Navbar() {
                                 href={item.href}
                                 className={cn(
                                     "hover:text-brand-orange transition-colors py-2 flex items-center gap-1.5",
-                                    pathname === item.href ? "text-brand-black font-semibold" : ""
+                                    pathname === item.href
+                                        ? (isDarkBg ? "text-white font-bold" : "text-brand-black font-semibold")
+                                        : ""
                                 )}
                             >
                                 {/* @ts-ignore - icon is optional */}
@@ -197,7 +205,10 @@ export default function Navbar() {
                         </div>
                     ) : (
                         <>
-                            <Link href="/login" className="text-sm font-medium text-gray-500 hover:text-brand-black transition-colors px-3 py-2">
+                            <Link href="/login" className={cn(
+                                "text-sm font-medium transition-colors px-3 py-2",
+                                isDarkBg ? "text-white hover:text-white/80" : "text-gray-500 hover:text-brand-black"
+                            )}>
                                 Sign in
                             </Link>
                             <Link href="/register" className="bg-brand-orange hover:bg-brand-orange-hover text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-subtle hover:shadow-md">
@@ -209,7 +220,10 @@ export default function Navbar() {
 
                 {/* Mobile Menu Toggle */}
                 <button
-                    className="md:hidden text-gray-600"
+                    className={cn(
+                        "md:hidden transition-colors",
+                        isDarkBg ? "text-white" : "text-gray-600"
+                    )}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                     {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

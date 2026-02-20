@@ -7,15 +7,15 @@ import { Plus, Minus } from 'lucide-react';
 const faqs = [
     {
         question: "Is this suitable for beginners?",
-        answer: "Absolutely. Prep0 starts with a baseline assessment. If you're a beginner, we generate a custom roadmap that starts from the very basics of programming before moving to complex DSA topics."
+        answer: "Absolutely. Placement Mode starts with a baseline assessment. If you're a beginner, we generate a custom roadmap that starts from the very basics of programming before moving to complex DSA topics."
     },
     {
-        question: "How does We2Hub simulation work?",
-        answer: "It's like a flight simulator for coding. You join a virtual company, get assigned a Senior Dev AI Bot, and receive tickets on a Jira-like board. You fix bugs, add features, and merge code just like in a real job."
+        question: "How does Job Simulation simulation work?",
+        answer: "It's like a flight simulator for coding. You join a virtual company, get assigned a Senior Dev AI Bot, and receive tickets on a task management board. You fix bugs, add features, and merge code just like in a real job."
     },
     {
         question: "Do you guarantee placement?",
-        answer: "We focus on making you 'Hire-Ready'. By completing the We2Hub simulation with a 'Verified' score, you build a vetted portfolio that top companies demand. Our students see a 5x increase in interview calls due to documented proof of skill."
+        answer: "We focus on making you 'Hire-Ready'. By completing the Job Simulation simulation with a 'Verified' score, you build a vetted portfolio that top companies demand. Our students see a 5x increase in interview calls due to documented proof of skill."
     },
     {
         question: "Can I do this alongside my college/job?",

@@ -49,7 +49,7 @@ export default function RegisterPage() {
                         <div className="w-10 h-10 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
                             W2
                         </div>
-                        <span className="font-bold text-2xl tracking-tight">We2<span className="text-brand-orange">.Target</span></span>
+                        <span className="font-bold text-2xl tracking-tight">EMBLE<span className="text-brand-orange">.Target</span></span>
                     </Link>
                 </div>
 

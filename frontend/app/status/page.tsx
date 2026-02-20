@@ -21,8 +21,8 @@ import Footer from '@/app/components/layout/Footer';
 const services = [
     { name: "Core API", status: "operational", uptime: "99.98%", icon: Server },
     { name: "Database Cluster", status: "operational", uptime: "100%", icon: Database },
-    { name: "We2Hub Engine", status: "operational", uptime: "99.95%", icon: Zap },
-    { name: "Prep0 AI Mentors", status: "operational", uptime: "99.99%", icon: Activity },
+    { name: "Job Simulation Engine", status: "operational", uptime: "99.95%", icon: Zap },
+    { name: "Placement Mode AI Mentors", status: "operational", uptime: "99.99%", icon: Activity },
     { name: "Asset CDN", status: "operational", uptime: "100%", icon: Globe },
     { name: "Auth Provider", status: "operational", uptime: "99.99%", icon: Shield },
 ];
@@ -33,14 +33,14 @@ const changelog = [
         version: "v2.1.0",
         type: "Feature",
         title: "Platform-wide Rebranding & High-Fidelity Resources",
-        description: "Successfully transitioned the entire platform to the We2 identity. This update includes the launch of the high-fidelity Documentation Hub, Terms of Service, and Privacy Policy centers.",
+        description: "Successfully transitioned the entire platform to the EMBLE identity. This update includes the launch of the high-fidelity Documentation Hub, Terms of Service, and Privacy Policy centers.",
         items: [
             "Launched high-fidelity Documentation Hub with dynamic guide navigation.",
             "Implemented brand-consistent Terms of Service and Privacy Policy pages.",
-            "Updated all landing pages (Prep0, We2Hub) with premium aesthetics.",
+            "Updated all landing pages (Placement Mode, Job Simulation) with premium aesthetics.",
             "System-wide CSS optimization and post-compilation stability fixes."
         ],
-        author: "We2 Engineering",
+        author: "EMBLE Engineering",
         color: "brand-orange"
     },
     {
@@ -61,7 +61,7 @@ const changelog = [
         date: "February 10, 2024",
         version: "v2.0.0",
         type: "Release",
-        title: "The We2 Hub Simulation Engine",
+        title: "The EMBLE Hub Simulation Engine",
         description: "A major overhaul of the industrial simulation engine, providing realistic 21-day sprint cycles for aspirants.",
         items: [
             "New simulation dashboard with real-time PR/Issue tracking simulation.",
@@ -142,7 +142,7 @@ export default function StatusPage() {
                                 transition={{ delay: 0.1 }}
                                 className="text-xl text-gray-400 font-medium"
                             >
-                                Real-time health monitoring and the latest updates from the We2 engineering team.
+                                Real-time health monitoring and the latest updates from the EMBLE engineering team.
                             </motion.p>
                         </div>
 

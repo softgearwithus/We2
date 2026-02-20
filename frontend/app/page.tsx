@@ -2,11 +2,11 @@ import Link from 'next/link';
 import DualModeSection from './components/home/DualModeSection';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import TrustedBy from './components/home/TrustedBy';
+
 import Testimonials from './components/home/Testimonials';
 import ProcessTimeline from './components/home/ProcessTimeline';
 import StatsSection from './components/home/StatsSection';
-import FAQ from './components/home/FAQ';
+import FAQSection from './components/home/FAQSection';
 import ComparisonSection from './components/home/ComparisonSection';
 import RoadmapPreview from './components/home/RoadmapPreview';
 
@@ -39,31 +39,31 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-orange"></span>
               </span>
-              <span className="text-sm font-bold text-orange-800 tracking-tight">Empowering 5,000+ Engineers</span>
+              <span className="text-sm font-bold text-orange-800 tracking-tight">Join 200+ Active Students</span>
             </div>
 
             {/* Headline - Balanced & Vibrant */}
             <h1 className="text-5xl md:text-7xl lg:text-[80px] font-[900] tracking-tight text-brand-black mb-8 leading-[1.1] text-balance">
               The Complete <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-600 to-purple-600 pb-2">
-                Placement Ecosystem.
+                Placement Accelerator.
               </span>
             </h1>
 
             {/* Subtext - Optimized for Readability */}
             <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed max-w-xl mb-10 text-balance">
-              Don't just code. <span className="text-brand-black font-bold">Prep0</span> handles your DSA & Mocks, while <span className="text-brand-black font-bold">We2Hub</span> delivers real-world JIRA experience.
+              Closing the gap between theoretical learning and industry reality. We train you to think like an engineer, solve complex problems, and write code that companies actually hire for.
             </p>
 
             {/* CTAs - Polished & Tactile */}
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
               <Link href="/register" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95">
-                Start Prep0 Free
+                Join Bootcamp
                 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
               </Link>
-              <Link href="/simulations" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
+              <Link href="/curriculum" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
                 <span className="material-symbols-outlined text-brand-orange group-hover:scale-110 transition-transform filled-icon">play_circle</span>
-                Explore We2Hub
+                View Curriculum
               </Link>
             </div>
 
@@ -73,7 +73,7 @@ export default function Home() {
                 <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="User" />
                 <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="User" />
                 <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <div className="w-10 h-10 rounded-full border-[3px] border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shadow-sm">+2k</div>
+                <div className="w-10 h-10 rounded-full border-[3px] border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shadow-sm">+200</div>
               </div>
               <div className="h-8 w-px bg-gray-200 mx-2"></div>
               <div className="flex flex-col">
@@ -82,9 +82,9 @@ export default function Home() {
                   <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
                   <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
                   <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
-                  <span className="material-symbols-outlined text-[14px] filled-icon">star</span>
+                  <span className="material-symbols-outlined text-[14px] filled-icon">star_half</span>
                 </div>
-                <p className="text-xs font-bold text-gray-500 mt-0.5">Example of <span className="text-gray-900">Premium Design</span></p>
+                <p className="text-xs font-bold text-gray-500 mt-0.5">4.3/5 <span className="text-gray-900">Student Satisfaction</span></p>
               </div>
             </div>
           </div>
@@ -146,7 +146,6 @@ export default function Home() {
         </div>
       </section>
 
-      <TrustedBy />
 
       <ProcessTimeline />
 
@@ -160,7 +159,7 @@ export default function Home() {
 
       <Testimonials />
 
-      <FAQ />
+      <FAQSection />
 
       <section className="py-48 bg-white border-t border-gray-50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-orange to-purple-600 opacity-20"></div>
@@ -169,7 +168,7 @@ export default function Home() {
             Start Your <br /> <span className="text-gradient">Story Today.</span>
           </h2>
           <p className="text-gray-400 text-2xl max-w-3xl mx-auto font-medium opacity-80 leading-relaxed">
-            Join 2,000+ students already mastering their future with We2.
+            Join 200+ students already mastering their future with EMBLE.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6 pt-10">
             <Link href="/register" className="h-[72px] px-16 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-[900] text-xl transition-all shadow-2xl hover:shadow-brand-orange/20 hover:-translate-y-2 flex items-center justify-center active:scale-95">

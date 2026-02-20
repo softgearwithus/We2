@@ -5,9 +5,9 @@ import { ChevronRight, Database, Globe, Lock, Rocket, Server, Terminal } from 'l
 
 const roadmapNodes = [
     { title: "Foundations & DSA", icon: Terminal, color: "text-blue-500", bg: "bg-blue-50" },
-    { title: "CS Core & Mocks", icon: Database, color: "text-purple-500", bg: "bg-purple-50" },
-    { title: "Development Projects", icon: Server, color: "text-orange-500", bg: "bg-orange-50" },
-    { title: "We2Hub Simulation", icon: Rocket, color: "text-green-500", bg: "bg-green-50" }
+    { title: "CS Core & SQL", icon: Database, color: "text-purple-500", bg: "bg-purple-50" },
+    { title: "Full-Stack Web Projects", icon: Server, color: "text-orange-500", bg: "bg-orange-50" },
+    { title: "AI Mock Interviews", icon: Rocket, color: "text-green-500", bg: "bg-green-50" }
 ];
 
 // Forced refresh
@@ -31,9 +31,10 @@ export default function RoadmapPreview() {
                         <div className="flex flex-col gap-4">
                             {[
                                 "500+ Hand-picked DSA Questions",
-                                "200+ Company-specific Question Banks",
-                                "15+ Production-grade Simulations",
-                                "Verified Industrial Work History"
+                                "Comprehensive SQL Training",
+                                "Full-Stack Project Building",
+                                "Interactive AI Mock Interviews",
+                                "ATS Resume Builder"
                             ].map((item, i) => (
                                 <div key={i} className="flex items-center gap-3 text-brand-black font-bold">
                                     <div className="w-6 h-6 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange">

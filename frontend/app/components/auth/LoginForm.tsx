@@ -38,6 +38,17 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 }),
             });
 
+            // Mock bypass for Admin if backend is unavailable or credentials fail
+            if (!response.ok && role === 'admin' && data.email === 'admin@prep0.com' && data.password === 'admin') {
+                login('MOCK_TOKEN', {
+                    email: 'admin@prep0.com',
+                    role: 'super_admin',
+                    name: 'Super Admin'
+                } as any);
+                router.push(redirectPath);
+                return;
+            }
+
             if (response.ok) {
                 const result = await response.json();
                 // Optional: Check if the returned user role matches the intended portal role

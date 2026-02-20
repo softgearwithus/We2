@@ -64,7 +64,7 @@ export const roadmapData: RoadmapPhase[] = [
                         { label: 'int', text: 'Stores whole numbers (e.g., 10, -5).' },
                         { label: 'float/double', text: 'Stores decimal numbers (e.g., 3.14).' },
                         { label: 'char', text: 'Stores single characters (e.g., "A").' },
-                        { label: 'string', text: 'Stores text (e.g., "Prep0").' }
+                        { label: 'string', text: 'Stores text (e.g., "Placement Mode").' }
                     ],
                     codeExamples: {
                         'C++': `#include <iostream>\nusing namespace std;\n\nint main() {\n    int age = 20;\n    double gpa = 8.5;\n    cout << "Age: " << age << ", GPA: " << gpa << endl;\n    return 0;\n}`,
@@ -175,9 +175,9 @@ export const roadmapData: RoadmapPhase[] = [
                         { label: 'Stack Overflow', text: 'Error when recursion depth exceeds memory limits.' }
                     ],
                     codeExamples: {
-                        'C++': `void printName(int i, int n) {\n    if(i > n) return;\n    cout << "Prep0" << endl;\n    printName(i + 1, n);\n}`,
-                        'Java': `void printName(int i, int n) {\n    if(i > n) return;\n    System.out.println("Prep0");\n    printName(i + 1, n);\n}`,
-                        'Python': `def print_name(i, n):\n    if i > n: return\n    print("Prep0")\n    print_name(i + 1, n)`
+                        'C++': `void printName(int i, int n) {\n    if(i > n) return;\n    cout << "Placement Mode" << endl;\n    printName(i + 1, n);\n}`,
+                        'Java': `void printName(int i, int n) {\n    if(i > n) return;\n    System.out.println("Placement Mode");\n    printName(i + 1, n);\n}`,
+                        'Python': `def print_name(i, n):\n    if i > n: return\n    print("Placement Mode")\n    print_name(i + 1, n)`
                     }
                 }
             },
