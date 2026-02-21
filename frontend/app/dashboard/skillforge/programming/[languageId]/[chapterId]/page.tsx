@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import { Loader2, ArrowLeft, ChevronLeft, ChevronRight, Menu, CheckCircle } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import API_BASE_URL from '@/app/lib/api-config';
 
 interface CourseContent {
     id: string;
@@ -28,7 +29,7 @@ export default function ChapterPage() {
             try {
                 // Fetch content for this chapter
                 const topicId = `programming-${languageId}-${chapterId}`;
-                const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+                const response = await fetch(`${API_BASE_URL}/course-content/${topicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

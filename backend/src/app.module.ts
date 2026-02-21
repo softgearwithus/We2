@@ -37,6 +37,14 @@ import { SqlUserState } from './sql/entities/sql-user-state.entity';
 import { SqlTrainingSession } from './sql/entities/sql-training-session.entity';
 import { SqlProblemInsight } from './sql/entities/sql-problem-insight.entity';
 import { Interview } from './interview/entities/interview.entity';
+import { CollegesModule } from './colleges/colleges.module';
+import { College } from './colleges/entities/college.entity';
+import { CollegeStaff } from './colleges/entities/college-staff.entity';
+import { StudentCohort } from './colleges/entities/student-cohort.entity';
+import { CollegeStudent } from './colleges/entities/college-student.entity';
+import { AdminModule } from './admin/admin.module';
+import { AdminActivityLog } from './admin/entities/admin-activity-log.entity';
+import { InstituteModule } from './institute/institute.module';
 import { CourseContent } from './course-content/entities/course-content.entity';
 import { InterviewModule } from './interview/interview.module';
 import { CourseContentModule } from './course-content/course-content.module';
@@ -89,6 +97,11 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           Resume,
           McqQuestion,
           WriteXQuestion,
+          College,
+          CollegeStaff,
+          StudentCohort,
+          CollegeStudent,
+          AdminActivityLog,
         ];
 
         if (dbType === 'postgres') {
@@ -127,6 +140,9 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
     AiModule,
     GamificationModule,
     AnalyticsModule,
+    CollegesModule,
+    AdminModule,
+    InstituteModule,
     ResumeModule,
     McqsModule,
     WriteXModule,

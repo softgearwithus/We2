@@ -1,20 +1,17 @@
 "use client";
 
-import { mockStudents } from "@/lib/institute/mockData";
 import { Trophy, Medal, Star, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function LeaderBoard() {
-    const topStudents = [...mockStudents]
-        .sort((a, b) => b.placementReadiness - a.placementReadiness)
-        .slice(0, 5);
-
-    const departments = ['Computer Science', 'Mechanical', 'Electronics', 'Civil'];
-    const deptPerformance = departments.map(dept => {
-        const studs = mockStudents.filter(s => s.department === dept);
-        const avg = studs.reduce((acc, s) => acc + s.placementReadiness, 0) / studs.length;
-        return { name: dept, score: avg };
-    }).sort((a, b) => b.score - a.score);
+export function LeaderBoard({
+    topStudents,
+    deptPerformance,
+}: {
+    topStudents: Array<{ id: string; name: string; department: string; placementReadiness: number }>;
+    deptPerformance: Array<{ name: string; score: number }>;
+}) {
+    const students = topStudents || [];
+    const departmentsPerf = deptPerformance || [];
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
@@ -29,7 +26,12 @@ export function LeaderBoard() {
                 </div>
 
                 <div className="space-y-4 flex-1 overflow-auto pr-2">
-                    {topStudents.map((student, i) => (
+                    {students.length === 0 && (
+                        <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-800 text-slate-400 text-sm">
+                            No student performance data available yet.
+                        </div>
+                    )}
+                    {students.map((student, i) => (
                         <motion.div
                             key={student.id}
                             initial={{ x: -20, opacity: 0 }}
@@ -76,7 +78,12 @@ export function LeaderBoard() {
                 </div>
 
                 <div className="space-y-6 flex-1 overflow-auto pr-2 pt-2">
-                    {deptPerformance.map((dept, i) => (
+                    {departmentsPerf.length === 0 && (
+                        <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-800 text-slate-400 text-sm">
+                            No department performance data available yet.
+                        </div>
+                    )}
+                    {departmentsPerf.map((dept, i) => (
                         <div key={dept.name} className="relative">
                             <div className="flex justify-between items-end mb-2">
                                 <div className="flex items-center gap-2">

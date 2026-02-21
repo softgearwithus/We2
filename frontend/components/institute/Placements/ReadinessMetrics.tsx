@@ -1,13 +1,13 @@
 "use client";
 
-import { Student } from "@/lib/institute/mockData";
+import { InstituteStudent } from "@/app/lib/institute";
 import { Brain, Code, MessageSquare, Zap } from "lucide-react";
 
-export function ReadinessMetrics({ students }: { students: Student[] }) {
-    const avgCoding = students.reduce((acc, s) => acc + s.skills.coding, 0) / students.length;
-    const avgAptitude = students.reduce((acc, s) => acc + s.skills.aptitude, 0) / students.length;
-    const avgComm = students.reduce((acc, s) => acc + s.skills.communication, 0) / students.length;
-    const avgCore = students.reduce((acc, s) => acc + s.skills.core, 0) / students.length;
+export function ReadinessMetrics({ students, override }: { students: InstituteStudent[]; override?: { coding: number; aptitude: number; communication: number; core: number } }) {
+    const avgCoding = override?.coding ?? (students.length ? (students.reduce((acc, s) => acc + s.skills.coding, 0) / students.length) : 0);
+    const avgAptitude = override?.aptitude ?? (students.length ? (students.reduce((acc, s) => acc + s.skills.aptitude, 0) / students.length) : 0);
+    const avgComm = override?.communication ?? (students.length ? (students.reduce((acc, s) => acc + s.skills.communication, 0) / students.length) : 0);
+    const avgCore = override?.core ?? (students.length ? (students.reduce((acc, s) => acc + s.skills.core, 0) / students.length) : 0);
 
     const metrics = [
         { label: "Coding Proficiency", value: avgCoding.toFixed(1), icon: Code, color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },

@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
+const fallbackData = [
     { week: 'W1', interviews: 24, avgScore: 65 },
     { week: 'W2', interviews: 35, avgScore: 68 },
     { week: 'W3', interviews: 42, avgScore: 72 },
@@ -11,7 +11,7 @@ const data = [
     { week: 'W6', interviews: 62, avgScore: 78 },
 ];
 
-export function MockInterviewTrends() {
+export function MockInterviewTrends({ data = fallbackData }: { data?: Array<{ week: string; interviews: number; avgScore: number }> }) {
     return (
         <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-6 rounded-2xl h-full flex flex-col">
             <div className="mb-6 flex justify-between items-end">

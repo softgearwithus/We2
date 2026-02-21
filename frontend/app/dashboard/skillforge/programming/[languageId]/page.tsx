@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle2, Circle, ArrowLeft, Play, Lock, BrainCircuit } from 'lucide-react';
+import API_BASE_URL from '@/app/lib/api-config';
 
 interface Chapter {
     id: string;
@@ -26,7 +27,7 @@ export default function LanguageCoursePage() {
                 // Fetch the chapter list for this language
                 // E.g., topicId: 'programming-python-chapters'
                 const topicId = `programming-${languageId}-chapters`;
-                const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+                const response = await fetch(`${API_BASE_URL}/course-content/${topicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

@@ -1,11 +1,11 @@
 "use client";
 
-import { Student } from "@/lib/institute/mockData";
+import { InstituteStudent } from "@/app/lib/institute";
 import { BadgeCheck, Clock, ShieldAlert, ShieldCheck, Eye } from "lucide-react";
 
 interface TableProps {
-    students: Student[];
-    onViewProfile: (student: Student) => void;
+    students: InstituteStudent[];
+    onViewProfile: (student: InstituteStudent) => void;
 }
 
 export function StudentTable({ students, onViewProfile }: TableProps) {

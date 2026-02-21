@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Code2, Terminal, Cpu, ArrowRight, Loader2, Globe, Zap } from 'lucide-react';
+import API_BASE_URL from '@/app/lib/api-config';
 
 interface Language {
     id: string;
@@ -22,7 +23,7 @@ export default function ProgrammingPage() {
         const fetchLanguages = async () => {
             try {
                 // Fetch the 'programming-languages' topic which contains our metadata
-                const response = await fetch('http://localhost:3001/course-content/programming-languages');
+                const response = await fetch(`${API_BASE_URL}/course-content/programming-languages`);
                 if (response.ok) {
                     const text = await response.text();
                     if (text) {

@@ -6,6 +6,9 @@ interface User {
     id: string;
     email: string;
     role: string;
+    collegeId?: string | null;
+    department?: string | null;
+    year?: string | null;
     subscriptionPlan?: string;
     subscriptionStatus?: string;
     subscriptionEndDate?: string;
@@ -73,7 +76,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('accessTokenSetAt', String(Date.now()));
         localStorage.setItem('userId', userData.id);
         setUser(userData);
-        router.push('/dashboard');
     };
 
     const logout = () => {

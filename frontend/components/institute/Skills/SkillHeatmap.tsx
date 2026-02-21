@@ -2,15 +2,13 @@
 
 import { motion } from "framer-motion";
 
-const departments = ['Comp Sci', 'Mech', 'Electronics', 'Civil'];
-const skills = ['Coding', 'Aptitude', 'Comm', 'Projects', 'Core'];
-
-// Mock Data: 0-100 scores
-const data = [
-    [85, 70, 65, 80, 75], // CS
-    [45, 60, 55, 70, 85], // Mech
-    [60, 75, 60, 75, 80], // ECE
-    [40, 55, 50, 65, 80], // Civil
+const fallbackDepartments = ['Comp Sci', 'Mech', 'Electronics', 'Civil'];
+const fallbackSkills = ['Coding', 'Aptitude', 'Comm', 'Projects', 'Core'];
+const fallbackData = [
+    [85, 70, 65, 80, 75],
+    [45, 60, 55, 70, 85],
+    [60, 75, 60, 75, 80],
+    [40, 55, 50, 65, 80],
 ];
 
 const getColor = (score: number) => {
@@ -20,7 +18,15 @@ const getColor = (score: number) => {
     return "bg-red-500 hover:bg-red-400";
 };
 
-export function SkillHeatmap() {
+export function SkillHeatmap({
+    departments = fallbackDepartments,
+    skills = fallbackSkills,
+    data = fallbackData,
+}: {
+    departments?: string[];
+    skills?: string[];
+    data?: number[][];
+}) {
     return (
         <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-6 rounded-2xl h-full flex flex-col">
             <div className="mb-6">

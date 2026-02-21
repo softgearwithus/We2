@@ -4,6 +4,7 @@ import { SkillHeatmap } from "@/components/institute/Skills/SkillHeatmap";
 import { WeakAreaList } from "@/components/institute/Skills/WeakAreaList";
 import { Lightbulb, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const container = {
     hidden: { opacity: 0 },
@@ -21,6 +22,33 @@ const item = {
 };
 
 export default function SkillsPage() {
+    const [heatmap, setHeatmap] = useState({
+        departments: [] as string[],
+        skills: [] as string[],
+        data: [] as number[][],
+    });
+    const [weakAreas, setWeakAreas] = useState<Array<{ topic: string; domain: string; severity: string; impacted: string; action: string }>>([]);
+    const [hasData, setHasData] = useState(false);
+
+    useEffect(() => {
+        const loadSkills = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchInstituteSkills } = await import('@/app/lib/institute');
+                const data = await fetchInstituteSkills(token);
+                setHeatmap({
+                    departments: data.departments || [],
+                    skills: data.skills || [],
+                    data: data.data || [],
+                });
+                setWeakAreas(data.weakAreas || []);
+                setHasData(true);
+            } catch (error) {
+                setHasData(false);
+            }
+        };
+        loadSkills();
+    }, []);
     return (
         <motion.div
             variants={container}
@@ -41,10 +69,10 @@ export default function SkillsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px]">
                 <motion.div variants={item} className="lg:col-span-2 h-full">
-                    <SkillHeatmap />
+                    <SkillHeatmap departments={heatmap.departments} skills={heatmap.skills} data={heatmap.data} />
                 </motion.div>
                 <motion.div variants={item} className="h-full">
-                    <WeakAreaList />
+                    <WeakAreaList areas={weakAreas} />
                 </motion.div>
             </div>
 
@@ -54,13 +82,21 @@ export default function SkillsPage() {
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-white mb-2">AI Recommendation</h3>
-                    <p className="text-slate-300 text-sm leading-relaxed">
-                        Based on the current heatmap, <span className="text-white font-semibold">Mechanical Engineering</span> students are lagging significantly in <span className="text-white font-semibold">Coding Proficiency (45%)</span>.
-                        Considering keeping up with Industry 4.0 trends, implementing a mandatory "Python for Automation" module in the 3rd semester is highly recommended.
-                    </p>
-                    <button className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
-                        Apply Curriculum Change
-                    </button>
+                    {hasData ? (
+                        <>
+                            <p className="text-slate-300 text-sm leading-relaxed">
+                                Based on the current heatmap, <span className="text-white font-semibold">Mechanical Engineering</span> students are lagging significantly in <span className="text-white font-semibold">Coding Proficiency</span>.
+                                Consider a targeted workshop to close the gap ahead of placements.
+                            </p>
+                            <button className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
+                                Apply Curriculum Change
+                            </button>
+                        </>
+                    ) : (
+                        <p className="text-slate-300 text-sm leading-relaxed">
+                            No skill intelligence data yet. Import student data or wait for the next sync.
+                        </p>
+                    )}
                 </div>
             </motion.div>
         </motion.div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { roadmapData } from '@/app/lib/data/roadmapData';
 import { ArrowLeft, Save, Loader2, CheckCircle, AlertCircle, Edit3, Eye, FileText, Sparkles, Wand2 } from 'lucide-react';
+import API_BASE_URL from '@/app/lib/api-config';
 import Link from 'next/link';
 
 const LESSON_TEMPLATE = `# 🎯 Learning Objectives
@@ -68,7 +69,7 @@ export default function AdminContentPage() {
         setLoading(true);
         setMessage(null);
         try {
-            const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+            const response = await fetch(`${API_BASE_URL}/course-content/${topicId}`);
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.title) {
@@ -109,7 +110,7 @@ export default function AdminContentPage() {
         setGenerating(true);
         setMessage(null);
         try {
-            const response = await fetch(`http://localhost:3001/ai/generate-content`, {
+            const response = await fetch(`${API_BASE_URL}/ai/generate-content`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ topicId: selectedTopicId, topicTitle: title })
@@ -139,7 +140,7 @@ export default function AdminContentPage() {
         setSaving(true);
         setMessage(null);
         try {
-            const response = await fetch(`http://localhost:3001/course-content/${selectedTopicId}`, {
+            const response = await fetch(`${API_BASE_URL}/course-content/${selectedTopicId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, content })

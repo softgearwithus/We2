@@ -54,28 +54,28 @@ export default function CreateCollegePage() {
         setFormData(prev => ({ ...prev, departments: prev.departments.filter(d => d !== dept) }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!formData.info.name || !formData.info.collegeId) {
             alert('Please fill in college information first.');
             setCurrentStep(1);
             return;
         }
-
-        const existingColleges = JSON.parse(localStorage.getItem('emble_colleges') || '[]');
-        const newCollege = {
-            id: formData.info.collegeId,
-            name: formData.info.name,
-            location: formData.info.location,
-            type: formData.info.type,
-            students: 0,
-            status: 'Active',
-            years: formData.selectedYears,
-            departments: formData.departments,
-            studentCohorts: [] // For persisting generated students
-        };
-
-        localStorage.setItem('emble_colleges', JSON.stringify([...existingColleges, newCollege]));
-        router.push('/admin/colleges');
+        try {
+            const token = localStorage.getItem('accessToken') || '';
+            const { createCollege } = await import('@/app/lib/colleges');
+            await createCollege(token, {
+                name: formData.info.name,
+                code: formData.info.collegeId,
+                location: formData.info.location,
+                type: formData.info.type,
+                years: formData.selectedYears,
+                departments: formData.departments,
+                adminEmail: formData.info.adminEmail,
+            });
+            router.push('/admin/colleges');
+        } catch (error) {
+            alert('Failed to create college.');
+        }
     };
 
     const renderStep = () => {

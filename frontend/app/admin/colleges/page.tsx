@@ -11,30 +11,31 @@ export default function CollegesPage() {
     const [activeMenu, setActiveMenu] = useState<string | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
 
-    const loadColleges = () => {
-        const defaultColleges = [
-            { id: 'CLGMIT001', name: 'MIT Pune', location: 'Pune, Maharashtra', type: 'Engineering', students: 1250, status: 'Active', years: ['Y1', 'Y2', 'Y3', 'Y4'], departments: ['CSE', 'ECE', 'ME', 'CE'], studentCohorts: [] },
-            { id: 'CLGBITS001', name: 'BITS Pilani', location: 'Pilani, Rajasthan', type: 'Engineering', students: 850, status: 'Active', years: ['Y1', 'Y2', 'Y3', 'Y4'], departments: ['CSE', 'ECE', 'ME'], studentCohorts: [] },
-            { id: 'CLGIITB001', name: 'IIT Bombay', location: 'Mumbai, Maharashtra', type: 'Engineering', students: 2100, status: 'Active', years: ['Y1', 'Y2', 'Y3', 'Y4'], departments: ['CSE', 'ECE', 'EE'], studentCohorts: [] },
-        ];
+    const loadColleges = async () => {
+        try {
+            const token = localStorage.getItem('accessToken') || '';
+            const { fetchColleges } = await import('@/app/lib/colleges');
+            const data = await fetchColleges(token);
+            const normalized = data.map((c: any) => ({
+                id: c.id,
+                code: c.code,
+                name: c.name,
+                location: c.location,
+                type: c.type,
+                students: c.studentCount || 0,
+                status: c.status || 'Active',
+                years: c.years || [],
+                departments: c.departments || [],
+                studentCohorts: [],
+            }));
+            setColleges(normalized);
 
-        const savedColleges = JSON.parse(localStorage.getItem('emble_colleges') || '[]');
-
-        const combined = [...defaultColleges];
-        savedColleges.forEach((sc: any) => {
-            const index = combined.findIndex(c => c.id === sc.id);
-            if (index !== -1) {
-                combined[index] = sc;
-            } else {
-                combined.push(sc);
+            if (selectedCollege) {
+                const updated = normalized.find((c: any) => c.id === selectedCollege.id);
+                if (updated) setSelectedCollege(updated);
             }
-        });
-
-        setColleges(combined);
-
-        if (selectedCollege) {
-            const updated = combined.find(c => c.id === selectedCollege.id);
-            if (updated) setSelectedCollege(updated);
+        } catch (error) {
+            setColleges([]);
         }
     };
 
@@ -50,33 +51,36 @@ export default function CollegesPage() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [selectedCollege]);
 
-    const handleUpdateCollege = (updatedCollege: any) => {
-        const savedColleges = JSON.parse(localStorage.getItem('emble_colleges') || '[]');
-        const index = savedColleges.findIndex((c: any) => c.id === updatedCollege.id);
-
-        let newSaved;
-        if (index !== -1) {
-            newSaved = [...savedColleges];
-            newSaved[index] = updatedCollege;
-        } else {
-            newSaved = [...savedColleges, updatedCollege];
+    const handleUpdateCollege = async (updatedCollege: any) => {
+        try {
+            const token = localStorage.getItem('accessToken') || '';
+            const { updateCollege } = await import('@/app/lib/colleges');
+            await updateCollege(token, updatedCollege.id, {
+                name: updatedCollege.name,
+                code: updatedCollege.code || updatedCollege.id,
+                location: updatedCollege.location,
+                type: updatedCollege.type,
+                years: updatedCollege.years,
+                departments: updatedCollege.departments,
+                adminEmail: updatedCollege.adminEmail,
+            });
+            await loadColleges();
+        } catch (error) {
+            // ignore
         }
-
-        localStorage.setItem('emble_colleges', JSON.stringify(newSaved));
-        loadColleges();
     };
 
-    const handleDeleteCollege = (id: string) => {
+    const handleDeleteCollege = async (id: string) => {
         if (!confirm('Are you sure you want to delete this institution? All data will be permanently removed.')) return;
-
-        const savedColleges = JSON.parse(localStorage.getItem('emble_colleges') || '[]');
-        const filtered = savedColleges.filter((c: any) => c.id !== id);
-        localStorage.setItem('emble_colleges', JSON.stringify(filtered));
-
-        // If it was a default college, we can't truly delete it from the hardcoded list 
-        // without more complex logic, but we can filter it out of the UI for this session.
-        setColleges(prev => prev.filter(c => c.id !== id));
-        setActiveMenu(null);
+        try {
+            const token = localStorage.getItem('accessToken') || '';
+            const { deleteCollege } = await import('@/app/lib/colleges');
+            await deleteCollege(token, id);
+            await loadColleges();
+            setActiveMenu(null);
+        } catch (error) {
+            // ignore
+        }
     };
 
     if (selectedCollege) {
@@ -164,7 +168,7 @@ export default function CollegesPage() {
                                             </div>
                                             <div>
                                                 <p className="font-bold text-slate-900 text-sm">{college.name}</p>
-                                                <p className="text-[10px] font-medium text-slate-400 uppercase">{college.id}</p>
+                                            <p className="text-[10px] font-medium text-slate-400 uppercase">{college.code || college.id}</p>
                                             </div>
                                         </div>
                                     </td>

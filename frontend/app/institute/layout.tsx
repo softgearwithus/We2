@@ -1,10 +1,37 @@
+"use client";
+
 import { InstituteSidebar } from "@/components/institute/InstituteSidebar";
+import { useAuth } from "@/app/context/AuthContext";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function InstituteLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const { user, isLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isLoading) return;
+        if (!user) {
+            router.push('/login/college');
+            return;
+        }
+        if (user.role !== 'college_admin' && user.role !== 'mentor') {
+            router.push('/login');
+        }
+    }, [user, isLoading, router]);
+
+    if (isLoading || !user) {
+        return (
+            <div className="flex h-screen items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-orange"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden selection:bg-brand-orange/20 selection:text-brand-orange font-sans antialiased">
             <InstituteSidebar />

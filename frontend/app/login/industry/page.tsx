@@ -1,7 +1,7 @@
 'use client';
 
 import AuthLayout from '../../components/auth/AuthLayout';
-import LoginForm from '../../components/auth/LoginForm';
+import Link from 'next/link';
 
 export default function IndustryLoginPage() {
     return (
@@ -23,7 +23,18 @@ export default function IndustryLoginPage() {
                 </ul>
             }
         >
-            <LoginForm role="industry" redirectPath="/dashboard/industry" />
+            <div className="text-center md:text-left space-y-6">
+                <h2 className="text-3xl font-bold text-slate-900">Invite-only access</h2>
+                <p className="text-slate-500">
+                    Industry accounts are provisioned by our team. Request access and we will set up your dashboard.
+                </p>
+                <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-900 text-white font-bold hover:bg-black transition-colors"
+                >
+                    Contact Sales
+                </Link>
+            </div>
         </AuthLayout>
     );
 }

@@ -22,14 +22,31 @@ export default function AnalyticsPage() {
         subscribers: 848,
         activeNow: 124
     });
+    const [analyticsData, setAnalyticsData] = useState<{ funnels?: any[]; featureEngagement?: any[] } | null>(null);
     const [timeRange, setTimeRange] = useState('7d');
 
     // Simulate real-time activity
     useEffect(() => {
+        const loadAnalytics = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchAdminAnalytics } = await import('@/app/lib/admin');
+                const data = await fetchAdminAnalytics(token);
+                setStats({
+                    visitors: data.visitors || 0,
+                    subscribers: data.subscribers || 0,
+                    activeNow: data.activeNow || 0,
+                });
+                setAnalyticsData(data);
+            } catch (error) {
+                // keep defaults
+            }
+        };
+        loadAnalytics();
         const interval = setInterval(() => {
             setStats(prev => ({
                 ...prev,
-                activeNow: Math.max(110, prev.activeNow + (Math.floor(Math.random() * 5) - 2))
+                activeNow: Math.max(0, prev.activeNow + (Math.floor(Math.random() * 5) - 2))
             }));
         }, 3000);
         return () => clearInterval(interval);
@@ -44,7 +61,7 @@ export default function AnalyticsPage() {
         { label: 'Avg. Session Time', value: '24m 12s', change: '-2%', trend: 'down', icon: Clock, color: 'text-slate-600' },
     ];
 
-    const featureEngagement = [
+    const featureEngagement = analyticsData?.featureEngagement || [
         { name: 'DSA Training', time: '840h users', percentage: 90, color: 'bg-blue-500' },
         { name: 'VS School (Prep)', time: '620h users', percentage: 75, color: 'bg-indigo-500' },
         { name: 'Mock Interviews', time: '410h users', percentage: 60, color: 'bg-rose-500' },
@@ -52,7 +69,7 @@ export default function AnalyticsPage() {
         { name: 'Synapse Intelligence', time: '340h users', percentage: 45, color: 'bg-amber-500' },
     ];
 
-    const engagementFunnels = [
+    const engagementFunnels = analyticsData?.funnels || [
         { stage: 'Platform Landing', count: '12.4k', percentage: 100 },
         { stage: 'Entered Placement Mode', count: '8.2k', percentage: 66 },
         { stage: 'Started Training', count: '4.1k', percentage: 33 },

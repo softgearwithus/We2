@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle2, Circle, ArrowLeft, Play, Lock, BrainCircuit, Loader2 } from 'lucide-react';
+import API_BASE_URL from '@/app/lib/api-config';
 
 interface Chapter {
     id: string;
@@ -26,7 +27,7 @@ export default function GenericTopicPage() {
             try {
                 // Construct the DB topic ID: e.g. technology-react-chapters
                 const dbTopicId = `${trackId}-${topicId}-chapters`;
-                const response = await fetch(`http://localhost:3001/course-content/${dbTopicId}`);
+                const response = await fetch(`${API_BASE_URL}/course-content/${dbTopicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

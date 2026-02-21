@@ -52,7 +52,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Mock Analysis', href: '/dashboard/interview?mode=analysis', icon: 'analytics' }
             ]
         },
-        { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
     ];

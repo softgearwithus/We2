@@ -4,7 +4,10 @@ import React from 'react';
 import { Sparkles, BrainCircuit, Activity, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function SynapseWidget() {
+export default function SynapseWidget({ recentActivity = [] as Array<{ title: string; time: string }> }: { recentActivity?: Array<{ title: string; time: string }> }) {
+    const items = recentActivity.length
+        ? recentActivity
+        : [{ title: 'No recent activity yet. Complete your next task to see updates here.', time: 'Just now' }];
     return (
         <div className="h-full w-full bg-slate-900 rounded-2xl p-6 relative overflow-hidden text-white flex flex-col justify-between">
             {/* Background Effects */}
@@ -25,19 +28,24 @@ export default function SynapseWidget() {
                 </div>
 
                 <div className="space-y-3">
-                    <div className="p-3 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm hover:bg-white/10 transition-colors cursor-pointer group">
-                        <div className="flex items-start gap-3">
-                            <div className="mt-1">
-                                <Sparkles size={16} className="text-amber-400" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">
-                                    Placement probability increased by 12% based on recent mock interviews.
-                                </p>
-                                <span className="text-xs text-slate-500 mt-1 block">Just now</span>
+                    {items.map((activity, index) => (
+                        <div
+                            key={`${activity.title}-${index}`}
+                            className="p-3 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm hover:bg-white/10 transition-colors cursor-pointer group"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="mt-1">
+                                    <Sparkles size={16} className="text-amber-400" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-slate-200 group-hover:text-white transition-colors">
+                                        {activity.title}
+                                    </p>
+                                    <span className="text-xs text-slate-500 mt-1 block">{activity.time}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ))}
                 </div>
             </div>
 

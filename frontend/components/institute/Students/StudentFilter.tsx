@@ -9,12 +9,13 @@ interface FilterProps {
         status: string | null;
     };
     setFilters: (filters: any) => void;
+    departments?: string[];
+    years?: number[];
 }
 
-export function StudentFilter({ filters, setFilters }: FilterProps) {
-    const departments = ['Computer Science', 'Mechanical', 'Electronics', 'Civil'];
+export function StudentFilter({ filters, setFilters, departments = [], years = [1, 2, 3, 4] }: FilterProps) {
+    const departmentOptions = departments.length ? departments : ['Computer Science', 'Mechanical', 'Electronics', 'Civil'];
     const statusOptions = ['Placed', 'Looking', 'Higher Studies', 'At Risk'];
-    const years = [1, 2, 3, 4];
 
     const toggleFilter = (key: string, value: any) => {
         setFilters((prev: any) => ({
@@ -56,7 +57,7 @@ export function StudentFilter({ filters, setFilters }: FilterProps) {
                 <div>
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Department</h4>
                     <div className="space-y-2">
-                        {departments.map((dept) => (
+                        {departmentOptions.map((dept) => (
                             <button
                                 key={dept}
                                 onClick={() => toggleFilter("department", dept)}

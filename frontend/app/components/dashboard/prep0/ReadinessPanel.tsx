@@ -4,7 +4,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, CheckCircle, Zap } from 'lucide-react';
 
-export default function ReadinessPanel() {
+export default function ReadinessPanel({ readinessScore = 0 }: { readinessScore?: number }) {
+    const score = Math.min(100, Math.max(0, Math.round(readinessScore)));
+    const dashOffset = 440 - (440 * (score / 100));
     return (
         <div className="w-full bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] group transition-all hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
             {/* Background Blob (Subtle) */}
@@ -31,13 +33,13 @@ export default function ReadinessPanel() {
                             fill="transparent"
                             strokeDasharray="440"
                             initial={{ strokeDashoffset: 440 }}
-                            animate={{ strokeDashoffset: 440 - (440 * 0.72) }} // 72%
+                            animate={{ strokeDashoffset: dashOffset }}
                             transition={{ duration: 1.5, ease: "easeOut" }}
                             strokeLinecap="round"
                         />
                     </svg>
                     <div className="absolute flex flex-col items-center">
-                        <span className="text-4xl font-extrabold text-slate-900 tracking-tight">72%</span>
+                        <span className="text-4xl font-extrabold text-slate-900 tracking-tight">{score}%</span>
                         <span className="text-xs text-indigo-600 font-bold uppercase tracking-widest mt-1">Ready</span>
                     </div>
                 </div>

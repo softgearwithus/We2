@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/app/context/AuthContext";
+import { useEffect, useState } from "react";
+import { fetchCollegeById } from "@/app/lib/colleges";
 import {
     LayoutDashboard,
     Users,
@@ -15,6 +18,8 @@ import {
 
 export function InstituteSidebar() {
     const pathname = usePathname();
+    const { user, logout } = useAuth();
+    const [collegeName, setCollegeName] = useState<string>('Institute');
 
     const menuItems = [
         { label: "Dashboard", href: "/institute/dashboard", icon: LayoutDashboard },
@@ -23,6 +28,20 @@ export function InstituteSidebar() {
         { label: "Skill Intelligence", href: "/institute/skills", icon: PieChart },
         { label: "Reports", href: "/institute/reports", icon: BarChart3 },
     ];
+
+    useEffect(() => {
+        const loadCollege = async () => {
+            if (!user?.collegeId) return;
+            const token = localStorage.getItem('accessToken') || '';
+            try {
+                const data = await fetchCollegeById(token, user.collegeId);
+                setCollegeName(data?.name || 'Institute');
+            } catch (error) {
+                setCollegeName('Institute');
+            }
+        };
+        loadCollege();
+    }, [user?.collegeId]);
 
     return (
         <div className="flex flex-col h-screen w-72 bg-white border-r border-gray-200 relative z-20">
@@ -67,11 +86,11 @@ export function InstituteSidebar() {
             <div className="mt-auto p-6 border-t border-gray-100 bg-gray-50/50">
                 <div className="flex items-center gap-3 mb-6 px-2">
                     <div className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-sm font-bold text-gray-700 shadow-sm">
-                        IIT
+                        {collegeName.substring(0, 3).toUpperCase()}
                     </div>
                     <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-gray-900 truncate">IIT Bombay</p>
-                        <p className="text-xs text-gray-500 truncate">Premium Plan</p>
+                        <p className="text-sm font-bold text-gray-900 truncate">{collegeName}</p>
+                        <p className="text-xs text-gray-500 truncate">{user?.subscriptionPlan ? `${user.subscriptionPlan.replace(/_/g, ' ')} Plan` : 'Plan'}</p>
                     </div>
                 </div>
 
@@ -79,7 +98,10 @@ export function InstituteSidebar() {
                     <Settings className="w-4 h-4" />
                     <span>Settings</span>
                 </button>
-                <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors text-sm font-medium">
+                <button
+                    onClick={logout}
+                    className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors text-sm font-medium"
+                >
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>
                 </button>

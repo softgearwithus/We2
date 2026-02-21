@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LeaderBoard } from "@/components/institute/Reports/LeaderBoard";
 import { ExportModal } from "@/components/institute/Reports/ExportModal";
 import { Printer, CalendarRange } from "lucide-react";
@@ -23,6 +23,27 @@ const item = {
 
 export default function ReportsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [reportData, setReportData] = useState({
+        topStudents: [] as Array<{ id: string; name: string; department: string; placementReadiness: number }>,
+        deptPerformance: [] as Array<{ name: string; score: number }>,
+    });
+
+    useEffect(() => {
+        const loadReports = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchInstituteReports } = await import('@/app/lib/institute');
+                const data = await fetchInstituteReports(token);
+                setReportData({
+                    topStudents: data.topStudents || [],
+                    deptPerformance: data.deptPerformance || [],
+                });
+            } catch (error) {
+                // keep defaults
+            }
+        };
+        loadReports();
+    }, []);
 
     return (
         <motion.div
@@ -53,7 +74,10 @@ export default function ReportsPage() {
 
             {/* Leaderboard Section */}
             <motion.div variants={item} className="h-[600px]">
-                <LeaderBoard />
+                <LeaderBoard
+                    topStudents={reportData.topStudents}
+                    deptPerformance={reportData.deptPerformance}
+                />
             </motion.div>
 
             {/* Modal */}

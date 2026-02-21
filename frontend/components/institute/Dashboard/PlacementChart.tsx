@@ -2,7 +2,7 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const data = [
+const fallbackData = [
     { month: 'Jan', placed: 45, offers: 60 },
     { month: 'Feb', placed: 52, offers: 75 },
     { month: 'Mar', placed: 48, offers: 82 },
@@ -12,7 +12,7 @@ const data = [
     { month: 'Jul', placed: 72, offers: 110 },
 ];
 
-export function PlacementChart() {
+export function PlacementChart({ data = fallbackData }: { data?: Array<{ month: string; placed: number; offers: number }> }) {
     return (
         <div className="rounded-3xl bg-white border border-gray-100 p-8 h-full shadow-[0_2px_20px_rgb(0,0,0,0.04)] flex flex-col relative overflow-hidden">
             {/* Ambient Glow */}

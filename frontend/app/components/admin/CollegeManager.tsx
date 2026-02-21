@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, GraduationCap, Users, Plus, CheckCircle2, Trash2, Download } from 'lucide-react';
 import StaffManagement from '@/app/components/admin/StaffManagement';
 
@@ -31,19 +31,11 @@ interface CollegeManagerProps {
     onUpdate: (updatedCollege: any) => void;
 }
 
-const generatePassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-    let password = '';
-    for (let i = 0; i < 8; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
-};
-
 export default function CollegeManager({ college, onClose, onUpdate }: CollegeManagerProps) {
     const [activeTab, setActiveTab] = useState<'staff' | 'students'>('students');
     const [studentCohorts, setStudentCohorts] = useState<StudentCohort[]>(college.studentCohorts || []);
     const [staff, setStaff] = useState<any[]>(college.staff || []);
+    const [loading, setLoading] = useState(false);
 
     // Student Form State
     const [studentFormData, setStudentFormData] = useState({
@@ -52,45 +44,31 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
         count: 0
     });
 
-    const handleAddCohort = () => {
+    const handleAddCohort = async () => {
         if (!studentFormData.year || !studentFormData.dept || studentFormData.count <= 0) return;
-
-        const cohortId = `${college.id}-${studentFormData.dept.slice(0, 3).toUpperCase()}-${studentFormData.year}`;
-
-        // Check if cohort already exists
-        if (studentCohorts.find(c => c.id === cohortId)) {
-            alert('This cohort already has generated credentials. Please update or delete the existing one first.');
-            return;
-        }
-
-        const credentials: StudentCredential[] = [];
-        for (let i = 1; i <= studentFormData.count; i++) {
-            credentials.push({
-                uid: `${cohortId}-${i.toString().padStart(3, '0')}`,
-                password: generatePassword()
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('accessToken') || '';
+            const { createCollegeCohort, fetchCollegeCohorts } = await import('@/app/lib/colleges');
+            await createCollegeCohort(token, college.id, {
+                year: studentFormData.year,
+                department: studentFormData.dept,
+                count: studentFormData.count,
             });
+            const cohorts = await fetchCollegeCohorts(token, college.id);
+            const normalized = cohorts.map((c: any) => ({
+                id: c.id,
+                year: c.year,
+                dept: c.department,
+                count: c.count,
+                credentials: c.credentials || [],
+            }));
+            setStudentCohorts(normalized);
+            onUpdate({ ...college, students: normalized.reduce((acc: number, curr: any) => acc + curr.count, 0) });
+            setStudentFormData({ year: '', dept: '', count: 0 });
+        } finally {
+            setLoading(false);
         }
-
-        const newCohort: StudentCohort = {
-            id: cohortId,
-            year: studentFormData.year,
-            dept: studentFormData.dept,
-            count: studentFormData.count,
-            credentials
-        };
-
-        const updatedCohorts = [...studentCohorts, newCohort];
-        setStudentCohorts(updatedCohorts);
-
-        // Update the college object and persist
-        const updatedCollege = {
-            ...college,
-            studentCohorts: updatedCohorts,
-            students: updatedCohorts.reduce((acc, curr) => acc + curr.count, 0)
-        };
-        onUpdate(updatedCollege);
-
-        setStudentFormData({ year: '', dept: '', count: 0 });
     };
 
     const handleRemoveCohort = (id: string) => {
@@ -114,21 +92,11 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
         onUpdate(updatedCollege);
     }
 
-    const downloadCohortCSV = (cohort: StudentCohort) => {
-        const headers = ['UID', 'Password', 'Year', 'Department'];
-        const rows = cohort.credentials.map(c => [
-            c.uid,
-            c.password,
-            cohort.year,
-            cohort.dept
-        ]);
-
-        const csvContent = [
-            headers.join(','),
-            ...rows.map(r => r.map(cell => `"${cell}"`).join(','))
-        ].join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const downloadCohortCSV = async (cohort: StudentCohort) => {
+        const token = localStorage.getItem('accessToken') || '';
+        const { exportCollegeCohort } = await import('@/app/lib/colleges');
+        const response = await exportCollegeCohort(token, college.id, cohort.id);
+        const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.setAttribute('href', url);
@@ -138,6 +106,31 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
         link.click();
         document.body.removeChild(link);
     };
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchCollegeStaff, fetchCollegeCohorts } = await import('@/app/lib/colleges');
+                const [staffData, cohorts] = await Promise.all([
+                    fetchCollegeStaff(token, college.id),
+                    fetchCollegeCohorts(token, college.id),
+                ]);
+                setStaff(staffData || []);
+                const normalized = (cohorts || []).map((c: any) => ({
+                    id: c.id,
+                    year: c.year,
+                    dept: c.department,
+                    count: c.count,
+                    credentials: c.credentials || [],
+                }));
+                setStudentCohorts(normalized);
+            } catch (error) {
+                // ignore
+            }
+        };
+        loadData();
+    }, [college.id]);
 
     return (
         <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
@@ -231,11 +224,11 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
                             </div>
                             <button
                                 onClick={handleAddCohort}
-                                disabled={!studentFormData.year || !studentFormData.dept || studentFormData.count <= 0}
+                                disabled={loading || !studentFormData.year || !studentFormData.dept || studentFormData.count <= 0}
                                 className="w-full mt-6 bg-blue-600 text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:grayscale shadow-xl shadow-blue-500/20"
                             >
                                 <CheckCircle2 size={18} />
-                                Generate Batch Credentials
+                                {loading ? 'Generating...' : 'Generate Batch Credentials'}
                             </button>
                         </div>
 

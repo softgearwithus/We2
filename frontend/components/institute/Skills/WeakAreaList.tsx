@@ -2,13 +2,15 @@
 
 import { AlertTriangle, BookOpen, ChevronRight } from "lucide-react";
 
-export function WeakAreaList() {
-    const weakAreas = [
-        { topic: "Dynamic Programming", domain: "Coding", severity: "High", impacted: "CS, ECE", action: "Schedule Workshop" },
-        { topic: "Verbal Reasoning", domain: "Aptitude", severity: "Medium", impacted: "All Depts", action: "Assign Practice Test" },
-        { topic: "Thermodynamics", domain: "Core", severity: "High", impacted: "Mech", action: "Remedial Classes" },
-        { topic: "System Design", domain: "Coding", severity: "Medium", impacted: "CS", action: "Guest Lecture" },
-    ];
+export function WeakAreaList({ areas = [] as Array<{ topic: string; domain: string; severity: string; impacted: string; action: string }> }) {
+    const weakAreas = areas.length
+        ? areas
+        : [
+            { topic: "Dynamic Programming", domain: "Coding", severity: "High", impacted: "CS, ECE", action: "Schedule Workshop" },
+            { topic: "Verbal Reasoning", domain: "Aptitude", severity: "Medium", impacted: "All Depts", action: "Assign Practice Test" },
+            { topic: "Thermodynamics", domain: "Core", severity: "High", impacted: "Mech", action: "Remedial Classes" },
+            { topic: "System Design", domain: "Coding", severity: "Medium", impacted: "CS", action: "Guest Lecture" },
+        ];
 
     return (
         <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-6 rounded-2xl h-full flex flex-col">

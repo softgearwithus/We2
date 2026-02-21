@@ -9,6 +9,7 @@ import {
     Database, Layout, Server, BrainCircuit, Activity, Calculator,
     Puzzle, Book, Bitcoin, GitBranch, Shield, Box, List
 } from 'lucide-react';
+import API_BASE_URL from '@/app/lib/api-config';
 
 interface Topic {
     id: string;
@@ -62,7 +63,7 @@ export default function GenericTrackPage() {
             }
 
             try {
-                const response = await fetch(`http://localhost:3001/course-content/${dbTopicId}`);
+                const response = await fetch(`${API_BASE_URL}/course-content/${dbTopicId}`);
                 if (response.ok) {
                     const text = await response.text();
                     if (text) {

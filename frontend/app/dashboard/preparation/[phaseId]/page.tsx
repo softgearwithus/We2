@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { roadmapData } from '@/app/lib/data/roadmapData';
 import { ArrowLeft, BookOpen, Video, Code, CheckCircle, ExternalLink, Globe, Lightbulb, ChevronRight, X, Loader2, Sparkles, Star, Target, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import API_BASE_URL from '@/app/lib/api-config';
 
 // Simple Markdown-like Renderer for Drawer
 const RichContentRenderer = ({ content }: { content: string }) => {
@@ -94,7 +95,7 @@ export default function TopicPage() {
         setShowDetails(true);
         setLoadingDetails(true);
         try {
-            const response = await fetch(`http://localhost:3001/course-content/${topicId}`);
+            const response = await fetch(`${API_BASE_URL}/course-content/${topicId}`);
             if (response.ok) {
                 const data = await response.json();
                 setDetailedContent(data);

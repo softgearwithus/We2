@@ -1,16 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserPlus, Shield, X, Mail, User, Search, ChevronLeft, Download } from 'lucide-react';
 
 interface StaffMember {
     name: string;
     email: string;
     role: string;
+    roleLabel?: string;
     dept?: string;
+    department?: string;
     year?: string;
     id: string;
+    credentialId?: string;
     password?: string;
+    tempPassword?: string;
 }
 
 interface StaffManagementProps {
@@ -24,15 +28,6 @@ interface StaffManagementProps {
     onUpdateStaff: (updatedStaff: StaffMember[]) => void;
 }
 
-const generatePassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-    let password = '';
-    for (let i = 0; i < 8; i++) {
-        password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return password;
-};
-
 export default function StaffManagement({ college, staff, onUpdateStaff }: StaffManagementProps) {
     const [formData, setFormData] = useState({
         name: '',
@@ -41,31 +36,51 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
         dept: '',
         year: ''
     });
+    const [loading, setLoading] = useState(false);
 
     const isNonAdmin = formData.role !== 'College Admin';
     const isFormIncomplete = !formData.name || !formData.email || (isNonAdmin && (!formData.dept || !formData.year));
 
-    const addStaff = () => {
+    const addStaff = async () => {
         if (isFormIncomplete) return;
-
-        const newStaff: StaffMember = {
-            ...formData,
-            id: `${college.id}-${formData.role === 'College Admin' ? 'ADM' : formData.role === 'HOD' ? 'HOD' : 'STAFF'}-${Date.now().toString().slice(-4)}`,
-            password: generatePassword()
-        };
-
-        onUpdateStaff([...staff, newStaff]);
-        setFormData({
-            name: '',
-            email: '',
-            role: 'College Admin',
-            dept: '',
-            year: ''
-        });
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('accessToken') || '';
+            const { createCollegeStaff, fetchCollegeStaff } = await import('@/app/lib/colleges');
+            const roleMap: Record<string, string> = {
+                'College Admin': 'college_admin',
+                'HOD': 'mentor',
+                'Mentor': 'mentor',
+                'Viewer': 'mentor',
+            };
+            await createCollegeStaff(token, college.id, {
+                name: formData.name,
+                email: formData.email,
+                role: roleMap[formData.role] || 'mentor',
+                roleLabel: formData.role,
+                department: formData.dept || null,
+                year: formData.year || null,
+            });
+            const updated = await fetchCollegeStaff(token, college.id);
+            onUpdateStaff(updated);
+            setFormData({
+                name: '',
+                email: '',
+                role: 'College Admin',
+                dept: '',
+                year: ''
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const removeStaff = (id: string) => {
-        onUpdateStaff(staff.filter(s => s.id !== id));
+    const removeStaff = async (id: string) => {
+        const token = localStorage.getItem('accessToken') || '';
+        const { deleteCollegeStaff, fetchCollegeStaff } = await import('@/app/lib/colleges');
+        await deleteCollegeStaff(token, college.id, id);
+        const updated = await fetchCollegeStaff(token, college.id);
+        onUpdateStaff(updated);
     };
 
     const downloadStaffCSV = () => {
@@ -73,12 +88,12 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
 
         const headers = ['System ID', 'Name', 'Email', 'Role', 'Password', 'Department', 'Year'];
         const rows = staff.map(s => [
-            s.id,
+            s.credentialId || s.id,
             s.name,
             s.email,
             s.role,
-            s.password || 'N/A',
-            s.dept || 'Full Access',
+            s.tempPassword || s.password || 'N/A',
+            s.department || s.dept || 'Full Access',
             s.year || 'Full Access'
         ]);
 
@@ -97,6 +112,20 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
         link.click();
         document.body.removeChild(link);
     };
+
+    useEffect(() => {
+        const loadStaff = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchCollegeStaff } = await import('@/app/lib/colleges');
+                const updated = await fetchCollegeStaff(token, college.id);
+                onUpdateStaff(updated);
+            } catch (error) {
+                // ignore
+            }
+        };
+        loadStaff();
+    }, [college.id]);
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
@@ -197,11 +226,11 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
 
                 <button
                     onClick={addStaff}
-                    disabled={isFormIncomplete}
+                    disabled={isFormIncomplete || loading}
                     className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-black active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-slate-200"
                 >
                     <UserPlus size={20} />
-                    Generate & Add Staff Credential
+                    {loading ? 'Saving...' : 'Generate & Add Staff Credential'}
                 </button>
             </div>
 
@@ -223,16 +252,16 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
                                         <div className="flex items-center gap-3">
                                             <p className="font-black text-slate-900 text-lg leading-none tracking-tight">{s.name}</p>
                                             <span className="text-[9px] font-black uppercase bg-blue-600 text-white px-2 py-1 rounded-lg">
-                                                {s.role}
+                                                {s.roleLabel || s.role}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-3 mt-1.5 font-bold">
                                             <p className="text-xs text-slate-400">{s.email}</p>
-                                            {(s.dept || s.year) && (
+                                            {(s.department || s.dept || s.year) && (
                                                 <>
                                                     <span className="w-1 h-1 rounded-full bg-slate-300" />
                                                     <p className="text-[10px] text-blue-500 uppercase tracking-wider">
-                                                        Scope: {s.dept} {s.year ? `[${s.year}]` : ''}
+                                                        Scope: {s.department || s.dept} {s.year ? `[${s.year}]` : ''}
                                                     </p>
                                                 </>
                                             )}

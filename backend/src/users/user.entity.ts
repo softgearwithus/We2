@@ -31,6 +31,15 @@ export class User {
     })
     role: UserRole;
 
+    @Column({ type: 'uuid', nullable: true })
+    collegeId: string | null;
+
+    @Column({ type: 'varchar', length: 80, nullable: true })
+    department: string | null;
+
+    @Column({ type: 'varchar', length: 20, nullable: true })
+    year: string | null;
+
     @Column({
         type: 'varchar',
         default: 'free', // free, placement_plus, industry_plus, we2_max

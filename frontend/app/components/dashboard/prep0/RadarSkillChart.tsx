@@ -17,7 +17,7 @@ interface SkillData {
     fullMark: number;
 }
 
-const data: SkillData[] = [
+const fallbackData: SkillData[] = [
     { subject: 'DSA', A: 85, fullMark: 100 },
     { subject: 'Fundamentals', A: 65, fullMark: 100 },
     { subject: 'Aptitude', A: 90, fullMark: 100 },
@@ -26,7 +26,7 @@ const data: SkillData[] = [
     { subject: 'Company Prep', A: 40, fullMark: 100 },
 ];
 
-export default function RadarSkillChart() {
+export default function RadarSkillChart({ data = fallbackData }: { data?: SkillData[] }) {
     return (
         <div className="w-full h-[380px] bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden group">
             {/* Glow Effect */}

@@ -27,51 +27,24 @@ export default function AdminDashboard() {
     const [recentSignups, setRecentSignups] = useState<any[]>([]);
 
     useEffect(() => {
-        const savedColleges = JSON.parse(localStorage.getItem('emble_colleges') || '[]');
-        const totalStudents = savedColleges.reduce((acc: number, college: any) => acc + (college.students || 0), 0);
-
-        setStats(prev => ({
-            ...prev,
-            totalColleges: savedColleges.length || 3,
-            totalStudents: totalStudents || 4200
-        }));
-
-        const logs: any[] = [];
-        const signups: any[] = [];
-
-        // Populate Activity with Signups and Logins simulation
-        savedColleges.forEach((c: any) => {
-            if (c.staff && c.staff.length > 0) {
-                c.staff.forEach((s: any) => {
-                    logs.push({
-                        id: Math.random(),
-                        user: s.name,
-                        action: 'System Login',
-                        target: c.name,
-                        time: 'Just now',
-                        icon: Fingerprint
-                    });
-                    signups.push({
-                        id: Math.random(),
-                        name: s.name,
-                        college: c.name,
-                        role: s.role,
-                        time: 'New'
-                    });
+        const loadOverview = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchAdminOverview } = await import('@/app/lib/admin');
+                const data = await fetchAdminOverview(token);
+                setStats({
+                    totalColleges: data.totalColleges || 0,
+                    totalStudents: data.totalStudents || 0,
+                    partners: data.partners || 0,
+                    uptime: data.uptime || '99.9%',
                 });
+                setRecentLogs(data.recentLogs || []);
+                setRecentSignups(data.recentSignups || []);
+            } catch (error) {
+                // fallback UI stays at defaults
             }
-        });
-
-        if (logs.length === 0) {
-            logs.push(
-                { id: 1, user: 'Dr. Sameer', action: 'New Staff Sign-up', target: 'MIT Pune', time: '2 mins ago', icon: UserPlus },
-                { id: 2, user: 'Admin_IITB', action: 'Platform Access', target: 'IIT Bombay', time: '8 mins ago', icon: ShieldCheck },
-                { id: 3, user: 'Prof. Anjali', action: 'System Login', target: 'BITS Pilani', time: '15 mins ago', icon: Fingerprint }
-            );
-        }
-
-        setRecentLogs(logs.slice(0, 5));
-        setRecentSignups(signups.slice(0, 5));
+        };
+        loadOverview();
     }, []);
 
     const dashboardStats = [
@@ -148,12 +121,14 @@ export default function AdminDashboard() {
                                         </div>
                                         <div>
                                             <p className="text-base font-bold text-slate-700">
-                                                <span className="text-slate-900 font-black">{log.user}</span> • {log.action}
+                                                <span className="text-slate-900 font-black">{log.actorName || log.user}</span> • {log.action}
                                             </p>
                                             <p className="text-sm text-slate-400 font-medium">Institution: {log.target}</p>
                                         </div>
                                     </div>
-                                    <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">{log.time}</span>
+                                    <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                                        {log.time || (log.createdAt ? new Date(log.createdAt).toLocaleString() : 'Just now')}
+                                    </span>
                                 </div>
                             ))}
                         </div>
@@ -192,8 +167,8 @@ export default function AdminDashboard() {
                                     <div key={s.id} className="flex items-center gap-4 px-2">
                                         <div className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)]" />
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-black text-slate-800 truncate">{s.name}</p>
-                                            <p className="text-[10px] text-slate-400 font-black truncate uppercase tracking-widest">{s.role}</p>
+                                            <p className="text-sm font-black text-slate-800 truncate">{s.name || s.email}</p>
+                                            <p className="text-[10px] text-slate-400 font-black truncate uppercase tracking-widest">{s.role || 'Staff'}</p>
                                         </div>
                                     </div>
                                 )) : (

@@ -1,7 +1,8 @@
 "use client";
 
-import { mockStudents } from "@/lib/institute/mockData";
+import { useEffect, useState } from "react";
 import { ReadinessMetrics } from "@/components/institute/Placements/ReadinessMetrics";
+import { InstituteStudent } from "@/app/lib/institute";
 import { FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
@@ -32,6 +33,37 @@ const item = {
 };
 
 export default function PlacementPage() {
+    const [metrics, setMetrics] = useState({
+        readiness: { coding: 0, aptitude: 0, communication: 0, core: 0 },
+        resumeQuality: [] as Array<{ name: string; value: number; color: string }>,
+        mockInterviewTrends: [] as Array<{ week: string; interviews: number; avgScore: number }>,
+    });
+    const [students, setStudents] = useState<InstituteStudent[]>([]);
+
+    useEffect(() => {
+        const loadPlacements = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchInstitutePlacements, fetchInstituteStudents } = await import('@/app/lib/institute');
+                const data = await fetchInstitutePlacements(token);
+                setMetrics({
+                    readiness: data.readiness || { coding: 0, aptitude: 0, communication: 0, core: 0 },
+                    resumeQuality: data.resumeQuality || [],
+                    mockInterviewTrends: data.mockInterviewTrends || [],
+                });
+                const studentData = await fetchInstituteStudents(token, {});
+                setStudents(studentData || []);
+            } catch (error) {
+                setMetrics({
+                    readiness: { coding: 0, aptitude: 0, communication: 0, core: 0 },
+                    resumeQuality: [],
+                    mockInterviewTrends: [],
+                });
+                setStudents([]);
+            }
+        };
+        loadPlacements();
+    }, []);
     return (
         <motion.div
             variants={container}
@@ -52,16 +84,19 @@ export default function PlacementPage() {
 
             {/* Top Metrics Grid */}
             <motion.div variants={item}>
-                <ReadinessMetrics students={mockStudents} />
+                <ReadinessMetrics
+                    students={students}
+                    override={metrics.readiness}
+                />
             </motion.div>
 
             {/* Charts Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[400px]">
                 <motion.div variants={item} className="h-full">
-                    <ResumeQualityChart />
+                    <ResumeQualityChart data={metrics.resumeQuality} />
                 </motion.div>
                 <motion.div variants={item} className="lg:col-span-2 h-full">
-                    <MockInterviewTrends />
+                    <MockInterviewTrends data={metrics.mockInterviewTrends} />
                 </motion.div>
             </div>
 

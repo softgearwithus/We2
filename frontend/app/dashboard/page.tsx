@@ -30,26 +30,26 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (!authLoading && user) {
-            // Only fetch placement stats if in prep mode, or fetch both if needed.
-            const fetchStats = async () => {
-                const token = localStorage.getItem('accessToken');
-                try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/dashboard-stats`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
+                // Only fetch placement stats if in prep mode, or fetch both if needed.
+                const fetchStats = async () => {
+                    const token = localStorage.getItem('accessToken');
+                    try {
+                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/dashboard-stats`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            setStats(data);
                         }
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        setStats(data);
+                    } catch (error) {
+                        console.error('Failed to fetch stats', error);
+                    } finally {
+                        setLoading(false);
                     }
-                } catch (error) {
-                    console.error('Failed to fetch stats', error);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchStats();
+                };
+                fetchStats();
         }
     }, [authLoading, user]);
 
@@ -102,7 +102,7 @@ export default function DashboardPage() {
                     {/* Left Column (8/12) */}
                     <div className="lg:col-span-8 space-y-8">
                         {/* Readiness Panel */}
-                        <ReadinessPanel />
+                        <ReadinessPanel readinessScore={stats.readinessScore / 10} />
 
                         {/* Quick Access Grid */}
                         <div>
@@ -117,11 +117,20 @@ export default function DashboardPage() {
                     {/* Right Column (4/12) */}
                     <div className="lg:col-span-4 space-y-8">
                         {/* Radar Chart */}
-                        <RadarSkillChart />
+                        <RadarSkillChart
+                            data={[
+                                { subject: 'DSA', A: stats.skillProficiency?.[0] ?? 0, fullMark: 100 },
+                                { subject: 'Fundamentals', A: stats.skillProficiency?.[1] ?? 0, fullMark: 100 },
+                                { subject: 'Aptitude', A: stats.skillProficiency?.[2] ?? 0, fullMark: 100 },
+                                { subject: 'Communication', A: stats.skillProficiency?.[3] ?? 0, fullMark: 100 },
+                                { subject: 'Interview', A: stats.skillProficiency?.[4] ?? 0, fullMark: 100 },
+                                { subject: 'Company Prep', A: stats.skillProficiency?.[5] ?? 0, fullMark: 100 },
+                            ]}
+                        />
 
                         {/* Synapse Intelligence Widget */}
                         <div className="h-64">
-                            <SynapseWidget />
+                            <SynapseWidget recentActivity={stats.recentActivity} />
                         </div>
                     </div>
                 </div>

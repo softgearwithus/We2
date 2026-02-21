@@ -34,7 +34,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...data,
-                    role: roleMap[role],
+                    ...(role === 'college' ? {} : { role: roleMap[role] }),
                 }),
             });
 
@@ -52,8 +52,10 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             if (response.ok) {
                 const result = await response.json();
                 // Optional: Check if the returned user role matches the intended portal role
-                if (result.user.role !== roleMap[role] && role !== 'admin') {
-                    // Allow admin to potentially login locally if needed, or stick to strict checking
+                const allowedRoles = role === 'college'
+                    ? [roleMap[role], 'mentor']
+                    : [roleMap[role]];
+                if (!allowedRoles.includes(result.user.role) && role !== 'admin') {
                     alert(`Access Denied: This portal is for ${role}s only.`);
                     setIsLoading(false);
                     return;

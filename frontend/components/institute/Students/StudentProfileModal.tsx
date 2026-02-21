@@ -1,6 +1,6 @@
 "use client";
 
-import { Student } from "@/lib/institute/mockData";
+import { InstituteStudent } from "@/app/lib/institute";
 import { X, Mail, Phone, Calendar, Download, Trophy, GraduationCap, Github, Linkedin, ExternalLink } from "lucide-react";
 import { ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,7 +12,7 @@ const StudentRadarChart = dynamic(() => import('./StudentRadarChart'), {
 });
 
 interface ModalProps {
-    student: Student;
+    student: InstituteStudent;
     onClose: () => void;
 }
 

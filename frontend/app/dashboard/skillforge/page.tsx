@@ -152,6 +152,14 @@ const tracks = [
 ];
 
 export default function SkillForgeLanding() {
+    return (
+        <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6">
+            <h1 className="text-4xl font-black text-slate-900 mb-3">Skill Forge is paused</h1>
+            <p className="text-slate-500 max-w-lg">
+                This module is temporarily hidden from the dashboard. Check back soon.
+            </p>
+        </div>
+    );
     const [searchQuery, setSearchQuery] = React.useState('');
     const [activeFilter, setActiveFilter] = React.useState('All');
 

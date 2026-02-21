@@ -2,14 +2,14 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
-const data = [
+const fallbackData = [
     { name: 'High Impact', value: 35, color: '#10b981' },
     { name: 'Good', value: 45, color: '#6366f1' },
     { name: 'Average', value: 15, color: '#f59e0b' },
     { name: 'Needs Work', value: 5, color: '#ef4444' },
 ];
 
-export function ResumeQualityChart() {
+export function ResumeQualityChart({ data = fallbackData }: { data?: Array<{ name: string; value: number; color: string }> }) {
     return (
         <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-6 rounded-2xl h-full flex flex-col">
             <div className="mb-4">

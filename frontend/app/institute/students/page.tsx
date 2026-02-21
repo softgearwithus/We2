@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { mockStudents } from "@/lib/institute/mockData";
+import { useEffect, useState } from "react";
 import { StudentFilter } from "@/components/institute/Students/StudentFilter";
+import { useAuth } from "@/app/context/AuthContext";
+import { fetchCollegeById } from "@/app/lib/colleges";
 import { StudentTable } from "@/components/institute/Students/StudentTable";
 import { StudentProfileModal } from "@/components/institute/Students/StudentProfileModal";
 import { Search, Download, FileSpreadsheet } from "lucide-react";
-import { Student } from "@/lib/institute/mockData";
+import { InstituteStudent } from "@/app/lib/institute";
 import { motion } from "framer-motion";
 
 const container = {
@@ -25,8 +26,9 @@ const item = {
 };
 
 export default function StudentAnalyticsPage() {
+    const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+    const [selectedStudent, setSelectedStudent] = useState<InstituteStudent | null>(null);
     const [filters, setFilters] = useState<{
         year: number | null;
         department: string | null;
@@ -37,15 +39,65 @@ export default function StudentAnalyticsPage() {
         status: null,
     });
 
-    const filteredStudents = mockStudents.filter((student) => {
-        // Search
-        if (searchTerm && !student.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    const [students, setStudents] = useState<InstituteStudent[]>([]);
+    const [filterOptions, setFilterOptions] = useState<{ years: number[]; departments: string[] }>(
+        { years: [1, 2, 3, 4], departments: [] }
+    );
 
-        // Filters
+    useEffect(() => {
+        const loadStudents = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const { fetchInstituteStudents } = await import('@/app/lib/institute');
+                const data = await fetchInstituteStudents(token, {
+                    year: filters.year || undefined,
+                    department: filters.department || undefined,
+                    status: filters.status || undefined,
+                    search: searchTerm || undefined,
+                });
+                const mapped = (data || []).map((student: any) => ({
+                    id: student.id,
+                    name: student.name,
+                    department: student.department,
+                    year: student.year,
+                    cgpa: student.cgpa,
+                    attendance: student.attendance,
+                    placementReadiness: student.placementReadiness,
+                    skills: student.skills,
+                    status: student.status,
+                }));
+                setStudents(mapped);
+            } catch (error) {
+                setStudents([]);
+            }
+        };
+        loadStudents();
+    }, [filters.year, filters.department, filters.status, searchTerm]);
+
+    useEffect(() => {
+        const loadFilterOptions = async () => {
+            if (!user?.collegeId) return;
+            const token = localStorage.getItem('accessToken') || '';
+            try {
+                const college = await fetchCollegeById(token, user.collegeId);
+                const years = (college?.years || []).map((y: string) => Number(y)).filter((y: number) => !Number.isNaN(y));
+                const departments = college?.departments || [];
+                setFilterOptions({
+                    years: years.length ? years : [1, 2, 3, 4],
+                    departments,
+                });
+            } catch (error) {
+                setFilterOptions({ years: [1, 2, 3, 4], departments: [] });
+            }
+        };
+        loadFilterOptions();
+    }, [user?.collegeId]);
+
+    const filteredStudents = students.filter((student) => {
+        if (searchTerm && !student.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
         if (filters.year && student.year !== filters.year) return false;
         if (filters.department && student.department !== filters.department) return false;
         if (filters.status && student.status !== filters.status) return false;
-
         return true;
     });
 
@@ -76,7 +128,12 @@ export default function StudentAnalyticsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Left Sidebar - Filters */}
                 <motion.div variants={item} className="lg:col-span-1">
-                    <StudentFilter filters={filters} setFilters={setFilters} />
+                    <StudentFilter
+                        filters={filters}
+                        setFilters={setFilters}
+                        departments={filterOptions.departments}
+                        years={filterOptions.years}
+                    />
                 </motion.div>
 
                 {/* Right Content - Table and Search */}

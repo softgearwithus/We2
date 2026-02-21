@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Database, Video, FileText, MonitorPlay, ChevronRight } from 'lucide-react';
+import { Code2, Database, Video, FileText, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 const modules = [
@@ -42,15 +42,16 @@ const modules = [
         bg: 'bg-emerald-500/10',
         border: 'border-emerald-500/20'
     },
-    {
-        title: 'Skill Forge',
-        desc: 'Master New Technologies',
-        icon: MonitorPlay,
-        href: '/dashboard/skillforge',
-        color: 'text-orange-400',
-        bg: 'bg-orange-500/10',
-        border: 'border-orange-500/20'
-    }
+    // Skill Forge hidden for now; re-enable by restoring module below.
+    // {
+    //     title: 'Skill Forge',
+    //     desc: 'Master New Technologies',
+    //     icon: MonitorPlay,
+    //     href: '/dashboard/skillforge',
+    //     color: 'text-orange-400',
+    //     bg: 'bg-orange-500/10',
+    //     border: 'border-orange-500/20'
+    // }
 ];
 
 export default function QuickAccessGrid() {
