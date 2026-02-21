@@ -22,25 +22,25 @@ export default function LoginSelectionPage() {
             role: 'Institute',
             icon: <Building2 size={32} className="text-white" />,
             description: 'Partner with us to transform your campus into a tech talent hub.',
-            link: '/contact',
+            link: '/login/college',
             gradient: 'from-emerald-600 to-teal-600',
             border: 'hover:border-emerald-300',
             shadow: 'hover:shadow-emerald-500/20',
             badge: 'Partner Program',
             badgeColor: 'bg-emerald-600',
-            cta: 'Contact Sales'
+            cta: 'Institute Login'
         },
         {
             role: 'Industry',
             icon: <Briefcase size={32} className="text-white" />,
             description: 'Hire pre-vetted talent directly from our high-performance cohorts.',
-            link: '/contact',
+            link: '/login/industry',
             gradient: 'from-slate-800 to-black',
             border: 'hover:border-slate-400',
             shadow: 'hover:shadow-slate-500/20',
             badge: 'Hiring Solutions',
             badgeColor: 'bg-slate-900',
-            cta: 'Inquire Now'
+            cta: 'Company Login'
         },
     ];
 

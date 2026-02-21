@@ -16,7 +16,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
     const { login } = useAuth();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
     const onSubmit = async (data: any) => {
         setIsLoading(true);
@@ -38,15 +38,23 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 }),
             });
 
-            // Mock bypass for Admin if backend is unavailable or credentials fail
-            if (!response.ok && role === 'admin' && data.email === 'admin@prep0.com' && data.password === 'admin') {
-                login('MOCK_TOKEN', {
-                    email: 'admin@prep0.com',
-                    role: 'super_admin',
-                    name: 'Super Admin'
-                } as any);
-                router.push(redirectPath);
-                return;
+            // Mock bypass if backend is unavailable or credentials fail
+            if (!response.ok) {
+                if (role === 'admin' && data.email === 'admin@prep0.com' && data.password === 'admin') {
+                    login('MOCK_TOKEN_ADMIN', { email: 'admin@prep0.com', role: 'super_admin', name: 'Super Admin' } as any);
+                    router.push(redirectPath);
+                    return;
+                }
+                if (role === 'college' && data.email === 'college@prep0.com' && data.password === 'college') {
+                    login('MOCK_TOKEN_COLLEGE', { email: 'college@prep0.com', role: 'college_admin', name: 'Mock College' } as any);
+                    router.push(redirectPath);
+                    return;
+                }
+                if (role === 'industry' && data.email === 'company@prep0.com' && data.password === 'company') {
+                    login('MOCK_TOKEN_INDUSTRY', { email: 'company@prep0.com', role: 'company_admin', name: 'Mock Company' } as any);
+                    router.push(redirectPath);
+                    return;
+                }
             }
 
             if (response.ok) {

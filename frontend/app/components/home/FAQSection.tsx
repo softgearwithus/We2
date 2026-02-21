@@ -6,7 +6,7 @@ import { ChevronDown, HelpCircle } from 'lucide-react';
 
 const faqs = [
     {
-        q: "Does India's #1 AI-powered platform really prepare me for top-tier MNC rounds?",
+        q: "Does India's First Integrated AI Placement Ecosystem Hub really prepare me for top-tier MNC rounds?",
         a: "Mastering technical logic is about pattern recognition - not just memorization. We provide 200+ curated patterns frequently asked in high-stakes interviews at top product companies, ensuring you master the logic recruiters actually look for."
     },
     {
@@ -15,7 +15,7 @@ const faqs = [
     },
     {
         q: "I've practiced on traditional coding platforms - why do I need this AI-Integrated environment?",
-        a: "Standard platforms are great for isolated logic, but real jobs happen in large systems. As India's #1 AI-powered platform, we simulate production realities like Docker, AWS, and system-wide debugging - bridging the gap between a simple solution and a real feature."
+        a: "Standard platforms are great for isolated logic, but real jobs happen in large systems. As India's First Integrated AI Placement Ecosystem Hub, we simulate production realities like Docker, AWS, and system-wide debugging - bridging the gap between a simple solution and a real feature."
     },
     {
         q: "Can I practice the Industry SQL 50 questions for real-world data rounds?",
@@ -34,15 +34,15 @@ const faqs = [
         a: "Absolutely. We exclusively focus on the high-demand stack - React, NestJS, PostgreSQL, Docker, and AWS. Mastering these ensures you are competent in the technologies used by the fastest-growing tech companies today."
     },
     {
-        q: "Will the Snipes feed help me stay updated with industrial trends for my interviews?",
-        a: "Yes. Technical rounds often include discussions on industry trends. Snipes provides a daily briefing of critical AI news and industrial signals - ensuring you always have an informed perspective during your technical discussions."
+        q: "Will the Synapse feed help me stay updated with industrial trends for my interviews?",
+        a: "Yes. Technical rounds often include discussions on industry trends. Synapse provides a daily briefing of critical AI news and industrial signals - ensuring you always have an informed perspective during your technical discussions."
     },
     {
         q: "How do I prove my 'Placement Readiness' with the Skill Scorecard?",
         a: "Your Scorecard provides a data-driven view of your logic, coding, and communication skills. It's a holistic metric used by our placement partners to identify top talent who are ready for immediate industrial contribution."
     },
     {
-        q: "Is India's #1 AI-powered platform designed only for beginners or experienced engineers?",
+        q: "Is India's First Integrated AI Placement Ecosystem Hub designed only for beginners or experienced engineers?",
         a: "Emble is built for anyone looking to reach the next tier of engineering. Whether you're a student learning patterns or a dev wanting to master industrial-scale systems - the platform adapts to push your technical boundaries."
     }
 ];

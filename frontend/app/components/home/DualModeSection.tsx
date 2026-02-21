@@ -7,19 +7,18 @@ import { ArrowRight, CheckCircle2, Briefcase, BookOpen, Zap, Sparkles, Code2, Ta
 
 const prepFeatures = [
     { icon: Sparkles, label: 'AI Mock Interviews (Voice & Video)' },
-    { icon: Code2, label: '200+ Hand-picked DSA Questions' },
+    { icon: Code2, label: '200+ Company-Picked Questions' },
     { icon: BookOpen, label: 'SQL & Database Challenges' },
     { icon: Target, label: 'Resume & Skills AI Audit' },
     { icon: Target, label: 'Logic & Aptitude Drills' },
-    { icon: Sparkles, label: 'Hand-picked Concept Sheets' },
 ];
 
 const hubFeatures = [
-    { icon: Zap, label: 'Industry Sprint Board' },
-    { icon: Code2, label: 'Senior AI Code Reviews' },
-    { icon: Sparkles, label: 'GitHub & Industry Standards' },
-    { icon: Target, label: 'Professional Engineering Tag' },
-    { icon: Zap, label: 'Production System Design' },
+    { icon: Zap, label: 'GitHub Residency' },
+    { icon: Code2, label: 'Professional Deployment' },
+    { icon: Sparkles, label: 'Industrial Logic & Standards' },
+    { icon: Target, label: 'Production Ready Tag' },
+    { icon: Zap, label: 'Microservices Architecture' },
     { icon: Code2, label: 'Industrial Work Certificates' },
 ];
 
@@ -99,7 +98,7 @@ export default function DualModeSection() {
                             {/* Brand Name */}
                             <div className="mb-auto">
                                 <h3 className="text-4xl md:text-5xl font-[1000] text-brand-black mb-2 tracking-tighter transition-colors duration-300 group-hover:text-emerald-700">
-                                    Placement Accelerator
+                                    Placement Ecosystem Hub
                                 </h3>
                                 <p className="text-xs font-black uppercase tracking-[0.3em] text-emerald-600/70 mb-8">
                                     Solve the rejection problem

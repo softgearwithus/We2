@@ -30,11 +30,10 @@ export default function RoadmapPreview() {
                         </p>
                         <div className="flex flex-col gap-4">
                             {[
-                                "500+ Hand-picked DSA Questions",
+                                "200+ Company-Picked Questions",
                                 "Comprehensive SQL Training",
                                 "Full-Stack Project Building",
-                                "Interactive AI Mock Interviews",
-                                "ATS Resume Builder"
+                                "AI Mock Interviews",
                             ].map((item, i) => (
                                 <div key={i} className="flex items-center gap-3 text-brand-black font-bold">
                                     <div className="w-6 h-6 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange">

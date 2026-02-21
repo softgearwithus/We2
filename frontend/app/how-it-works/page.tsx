@@ -35,22 +35,22 @@ export default function HowItWorksPage() {
                                 {
                                     icon: BookOpen,
                                     title: "1. Master the Fundamentals",
-                                    desc: "Start with our curated DSA curriculum. Solve top 100 interview problems with AI-powered hints that guide you without giving away the answer."
-                                },
-                                {
-                                    icon: Users,
-                                    title: "2. Enter the Simulation",
-                                    desc: "Join a virtual tech team. Receive tickets on a Jira-like board, attend standups, and write production-grade code in our cloud IDE."
+                                    desc: "Build a rock-solid foundation. You'll master DSA patterns, SQL queries, and core computer science concepts that top companies actually test for."
                                 },
                                 {
                                     icon: Code2,
-                                    title: "3. Build & Review",
-                                    desc: "Submit your PRs. Our AI and expert mentors review your code for scalability, readability, and best practices—just like a senior engineer would."
+                                    title: "2. Build Full Stack Systems",
+                                    desc: "Stop watching tutorials. You'll build production-ready applications using professional tech stacks (React, Node, AWS) and collaborate using GitHub."
+                                },
+                                {
+                                    icon: Target,
+                                    title: "3. Crack AI Interviews",
+                                    desc: "Practice makes perfect. Face our AI-driven voice and video interviews to get real-time feedback on your communication and technical logic."
                                 },
                                 {
                                     icon: Trophy,
-                                    title: "4. Get Certified & Hired",
-                                    desc: "Earn a verified 'Experience Certificate' based on your commit history. Share your detailed portfolio with our hiring partners."
+                                    title: "4. Launch Your Career",
+                                    desc: "Graduate with a verified portfolio. We take your completed projects and Skill Scorecard directly to our network of hiring partners."
                                 }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-6 group">

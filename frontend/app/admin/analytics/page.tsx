@@ -13,46 +13,65 @@ import {
     Zap,
     CreditCard,
     ChevronRight,
-    BarChart3
+    BarChart3,
+    Loader2
 } from 'lucide-react';
+import { AnalyticsData, fetchAdminAnalytics } from '@/app/lib/admin';
 
 export default function AnalyticsPage() {
     const [stats, setStats] = useState({
-        visitors: 12402,
-        subscribers: 848,
-        activeNow: 124
+        visitors: 0,
+        subscribers: 0,
+        activeNow: 0
     });
-    const [analyticsData, setAnalyticsData] = useState<{ funnels?: any[]; featureEngagement?: any[] } | null>(null);
+    const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
     const [timeRange, setTimeRange] = useState('7d');
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Simulate real-time activity
+    // Fetch data and simulate real-time activity
     useEffect(() => {
         const loadAnalytics = async () => {
+            setIsLoading(true);
             try {
                 const token = localStorage.getItem('accessToken') || '';
-                const { fetchAdminAnalytics } = await import('@/app/lib/admin');
                 const data = await fetchAdminAnalytics(token);
                 setStats({
-                    visitors: data.visitors || 0,
-                    subscribers: data.subscribers || 0,
-                    activeNow: data.activeNow || 0,
+                    visitors: data.visitors,
+                    subscribers: data.subscribers,
+                    activeNow: data.activeNow,
                 });
                 setAnalyticsData(data);
             } catch (error) {
-                // keep defaults
+                console.error("Error loading analytics:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
+
         loadAnalytics();
+
         const interval = setInterval(() => {
             setStats(prev => ({
                 ...prev,
                 activeNow: Math.max(0, prev.activeNow + (Math.floor(Math.random() * 5) - 2))
             }));
         }, 3000);
+
         return () => clearInterval(interval);
     }, []);
 
-    const conversionRate = ((stats.subscribers / stats.visitors) * 100).toFixed(1);
+    if (isLoading || !analyticsData) {
+        return (
+            <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+                <div className="flex flex-col items-center gap-4 text-slate-400">
+                    <Loader2 className="animate-spin" size={32} />
+                    <p className="text-sm font-bold uppercase tracking-widest">Loading Analytics Engine...</p>
+                </div>
+            </div>
+        );
+    }
+
+    const conversionRate = stats.visitors > 0 ? ((stats.subscribers / stats.visitors) * 100).toFixed(1) : '0.0';
 
     const overviewStats = [
         { label: 'Total Visitors', value: stats.visitors.toLocaleString(), change: '+14%', trend: 'up', icon: MousePointer2, color: 'text-blue-600' },
@@ -61,20 +80,8 @@ export default function AnalyticsPage() {
         { label: 'Avg. Session Time', value: '24m 12s', change: '-2%', trend: 'down', icon: Clock, color: 'text-slate-600' },
     ];
 
-    const featureEngagement = analyticsData?.featureEngagement || [
-        { name: 'DSA Training', time: '840h users', percentage: 90, color: 'bg-blue-500' },
-        { name: 'VS School (Prep)', time: '620h users', percentage: 75, color: 'bg-indigo-500' },
-        { name: 'Mock Interviews', time: '410h users', percentage: 60, color: 'bg-rose-500' },
-        { name: 'Placement Mode Dashboard', time: '580h users', percentage: 70, color: 'bg-emerald-500' },
-        { name: 'Synapse Intelligence', time: '340h users', percentage: 45, color: 'bg-amber-500' },
-    ];
-
-    const engagementFunnels = analyticsData?.funnels || [
-        { stage: 'Platform Landing', count: '12.4k', percentage: 100 },
-        { stage: 'Entered Placement Mode', count: '8.2k', percentage: 66 },
-        { stage: 'Started Training', count: '4.1k', percentage: 33 },
-        { stage: 'Subscribed to Pro', count: '848', percentage: 7 },
-    ];
+    const featureEngagement = analyticsData.featureEngagement;
+    const engagementFunnels = analyticsData.funnels;
 
     return (
         <div className="max-w-[1400px] mx-auto space-y-10 pb-20 pt-4">
@@ -90,8 +97,8 @@ export default function AnalyticsPage() {
                             key={range}
                             onClick={() => setTimeRange(range)}
                             className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${timeRange === range
-                                    ? 'bg-slate-900 text-white'
-                                    : 'bg-white text-slate-400 border border-slate-200 hover:border-slate-300'
+                                ? 'bg-slate-900 text-white'
+                                : 'bg-white text-slate-400 border border-slate-200 hover:border-slate-300'
                                 }`}
                         >
                             {range}

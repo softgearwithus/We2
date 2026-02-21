@@ -36,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import PremiumPopup from './components/shared/PremiumPopup';
+
 export default function RootLayout({
   children,
 }: {
@@ -50,7 +52,10 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <PremiumPopup />
+        </AuthProvider>
       </body>
     </html>
   );

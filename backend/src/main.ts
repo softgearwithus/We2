@@ -34,6 +34,7 @@ async function bootstrap() {
   );
 
   // Enable CORS
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const defaultOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
   const envOrigins = (process.env.FRONTEND_URL || '')
     .split(',')
@@ -43,7 +44,8 @@ async function bootstrap() {
 
   app.enableCors({
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow all origins in development, or if the origin is in the allowed list
+      if (!origin || isDevelopment || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by CORS'), false);

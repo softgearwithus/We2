@@ -44,24 +44,32 @@ const unifiedTechStack = [
 
 const combinedFaqs = [
     {
-        q: "What makes Emble India's #1 AI Interview platform?",
-        a: "Emble is the only platform offering a dual-mode AI interview simulation experience: Audiotail for immersive voice-only rounds and full AI video simulation interviews that track your body language and confidence in real-time."
+        q: "What is India's First Integrated AI Placement Ecosystem Hub?",
+        a: "Emble is more than just a course - it's an end-to-end career ecosystem. We combine industry-exact DSA/SQL training with deep-tech AI simulations (Voice and Video) and 'Synapse' (our real-time industry intelligence feed) to ensure you don't just learn, but master the industrial logic required by top engineering teams."
     },
     {
-        q: "How does the DSA training work?",
-        a: "We offer a curated suite of 200+ hand-picked questions that are frequently asked in top companies like Google, Amazon, and Microsoft. Each question comes with an AI-powered hint system and optimal solution walkthroughs."
+        q: "What is 'Synapse' and how does it help me?",
+        a: "Synapse is our real-time industry intelligence hub. Instead of static news, it delivers 'snappy' updates on new tech stacks, company-specific hiring trends, and technical shifts in the global engineering landscape, ensuring your knowledge is always current for interviews."
     },
     {
-        q: "What is Snipes?",
-        a: "Snipes is our built-in AI intelligence feed that keeps you updated with the latest AI news and industry trends, ensuring you're never out of the loop during technical discussions."
+        q: "How does the AI Interview Simulation actually work?",
+        a: "It's a two-stage process. First, 'Audiotail' masters your voice presence and verbal logic. Then, our Video AI analyzes your body language, technical accuracy, and confidence. It's like having a senior engineer from a top tech firm coaching you 24/7."
     },
     {
-        q: "Tell me more about the SQL training.",
-        a: "We've identified the top 50 industry-asked SQL questions and built a dedicated sandbox where you can practice complex queries and database schema designs asked by top employers."
+        q: "Will this help me if I'm a complete beginner?",
+        a: "Absolutely. The ecosystem is designed to take you from 'First Line of Code' to 'Production Deployment'. We bridge the gap between college theory and actual industrial reality using the same tools and logic used at firms like Google and Amazon."
     },
     {
-        q: "What is the structure of the overall Bootcamp Curriculum?",
-        a: "The curriculum is divided into two major phases: Phase 1 focuses on Placement Mastery (DSA, SQL, AI Interviews), and Phase 2 focuses on Industrial Simulation (building real-word production systems)."
+        q: "What makes the DSA & SQL training different here?",
+        a: "We don't focus on 1000s of generic questions. We focus on the 'Logic Gap'. You get 200+ Company-Picked DSA challenges and 50+ Industry SQL scenarios that actually show up in high-paying placement rounds."
+    },
+    {
+        q: "Can I use Emble for remote job preparation?",
+        a: "Yes. Our simulations and industrial projects are curated to reflect the global remote engineering standard, focusing on clean code, GitHub standards, and professional asynchronous communication."
+    },
+    {
+        q: "How do I get started with the Career Ecosystem?",
+        a: "Simple. Choose your path—Standard or Pro. Once you're in, the AI adaptive engine audits your current skills and creates a personalized roadmap through Placement Mode and Industrial Simulation."
     }
 ];
 
@@ -146,7 +154,7 @@ export default function CurriculumPage() {
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-orange text-xs font-bold uppercase tracking-widest mb-6 border border-white/10"
                     >
                         <Zap size={14} className="fill-current" />
-                        India's #1 AI Interview Simulation Platform
+                        India's First Integrated AI Placement Ecosystem Hub
                     </motion.div>
 
                     <motion.h1
@@ -184,7 +192,7 @@ export default function CurriculumPage() {
                             Phase 1: Recruitment Readiness
                         </motion.div>
                         <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-extrabold text-brand-black mb-4 tracking-tight">
-                            Placement Accelerator.
+                            Placement Ecosystem Hub.
                         </motion.h2>
                         <motion.p variants={itemVariants} className="text-gray-500 max-w-2xl mx-auto font-medium text-lg">
                             Are you clearing the technical rounds? We bridge the logic gap that video lectures miss, ensuring you're ready for every screening.
@@ -228,11 +236,11 @@ export default function CurriculumPage() {
                                 badge: "ATS Optimized"
                             },
                             {
-                                title: "Latest AI News",
-                                desc: "Stay ahead with a daily feed of the most important AI updates and industry trends.",
+                                title: "Synapse (Neural Growth Feed)",
+                                desc: "Stay ahead with a real-time feed of snappy industry intelligence, hiring trends, and technical shifts.",
                                 icon: Newspaper,
                                 color: "pink",
-                                badge: "Real-time"
+                                badge: "Industry IQ"
                             },
                             {
                                 title: "Behavioral & HR Prep",
@@ -295,20 +303,21 @@ export default function CurriculumPage() {
                             viewport={{ once: true, amount: 0.1 }}
                             variants={containerVariants}
                         >
-                            <motion.h3 variants={itemVariants} className="text-3xl font-extrabold text-brand-black mb-8">The 21-Day Industry Sprint</motion.h3>
-                            <div className="space-y-8">
+                            <motion.h3 variants={itemVariants} className="text-3xl font-extrabold text-brand-black mb-8">Four Pillars of Industrial Excellence</motion.h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                 {[
-                                    { title: "Week 1: System Onboarding", desc: "Set up your dev environment, explore the existing microservices architecture, and take your first bug ticket." },
-                                    { title: "Week 2: Feature Development", desc: "Write clean, modular code for a major feature. Submit Pull Requests and go through rigorous senior AI code reviews." },
-                                    { title: "Week 3: Deployment & Refinement", desc: "Integrate with CI/CD pipelines, handle edge cases, and finalize your work for the production deployment." }
+                                    { title: "GitHub Mastery", desc: "Master professional collaboration. Learn branching, PR reviews, and industrial git standards." },
+                                    { title: "Professional Deployment", desc: "Move beyond localhost. Master rendering, hosting, and production-ready deployments." },
+                                    { title: "Industrial Standards", desc: "Write code that survives. Learn clean code, modular architecture, and documentation logic." },
+                                    { title: "Production Systems", desc: "Understand real-world scale. Navigate microservices and production-grade dev-ops." }
                                 ].map((item, idx) => (
-                                    <motion.div key={idx} variants={itemVariants} className="flex gap-6 group">
-                                        <div className="w-12 h-12 rounded-2xl bg-white border border-gray-200 shadow-sm text-brand-orange flex items-center justify-center font-black text-lg flex-shrink-0 group-hover:scale-110 group-hover:border-brand-orange transition-all">
+                                    <motion.div key={idx} variants={itemVariants} className="flex flex-col gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                                        <div className="w-10 h-10 rounded-xl bg-orange-50 text-brand-orange flex items-center justify-center font-black group-hover:scale-110 transition-transform">
                                             {idx + 1}
                                         </div>
                                         <div>
-                                            <h4 className="text-xl font-bold text-brand-black mb-2">{item.title}</h4>
-                                            <p className="text-gray-500 font-medium leading-relaxed">{item.desc}</p>
+                                            <h4 className="text-lg font-bold text-brand-black mb-2">{item.title}</h4>
+                                            <p className="text-gray-500 font-medium text-sm leading-relaxed">{item.desc}</p>
                                         </div>
                                     </motion.div>
                                 ))}

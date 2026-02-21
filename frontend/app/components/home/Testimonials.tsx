@@ -200,7 +200,7 @@ const testimonials = [
         initials: "K",
         color: "bg-rose-600",
         rating: 4.7,
-        text: "As India's #1 AI platform, the tech depth is incredible. Building microservices with real-time AI feedback is a game changer.",
+        text: "As India's First Integrated AI Placement Ecosystem Hub, the tech depth is incredible. Building microservices with real-time AI feedback is a game changer.",
         verified: false,
         gradient: "from-rose-50 to-rose-200/50"
     },
