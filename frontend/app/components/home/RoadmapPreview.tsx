@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { ChevronRight, Database, Globe, Lock, Rocket, Server, Terminal } from 'lucide-react';
 
 const roadmapNodes = [
@@ -13,7 +12,7 @@ const roadmapNodes = [
 // Forced refresh
 export default function RoadmapPreview() {
     return (
-        <section className="py-24 bg-gray-50 relative overflow-hidden">
+        <section className="py-16 bg-gray-50 relative overflow-hidden">
             {/* Decorative grid */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
@@ -53,19 +52,14 @@ export default function RoadmapPreview() {
 
                             <div className="space-y-10">
                                 {roadmapNodes.map((node, i) => (
-                                    <motion.div
+                                    <div
                                         key={i}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1, duration: 0.5 }}
                                         className="flex items-center gap-8 group"
                                     >
                                         <div className={`w-20 h-20 rounded-2xl ${node.bg} ${node.color} flex items-center justify-center border border-white shadow-xl group-hover:scale-110 transition-transform duration-300 relative`}>
                                             <node.icon size={32} />
                                             {/* Pulse effect for first node or 'active' node */}
                                             {i === 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                                 <span className="relative inline-flex rounded-full h-4 w-4 bg-blue-500 border-2 border-white"></span>
                                             </span>}
                                         </div>
@@ -73,12 +67,12 @@ export default function RoadmapPreview() {
                                             <h4 className="text-lg font-extrabold text-brand-black mb-1">{node.title}</h4>
                                             <p className="text-sm text-gray-500 font-medium">Stage {i + 1} Assessment Completed</p>
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 ))}
                             </div>
 
                             {/* Floating CTA */}
-                            <div className="absolute -bottom-10 right-0 p-4 bg-brand-black text-white rounded-2xl shadow-xl flex items-center gap-4 animate-bounce-slow">
+                            <div className="absolute -bottom-10 right-0 p-4 bg-brand-black text-white rounded-2xl shadow-xl flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-brand-orange flex items-center justify-center">
                                     <Rocket size={18} />
                                 </div>

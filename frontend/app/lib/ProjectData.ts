@@ -108,6 +108,15 @@ const createProject = (
 });
 
 
+// Helper to replicate projects to reach a count
+const replicateProjects = (template: ProjectType, count: number): ProjectType[] => {
+    return Array.from({ length: count }).map((_, i) => ({
+        ...template,
+        id: `${template.id}-${i + 1}`,
+        title: `${template.title} ${i + 1}`
+    }));
+};
+
 export const PROJECT_DOMAINS: DomainType[] = [
     {
         id: 'web_fundamentals',
@@ -126,9 +135,9 @@ export const PROJECT_DOMAINS: DomainType[] = [
                 popularity: 100,
                 difficulty: 'Low',
                 tiers: {
-                    beginner: [createProject('fund-html-1', 'Personal Resume', 'A digital resume.', 'Beginner', '3 Hours', ['HTML5', 'CSS3'], ['Portfolio'], { frontend: 'HTML/CSS', prerequisites: ['None'], tools: ['VS Code'] })],
-                    intermediate: [createProject('fund-html-2', 'Landing Page', 'Product landing page.', 'Intermediate', '8 Hours', ['Flexbox', 'Grid'], ['Marketing'], { frontend: 'HTML/CSS', prerequisites: ['Basic HTML'], tools: ['VS Code', 'Chrome DevTools'] })],
-                    advanced: [createProject('fund-html-3', 'CSS Animations', 'Complex animations.', 'Advanced', '15 Hours', ['Keyframes', 'Transform'], ['Creative'], { frontend: 'Advanced CSS', prerequisites: ['CSS Basics'], tools: ['VS Code'] })]
+                    beginner: replicateProjects(createProject('fund-html-1', 'Personal Resume', 'A digital resume.', 'Beginner', '3 Hours', ['HTML5', 'CSS3'], ['Portfolio'], { frontend: 'HTML/CSS', prerequisites: ['None'], tools: ['VS Code'] }), 10),
+                    intermediate: replicateProjects(createProject('fund-html-2', 'Landing Page', 'Product landing page.', 'Intermediate', '8 Hours', ['Flexbox', 'Grid'], ['Marketing'], { frontend: 'HTML/CSS', prerequisites: ['Basic HTML'], tools: ['VS Code', 'Chrome DevTools'] }), 10),
+                    advanced: replicateProjects(createProject('fund-html-3', 'CSS Animations', 'Complex animations.', 'Advanced', '15 Hours', ['Keyframes', 'Transform'], ['Creative'], { frontend: 'Advanced CSS', prerequisites: ['CSS Basics'], tools: ['VS Code'] }), 10)
                 }
             },
             {
@@ -139,9 +148,9 @@ export const PROJECT_DOMAINS: DomainType[] = [
                 popularity: 100,
                 difficulty: 'Medium',
                 tiers: {
-                    beginner: [createProject('fund-js-1', 'Digital Clock', 'Live time display.', 'Beginner', '2 Hours', ['Date Object', 'DOM'], ['Utility'], { frontend: 'Vanilla JS', prerequisites: ['HTML/CSS'], tools: ['Browser Console'] })],
-                    intermediate: [createProject('fund-js-2', 'Weather App', 'Fetch API usage.', 'Intermediate', '10 Hours', ['Fetch API', 'Promises'], ['API'], { frontend: 'JS + HTML/CSS', backend: 'OpenWeatherMap API', prerequisites: ['Basic JS'], tools: ['VS Code'] })],
-                    advanced: [createProject('fund-js-3', 'Vanilla SPA', 'Single Page App framework.', 'Advanced', '30 Hours', ['History API', 'Classes'], ['Architecture'], { frontend: 'Vanilla JS', architecture: 'MVC', prerequisites: ['Intermediate JS'], tools: ['VS Code'] })]
+                    beginner: replicateProjects(createProject('fund-js-1', 'Digital Clock', 'Live time display.', 'Beginner', '2 Hours', ['Date Object', 'DOM'], ['Utility'], { frontend: 'Vanilla JS', prerequisites: ['HTML/CSS'], tools: ['Browser Console'] }), 10),
+                    intermediate: replicateProjects(createProject('fund-js-2', 'Weather App', 'Fetch API usage.', 'Intermediate', '10 Hours', ['Fetch API', 'Promises'], ['API'], { frontend: 'JS + HTML/CSS', backend: 'OpenWeatherMap API', prerequisites: ['Basic JS'], tools: ['VS Code'] }), 10),
+                    advanced: replicateProjects(createProject('fund-js-3', 'Vanilla SPA', 'Single Page App framework.', 'Advanced', '30 Hours', ['History API', 'Classes'], ['Architecture'], { frontend: 'Vanilla JS', architecture: 'MVC', prerequisites: ['Intermediate JS'], tools: ['VS Code'] }), 10)
                 }
             }
         ]

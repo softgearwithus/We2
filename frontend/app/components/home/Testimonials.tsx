@@ -257,12 +257,11 @@ const testimonials = [
 ];
 
 // Duplicate for marquee effect
-const marqueeTestimonials = [...testimonials, ...testimonials, ...testimonials];
+const marqueeTestimonials = [...testimonials, ...testimonials];
 
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
-    <div className="w-[400px] shrink-0 mx-4 group relative cursor-pointer">
-        <div className={`absolute -inset-0.5 bg-gradient-to-b ${t.gradient} rounded-[2rem] opacity-0 group-hover:opacity-100 transition duration-500 blur-xl`}></div>
-        <div className="relative h-full bg-white rounded-[1.8rem] p-8 border border-gray-100 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-gray-200/60 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1">
+    <div className="w-[400px] shrink-0 mx-4 group relative cursor-pointer transform-gpu will-change-transform">
+        <div className="relative h-full bg-white rounded-[1.8rem] p-8 border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-2xl hover:shadow-brand-orange/10 transition-shadow duration-300 flex flex-col justify-between">
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -300,7 +299,7 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
 
 export default function Testimonials() {
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section className="py-20 bg-white relative overflow-hidden">
 
             {/* Header */}
             <div className="max-w-7xl mx-auto px-6 mb-16 relative z-10 text-center">
@@ -316,16 +315,16 @@ export default function Testimonials() {
             </div>
 
             {/* Marquee Container */}
-            <div className="relative w-full overflow-hidden mask-linear-fade">
+            <div className="relative w-full overflow-hidden mask-linear-fade transform-gpu">
                 {/* Row 1: Left to Right */}
-                <div className="flex mb-8 w-fit animate-marquee hover:[animation-play-state:paused]">
+                <div className="flex mb-8 w-fit animate-marquee hover:[animation-play-state:paused] transform-gpu will-change-transform">
                     {marqueeTestimonials.map((t, i) => (
                         <Card key={`row1-${i}`} t={t} />
                     ))}
                 </div>
 
                 {/* Row 2: Right to Left */}
-                <div className="flex w-fit animate-marquee-reverse hover:[animation-play-state:paused]">
+                <div className="flex w-fit animate-marquee-reverse hover:[animation-play-state:paused] transform-gpu will-change-transform">
                     {marqueeTestimonials.map((t, i) => (
                         <Card key={`row2-${i}`} t={t} />
                     ))}
@@ -349,10 +348,10 @@ export default function Testimonials() {
                     100% { transform: translateX(0); }
                 }
                 .animate-marquee {
-                    animation: marquee 180s linear infinite;
+                    animation: marquee 120s linear infinite;
                 }
                 .animate-marquee-reverse {
-                    animation: marquee-reverse 200s linear infinite;
+                    animation: marquee-reverse 130s linear infinite;
                 }
             `}</style>
         </section>

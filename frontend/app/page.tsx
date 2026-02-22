@@ -16,27 +16,19 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section - Violet/Gradient Theme */}
-      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden">
-        {/* Background Animated Glows & Halo */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Main Halo Effect - Centered behind text area */}
-          <div className="absolute top-[20%] left-[10%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(255,87,34,0.15)_0%,rgba(255,255,255,0)_70%)] blur-[80px] animate-pulse-slow mix-blend-multiply dark:mix-blend-screen"></div>
-
-          {/* Secondary Ambient Glows */}
-          <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] rounded-full bg-purple-500/5 blur-[120px] animate-pulse-soft" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-[-10%] left-[-20%] w-[800px] h-[800px] rounded-full bg-blue-500/5 blur-[120px] animate-pulse-soft" style={{ animationDelay: '3s' }}></div>
-        </div>
+      <section className="relative pt-32 pb-16 lg:pt-48 lg:pb-20 overflow-hidden">
+        {/* Static Background Glow */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none bg-gradient-to-br from-brand-orange/5 via-transparent to-purple-600/5"></div>
 
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
 
 
           {/* Left Content */}
-          <div className="relative z-10 animate-fade-in-up flex flex-col items-start text-left">
+          <div className="relative z-10 flex flex-col items-start text-left">
 
             {/* Badge - High Contrast Pill */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 border border-orange-100 mb-8 transition-all hover:bg-orange-100 cursor-default group shadow-sm">
               <span className="flex h-2.5 w-2.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-orange"></span>
               </span>
               <span className="text-sm font-bold text-orange-800 tracking-tight">Join 200+ Active Students</span>
@@ -90,9 +82,9 @@ export default function Home() {
           </div>
 
           {/* Right Visual - Interactive Code Card */}
-          <div className="relative animate-fade-in-up md:block hidden" style={{ animationDelay: '0.2s' }}>
-            <div className="relative rounded-[32px] bg-gray-900 shadow-[0_40px_100px_rgba(0,0,0,0.4)] p-6 rotate-2 border border-white/10 hover:rotate-0 hover:scale-105 transition-all duration-700 group perspective">
-              <div className="absolute -inset-2 bg-gradient-to-r from-brand-orange/20 to-purple-600/20 rounded-[40px] blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000 pointer-events-none"></div>
+          <div className="relative md:block hidden">
+            <div className="relative rounded-[32px] bg-gray-900 shadow-2xl p-6 border border-white/10 group perspective">
+              <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange/20 to-purple-600/20 rounded-[40px] opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none mix-blend-overlay"></div>
 
               {/* Window Controls */}
               <div className="flex items-center gap-2 mb-8 px-2">
@@ -132,7 +124,7 @@ export default function Home() {
               </div>
 
               {/* Floating Badge */}
-              <div className="absolute -bottom-10 -right-10 glass p-5 rounded-3xl shadow-2xl border border-white/40 animate-bounce-slow flex items-center gap-4 transition-transform hover:scale-110">
+              <div className="absolute -bottom-10 -right-10 glass p-5 rounded-3xl shadow-xl border border-white/40 flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center text-white shadow-lg shadow-green-200">
                   <span className="material-symbols-outlined font-black text-3xl">check</span>
                 </div>
@@ -161,10 +153,10 @@ export default function Home() {
 
       <FAQSection />
 
-      <section className="py-48 bg-white border-t border-gray-50 relative overflow-hidden">
+      <section className="py-32 bg-white border-t border-gray-50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-orange to-purple-600 opacity-20"></div>
         <div className="max-w-6xl mx-auto px-6 text-center space-y-12">
-          <h2 className="text-6xl md:text-[100px] font-[900] text-brand-black tracking-tighter text-balance leading-[0.85] animate-pulse-soft">
+          <h2 className="text-6xl md:text-[100px] font-[900] text-brand-black tracking-tighter text-balance leading-[0.85]">
             Start Your <br /> <span className="text-gradient">Story Today.</span>
           </h2>
           <p className="text-gray-400 text-2xl max-w-3xl mx-auto font-medium opacity-80 leading-relaxed">

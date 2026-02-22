@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { TechStack, ProjectType } from '@/app/lib/ProjectData';
-import { Lock, Clock, CheckCircle2 } from 'lucide-react';
+import { Lock, Clock, CheckCircle2, ChevronDown, ChevronUp, Briefcase } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface SkillRoadmapProps {
     stack: TechStack;
@@ -10,6 +11,151 @@ interface SkillRoadmapProps {
 }
 
 export default function SkillRoadmap({ stack, onSelectProject }: SkillRoadmapProps) {
+    const [completedProjects, setCompletedProjects] = useState<string[]>([]);
+    const [expandedTiers, setExpandedTiers] = useState<{ [key: string]: boolean }>({
+        beginner: false,
+        intermediate: false,
+        advanced: false
+    });
+
+    useEffect(() => {
+        // Load completed projects from local storage to test progression
+        const stored = localStorage.getItem('emble_completed_projects');
+        if (stored) {
+            try {
+                setCompletedProjects(JSON.parse(stored));
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, []);
+
+    const toggleExpanded = (tier: string) => {
+        setExpandedTiers(prev => ({ ...prev, [tier]: !prev[tier] }));
+    };
+
+    // Calculate completions per tier
+    const getCompletedCount = (tierProjects: ProjectType[]) => {
+        return tierProjects.filter(p => completedProjects.includes(p.id)).length;
+    };
+
+    const beginnerCompleted = getCompletedCount(stack.tiers.beginner);
+    const intermediateCompleted = getCompletedCount(stack.tiers.intermediate);
+
+    const isIntermediateUnlocked = beginnerCompleted >= 3;
+    const isAdvancedUnlocked = intermediateCompleted >= 3;
+
+    const renderProjectCard = (project: ProjectType, isLocked: boolean) => {
+        const isCompleted = completedProjects.includes(project.id);
+
+        return (
+            <div
+                key={project.id}
+                onClick={() => !isLocked && onSelectProject(project)}
+                className={`bg-white border ${isCompleted ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-100/50'} rounded-3xl p-6 transition-all duration-300 ${isLocked ? 'grayscale opacity-75 cursor-not-allowed' : 'hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 cursor-pointer'} group relative`}
+            >
+                {isCompleted && (
+                    <div className="absolute top-4 right-4">
+                        <CheckCircle2 size={20} className="text-emerald-500" />
+                    </div>
+                )}
+                <div className="flex justify-between items-start mb-4">
+                    <h4 className="font-bold text-slate-800 text-lg group-hover:text-indigo-600 transition-colors line-clamp-1 pr-8 leading-tight">{project.title}</h4>
+                    {!isCompleted && (
+                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${project.complexity === 'Beginner' ? 'bg-emerald-50 text-emerald-600' : project.complexity === 'Intermediate' ? 'bg-orange-50 text-orange-600' : 'bg-rose-50 text-rose-600'
+                            }`}>
+                            {project.complexity}
+                        </span>
+                    )}
+                </div>
+                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-6 h-10">{project.description}</p>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                    <div className="flex items-center text-xs font-semibold text-slate-400 gap-1.5">
+                        <Clock size={14} />
+                        {project.estimatedTime}
+                    </div>
+                    <div className="flex gap-1">
+                        {!isLocked && (
+                            <span className="text-xs font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white px-3 py-1.5 rounded-full bg-indigo-50/80 transition-all duration-300">Start Project</span>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderTier = (
+        name: string,
+        tierKey: 'beginner' | 'intermediate' | 'advanced',
+        projects: ProjectType[],
+        isUnlocked: boolean,
+        unlockMessage: string,
+        completedCount: number,
+        requiredToUnlockNext: number = 3
+    ) => {
+        const isExpanded = expandedTiers[tierKey];
+        const visibleProjects = isExpanded ? projects : projects.slice(0, 4);
+        const hasMore = projects.length > 4;
+
+        return (
+            <div className={`relative ${!isUnlocked ? 'opacity-60' : ''}`}>
+                <div className={`absolute -left-[41px] top-0 w-6 h-6 rounded-full border-4 z-10 flex items-center justify-center ${isUnlocked ? 'bg-white border-indigo-600' : 'bg-slate-100 border-slate-300'}`}>
+                    {!isUnlocked && <Lock size={10} className="text-slate-400" />}
+                </div>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+                    <h3 className={`text-base font-bold flex items-center gap-2 ${isUnlocked ? 'text-slate-900' : 'text-slate-500'}`}>
+                        {name}
+                        {isUnlocked ? (
+                            <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold border border-indigo-100">
+                                {completedCount} / {projects.length} Completed
+                            </span>
+                        ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-bold border border-slate-200">
+                                Locked: {unlockMessage}
+                            </span>
+                        )}
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {visibleProjects.map((project) => renderProjectCard(project, !isUnlocked))}
+
+                        {/* View All / View Less Rendered as a Card */}
+                        {isUnlocked && hasMore && (
+                            <div
+                                onClick={() => toggleExpanded(tierKey)}
+                                className="bg-indigo-50/50 border border-indigo-100/50 rounded-3xl p-6 transition-all duration-300 hover:bg-indigo-100/80 hover:shadow-lg hover:shadow-indigo-500/5 cursor-pointer flex flex-col items-center justify-center text-center group min-h-[180px]"
+                            >
+                                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600 mb-3 group-hover:scale-110 transition-transform">
+                                    {isExpanded ? <ChevronUp size={24} /> : <span className="font-bold text-xl">+{projects.length - 4}</span>}
+                                </div>
+                                <h4 className="font-bold text-indigo-900 mb-1">
+                                    {isExpanded ? 'View Less' : 'More Projects'}
+                                </h4>
+                                <p className="text-sm text-indigo-600/70 font-medium">
+                                    {isExpanded ? 'Collapse list' : 'Click to view all'}
+                                </p>
+                            </div>
+                        )}
+
+                        {visibleProjects.length === 0 && (
+                            <div className="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
+                                Projects coming soon for this tier...
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {isUnlocked && completedCount < requiredToUnlockNext && (
+                    <div className="mt-4 text-xs font-medium text-amber-600 bg-amber-50 border border-amber-100 p-2.5 rounded-lg inline-block">
+                        Complete {requiredToUnlockNext - completedCount} more project{requiredToUnlockNext - completedCount > 1 ? 's' : ''} to unlock the next tier.
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -17,84 +163,45 @@ export default function SkillRoadmap({ stack, onSelectProject }: SkillRoadmapPro
             exit={{ opacity: 0, y: -10 }}
             className="w-full h-full"
         >
-            <h2 className="text-lg font-bold mb-6 text-slate-800">
-                Learning Path <span className="text-slate-400 font-normal">/</span> <span className="text-emerald-600">{stack.name}</span>
+            <h2 className="text-2xl font-black mb-8 text-slate-900 tracking-tight">
+                Roadmap <span className="text-slate-300 font-normal mx-2">/</span> <span className="text-indigo-600">{stack.name}</span>
             </h2>
 
-            <div className="relative space-y-8 pl-8 before:absolute before:left-[11px] before:top-2 before:bottom-0 before:w-0.5 before:bg-slate-200">
-                {/* Beginner Tier */}
-                <div className="relative">
-                    <div className="absolute -left-[41px] top-0 w-6 h-6 rounded-full bg-white border-4 border-indigo-600 z-10" />
-                    <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                        Beginner
-                        <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold border border-indigo-100">Unlock: Level 1</span>
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {stack.tiers.beginner.map((project) => (
-                            <div
-                                key={project.id}
-                                onClick={() => onSelectProject(project)}
-                                className="bg-white border border-slate-200 rounded-xl p-5 hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer group"
-                            >
-                                <div className="flex justify-between items-start mb-3">
-                                    <h4 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">{project.title}</h4>
-                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${project.complexity === 'Beginner' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-slate-50 text-slate-600 border-slate-100'
-                                        }`}>
-                                        {project.complexity}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-slate-500 line-clamp-2 mb-4 h-10">{project.description}</p>
-
-                                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                                    <div className="flex items-center text-xs text-slate-400">
-                                        <Clock size={12} className="mr-1" />
-                                        {project.estimatedTime}
-                                    </div>
-                                    <div className="flex gap-1">
-                                        <span className="text-[10px] px-2 py-1 rounded-full bg-indigo-50 text-indigo-600 font-bold border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-colors">View Details</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                        {stack.tiers.beginner.length === 0 && (
-                            <div className="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50">
-                                Projects coming soon for this tier...
-                            </div>
-                        )}
-                    </div>
+            {/* Resume Banner */}
+            <div className="mb-10 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100/50 rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
+                <div className="w-12 h-12 shrink-0 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600 border border-indigo-50">
+                    <Briefcase size={20} />
                 </div>
-
-                {/* Intermediate Tier */}
-                <div className="relative opacity-60">
-                    <div className="absolute -left-[41px] top-0 w-6 h-6 rounded-full bg-slate-100 border-4 border-slate-300 z-10 flex items-center justify-center">
-                        <Lock size={10} className="text-slate-400" />
-                    </div>
-                    <h3 className="text-base font-bold text-slate-500 mb-4 flex items-center gap-2">
-                        Intermediate
-                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-bold border border-slate-200">Locked</span>
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pointer-events-none">
-                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 grayscale">
-                            <div className="flex justify-between items-start mb-3">
-                                <h4 className="font-bold text-slate-700">Waitlist API</h4>
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-500 border border-slate-200">Medium</span>
-                            </div>
-                            <p className="text-sm text-slate-500 mb-4 h-10">Build a robust backend service for managing a waitlist queue.</p>
-                        </div>
-                    </div>
+                <div>
+                    <h3 className="font-bold text-indigo-950 mb-1 leading-tight">Build Your Portfolio</h3>
+                    <p className="text-sm text-indigo-900/70 leading-relaxed font-medium">
+                        These real-world projects are strictly designed to be added directly to your resume. Completing them provides strong, verifiable talking points for technical interviews.
+                    </p>
                 </div>
+            </div>
 
-                {/* Advanced Tier */}
-                <div className="relative opacity-60">
-                    <div className="absolute -left-[41px] top-0 w-6 h-6 rounded-full bg-slate-100 border-4 border-slate-300 z-10 flex items-center justify-center">
-                        <Lock size={10} className="text-slate-400" />
-                    </div>
-                    <h3 className="text-base font-bold text-slate-500 mb-4 flex items-center gap-2">
-                        Advanced
-                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-xs font-bold border border-slate-200">Locked</span>
-                    </h3>
-                </div>
+            <div className="relative space-y-12 pl-8 before:absolute before:left-[11px] before:top-2 before:bottom-0 before:w-0.5 before:bg-slate-200">
+                {renderTier('Beginner', 'beginner', stack.tiers.beginner, true, '', beginnerCompleted, 3)}
+
+                {renderTier(
+                    'Intermediate',
+                    'intermediate',
+                    stack.tiers.intermediate,
+                    isIntermediateUnlocked,
+                    'Complete 3 Beginner Projects',
+                    intermediateCompleted,
+                    3
+                )}
+
+                {renderTier(
+                    'Advanced',
+                    'advanced',
+                    stack.tiers.advanced,
+                    isAdvancedUnlocked,
+                    'Complete 3 Intermediate Projects',
+                    getCompletedCount(stack.tiers.advanced),
+                    3
+                )}
             </div>
         </motion.div>
     );

@@ -9,7 +9,8 @@ import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
 import SynapseWidget from '../components/dashboard/prep0/SynapseWidget';
-import { Sparkles, Target } from 'lucide-react';
+import { Sparkles, Target, GraduationCap, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 interface DashboardStats {
     readinessScore: number;
@@ -30,26 +31,26 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (!authLoading && user) {
-                // Only fetch placement stats if in prep mode, or fetch both if needed.
-                const fetchStats = async () => {
-                    const token = localStorage.getItem('accessToken');
-                    try {
-                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/dashboard-stats`, {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                        if (response.ok) {
-                            const data = await response.json();
-                            setStats(data);
+            // Only fetch placement stats if in prep mode, or fetch both if needed.
+            const fetchStats = async () => {
+                const token = localStorage.getItem('accessToken');
+                try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/dashboard-stats`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
                         }
-                    } catch (error) {
-                        console.error('Failed to fetch stats', error);
-                    } finally {
-                        setLoading(false);
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStats(data);
                     }
-                };
-                fetchStats();
+                } catch (error) {
+                    console.error('Failed to fetch stats', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchStats();
         }
     }, [authLoading, user]);
 
@@ -62,7 +63,7 @@ export default function DashboardPage() {
         return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>;
     }
 
-    // New PREP0 Dashboard Layout (Premium Light Theme)
+    // New Amber Dashboard Layout (Premium Light Theme)
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
             {/* Ambient Background Gradient (Subtle) */}
@@ -129,9 +130,38 @@ export default function DashboardPage() {
                         />
 
                         {/* Synapse Intelligence Widget */}
-                        <div className="h-64">
+                        <div className="h-64 mb-8">
                             <SynapseWidget recentActivity={stats.recentActivity} />
                         </div>
+
+                        {/* Become a Mentor Earn CTA */}
+                        <Link href="/mentor/apply" className="block mt-12 md:mt-16 group">
+                            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-black p-6 md:p-8 shadow-[0_10px_40px_-10px_rgba(79,70,229,0.4)] border border-indigo-500/20 hover:border-indigo-400/40 hover:shadow-[0_15px_50px_-10px_rgba(79,70,229,0.5)] transition-all duration-300 transform group-hover:-translate-y-1">
+                                {/* Decorative elements */}
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[60px] translate-x-1/3 -translate-y-1/3 pointer-events-none group-hover:bg-indigo-400/30 transition-colors"></div>
+                                <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand-orange/10 rounded-full blur-[40px] -translate-x-1/2 translate-y-1/2 pointer-events-none group-hover:bg-brand-orange/20 transition-colors"></div>
+
+                                <div className="relative z-10">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-4 backdrop-blur-md">
+                                        <Sparkles size={12} className="text-brand-orange" />
+                                        Earn With EMBLE
+                                    </div>
+
+                                    <h3 className="text-2xl font-extrabold text-white tracking-tight mb-2 leading-tight">
+                                        Join as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-indigo-400">Mentor</span>
+                                    </h3>
+
+                                    <p className="text-sm text-indigo-100/80 mb-6 leading-relaxed">
+                                        Got a great GATE/Codeforces score? Monetize your free time, guide the community, and earn well by taking 1:1 sessions.
+                                    </p>
+
+                                    <div className="flex items-center gap-2 text-sm font-bold text-white group-hover:text-brand-orange transition-colors">
+                                        Apply Now
+                                        <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>

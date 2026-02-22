@@ -13,9 +13,9 @@ const comparisonData = [
 
 export default function ComparisonSection() {
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section className="py-16 bg-white relative overflow-hidden">
             <div className="max-w-5xl mx-auto px-6">
-                <div className="text-center mb-16">
+                <div className="text-center mb-14">
                     <h2 className="text-4xl font-bold text-brand-black tracking-tight mb-4">
                         The <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600 font-black">EMBLE Edge</span>
                     </h2>

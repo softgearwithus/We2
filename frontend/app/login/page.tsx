@@ -46,10 +46,10 @@ export default function LoginSelectionPage() {
 
     return (
         <div className="min-h-screen bg-white selection:bg-brand-orange selection:text-white relative overflow-hidden flex flex-col">
-            {/* Background Decoration */}
+            {/* Background Decoration - Static for Performance */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64 animate-pulse-slow" />
-                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-3xl -ml-64 -mb-64 animate-pulse-slow delay-700" />
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64" />
+                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-3xl -ml-64 -mb-64" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{
                     backgroundImage: `radial-gradient(#000 1px, transparent 1px)`,
                     backgroundSize: '32px 32px'
@@ -58,11 +58,8 @@ export default function LoginSelectionPage() {
 
             {/* Header */}
             <header className="relative z-10 py-8 px-6 md:px-12 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2 group">
-                    <div className="w-10 h-10 bg-brand-black rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-orange/20 group-hover:scale-105 transition-transform">
-                        W2
-                    </div>
-                    <span className="font-bold text-xl text-brand-black tracking-tight">EMBLE<span className="text-brand-orange">.Target</span></span>
+                <Link href="/" className="flex items-center gap-3 group">
+                    <span className="font-black text-2xl text-brand-black tracking-tight">EMBLE</span>
                 </Link>
                 <Link
                     href="/"

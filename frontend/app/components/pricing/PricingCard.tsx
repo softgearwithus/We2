@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Check, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/app/lib/utils';
 import { useAuth } from '@/app/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 declare global {
     interface Window {
@@ -20,6 +21,7 @@ interface PricingFeature {
 interface PricingCardProps {
     title: string;
     price: string;
+    originalPrice?: string;
     period: string;
     features: PricingFeature[];
     variant?: 'default' | 'popular' | 'premium';
@@ -36,6 +38,7 @@ interface PricingCardProps {
 export default function PricingCard({
     title,
     price,
+    originalPrice,
     period,
     features,
     variant = 'default',
@@ -51,6 +54,7 @@ export default function PricingCard({
     const isPopular = variant === 'popular';
     const isPremium = variant === 'premium';
     const { login, updateUser, user } = useAuth();
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
     const loadRazorpayScript = () => {
@@ -115,6 +119,7 @@ export default function PricingCard({
                             updateUser(updatedUser);
                             alert(`Successfully upgraded to ${title}!`);
                             if (onCtaClick) onCtaClick();
+                            router.push('/dashboard');
                         } else {
                             const errorText = await upgradeResponse.text();
                             console.error('Upgrade failed:', upgradeResponse.status, errorText);
@@ -191,6 +196,9 @@ export default function PricingCard({
                 </div>
 
                 <div className="flex flex-col">
+                    {originalPrice && (
+                        <span className="text-slate-400 font-bold line-through text-xl decoration-slate-300 decoration-2">{originalPrice}</span>
+                    )}
                     <div className="flex items-baseline gap-1">
                         <span className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">{price}</span>
                         <span className="text-slate-500 font-bold">/{period}</span>

@@ -25,20 +25,18 @@ const STANDARD_PLAN = {
     period: 'month',
     description: 'Perfect for maintaining skills & light practice.',
     features: [
-        { text: 'Advanced Audio & Logic Drills', included: true },
-        { text: 'Curated FAANG-Level Coding', included: true },
-        { text: '5 Interactive AI Voice Interviews', included: true },
-        { text: '1 Full AI Video Interview', included: true },
-        { text: 'Precision ATS Resume Scans', included: true },
-        { text: 'Personalized AI Roadmaps', included: true },
-        { text: 'Company-Specific Problem Sets', included: true },
-        { text: 'Official Solutions & Explanations', included: true },
-        { text: 'Advanced Analytics Dashboard', included: true },
+        { text: 'Full-Stack Web Projects', included: true },
+        { text: 'Company-Specific DSA & SQL', included: true },
+        { text: 'GitHub & Cloud Deployments', included: true },
+        { text: 'Industry Intelligence Hub', included: true },
+        { text: '5 Interactive AI Voice Interviews/mo', included: true },
+        { text: '1 Full AI Video Interview/mo', included: true },
+        { text: 'AI Resume Builder & ATS Scans', included: true },
     ],
     ctaText: 'Get Standard Access',
     variant: 'default' as const,
     planId: 'standard_tier',
-    savings: 'Effective: ₹15/day'
+    savings: 'Effective: ₹11/day'
 };
 
 const PRO_PLAN = {
@@ -49,19 +47,15 @@ const PRO_PLAN = {
     description: 'For serious job seekers who need intense practice.',
     features: [
         { text: 'Everything in Standard', included: true },
-        { text: 'Immersive AI Simulation Environment', included: true },
-        { text: 'Real-world Project Workflows', included: true },
-        { text: 'Unlimited AI Pair Programming', included: true },
-        { text: 'Code Reviews by Senior AI Devs', included: true },
-        { text: 'Recruiter Visibility Badge', included: true },
-        { text: '10x Faster Code Execution', included: true },
-        { text: 'Unlimited Coding Playgrounds', included: true },
-        { text: '24/7 Priority AI Doubt Support', included: true },
-        { text: 'Elite AI Coding Agent Access', included: true },
+        { text: '15 Interactive AI Voice Interviews/mo', included: true },
+        { text: '3 Full AI Video Interviews/mo', included: true },
+        { text: 'Verified Skill Scorecard', included: true },
+        { text: 'Direct MNC Hiring Network', included: true },
+        { text: '24/7 Priority AI Support', included: true },
     ],
     ctaText: 'Get Pro Access',
     variant: 'premium' as const,
-    savings: 'Effective: ₹26/day',
+    savings: 'Effective: ₹20/day',
     badgeText: 'Best Value',
     planId: 'pro_tier',
 };
@@ -69,16 +63,16 @@ const PRO_PLAN = {
 const PLANS = [STANDARD_PLAN, PRO_PLAN];
 
 const ALL_FEATURES = [
-    { category: 'Preparation', name: 'DSA Placement Bootcamp', std: true, pro: true },
-    { category: 'Preparation', name: 'Virtual Internship', std: true, pro: true },
-    { category: 'Preparation', name: 'Company-Specific Problems', std: true, pro: true },
-    { category: 'AI Practice', name: 'AI Voice Interviews', std: '5/mo', pro: '15/mo' },
-    { category: 'AI Practice', name: 'AI Video Interviews', std: '1/mo', pro: '3/mo' },
-    { category: 'Career', name: 'ATS Resume Scans', std: '3/mo', pro: '10/mo' },
-    { category: 'Career', name: 'AI Copy Mentor', std: 'Limited', pro: 'Unlimited' },
-    { category: 'Career', name: 'Verified Certificate', std: false, pro: true },
-    { category: 'Career', name: 'Recruiter Badge', std: false, pro: true },
-    { category: 'Support', name: 'Priority Support', std: false, pro: true },
+    { category: 'Foundation', name: 'Company-Specific DSA & SQL', std: true, pro: true },
+    { category: 'Foundation', name: 'Industry Intelligence Hub (Synapse)', std: true, pro: true },
+    { category: 'Real-World Experience', name: 'Full-Stack Web Projects', std: true, pro: true },
+    { category: 'Real-World Experience', name: 'GitHub & Cloud Deployments', std: true, pro: true },
+    { category: 'Interview Practice', name: 'AI Voice Interviews', std: '5/mo', pro: '15/mo' },
+    { category: 'Interview Practice', name: 'AI Video Interviews', std: '1/mo', pro: '3/mo' },
+    { category: 'Career Growth', name: 'AI Resume Builder & ATS Scans', std: true, pro: true },
+    { category: 'Career Growth', name: 'Verified Skill Scorecard', std: false, pro: true },
+    { category: 'Career Growth', name: 'Direct MNC Hiring Network', std: false, pro: true },
+    { category: 'Support', name: '24/7 Priority AI Support', std: false, pro: true },
 ];
 
 export default function PricingPage() {
@@ -90,11 +84,11 @@ export default function PricingPage() {
         <div className="min-h-screen bg-white font-sans text-brand-black relative selection:bg-brand-orange-hover selection:text-white">
             <Navbar />
 
-            <main className="relative z-10 pt-32 pb-32 px-6">
+            <main className="relative z-10 pt-20 pb-20 px-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
-                    <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in-up">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-6">
+                    <div className="text-center max-w-3xl mx-auto mb-10 animate-fade-in-up">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-4">
                             Invest In Your Career
                         </div>
                         <h1 className="text-5xl md:text-6xl font-extrabold text-brand-black tracking-tight mb-6 leading-tight">
@@ -107,7 +101,7 @@ export default function PricingPage() {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex justify-center mb-16">
+                    <div className="flex justify-center mb-10">
                         <div className="bg-white p-1.5 rounded-2xl inline-flex gap-1 shadow-subtle border border-gray-200">
                             {TABS.map((tab) => {
                                 const Icon = tab.icon;
@@ -140,9 +134,9 @@ export default function PricingPage() {
                             transition={{ duration: 0.3 }}
                         >
                             {activeTab === 'students' && (
-                                <div className="space-y-16">
+                                <div className="space-y-6">
                                     {/* Billing Toggle */}
-                                    <div className="flex justify-center items-center gap-4 mb-8">
+                                    <div className="flex justify-center items-center gap-4 mb-4">
                                         <span className={cn("text-sm font-bold", billingCycle === 'monthly' ? "text-brand-black" : "text-gray-400")}>Monthly</span>
                                         <button
                                             onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'yearly' : 'monthly')}
@@ -155,29 +149,54 @@ export default function PricingPage() {
                                         </button>
                                         <span className={cn("text-sm font-bold flex items-center gap-2", billingCycle === 'yearly' ? "text-brand-black" : "text-gray-400")}>
                                             Yearly
-                                            <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">Save 20%</span>
+                                            <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">Save 26%</span>
                                         </span>
                                     </div>
 
+                                    <div className="text-center mt-2 mb-4">
+                                        <div className="h-8 flex items-center justify-center">
+                                            <AnimatePresence>
+                                                {billingCycle === 'monthly' && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: -10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, scale: 0.95 }}
+                                                        className="text-sm font-bold text-brand-orange bg-orange-50 px-4 py-1.5 rounded-full inline-block border border-orange-100 shadow-sm"
+                                                    >
+                                                        💡 Subscribe annually and save up to 26%!
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </div>
+
                                     {/* ROI Message */}
-                                    <div className="text-center mb-10">
+                                    <div className="text-center mb-4">
                                         <p className="text-sm font-medium text-gray-500 bg-white inline-block px-4 py-2 rounded-full shadow-subtle border border-gray-100">
                                             💡 <span className="text-brand-orange font-bold">ROI Fact:</span> Less than the cost of a weekend outing, but builds a career that pays for a lifetime.
                                         </p>
                                     </div>
 
                                     {/* Pricing Cards */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch pt-4 max-w-5xl mx-auto">
-                                        {PLANS.map((plan, idx) => (
-                                            <PricingCard
-                                                key={plan.title}
-                                                {...plan}
-                                                price={billingCycle === 'yearly' ? `₹${Math.round(parseInt(plan.price.replace('₹', '')) * 12 * 0.8)}` : plan.price}
-                                                period={billingCycle === 'yearly' ? 'year' : 'month'}
-                                                delay={idx}
-                                                onCtaClick={() => console.log('Clicked', plan.title)}
-                                            />
-                                        ))}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch pt-2 max-w-5xl mx-auto">
+                                        {PLANS.map((plan, idx) => {
+                                            const basePrice = parseInt(plan.price.replace('₹', ''));
+                                            const originalYearly = basePrice * 12;
+                                            const discountedYearly = basePrice === 449 ? 3999 : 7470;
+
+                                            return (
+                                                <PricingCard
+                                                    key={plan.title}
+                                                    {...plan}
+                                                    originalPrice={billingCycle === 'yearly' ? `₹${originalYearly}` : undefined}
+                                                    price={billingCycle === 'yearly' ? `₹${discountedYearly}` : plan.price}
+                                                    period={billingCycle === 'yearly' ? 'year' : 'month'}
+                                                    savings={billingCycle === 'yearly' ? plan.savings : undefined}
+                                                    delay={idx}
+                                                    onCtaClick={() => console.log('Clicked', plan.title)}
+                                                />
+                                            );
+                                        })}
                                     </div>
 
                                     {/* Comparison Table Toggle */}
@@ -202,21 +221,21 @@ export default function PricingPage() {
                                                         <table className="w-full text-sm text-left">
                                                             <thead>
                                                                 <tr className="border-b border-gray-100">
-                                                                    <th className="py-3 font-medium text-gray-500">Feature</th>
-                                                                    <th className="py-3 font-bold text-brand-black text-center">Ignite</th>
-                                                                    <th className="py-3 font-bold text-brand-orange text-center">Nexus</th>
+                                                                    <th className="py-2 font-medium text-gray-500">Feature</th>
+                                                                    <th className="py-2 font-bold text-brand-black text-center">Standard</th>
+                                                                    <th className="py-2 font-bold text-brand-orange text-center">Pro</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {ALL_FEATURES.map((feat, i) => (
                                                                     <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50">
-                                                                        <td className="py-3 font-medium text-gray-700">{feat.name}</td>
-                                                                        <td className="py-3 text-center text-gray-500">
+                                                                        <td className="py-2 font-medium text-gray-700">{feat.name}</td>
+                                                                        <td className="py-2 text-center text-gray-500">
                                                                             {typeof feat.std === 'string' ? (
                                                                                 <span className="font-semibold text-slate-700">{feat.std}</span>
                                                                             ) : (feat.std ? <Check size={16} className="mx-auto text-emerald-500" /> : <MinusIcon />)}
                                                                         </td>
-                                                                        <td className="py-3 text-center text-gray-500">
+                                                                        <td className="py-2 text-center text-gray-500">
                                                                             {typeof feat.pro === 'string' ? (
                                                                                 <span className="font-bold text-brand-orange">{feat.pro}</span>
                                                                             ) : (feat.pro ? <Check size={16} className="mx-auto text-brand-orange" /> : <MinusIcon />)}

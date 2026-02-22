@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+
 import { Target, Code2, Briefcase, Trophy, ChevronRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -53,15 +53,14 @@ const steps = [
 
 export default function ProcessTimeline() {
     return (
-        <section className="py-32 relative overflow-hidden bg-slate-50/50">
+        <section className="pt-24 pb-32 relative overflow-hidden bg-slate-50/50">
             {/* Ambient Halo Background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[1200px] h-[600px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-100/40 via-purple-100/20 to-transparent blur-[100px] opacity-70"></div>
-                <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent blur-[80px]"></div>
+            <div className="absolute inset-0 overflow-hidden pointer-events-none transform-gpu hidden md:block">
+                <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[1200px] h-[600px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-100/10 via-purple-100/5 to-transparent opacity-30 transform-gpu"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="text-center max-w-3xl mx-auto mb-24">
+                <div className="text-center max-w-3xl mx-auto mb-16">
                     <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-100 inline-block mb-8 shadow-sm">
                         The Emble journey
                     </span>
@@ -74,31 +73,19 @@ export default function ProcessTimeline() {
                 </div>
 
                 <div className="relative">
-                    {/* Connecting Line (Desktop) */}
-                    <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[3px] bg-slate-200/50 rounded-full overflow-hidden z-0">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: '100%' }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.5, ease: "easeInOut" }}
-                            className="h-full bg-gradient-to-r from-blue-400 via-orange-400 to-purple-500"
-                        />
+                    {/* Connecting Line (Desktop) - Static */}
+                    <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[2px] bg-slate-200 z-0">
+                        <div className="h-full bg-gradient-to-r from-blue-300 via-orange-300 to-purple-400 w-full" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
                         {steps.map((step, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.15, duration: 0.6 }}
-                            >
+                            <div key={i}>
                                 <div className="flex flex-col items-center group h-full">
                                     {/* Icon Container with Halo */}
-                                    <div className="relative mb-8">
-                                        <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${step.gradient} blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500`}></div>
-                                        <div className={`relative w-24 h-24 rounded-3xl bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2`}>
+                                    <div className="relative mb-8 transform-gpu will-change-transform">
+                                        <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${step.gradient} opacity-20 group-hover:opacity-40 transition-opacity duration-500 transform-gpu will-change-opacity`} style={{ filter: 'blur(15px)' }}></div>
+                                        <div className={`relative w-24 h-24 rounded-3xl bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2 transform-gpu`}>
                                             <div className={`p-4 rounded-2xl ${step.bg}`}>
                                                 <step.icon size={32} className={step.color} strokeWidth={2.5} />
                                             </div>
@@ -141,7 +128,7 @@ export default function ProcessTimeline() {
                                         <div className="w-0.5 h-12 bg-gradient-to-b from-slate-200 to-transparent"></div>
                                     </div>
                                 )}
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>

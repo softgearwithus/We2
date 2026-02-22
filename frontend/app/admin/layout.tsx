@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Briefcase } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Briefcase, GraduationCap, Code2, Radar } from 'lucide-react';
 
 export default function AdminLayout({
     children,
@@ -17,8 +17,11 @@ export default function AdminLayout({
     const menuItems = [
         { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['all'] },
         { icon: Users, label: 'Students', href: '/admin/students', roles: ['all'] },
+        { icon: GraduationCap, label: 'Mentors', href: '/admin/mentors', roles: ['super_admin'] },
         { icon: Building2, label: 'Colleges', href: '/admin/colleges', roles: ['super_admin'] },
         { icon: Briefcase, label: 'Companies', href: '/admin/companies', roles: ['super_admin'] },
+        { icon: Code2, label: 'Project Labs', href: '/admin/projects', roles: ['super_admin'] },
+        { icon: Radar, label: 'Market Radar', href: '/admin/market-radar', roles: ['super_admin'] },
         { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['all'] },
         { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['all'] },
     ];

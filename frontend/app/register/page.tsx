@@ -46,10 +46,7 @@ export default function RegisterPage() {
                 {/* Logo */}
                 <div className="relative z-10">
                     <Link href="/" className="flex items-center gap-3 group w-max">
-                        <div className="w-10 h-10 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
-                            W2
-                        </div>
-                        <span className="font-bold text-2xl tracking-tight">EMBLE<span className="text-brand-orange">.Target</span></span>
+                        <span className="font-bold text-2xl tracking-tight">EMBLE</span>
                     </Link>
                 </div>
 
@@ -120,8 +117,8 @@ export default function RegisterPage() {
                                 whileTap={!isNavigating ? { scale: 0.98 } : {}}
                                 animate={isNavigating && selection !== 'student' ? { opacity: 0.5, scale: 0.95 } : {}}
                                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-hidden ${selection === 'student'
-                                        ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-105'
-                                        : 'border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/50'
+                                    ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-105'
+                                    : 'border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/50'
                                     }`}
                             >
                                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform ${selection === 'student' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600 group-hover:scale-110'
@@ -154,8 +151,8 @@ export default function RegisterPage() {
                                 whileTap={!isNavigating ? { scale: 0.98 } : {}}
                                 animate={isNavigating && selection !== 'partner' ? { opacity: 0.5, scale: 0.95 } : {}}
                                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-hidden ${selection === 'partner'
-                                        ? 'border-brand-orange bg-orange-50 shadow-lg scale-105'
-                                        : 'border-slate-100 hover:border-brand-orange hover:bg-orange-50/50'
+                                    ? 'border-brand-orange bg-orange-50 shadow-lg scale-105'
+                                    : 'border-slate-100 hover:border-brand-orange hover:bg-orange-50/50'
                                     }`}
                             >
                                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform ${selection === 'partner' ? 'bg-brand-orange text-white' : 'bg-orange-100 text-brand-orange group-hover:scale-110'

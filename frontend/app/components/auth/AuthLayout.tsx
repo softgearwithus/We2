@@ -31,15 +31,12 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                     backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
                     backgroundSize: '40px 40px'
                 }} />
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[100px] -mr-32 -mt-32 animate-pulse" style={{ animationDuration: '4s' }} />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[100px] -mr-32 -mt-32" />
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-orange/20 rounded-full blur-[80px] -ml-20 -mb-20" />
 
                 <div className="relative z-10 max-w-xl">
-                    <Link href="/" className="inline-flex items-center gap-2 mb-12 group">
-                        <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white font-bold text-xl border border-white/20 group-hover:scale-105 transition-transform">
-                            W2
-                        </div>
-                        <span className="font-bold text-xl text-white tracking-tight">EMBLE<span className="text-brand-orange">.Target</span></span>
+                    <Link href="/" className="inline-flex items-center gap-3 mb-12 group">
+                        <span className="font-black text-2xl text-white tracking-tight">EMBLE</span>
                     </Link>
 
                     <h2 className="text-5xl font-black mb-6 leading-tight tracking-tight">
@@ -67,8 +64,7 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
             <div className="flex flex-col justify-center items-center p-8 lg:p-20 relative">
                 {/* Mobile Header */}
                 <div className="lg:hidden absolute top-8 left-8">
-                    <Link href="/" className="flex items-center gap-2 font-bold text-brand-black">
-                        <div className="w-8 h-8 bg-brand-black rounded-lg flex items-center justify-center text-white text-sm">W2</div>
+                    <Link href="/" className="flex items-center gap-2 font-black text-brand-black text-lg">
                         EMBLE
                     </Link>
                 </div>

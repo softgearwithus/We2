@@ -23,29 +23,6 @@ interface WriteXResult {
     improvements: string[];
 }
 
-const container = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1,
-            delayChildren: 0.2
-        }
-    }
-};
-
-const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-};
-
-const BackgroundDecor = () => (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden bg-[#F8FAFC]">
-        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[100px]" />
-    </div>
-);
-
 export default function CommunicationTestsPage() {
     const [question, setQuestion] = useState<WriteXQuestion | null>(null);
     const [answer, setAnswer] = useState('');
@@ -103,65 +80,66 @@ export default function CommunicationTestsPage() {
         }
     };
     return (
-        <div className="min-h-screen font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-700 overflow-x-hidden pb-20">
-            <BackgroundDecor />
+        <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-700 overflow-x-hidden pb-20 relative">
+            <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto p-6 lg:p-12 relative z-10">
+            <div className="max-w-4xl mx-auto p-6 lg:p-10 relative z-10">
                 <motion.header
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-16"
+                    className="mb-14 mt-6"
                 >
-                    <Link href="/dashboard/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-medium mb-8 transition-all group px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md">
-                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Test Series
+                    <Link href="/dashboard/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-bold mb-8 transition-colors group px-4 py-2 rounded-full hover:bg-white bg-transparent border border-transparent hover:border-slate-200">
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Test Series
                     </Link>
 
-                    <div className="flex items-center gap-4 mb-6 text-emerald-600">
-                        <Sparkles size={24} className="animate-pulse" />
-                        <span className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">WriteX Analysis</span>
-                    </div>
+                    <div>
+                        <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-emerald-100">
+                            <Sparkles size={14} /> WriteX Analysis
+                        </div>
 
-                    <h1 className="text-5xl lg:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-none">
-                        WriteX <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Analysis.</span>
-                    </h1>
-                    <p className="text-xl text-slate-500 max-w-2xl leading-relaxed font-medium">
-                        Submit your response and receive a lenient AI score out of 100 with actionable feedback.
-                    </p>
+                        <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 mb-4">
+                            WriteX <span className="text-emerald-600">Analysis.</span>
+                        </h1>
+                        <p className="text-lg text-slate-500 font-medium max-w-2xl">
+                            Submit your response and receive an instant AI score with actionable feedback.
+                        </p>
+                    </div>
                 </motion.header>
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-[40px] p-10 border border-slate-100 shadow-xl shadow-slate-200/40"
+                    transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 24 }}
+                    className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-100 shadow-sm relative overflow-hidden"
                 >
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                            <PenTool size={24} />
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center">
+                            <PenTool size={20} strokeWidth={2.5} />
                         </div>
                         <div>
-                            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">WriteX Prompt</p>
-                            <h2 className="text-2xl font-black text-slate-900">Answer the prompt below</h2>
+                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">WriteX Prompt</p>
+                            <h2 className="text-xl font-bold text-slate-900">Answer the prompt below</h2>
                         </div>
                     </div>
 
                     {question ? (
                         <div className="space-y-6">
-                            <div className="p-6 bg-emerald-50/50 border border-emerald-100 rounded-3xl text-slate-700 font-semibold">
+                            <div className="p-5 bg-emerald-50/50 border border-emerald-100/50 rounded-2xl text-slate-800 font-medium leading-relaxed">
                                 {question.prompt}
                             </div>
                             <textarea
                                 value={answer}
                                 onChange={(e) => setAnswer(e.target.value)}
-                                placeholder="Write your response here..."
-                                className="w-full h-56 p-4 border border-slate-200 rounded-2xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none resize-none"
+                                placeholder="Type your response here..."
+                                className="w-full h-48 p-5 border border-slate-200 rounded-2xl bg-white focus:bg-slate-50/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none resize-none shadow-inner"
                             />
-                            <div className="flex items-center justify-between">
-                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Aim for clarity and structure</p>
+                            <div className="flex items-center justify-between pt-2">
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest hidden sm:block">Aim for clarity & structure</p>
                                 <button
                                     onClick={submitAnswer}
                                     disabled={isSubmitting || answer.trim().length === 0}
-                                    className="px-6 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:bg-emerald-600 transition-all disabled:opacity-50 flex items-center gap-2"
+                                    className="px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-emerald-600 transition-colors disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
                                     {isSubmitting ? 'Evaluating...' : 'Submit Answer'}
@@ -169,56 +147,66 @@ export default function CommunicationTestsPage() {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-slate-500 font-semibold">No prompt available yet.</div>
+                        <div className="text-slate-500 font-medium py-10 text-center">Loading your prompt...</div>
                     )}
 
                     {error && (
-                        <div className="mt-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-bold">
+                        <div className="mt-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-bold flex items-center justify-center">
                             {error}
                         </div>
                     )}
 
                     {result && (
-                        <div className="mt-8 grid gap-6">
-                            <div className="p-6 border border-slate-200 rounded-3xl bg-slate-50">
-                                <p className="text-xs font-black uppercase tracking-widest text-slate-400">Score</p>
-                                <p className="text-4xl font-black text-emerald-600 mt-2">{result.score}</p>
-                                <p className="text-slate-600 mt-2">{result.summary}</p>
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="mt-10 pt-10 border-t border-slate-100 grid gap-6"
+                        >
+                            <div className="p-6 border border-slate-200 rounded-2xl bg-slate-50 shadow-sm">
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Total Score</p>
+                                <p className="text-5xl font-black text-emerald-600 mt-2">{result.score}<span className="text-xl text-slate-400">/100</span></p>
+                                <p className="text-slate-600 mt-3 font-medium">{result.summary}</p>
                             </div>
+
                             {result.criteria && (
-                                <div className="grid md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                                     {[
                                         { label: 'Relevance', value: result.criteria.relevance },
                                         { label: 'Fluency', value: result.criteria.fluency },
                                         { label: 'Grammar', value: result.criteria.grammar },
                                         { label: 'Vocabulary', value: result.criteria.vocabulary },
                                     ].map((item) => (
-                                        <div key={item.label} className="p-4 bg-white border border-slate-200 rounded-2xl">
-                                            <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">{item.label}</p>
-                                            <p className="text-2xl font-black text-slate-900 mt-2">{item.value}</p>
+                                        <div key={item.label} className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                                            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">{item.label}</p>
+                                            <p className="text-xl font-bold text-slate-900 mt-1">{item.value}/100</p>
                                         </div>
                                     ))}
                                 </div>
                             )}
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="p-6 bg-emerald-50/60 border border-emerald-100 rounded-3xl">
-                                    <h3 className="font-bold text-emerald-700 mb-3">Strengths</h3>
-                                    <ul className="space-y-2 text-sm text-slate-700">
+
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="p-5 bg-emerald-50/50 border border-emerald-100/50 rounded-xl">
+                                    <h3 className="font-bold text-emerald-700 mb-3 text-sm uppercase tracking-wide">Strengths</h3>
+                                    <ul className="space-y-2 text-sm text-emerald-900/80 font-medium">
                                         {result.strengths?.map((item, idx) => (
-                                            <li key={idx}>• {item}</li>
+                                            <li key={idx} className="flex items-start gap-2">
+                                                <span className="text-emerald-500 mt-0.5">•</span> {item}
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
-                                <div className="p-6 bg-orange-50/60 border border-orange-100 rounded-3xl">
-                                    <h3 className="font-bold text-orange-700 mb-3">Improvements</h3>
-                                    <ul className="space-y-2 text-sm text-slate-700">
+                                <div className="p-5 bg-orange-50/50 border border-orange-100/50 rounded-xl">
+                                    <h3 className="font-bold text-orange-700 mb-3 text-sm uppercase tracking-wide">Areas to Improve</h3>
+                                    <ul className="space-y-2 text-sm text-orange-900/80 font-medium">
                                         {result.improvements?.map((item, idx) => (
-                                            <li key={idx}>• {item}</li>
+                                            <li key={idx} className="flex items-start gap-2">
+                                                <span className="text-orange-500 mt-0.5">•</span> {item}
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     )}
                 </motion.div>
             </div>

@@ -25,14 +25,14 @@ const supportChannels = [
         title: "General Support",
         desc: "For questions about the Placement Mode dashboard or existing subscriptions.",
         icon: Mail,
-        contact: "support@we2.in",
+        contact: "emblehelpcare@gmail.com",
         color: "emerald"
     },
     {
         title: "Enterprise & Sales",
         desc: "Colleges and companies looking for tailored hiring solutions.",
         icon: Building2,
-        contact: "partners@we2.in",
+        contact: "emblehelpcare@gmail.com",
         color: "orange"
     },
     {

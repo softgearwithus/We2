@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Database, Video, FileText, ChevronRight } from 'lucide-react';
+import { Code2, Database, Video, FileText, ChevronRight, Layers } from 'lucide-react';
 import Link from 'next/link';
 
 const modules = [
@@ -38,9 +38,16 @@ const modules = [
         desc: 'ATS Optimization',
         icon: FileText,
         href: '/dashboard/resume',
-        color: 'text-emerald-400',
-        bg: 'bg-emerald-500/10',
         border: 'border-emerald-500/20'
+    },
+    {
+        title: 'Project Labs',
+        desc: 'Real-world simulations',
+        icon: Layers,
+        href: '/dashboard/projects',
+        color: 'text-orange-400',
+        bg: 'bg-orange-500/10',
+        border: 'border-orange-500/20'
     },
     // Skill Forge hidden for now; re-enable by restoring module below.
     // {

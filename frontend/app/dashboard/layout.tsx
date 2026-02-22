@@ -6,8 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { DashboardModeProvider, useDashboardMode } from '../context/DashboardModeContext';
 
-import Navbar from '../components/layout/Navbar';
-
 function DashboardContent({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
     const dashboardContext = useDashboardMode();
@@ -53,7 +51,28 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             ]
         },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
+        {
+            icon: 'memory',
+            label: 'Git Mastery',
+            href: '/dashboard/github',
+            subItems: [
+                { label: 'Commands & Lessons', href: '/dashboard/github', icon: 'terminal' },
+                { label: 'CI/CD Pipelines', href: '/dashboard/github/cicd', icon: 'settings_ethernet' },
+                { label: 'Git Testing', href: '/dashboard/github/testing', icon: 'bug_report' }
+            ]
+        },
+        { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar' },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
+        {
+            icon: 'group',
+            label: 'Mentors',
+            href: '/dashboard/mentors',
+            subItems: [
+                { label: 'Find a Mentor', href: '/dashboard/mentors', icon: 'search' },
+                { label: 'Mentor Console', href: '/dashboard/mentor-console', icon: 'dashboard' },
+                { label: 'Join as a Mentor', href: '/mentor/apply', icon: 'person_add' }
+            ]
+        },
     ];
 
     const simulationMenu: MenuItem[] = [
@@ -67,13 +86,10 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="min-h-screen bg-slate-50">
-            {/* Global Navbar */}
-            <Navbar />
-
-            <div className="flex pt-16 h-[calc(100vh)] box-border">
+            <div className="flex pt-0 h-[calc(100vh)] box-border">
                 {/* Sidebar */}
                 <aside
-                    className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-slate-200 fixed top-16 bottom-0 z-30 transition-all duration-300 flex flex-col`}
+                    className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-slate-200 fixed top-0 bottom-0 z-30 transition-all duration-300 flex flex-col`}
                 >
                     <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 shrink-0">
                         {/* Mode Indicator / Brand moved here or simplified */}

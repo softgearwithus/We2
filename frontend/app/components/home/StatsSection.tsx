@@ -43,7 +43,7 @@ function Counter({ value, suffix }: { value: number, suffix: string }) {
 
 export default function StatsSection() {
     return (
-        <section className="py-20 bg-gray-50/50 border-y border-gray-100 relative overflow-hidden">
+        <section className="py-16 bg-gray-50/50 border-y border-gray-100 relative overflow-hidden">
             {/* Minimal Grid Pattern */}
             <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] [background-size:40px_40px]"></div>
 

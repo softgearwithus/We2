@@ -6,10 +6,10 @@ import { Terminal, Github, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
     return (
-        <footer className="relative z-10 py-20 bg-white text-brand-black border-t border-gray-100">
+        <footer className="relative z-10 py-16 bg-white text-brand-black border-t border-gray-100">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                    <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-10">
+                    <div className="space-y-6 lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2 group">
                             <div className="w-8 h-8 bg-brand-black rounded flex items-center justify-center group-hover:bg-brand-orange transition-colors duration-300">
                                 <Terminal size={18} className="text-white" strokeWidth={3} />
@@ -66,10 +66,29 @@ export default function Footer() {
                             </ul>
                         </div>
                     ))}
+
+                    {/* Contact Info Column */}
+                    <div>
+                        <h6 className="text-brand-black font-bold mb-6 text-sm uppercase tracking-wider">Contact Us</h6>
+                        <ul className="space-y-4 text-sm text-gray-500">
+                            <li>
+                                <a href="mailto:emblehelpcare@gmail.com" className="hover:text-brand-orange transition-colors">
+                                    emblehelpcare@gmail.com
+                                </a>
+                            </li>
+                            <li>
+                                <span className="cursor-default">
+                                    +91 1xxxxx
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-medium text-gray-400 uppercase tracking-widest">
-                    <p>© 2025 EMBLE Technologies. All rights reserved.</p>
+                    <Link href="/copyright" className="hover:text-brand-orange transition-colors group">
+                        © 2026 EMBLE Technologies. <span className="group-hover:underline normal-case tracking-normal ml-2">View Copyright & Policies</span>
+                    </Link>
                     <div className="flex gap-8">
                         <Link href="#" className="hover:text-brand-black transition-colors"><Linkedin size={18} /></Link>
                         <Link href="#" className="hover:text-brand-black transition-colors"><Twitter size={18} /></Link>
@@ -77,6 +96,6 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 }
