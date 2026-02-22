@@ -191,6 +191,11 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
 
     const closeSessionDetails = () => {
         setSelectedSession(null);
+        setCurrentDrill(null);
+        setActiveTab('history');
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('show-sidebar'));
+        }
         setDetailError(null);
     };
 
@@ -233,7 +238,10 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
             <CommunicationAssessment
                 drillContent={currentDrill}
                 onComplete={handleDrillComplete}
-                onBack={() => setCurrentDrill(null)}
+                onBack={() => {
+                    setCurrentDrill(null);
+                    setActiveTab('history');
+                }}
             />
         );
     }

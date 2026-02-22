@@ -73,11 +73,15 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
         if (globalStream) {
             globalStream.getTracks().forEach(track => track.stop());
             setGlobalStream(null);
-            if (videoRef.current) {
-                videoRef.current.srcObject = null;
-            }
         }
-    }
+    };
+
+    // Attach stream to video element when available
+    useEffect(() => {
+        if (videoRef.current && globalStream) {
+            videoRef.current.srcObject = globalStream;
+        }
+    }, [globalStream, currentSection]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -147,17 +151,19 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 formData.append('extempore', fullData.extempore.blob, 'extempore.webm');
             }
 
-            // Append Technical File
-            if (fullData.technical) {
-                formData.append('technical', fullData.technical.blob, 'technical.webm');
+            // Append Technical Files (is now an array of {topic, blob})
+            if (fullData.technical && Array.isArray(fullData.technical)) {
+                fullData.technical.forEach((item: any, i: number) => {
+                    formData.append(`technical_${i}`, item.blob, `technical_${i}.webm`);
+                });
             }
 
             const metadata = {
                 theme: drillContent.theme,
                 reading: readingMeta,
                 listening: listeningMeta,
-                extempore: { topic: fullData.extempore.topic },
-                technical: { topic: fullData.technical.topic, role: drillContent.technical?.role }
+                extempore: { topic: fullData.extempore?.topic || '' },
+                technical: fullData.technical?.map((t: any) => ({ topic: t.topic, role: drillContent.technical?.role || 'Software Engineer' })) || []
             };
             formData.append('metadata', JSON.stringify(metadata));
 

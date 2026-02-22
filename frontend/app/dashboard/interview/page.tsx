@@ -18,7 +18,7 @@ function InterviewContent() {
 
 export default function InterviewPage() {
     return (
-        <div className="min-h-screen bg-slate-50 p-6">
+        <div className="w-full h-full">
             <Suspense fallback={<div>Loading...</div>}>
                 <InterviewContent />
             </Suspense>

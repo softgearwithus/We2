@@ -109,8 +109,8 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50/50 p-6 md:p-12 font-sans selection:bg-violet-200 selection:text-violet-900">
-            <div className="max-w-7xl mx-auto w-full space-y-12">
+        <div className="flex flex-col w-full h-full font-sans selection:bg-violet-200 selection:text-violet-900 pb-8">
+            <div className="max-w-7xl mx-auto w-full space-y-6">
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-200 pb-8">
@@ -148,11 +148,11 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                     <div className="md:col-span-6 group relative overflow-hidden rounded-[2.5rem] bg-white border border-slate-200 shadow-xl shadow-slate-200/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-200/50 hover:border-violet-200 flex flex-col">
                         <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-fuchsia-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                        <div className="relative p-8 md:p-10 flex-1 flex flex-col justify-between h-full">
-                            <div className="space-y-6">
+                        <div className="relative p-6 md:p-8 flex-1 flex flex-col justify-between h-full">
+                            <div className="space-y-4">
                                 <div className="flex justify-between items-start">
-                                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-50 flex items-center justify-center text-violet-600 shadow-sm border border-violet-100 group-hover:scale-110 transition-transform duration-300">
-                                        <Mic size={32} />
+                                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-50 flex items-center justify-center text-violet-600 shadow-sm border border-violet-100 group-hover:scale-110 transition-transform duration-300">
+                                        <Mic size={24} />
                                     </div>
                                     <div className="flex -space-x-2">
                                         {[1, 2, 3].map(i => (
@@ -164,14 +164,14 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                                 </div>
 
                                 <div>
-                                    <h3 className="text-3xl font-bold text-slate-900 mb-3">Audio Drill</h3>
-                                    <p className="text-slate-500 leading-relaxed">
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Audio Drill</h3>
+                                    <p className="text-sm text-slate-500 leading-relaxed">
                                         Focus on vocal delivery. Rapid-fire questions with instant AI feedback on key parameters.
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-8 border-t border-slate-100">
+                            <div className="mt-6 pt-6 border-t border-slate-100">
                                 <Button
                                     onClick={handleStartAudioFlow}
                                     className="w-full bg-slate-900 hover:bg-violet-600 text-white rounded-xl py-6 text-base font-bold shadow-lg shadow-slate-200 hover:shadow-violet-200 transition-all duration-300 flex justify-between items-center px-6"
@@ -193,11 +193,11 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                         <div className="absolute -right-20 -top-20 w-80 h-80 bg-violet-600/20 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/30 transition-colors" />
                         <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-fuchsia-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-fuchsia-600/20 transition-colors" />
 
-                        <div className="relative z-10 p-8 md:p-10 flex-1 flex flex-col justify-between h-full">
-                            <div className="space-y-6">
+                        <div className="relative z-10 p-6 md:p-8 flex-1 flex flex-col justify-between h-full">
+                            <div className="space-y-4">
                                 <div className="flex justify-between items-start">
-                                    <div className="h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform duration-300 shadow-2xl">
-                                        <Video size={32} />
+                                    <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                                        <Video size={24} />
                                     </div>
                                     <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
                                         Beta Access
@@ -205,15 +205,15 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                                 </div>
 
                                 <div>
-                                    <h3 className="text-3xl font-bold mb-3 text-white">Video Simulation</h3>
-                                    <p className="text-slate-400 leading-relaxed">
+                                    <h3 className="text-2xl font-bold mb-2 text-white">Video Simulation</h3>
+                                    <p className="text-sm text-slate-400 leading-relaxed">
                                         Face our AI avatar in a realistic environment.
                                         Get feedback on body language & confidence.
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-8 border-t border-slate-800">
+                            <div className="mt-6 pt-6 border-t border-slate-800">
                                 <Button
                                     onClick={handleStartVideoFlow}
                                     className="w-full bg-white text-slate-900 hover:bg-emerald-400 hover:text-emerald-950 rounded-xl py-6 text-base font-bold shadow-xl hover:shadow-emerald-500/20 transition-all duration-300 flex justify-between items-center px-6"
@@ -234,14 +234,14 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                     <div className="md:col-span-12">
                         <div className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white p-1 shadow-xl shadow-violet-200 cursor-pointer" onClick={() => setMode('analysis')}>
                             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
-                            <div className="relative bg-slate-900/10 backdrop-blur-[2px] rounded-[1.8rem] p-6 md:px-10 md:py-8 flex flex-col md:flex-row items-center justify-between gap-6 hover:bg-white/5 transition-colors">
-                                <div className="flex items-center gap-6">
-                                    <div className="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
-                                        <BarChart3 size={32} />
+                            <div className="relative bg-slate-900/10 backdrop-blur-[2px] rounded-[1.8rem] p-4 md:px-8 md:py-6 flex flex-col md:flex-row items-center justify-between gap-4 hover:bg-white/5 transition-colors">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+                                        <BarChart3 size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold">Performance Analytics</h3>
-                                        <p className="text-violet-100 opacity-90 text-sm">
+                                        <h3 className="text-xl font-bold">Performance Analytics</h3>
+                                        <p className="text-violet-100 opacity-90 text-xs">
                                             Deep dive into your communication history and track improvement over time.
                                         </p>
                                     </div>

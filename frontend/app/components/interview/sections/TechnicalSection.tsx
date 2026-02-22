@@ -125,7 +125,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-4 md:p-6 pb-20">
             <AnimatePresence mode="wait">
                 {phase === 'prep' && (
                     <motion.div

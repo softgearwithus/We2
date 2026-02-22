@@ -18,7 +18,7 @@ interface ExtemporeSectionProps {
 }
 
 export default function ExtemporeSection({ onComplete, topicContent, globalStream, previousRecordings }: ExtemporeSectionProps) {
-    const [phase, setPhase] = useState<'prep' | 'speak' | 'review'>('prep');
+    const [phase, setPhase] = useState<'prep' | 'speak'>('prep');
     const [timeLeft, setTimeLeft] = useState(30);
 
     const [isRecording, setIsRecording] = useState(false);
@@ -55,7 +55,6 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
             startTimer(60);
         } else if (phase === 'speak') {
             stopRecording();
-            setPhase('review');
         }
     };
 
@@ -78,6 +77,12 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
             mediaRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
                 setAudioBlob(blob);
+                onComplete({
+                    section: 'Extempore',
+                    score: 0,
+                    feedback: "",
+                    data: { topic: topicContent.topic, blob: blob }
+                });
             };
 
             mediaRecorderRef.current.start();
@@ -94,22 +99,10 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
             setIsRecording(false);
         }
         clearInterval(timerRef.current);
-        setPhase('review');
-    };
-
-    const handleSubmit = () => {
-        if (!audioBlob) return;
-
-        onComplete({
-            section: 'Extempore',
-            score: 0,
-            feedback: "",
-            data: { topic: topicContent.topic, blob: audioBlob }
-        });
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-4 lg:p-6 pb-20">
             <AnimatePresence mode="wait">
                 {phase === 'prep' && (
                     <motion.div
@@ -202,89 +195,6 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
                                 <div className="absolute inset-0 bg-white/20 animate-pulse mix-blend-overlay" />
                                 <Square size={20} fill="currentColor" className="mr-3" /> Stop Recording Early
                             </Button>
-                        </Card>
-                    </motion.div>
-                )}
-
-                {phase === 'review' && (
-                    <motion.div
-                        key="review"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="w-full"
-                    >
-                        <div className="text-center space-y-4 mb-8">
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Drill Complete!</h2>
-                            <p className="text-slate-500 text-lg">Review your recordings before final submission.</p>
-                        </div>
-
-                        <Card className="p-8 bg-white border-slate-200 shadow-xl shadow-slate-100 rounded-[2.5rem]">
-                            <div className="grid grid-cols-1 gap-6 max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar mb-8">
-
-                                {/* 1. Reading Preview */}
-                                {previousRecordings?.reading && previousRecordings.reading.length > 0 && (
-                                    <div className="space-y-4">
-                                        <h4 className="flex items-center gap-3 text-sm font-bold text-indigo-600 uppercase tracking-widest border-b border-indigo-50 pb-2">
-                                            <div className="w-2 h-2 bg-indigo-600 rounded-full" /> Part 1: Reading
-                                        </h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            {previousRecordings.reading.map((r, i) => (
-                                                <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                                                    <p className="text-xs font-bold text-slate-500 mb-3">Passage {i + 1}</p>
-                                                    <audio controls src={URL.createObjectURL(r.blob)} className="h-10 w-full" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* 2. Listening Preview */}
-                                {previousRecordings?.listening && previousRecordings.listening.length > 0 && (
-                                    <div className="space-y-4">
-                                        <h4 className="flex items-center gap-3 text-sm font-bold text-purple-600 uppercase tracking-widest border-b border-purple-50 pb-2">
-                                            <div className="w-2 h-2 bg-purple-600 rounded-full" /> Part 2: Listening
-                                        </h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            {previousRecordings.listening.map((l, i) => (
-                                                <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                                                    <p className="text-xs font-bold text-slate-500 mb-3">Phrase {i + 1}</p>
-                                                    <audio controls src={URL.createObjectURL(l.blob)} className="h-10 w-full" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* 3. Extempore Preview */}
-                                <div className="space-y-4">
-                                    <h4 className="flex items-center gap-3 text-sm font-bold text-pink-600 uppercase tracking-widest border-b border-pink-50 pb-2">
-                                        <div className="w-2 h-2 bg-pink-600 rounded-full" /> Part 3: Extempore
-                                    </h4>
-                                    <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
-                                        <p className="text-sm font-bold text-indigo-900 mb-4 tracking-tight leading-snug">"{topicContent.topic}"</p>
-                                        {audioBlob ? (
-                                            <audio controls src={URL.createObjectURL(audioBlob)} className="h-12 w-full" />
-                                        ) : (
-                                            <div className="flex items-center gap-2 text-rose-500 text-sm font-bold bg-rose-50 p-3 rounded-xl">
-                                                <AlertCircle size={16} /> No recording found
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t border-slate-100">
-                                <Button variant="outline" onClick={() => window.location.reload()} className="rounded-full h-14 px-10 text-slate-600 font-bold border-slate-200 w-full sm:w-auto">
-                                    Discard & Restart Drill
-                                </Button>
-                                <Button
-                                    onClick={handleSubmit}
-                                    disabled={!audioBlob}
-                                    className="bg-slate-900 hover:bg-indigo-600 text-white rounded-full h-14 px-10 shadow-lg shadow-slate-200 hover:shadow-indigo-200 transition-all font-bold flex items-center justify-center gap-2 disabled:opacity-50 w-full sm:w-auto"
-                                >
-                                    Proceed to Technical Section <ArrowRight size={18} />
-                                </Button>
-                            </div>
                         </Card>
                     </motion.div>
                 )}
