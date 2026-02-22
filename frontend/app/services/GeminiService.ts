@@ -10,7 +10,7 @@ export class GeminiService {
         this.model = this.genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     }
 
-    async generateInterviewDrill(topic: string = "General Software Engineering"): Promise<any> {
+    async generateInterviewDrill(topic: string = "Computer Science and Software Engineering"): Promise<any> {
         const prompt = `Generate a communication drill for a software engineer interview. 
         Topic: ${topic}.
         Return ONLY valid JSON with this structure:
@@ -18,7 +18,13 @@ export class GeminiService {
             "theme": "string",
             "reading": [{"level": "Easy", "text": "string"}, {"level": "Medium", "text": "string"}, {"level": "Hard", "text": "string"}],
             "listening": ["string", "string", "string"],
-            "extempore": {"topic": "string", "keyPoints": ["string", "string", "string", "string"]}
+            "extempore": {"topic": "string", "keyPoints": ["string", "string", "string", "string"]},
+            "technical": [
+                { "title": "Introduction", "prompt": "Please introduce yourself, including your name, current designation, and your background in computer science." },
+                { "title": "Core CS Concepts", "prompt": "string (A technical question about core CS fundamentals, e.g. Data Structures, Algorithms, or OS)" },
+                { "title": "Architecture & Design", "prompt": "string (A system design or architecture scenario question)" },
+                { "title": "Problem Solving Experience", "prompt": "string (A behavioral-technical question asking about a complex logic problem they solved)" }
+            ]
         }
         Do not include markdown formatting like \`\`\`json. just raw json.
         `;
@@ -63,7 +69,13 @@ export class GeminiService {
                         "Necessity of refactoring",
                         "Impact on future feature delivery"
                     ]
-                }
+                },
+                technical: [
+                    { title: "Introduction", prompt: "Please introduce yourself, including your name, current designation, and your background in computer science." },
+                    { title: "Core CS Concepts", prompt: "Explain the difference between an Array and a Linked List. What are the time complexities for searching and inserting in both?" },
+                    { title: "Architecture & Design", prompt: "Design a scalable rate limiter for a public API. What distributed storage would you use and why?" },
+                    { title: "Problem Solving Experience", prompt: "Describe a complex logic problem you solved in the past. How did you approach it and handle edge cases?" }
+                ]
             };
         }
     }

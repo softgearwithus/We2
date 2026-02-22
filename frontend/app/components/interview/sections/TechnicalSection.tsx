@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface TechnicalSectionProps {
     onComplete: (score: SectionScore) => void;
-    topicContent: { topic: string, role: string };
+    topicContent: { title: string, prompt: string }[];
     globalStream: MediaStream;
 }
 
@@ -27,10 +27,10 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
     const chunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<any>(null);
 
-    const questions = [
+    const questions = Array.isArray(topicContent) && topicContent.length > 0 ? topicContent : [
         { title: "Introduction", prompt: "Please introduce yourself, including your name, current designation, and your background in computer science." },
         { title: "Core CS Concepts", prompt: "Explain the difference between an Array and a Linked List. What are the time complexities for searching and inserting in both?" },
-        { title: "Architecture & Design", prompt: topicContent.topic },
+        { title: "Architecture & Design", prompt: "Explain the architecture of a real-time messaging application like WhatsApp." },
         { title: "Problem Solving Experience", prompt: "Describe a complex logic problem you solved in the past. How did you approach it and handle edge cases?" }
     ];
 

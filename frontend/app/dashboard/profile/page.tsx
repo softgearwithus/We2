@@ -9,6 +9,7 @@ import {
     Github, Linkedin, Globe, Edit3, X, XCircle, CheckCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import EditProfileModal from '../../components/profile/EditProfileModal';
 
 // Mock Data for the Profile
 const USER_DATA = {
@@ -63,6 +64,8 @@ const RECENT_SUBMISSIONS = [
 ];
 
 export default function LeetCodeProfile() {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
     return (
         <div className="min-h-screen bg-[#fafafa] font-sans text-slate-900 pb-20">
             <div className="max-w-[1200px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6">
@@ -76,9 +79,9 @@ export default function LeetCodeProfile() {
                                 <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
                                     <Image src={USER_DATA.avatar} alt="Avatar" width={96} height={96} className="object-cover" />
                                 </div>
-                                <Link href="/dashboard/settings" className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
+                                <button onClick={() => setIsEditModalOpen(true)} className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
                                     <Edit3 size={18} />
-                                </Link>
+                                </button>
                             </div>
                             <h1 className="text-xl font-bold text-slate-900">{USER_DATA.name}</h1>
                             <p className="text-slate-500 font-medium text-sm mb-4">@{USER_DATA.username}</p>
@@ -91,9 +94,9 @@ export default function LeetCodeProfile() {
                                 <Briefcase size={14} /> {USER_DATA.role}
                             </p>
 
-                            <Link href="/dashboard/settings" className="w-full block text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors mb-6">
+                            <button onClick={() => setIsEditModalOpen(true)} className="w-full block text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors mb-6">
                                 Edit Profile
-                            </Link>
+                            </button>
 
                             <div className="space-y-3 pt-6 border-t border-slate-100 text-sm text-slate-600">
                                 <div className="flex items-center gap-3">
@@ -255,6 +258,8 @@ export default function LeetCodeProfile() {
                 </div>
 
             </div>
+
+            <EditProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
         </div>
     );
 }

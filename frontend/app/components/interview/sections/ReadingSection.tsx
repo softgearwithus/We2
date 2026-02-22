@@ -143,9 +143,9 @@ export default function ReadingSection({ onComplete, passages, globalStream }: R
                         </div>
                         <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Reading Comprehension</h2>
                         <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 text-slate-600 max-w-lg mx-auto text-left space-y-3">
-                            <p className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />Read the following passages clearly and naturally.</p>
-                            <p className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />You have 10 seconds to prepare before recording starts.</p>
-                            <p className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />Maintain good posture and eye contact with the camera.</p>
+                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" /><span>Read the following passages clearly and naturally.</span></div>
+                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" /><span>You have 10 seconds to prepare before recording starts.</span></div>
+                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" /><span>Maintain good posture and eye contact with the camera.</span></div>
                         </div>
                         <Button onClick={startPrep} className="bg-slate-900 hover:bg-indigo-600 text-white text-lg px-10 h-16 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-indigo-200 transition-all font-bold group">
                             Start Level {currentLevel + 1} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />

@@ -211,31 +211,20 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
 
     return (
         <div className="fixed inset-0 z-[100] bg-[#F8FAFC] flex font-sans overflow-hidden">
-            {/* Main Pane: Active Drill Content */}
-            <div className="flex-1 w-full flex flex-col relative bg-white shadow-2xl z-10 overflow-y-auto custom-scrollbar">
 
-                {/* Header */}
-                <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 p-6 xl:px-12 flex items-center justify-between">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                            <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Active Drill</span>
+            {/* Left Sidebar Progress */}
+            {currentSection !== 'intro' && currentSection !== 'results' && (
+                <div className="w-64 xl:w-80 border-r border-slate-200 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-30 flex flex-col h-full shrink-0">
+                    <div className="p-8 border-b border-slate-100 space-y-3">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse ring-4 ring-indigo-50" />
+                            <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-none">Active Drill</span>
                         </div>
-                        <h2 className="text-xl font-bold text-slate-900">{typeof window !== 'undefined' ? drillContent.theme : 'Processing...'}</h2>
+                        <h2 className="text-xl font-black text-slate-900 leading-tight">{typeof window !== 'undefined' ? drillContent.theme : 'Processing...'}</h2>
                     </div>
-                    {currentSection !== 'results' && (
-                        <Button variant="ghost" onClick={onBack} className="text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors">
-                            Leave
-                        </Button>
-                    )}
-                </div>
 
-                {/* Main Content Area */}
-                <div className="flex-1 flex flex-col items-center justify-center p-6 xl:px-12 w-full max-w-4xl mx-auto">
-
-                    {/* Progress Bar (Hidden during results) */}
-                    {currentSection !== 'results' && currentSection !== 'intro' && (
-                        <div className="w-full flex items-center gap-4 mb-12">
+                    <div className="flex-1 p-8 overflow-y-auto custom-scrollbar pt-10">
+                        <div className="space-y-10">
                             {['Reading', 'Listening', 'Extempore', 'Technical'].map((step, idx) => {
                                 const sections = ['reading', 'repeat', 'extempore', 'technical'];
                                 const currentIndex = sections.indexOf(currentSection);
@@ -243,16 +232,63 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                 const isCurrent = currentIndex === idx;
 
                                 return (
-                                    <div key={step} className={`flex-1 flex items-center gap-3 border-t-4 pt-3 transition-colors duration-500 ${isCompleted ? 'border-emerald-500 text-emerald-600' : isCurrent ? 'border-indigo-600 text-indigo-600' : 'border-slate-200 text-slate-400'}`}>
-                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm transition-all duration-300 ${isCompleted ? 'bg-emerald-500 scale-110' : isCurrent ? 'bg-indigo-600 scale-110' : 'bg-slate-300'}`}>
-                                            {isCompleted ? '✓' : idx + 1}
+                                    <div key={step} className="relative flex items-start gap-5">
+                                        {/* Line connecting nodes */}
+                                        {idx !== 3 && (
+                                            <div className={`absolute left-4 top-10 bottom-[-3rem] w-0.5 transition-colors duration-500 rounded-full ${isCompleted ? 'bg-emerald-400' : 'bg-slate-100'}`} />
+                                        )}
+
+                                        <div className="relative z-10 shrink-0 mt-0.5">
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-indigo-600 text-white ring-8 ring-indigo-50' : 'bg-slate-100 text-slate-400 border-2 border-slate-200'}`}>
+                                                {isCompleted ? '✓' : idx + 1}
+                                            </div>
                                         </div>
-                                        <span className={`font-bold text-[11px] sm:text-xs tracking-widest uppercase transition-opacity ${isCurrent ? 'opacity-100' : 'opacity-70'}`}>{step}</span>
+
+                                        <div className="flex flex-col">
+                                            <span className={`text-sm tracking-widest uppercase font-bold transition-colors ${isCurrent ? 'text-indigo-600' : isCompleted ? 'text-slate-900' : 'text-slate-400'}`}>
+                                                {step}
+                                            </span>
+                                            {isCurrent && (
+                                                <span className="text-[10px] font-bold tracking-wider text-slate-500 uppercase mt-1 bg-slate-100 w-fit px-2 py-0.5 rounded-md">In Progress</span>
+                                            )}
+                                        </div>
                                     </div>
                                 );
                             })}
                         </div>
-                    )}
+                    </div>
+
+                    <div className="p-6 border-t border-slate-100 bg-slate-50/50 mt-auto">
+                        <Button variant="ghost" onClick={onBack} className="w-full text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors justify-start h-12 font-bold group">
+                            <ArrowRight className="mr-3 h-5 w-5 rotate-180 group-hover:-translate-x-1 transition-transform" /> Exit Drill
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Pane: Active Drill Content */}
+            <div className="flex-1 w-full flex flex-col relative bg-white shadow-2xl z-10 overflow-y-auto custom-scrollbar">
+
+                {/* Header (Only show if intro or results, otherwise sidebar handles it) */}
+                {(currentSection === 'intro' || currentSection === 'results') && (
+                    <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 p-6 xl:px-12 flex items-center justify-between">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                                <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Active Drill</span>
+                            </div>
+                            <h2 className="text-xl font-bold text-slate-900">{typeof window !== 'undefined' ? drillContent.theme : 'Processing...'}</h2>
+                        </div>
+                        {currentSection !== 'results' && (
+                            <Button variant="ghost" onClick={onBack} className="text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors">
+                                Leave
+                            </Button>
+                        )}
+                    </div>
+                )}
+
+                {/* Main Content Area */}
+                <div className={`flex-1 flex flex-col items-center p-6 xl:px-12 w-full max-w-5xl mx-auto ${currentSection === 'intro' ? 'justify-center' : 'pt-12 md:pt-20'}`}>
 
                     <div className="w-full">
                         <AnimatePresence mode='wait'>
@@ -369,7 +405,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                 <TechnicalSection
                                     key="technical"
                                     onComplete={handleSectionComplete}
-                                    topicContent={drillContent.technical || { role: "Software Engineer", topic: "Explain the architecture of a real-time messaging application like WhatsApp." }}
+                                    topicContent={(drillContent.technical as any) || []}
                                     globalStream={globalStream}
                                 />
                             )}
