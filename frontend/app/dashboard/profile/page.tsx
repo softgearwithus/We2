@@ -1,185 +1,259 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Trophy, Medal, Star, Zap, Target, User, MapPin,
-    Calendar, TrendingUp, Award, Code, Briefcase,
-    CheckCircle2, Flame
+    Trophy, Medal, MapPin,
+    Calendar, Code, Briefcase,
+    Github, Linkedin, Globe, Edit3, X, XCircle, CheckCircle
 } from 'lucide-react';
+import Link from 'next/link';
 
-export default function ProfilePage() {
-    const user = {
-        name: 'Alex Johnson',
-        role: 'Full Stack Aspirant',
-        level: 42,
-        xp: 12500,
-        nextLevelXp: 15000,
-        rank: 'Diamond I',
-        streak: 15,
-        location: 'Mumbai, India',
-        joined: 'Sept 2024'
-    };
+// Mock Data for the Profile
+const USER_DATA = {
+    username: 'alex_codes',
+    name: 'Alex Johnson',
+    role: 'Full Stack Engineer',
+    location: 'San Francisco, CA',
+    joined: 'Sep 2024',
+    rank: 12450,
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
+    links: {
+        github: 'github.com/alexcodes',
+        linkedin: 'linkedin.com/in/alexj',
+        website: 'alex.dev'
+    },
+    stats: {
+        views: 342,
+        solutions: 45,
+        reputation: 120
+    }
+};
 
-    const stats = [
-        { label: 'Problems Solved', value: '1,240', icon: Code, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-        { label: 'Interviews Aced', value: '12', icon: Briefcase, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-        { label: 'Projects Built', value: '8', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Skill Score', value: 'Top 5%', icon: TrendingUp, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    ];
+const SOLVED_DATA = {
+    total: 350,
+    totalAttempted: 400,
+    easy: { solved: 150, total: 800, color: 'text-emerald-500', bg: 'bg-emerald-500' },
+    medium: { solved: 150, total: 1600, color: 'text-amber-500', bg: 'bg-amber-500' },
+    hard: { solved: 50, total: 700, color: 'text-rose-500', bg: 'bg-rose-500' }
+};
 
-    const badges = [
-        { id: 1, name: 'Code Warrior', icon: '⚔️', desc: 'Solved 100+ Problems', earned: true },
-        { id: 2, name: 'Bug Hunter', icon: '🐛', desc: 'Fixed 50+ Issues', earned: true },
-        { id: 3, name: 'Night Owl', icon: '🦉', desc: 'Coded after 2 AM', earned: true },
-        { id: 4, name: 'Team Player', icon: '🤝', desc: '5 Group Projects', earned: false },
-        { id: 5, name: 'Algo Master', icon: '🧠', desc: 'Solved 50 Hard Problems', earned: false },
-        { id: 6, name: 'Streak God', icon: '🔥', desc: '30 Day Streak', earned: false },
-    ];
+const BADGES = [
+    { title: '100 Days Badge', icon: '🗓️' },
+    { title: 'Dynamic Programming I', icon: '🧠' },
+    { title: 'Graph Theory', icon: '🕸️' },
+    { title: 'Top 5%', icon: '🏆' },
+];
 
+const SKILLS = [
+    { name: 'JavaScript', count: 120 },
+    { name: 'Python', count: 95 },
+    { name: 'Java', count: 60 },
+    { name: 'C++', count: 40 },
+    { name: 'SQL', count: 35 },
+];
+
+const RECENT_SUBMISSIONS = [
+    { title: 'Two Sum', difficulty: 'Easy', status: 'Accepted', time: '10 mins ago', lang: 'JavaScript' },
+    { title: 'Median of Two Sorted Arrays', difficulty: 'Hard', status: 'Accepted', time: '2 hours ago', lang: 'Python' },
+    { title: 'Longest Palindromic Substring', difficulty: 'Medium', status: 'Wrong Answer', time: '5 hours ago', lang: 'Python' },
+    { title: 'Add Two Numbers', difficulty: 'Medium', status: 'Accepted', time: '1 day ago', lang: 'Java' },
+    { title: 'LRU Cache', difficulty: 'Medium', status: 'Accepted', time: '2 days ago', lang: 'JavaScript' },
+];
+
+export default function LeetCodeProfile() {
     return (
-        <div className="min-h-screen bg-slate-50 p-6 lg:p-10 space-y-8">
-            {/* Header / Banner */}
-            <div className="relative rounded-3xl overflow-hidden bg-slate-900 text-white shadow-xl shadow-slate-200">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-20">
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
-                </div>
+        <div className="min-h-screen bg-[#fafafa] font-sans text-slate-900 pb-20">
+            <div className="max-w-[1200px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6">
 
-                <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-8">
-                    {/* Avatar */}
-                    <div className="relative shrink-0">
-                        <div className="w-32 h-32 rounded-full border-4 border-white/20 overflow-hidden shadow-2xl relative bg-slate-800">
-                            <Image
-                                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
-                                alt="Avatar"
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                        <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 p-2 rounded-full border-4 border-slate-900 shadow-lg" title="Current Rank">
-                            <Trophy size={20} className="text-white fill-white" />
-                        </div>
-                    </div>
+                {/* LEFT SIDEBAR (User Info) */}
+                <div className="w-full md:w-[320px] shrink-0 space-y-4">
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        {/* Avatar & Basic Info */}
+                        <div className="p-6">
+                            <div className="flex items-start justify-between">
+                                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
+                                    <Image src={USER_DATA.avatar} alt="Avatar" width={96} height={96} className="object-cover" />
+                                </div>
+                                <Link href="/settings" className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
+                                    <Edit3 size={18} />
+                                </Link>
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-900">{USER_DATA.name}</h1>
+                            <p className="text-slate-500 font-medium text-sm mb-4">@{USER_DATA.username}</p>
 
-                    {/* Info */}
-                    <div className="flex-1 text-center md:text-left space-y-4">
-                        <div>
-                            <h1 className="text-3xl font-extrabold tracking-tight">{user.name}</h1>
-                            <p className="text-slate-400 font-medium flex items-center justify-center md:justify-start gap-2">
-                                {user.role} •
-                                <span className="flex items-center gap-1 text-emerald-400"><MapPin size={14} /> {user.location}</span>
+                            <div className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-2">
+                                <Trophy size={16} className="text-amber-500" /> Rank ~{USER_DATA.rank.toLocaleString()}
+                            </div>
+
+                            <p className="text-xs text-slate-500 flex items-center gap-2 mb-4">
+                                <Briefcase size={14} /> {USER_DATA.role}
                             </p>
+
+                            <Link href="/settings" className="w-full block text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors mb-6">
+                                Edit Profile
+                            </Link>
+
+                            <div className="space-y-3 pt-6 border-t border-slate-100 text-sm text-slate-600">
+                                <div className="flex items-center gap-3">
+                                    <MapPin size={16} className="text-slate-400" /> {USER_DATA.location}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Globe size={16} className="text-slate-400" /> {USER_DATA.links.website}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Github size={16} className="text-slate-400" /> {USER_DATA.links.github}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <Linkedin size={16} className="text-slate-400" /> {USER_DATA.links.linkedin}
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Level Progress */}
-                        <div className="w-full max-w-md bg-slate-800/50 rounded-full h-4 relative overflow-hidden backdrop-blur-sm border border-white/5 mx-auto md:mx-0">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(user.xp / user.nextLevelXp) * 100}%` }}
-                                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
-                            />
-                        </div>
-                        <div className="flex justify-between max-w-md text-xs font-bold text-slate-400 uppercase tracking-widest mx-auto md:mx-0">
-                            <span>Lvl {user.level}</span>
-                            <span>{user.xp} / {user.nextLevelXp} XP</span>
-                        </div>
-                    </div>
-
-                    {/* Quick Stats (Streak) */}
-                    <div className="flex flex-col items-center gap-2 bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10">
-                        <Flame size={32} className="text-orange-500 animate-pulse" fill="currentColor" />
-                        <div>
-                            <div className="text-2xl font-black text-white">{user.streak} Days</div>
-                            <div className="text-xs font-bold text-slate-400 uppercase">Current Streak</div>
+                        {/* Community Stats */}
+                        <div className="bg-slate-50 border-t border-slate-200 p-6">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Community Stats</h3>
+                            <div className="space-y-4 text-sm font-medium text-slate-700">
+                                <div className="flex justify-between items-center">
+                                    <span className="flex items-center gap-2 text-slate-500"><Code size={16} /> Views</span>
+                                    <span>{USER_DATA.stats.views.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="flex items-center gap-2 text-slate-500"><CheckCircle size={16} /> Solutions</span>
+                                    <span>{USER_DATA.stats.solutions}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="flex items-center gap-2 text-slate-500"><Medal size={16} /> Reputation</span>
+                                    <span>{USER_DATA.stats.reputation}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {stats.map((stat, i) => (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        key={stat.label}
-                        className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
-                    >
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.bg} ${stat.color}`}>
-                            <stat.icon size={24} />
-                        </div>
-                        <h3 className="text-2xl font-extrabold text-slate-900">{stat.value}</h3>
-                        <p className="text-sm font-bold text-slate-400">{stat.label}</p>
-                    </motion.div>
-                ))}
-            </div>
+                {/* RIGHT CONTENT AREA */}
+                <div className="flex-1 space-y-6">
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Badges Section */}
-                <div className="lg:col-span-2 bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                            <Medal className="text-indigo-500" /> Achievements
+                    {/* Top Row: Problems Solved */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 className="text-slate-900 font-bold mb-6 flex items-center gap-2">
+                            <Code className="text-indigo-500" size={20} /> Solved Problems
                         </h2>
-                        <button className="text-sm font-bold text-indigo-600 hover:text-indigo-700">View All</button>
-                    </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {badges.map((badge) => (
-                            <div
-                                key={badge.id}
-                                className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center gap-3 transition-all cursor-default
-                                    ${badge.earned
-                                        ? 'border-indigo-100 bg-indigo-50/50'
-                                        : 'border-slate-100 bg-slate-50 opacity-60 grayscale'}
-                                `}
-                            >
-                                <div className="text-4xl filter drop-shadow-sm">{badge.icon}</div>
-                                <div>
-                                    <h3 className={`font-bold text-sm ${badge.earned ? 'text-slate-900' : 'text-slate-500'}`}>{badge.name}</h3>
-                                    <p className="text-xs text-slate-400 mt-1">{badge.desc}</p>
+                        <div className="flex flex-col md:flex-row items-center gap-8">
+                            {/* Circular Progress */}
+                            <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle cx="72" cy="72" r="64" fill="none" stroke="#f1f5f9" strokeWidth="8" />
+                                    <circle
+                                        cx="72" cy="72" r="64" fill="none"
+                                        stroke="#f59e0b" strokeWidth="8"
+                                        strokeDasharray={`${(SOLVED_DATA.total / 3100) * 402} 402`}
+                                        className="transition-all duration-1000"
+                                    />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-3xl font-black text-slate-900">{SOLVED_DATA.total}</span>
+                                    <span className="text-xs font-bold text-slate-400 border-t border-slate-200 pt-1 mt-1">Solved</span>
                                 </div>
-                                {badge.earned && (
-                                    <div className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full mt-1">
-                                        Earned
+                            </div>
+
+                            {/* Linear Progress Bars */}
+                            <div className="flex-1 w-full space-y-4 text-sm font-bold">
+                                {[
+                                    { label: 'Easy', data: SOLVED_DATA.easy },
+                                    { label: 'Medium', data: SOLVED_DATA.medium },
+                                    { label: 'Hard', data: SOLVED_DATA.hard }
+                                ].map((tier) => (
+                                    <div key={tier.label}>
+                                        <div className="flex justify-between items-center mb-1.5">
+                                            <span className={`${tier.data.color}`}>{tier.label}</span>
+                                            <span className="text-slate-900 font-medium">
+                                                {tier.data.solved} <span className="text-slate-400 text-xs">/ {tier.data.total}</span>
+                                            </span>
+                                        </div>
+                                        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                            <div
+                                                className={`h-full rounded-full ${tier.data.bg}`}
+                                                style={{ width: `${(tier.data.solved / tier.data.total) * 100}%` }}
+                                            />
+                                        </div>
                                     </div>
-                                )}
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
 
-                {/* Recent Activity (Mini) */}
-                <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                            <Calendar className="text-indigo-500" /> History
+                    {/* Middle Row: Badges & Skills */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Badges */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                            <h2 className="text-slate-900 font-bold mb-4 flex items-center justify-between">
+                                Badges <span className="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-500">{BADGES.length}</span>
+                            </h2>
+                            <div className="flex flex-wrap gap-3">
+                                {BADGES.map((badge, i) => (
+                                    <div key={i} className="flex-1 min-w-[80px] text-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all cursor-crosshair">
+                                        <div className="text-3xl mb-1">{badge.icon}</div>
+                                        <div className="text-[10px] uppercase font-bold text-slate-500 whitespace-nowrap overflow-hidden text-ellipsis px-1">{badge.title}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Top Skills */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                            <h2 className="text-slate-900 font-bold mb-4">Top Languages & Skills</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {SKILLS.map((skill, i) => (
+                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-sm font-medium">
+                                        <span className="text-slate-900">{skill.name}</span>
+                                        <span className="text-xs text-slate-400 items-center flex gap-1"><CheckCircle className="w-3 h-3 text-emerald-500" />{skill.count}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Bottom Row: Recent Submissions */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 className="text-slate-900 font-bold mb-6 flex items-center gap-2">
+                            <Calendar className="text-indigo-500" size={20} /> Recent Submissions
                         </h2>
+
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm text-left">
+                                <thead className="text-xs font-bold uppercase text-slate-400 border-b border-slate-100">
+                                    <tr>
+                                        <th className="px-4 py-3">Time</th>
+                                        <th className="px-4 py-3">Problem</th>
+                                        <th className="px-4 py-3">Status</th>
+                                        <th className="px-4 py-3">Language</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {RECENT_SUBMISSIONS.map((sub, i) => (
+                                        <tr key={i} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                                            <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{sub.time}</td>
+                                            <td className="px-4 py-3 font-medium text-slate-900 hover:text-indigo-600 cursor-pointer">{sub.title}</td>
+                                            <td className="px-4 py-3">
+                                                <span className={`inline-flex items-center gap-1.5 font-bold ${sub.status === 'Accepted' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                    {sub.status === 'Accepted' ? <CheckCircle size={14} /> : <XCircle size={14} />} {sub.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <span className="px-2 py-1 bg-slate-100 rounded-md text-xs font-bold text-slate-600">{sub.lang}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div className="relative border-l-2 border-slate-100 ml-3 space-y-8">
-                        {[
-                            { title: 'Solved Two Sum', type: 'DSA', time: '2 hours ago', color: 'bg-blue-500' },
-                            { title: 'Mock Interview (AI)', type: 'Interview', time: 'Yesterday', color: 'bg-purple-500' },
-                            { title: 'Resume Update', type: 'Profile', time: '2 days ago', color: 'bg-emerald-500' },
-                            { title: 'Project: Resume Parser', type: 'Dev', time: '3 days ago', color: 'bg-amber-500' },
-                        ].map((act, i) => (
-                            <div key={i} className="relative pl-6">
-                                <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white shadow-sm ${act.color}`}></div>
-                                <h4 className="font-bold text-slate-900 text-sm">{act.title}</h4>
-                                <div className="flex gap-2 items-center mt-1">
-                                    <span className="text-xs font-bold text-slate-400">{act.type}</span>
-                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                                    <span className="text-xs text-slate-400">{act.time}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
                 </div>
+
             </div>
         </div>
     );

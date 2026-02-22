@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { DashboardModeProvider, useDashboardMode } from '../context/DashboardModeContext';
 import Navbar from '../components/layout/Navbar';
+import CompleteProfileModal from '../components/profile/CompleteProfileModal';
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
@@ -187,6 +188,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
         <DashboardModeProvider>
             <DashboardContent>{children}</DashboardContent>
+            <CompleteProfileModal />
         </DashboardModeProvider>
     );
 }

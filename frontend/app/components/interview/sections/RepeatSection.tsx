@@ -3,15 +3,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Mic, Square, ArrowRight, Volume2, Play } from 'lucide-react';
+import { Mic, Square, ArrowRight, Volume2, Play, CheckCircle } from 'lucide-react';
 import { SectionScore } from '../CommunicationAssessment';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface RepeatSectionProps {
     onComplete: (score: SectionScore) => void;
     sentences: string[];
+    globalStream: MediaStream;
 }
 
-export default function RepeatSection({ onComplete, sentences }: RepeatSectionProps) {
+export default function RepeatSection({ onComplete, sentences, globalStream }: RepeatSectionProps) {
     const [step, setStep] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
@@ -31,10 +33,16 @@ export default function RepeatSection({ onComplete, sentences }: RepeatSectionPr
         window.speechSynthesis.speak(utterance);
     };
 
-    const startRecording = async () => {
+    const startRecording = () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderRef.current = new MediaRecorder(stream);
+            const audioTrack = globalStream.getAudioTracks()[0];
+            if (!audioTrack) {
+                console.warn("No audio track found in global stream!");
+                return;
+            }
+
+            const audioOnlyStream = new MediaStream([audioTrack]);
+            mediaRecorderRef.current = new MediaRecorder(audioOnlyStream);
             chunksRef.current = [];
 
             mediaRecorderRef.current.ondataavailable = (e) => {
@@ -44,13 +52,13 @@ export default function RepeatSection({ onComplete, sentences }: RepeatSectionPr
             mediaRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
                 setAudioBlob(blob);
-                stream.getTracks().forEach(track => track.stop());
             };
 
             mediaRecorderRef.current.start();
             setIsRecording(true);
         } catch (err) {
-            console.error(err);
+            console.error("Recording start error", err);
+            alert("Failed to start recording. Please check microphone permissions.");
         }
     };
 
@@ -61,7 +69,7 @@ export default function RepeatSection({ onComplete, sentences }: RepeatSectionPr
         }
     };
 
-    const handleNext = async () => {
+    const handleNext = () => {
         if (!audioBlob) return;
 
         const currentRecording = { index: step, blob: audioBlob, text: sentences[step] };
@@ -84,45 +92,101 @@ export default function RepeatSection({ onComplete, sentences }: RepeatSectionPr
     };
 
     return (
-        <Card className="p-8 max-w-2xl w-full mx-auto space-y-6">
-            <h2 className="text-2xl font-bold text-slate-800 border-b pb-4">Part 2: Listen & Repeat</h2>
-            <div className="flex justify-between text-sm text-slate-400">
-                <span>Sentence {step + 1} of {sentences.length}</span>
-                <span>Listen carefully and repeat exactly.</span>
-            </div>
-
-            <div className="flex flex-col items-center justify-center py-12 gap-6 bg-slate-50 rounded-xl border border-slate-100">
-                <Button
-                    onClick={playSentence}
-                    disabled={isPlaying || isRecording}
-                    variant="outline"
-                    className="h-16 w-16 rounded-full border-2 border-indigo-100 hover:border-indigo-500 hover:text-indigo-600 transition-all"
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-6 lg:p-12">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={`step-${step}`}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="w-full space-y-8"
                 >
-                    {isPlaying ? <Volume2 className="animate-pulse" /> : <Play fill="currentColor" />}
-                </Button>
-                <p className="text-sm text-slate-400">Click to play audio</p>
-            </div>
-
-            <div className="flex justify-center gap-4 pt-4">
-                {!isRecording && !audioBlob && (
-                    <Button onClick={startRecording} disabled={isPlaying} className="bg-red-500 hover:bg-red-600 rounded-full h-16 w-16 shadow-xl">
-                        <Mic size={28} />
-                    </Button>
-                )}
-                {isRecording && (
-                    <Button onClick={stopRecording} className="bg-slate-800 hover:bg-slate-900 rounded-full h-16 w-16 shadow-xl animate-pulse">
-                        <Square size={24} />
-                    </Button>
-                )}
-                {audioBlob && (
-                    <div className="flex gap-4">
-                        <Button variant="outline" onClick={() => setAudioBlob(null)}>Retry</Button>
-                        <Button onClick={handleNext} className="bg-indigo-600 hover:bg-indigo-700">
-                            {step < sentences.length - 1 ? 'Next Sentence' : 'Finish Section'} <ArrowRight className="ml-2 w-4 h-4" />
-                        </Button>
+                    <div className="text-center space-y-4 mb-8">
+                        <div className="bg-purple-50 border border-purple-100 p-4 rounded-3xl w-20 h-20 mx-auto flex items-center justify-center text-purple-600 shadow-xl shadow-purple-50 mb-6">
+                            <Volume2 size={40} />
+                        </div>
+                        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Active Listening</h2>
+                        <div className="flex justify-center items-center gap-3 text-sm text-slate-500 font-bold uppercase tracking-wider">
+                            <span className="bg-slate-100 px-4 py-2 rounded-xl text-slate-700">Phrase {step + 1} of {sentences.length}</span>
+                            <span>Listen carefully and repeat</span>
+                        </div>
                     </div>
-                )}
-            </div>
-        </Card>
+
+                    <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-xl shadow-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center min-h-[300px] space-y-10 relative overflow-hidden">
+
+                        {/* Audio Playback Controls */}
+                        <div className="relative group">
+                            <div className={`absolute -inset-4 bg-purple-500 rounded-full blur-xl opacity-0 transition-opacity duration-500 ${isPlaying ? 'opacity-20 animate-pulse' : 'group-hover:opacity-10'}`} />
+                            <Button
+                                onClick={playSentence}
+                                disabled={isPlaying || isRecording}
+                                className={`relative h-24 w-24 rounded-full border-[6px] shadow-2xl transition-all duration-300 flex items-center justify-center ${isPlaying
+                                        ? 'bg-purple-50 border-purple-200 text-purple-600'
+                                        : 'bg-slate-900 border-slate-800 text-white hover:bg-purple-600 hover:border-purple-500 hover:scale-105'
+                                    }`}
+                            >
+                                {isPlaying ? <Volume2 size={36} className="animate-bounce" /> : <Play size={36} fill="currentColor" className="ml-2" />}
+                            </Button>
+                        </div>
+
+                        <div className="text-center">
+                            <p className="text-slate-500 font-medium">
+                                {isPlaying ? 'Listen closely...' : 'Click to play the phrase'}
+                            </p>
+                        </div>
+
+                        {/* Recording Controls */}
+                        <div className="flex flex-col items-center justify-center gap-4 pt-6 w-full border-t border-slate-100">
+                            {!isRecording && !audioBlob && (
+                                <Button
+                                    onClick={startRecording}
+                                    disabled={isPlaying}
+                                    className="bg-rose-500 hover:bg-rose-600 rounded-2xl h-16 px-8 shadow-lg shadow-rose-200 text-lg font-bold group w-48 disabled:opacity-50"
+                                >
+                                    <Mic size={20} className="mr-3 group-hover:scale-110 transition-transform" /> Start Speaking
+                                </Button>
+                            )}
+
+                            {isRecording && (
+                                <div className="flex flex-col items-center space-y-4">
+                                    <div className="flex gap-1.5 h-6 items-center">
+                                        {[...Array(6)].map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                className="w-1.5 bg-rose-500 rounded-full"
+                                                animate={{ height: ['4px', '20px', '8px', '24px', '4px'] }}
+                                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.1 }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <Button
+                                        onClick={stopRecording}
+                                        className="bg-slate-900 border-2 border-slate-800 hover:bg-rose-600 hover:border-rose-500 rounded-2xl h-16 px-8 shadow-xl text-lg font-bold transition-all w-48"
+                                    >
+                                        <Square size={20} fill="currentColor" className="mr-3" /> Stop Recording
+                                    </Button>
+                                </div>
+                            )}
+
+                            {audioBlob && (
+                                <div className="flex flex-col items-center w-full space-y-6">
+                                    <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 px-6 py-3 rounded-full font-bold">
+                                        <CheckCircle size={20} /> Audio captured successfully
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                                        <Button variant="outline" onClick={() => setAudioBlob(null)} className="rounded-2xl h-14 px-8 font-bold text-slate-600 border-slate-200">
+                                            Retry Recording
+                                        </Button>
+                                        <Button onClick={handleNext} className="bg-slate-900 hover:bg-indigo-600 rounded-2xl h-14 px-8 font-bold text-lg shadow-xl hover:shadow-indigo-200 transition-all text-white flex gap-2">
+                                            {step < sentences.length - 1 ? 'Next Phrase' : 'Finish Listening Section'} <ArrowRight size={20} />
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </Card>
+                </motion.div>
+            </AnimatePresence>
+        </div>
     );
 }

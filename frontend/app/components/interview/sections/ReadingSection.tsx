@@ -3,24 +3,22 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Square, ArrowRight, BookOpen, CheckCircle } from 'lucide-react';
+import { Square, ArrowRight, BookOpen, CheckCircle, Loader2 } from 'lucide-react';
 import { SectionScore } from '../CommunicationAssessment';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ReadingSectionProps {
     onComplete: (score: SectionScore) => void;
     passages: { level: string, text: string }[];
+    globalStream: MediaStream;
 }
 
-export default function ReadingSection({ onComplete, passages }: ReadingSectionProps) {
+export default function ReadingSection({ onComplete, passages, globalStream }: ReadingSectionProps) {
     const [currentLevel, setCurrentLevel] = useState(0);
     const [phase, setPhase] = useState<'intro' | 'prep' | 'read' | 'level_complete'>('intro');
     const [timeLeft, setTimeLeft] = useState(10);
 
     // Recording State
-    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-    const [micPermission, setMicPermission] = useState(false);
-
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<any>(null);
@@ -50,12 +48,18 @@ export default function ReadingSection({ onComplete, passages }: ReadingSectionP
         }, 1000);
     };
 
-    const startReading = async () => {
+    const startReading = () => {
         setPhase('read');
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            setMicPermission(true);
-            mediaRecorderRef.current = new MediaRecorder(stream);
+            // Create a new stream with ONLY the audio track from the global stream to record audio only
+            const audioTrack = globalStream.getAudioTracks()[0];
+            if (!audioTrack) {
+                console.warn("No audio track found in global stream!");
+                return;
+            }
+
+            const audioOnlyStream = new MediaStream([audioTrack]);
+            mediaRecorderRef.current = new MediaRecorder(audioOnlyStream);
             chunksRef.current = [];
 
             mediaRecorderRef.current.ondataavailable = (e) => {
@@ -64,14 +68,13 @@ export default function ReadingSection({ onComplete, passages }: ReadingSectionP
 
             mediaRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                stream.getTracks().forEach(track => track.stop());
                 saveRecording(blob);
             };
 
             mediaRecorderRef.current.start();
         } catch (err) {
-            console.error("Mic error", err);
-            alert("Please enable microphone access.");
+            console.error("Recording start error", err);
+            alert("Failed to start recording. Please check microphone permissions.");
         }
     };
 
@@ -89,45 +92,63 @@ export default function ReadingSection({ onComplete, passages }: ReadingSectionP
     const handleNextLevel = () => {
         if (currentLevel < passages.length - 1) {
             setCurrentLevel(prev => prev + 1);
-            setPhase('intro'); // Or prep
-            startPrep();
+            setPhase('intro');
+            // Alternatively, go straight to prep: setPhase('prep'); startPrep();
         } else {
-            // Done -> Pass all recordings to parent
-            // We need to merge the *last* recording which was just added to state?
-            // React state updates are async. 'recordings' here might not have the last one yet if we call this immediately?
-            // Actually, handleNextLevel is called by user button click, so state should be updated.
-            // Filter to ensure we only send valid recordings
-            const finalRecordings = recordings.filter(r => r.blob instanceof Blob);
-            console.log("Reading Section Complete: Sending", finalRecordings.length, "recordings");
-
-            onComplete({
-                section: 'Reading',
-                score: 0,
-                feedback: '',
-                data: finalRecordings
-            });
+            // Wait for state to settle, then complete
+            setTimeout(() => {
+                // Because recordings state update might be slightly delayed, we pass the current state
+                // Actually React state might not be fully updated here due to closure. 
+                // We use a functional update approach or rely on the effect, but let's just pass what we have
+                // The newest recording is already pushed to `recordings`.
+                onComplete({
+                    section: 'Reading',
+                    score: 0,
+                    feedback: '',
+                    data: recordings
+                });
+            }, 100);
         }
     };
 
+    // Need a special hook to trigger onComplete when 'recordings' reaches full length if we transition directly
+    useEffect(() => {
+        if (phase === 'level_complete' && recordings.length === passages.length) {
+            // Let the user click "Finish" first, handled in handleNextLevel
+        }
+    }, [phase, recordings.length, passages.length]);
+
+
+    const handleFinalize = () => {
+        onComplete({
+            section: 'Reading',
+            score: 0,
+            feedback: '',
+            data: recordings
+        });
+    }
+
     return (
-        <div className="w-full max-w-4xl mx-auto min-h-[500px] flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-6 lg:p-12">
             <AnimatePresence mode='wait'>
                 {phase === 'intro' && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="text-center space-y-8"
+                        exit={{ opacity: 0, y: -20, filter: 'blur(4px)' }}
+                        className="text-center space-y-8 w-full"
                     >
-                        <div className="bg-indigo-100 p-6 rounded-full w-24 h-24 mx-auto flex items-center justify-center text-indigo-600">
+                        <div className="bg-indigo-50 border border-indigo-100 p-6 rounded-[2rem] w-28 h-28 mx-auto flex items-center justify-center text-indigo-600 shadow-xl shadow-indigo-100">
                             <BookOpen size={48} />
                         </div>
-                        <h2 className="text-3xl font-bold text-slate-900">Reading Comprehension</h2>
-                        <p className="text-xl text-slate-600 max-w-lg mx-auto">
-                            Read the following 3 passages clearly and naturally.
-                        </p>
-                        <Button onClick={startPrep} size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-lg px-8 py-6 rounded-full shadow-xl">
-                            Start Level {currentLevel + 1}
+                        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Reading Comprehension</h2>
+                        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 text-slate-600 max-w-lg mx-auto text-left space-y-3">
+                            <p className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />Read the following passages clearly and naturally.</p>
+                            <p className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />You have 10 seconds to prepare before recording starts.</p>
+                            <p className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />Maintain good posture and eye contact with the camera.</p>
+                        </div>
+                        <Button onClick={startPrep} className="bg-slate-900 hover:bg-indigo-600 text-white text-lg px-10 h-16 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-indigo-200 transition-all font-bold group">
+                            Start Level {currentLevel + 1} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </motion.div>
                 )}
@@ -139,27 +160,29 @@ export default function ReadingSection({ onComplete, passages }: ReadingSectionP
                         animate={{ opacity: 1, y: 0 }}
                         className="w-full space-y-8"
                     >
-                        <div className="flex justify-between items-center text-slate-500 font-medium tracking-wide uppercase text-sm">
-                            <span>Level {currentLevel + 1}: {currentPassage.level}</span>
+                        <div className="flex justify-between items-center text-slate-500 font-bold tracking-wider uppercase text-xs">
+                            <span className="bg-slate-100 px-4 py-2 rounded-xl text-slate-700">Level {currentLevel + 1}: <span className="text-indigo-600">{currentPassage.level}</span></span>
                             <span>Passage {currentLevel + 1} of {passages.length}</span>
                         </div>
 
-                        <Card className={`relative overflow-hidden transition-all duration-500 ${phase === 'read' ? 'border-indigo-500 shadow-indigo-100 shadow-2xl scale-105' : 'border-slate-200'}`}>
+                        <Card className={`relative overflow-hidden transition-all duration-500 border-none rounded-[2.5rem] bg-slate-50 ${phase === 'read' ? 'shadow-2xl shadow-indigo-100 ring-4 ring-indigo-50' : 'shadow-sm ring-1 ring-slate-200'}`}>
                             {phase === 'prep' && (
-                                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
-                                    <span className="text-slate-500 text-lg mb-2">Read silently. Recording starts in...</span>
-                                    <span className="text-6xl font-black text-indigo-600">{timeLeft}</span>
+                                <div className="absolute inset-0 bg-white/80 backdrop-blur-md z-10 flex flex-col items-center justify-center">
+                                    <div className="w-24 h-24 rounded-full border-4 border-indigo-100 flex items-center justify-center mb-4">
+                                        <span className="text-5xl font-black text-indigo-600 animate-pulse">{timeLeft}</span>
+                                    </div>
+                                    <span className="text-slate-600 text-lg font-medium">Read silently. Recording starts soon.</span>
                                 </div>
                             )}
 
-                            <div className="p-10 md:p-14 text-center">
-                                <p className={`text-2xl md:text-3xl leading-relaxed font-serif transition-colors duration-300 ${phase === 'read' ? 'text-slate-900' : 'text-slate-400 blur-sm'}`}>
+                            <div className="p-10 md:p-14 text-center min-h-[400px] flex items-center justify-center">
+                                <p className={`text-2xl md:text-3xl leading-relaxed font-serif transition-colors duration-500 ${phase === 'read' ? 'text-slate-900' : 'text-slate-400 blur-[2px]'}`}>
                                     {currentPassage.text}
                                 </p>
                             </div>
 
                             {phase === 'read' && (
-                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-100">
+                                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-indigo-50">
                                     <motion.div
                                         className="h-full bg-indigo-500"
                                         initial={{ width: "0%" }}
@@ -170,16 +193,18 @@ export default function ReadingSection({ onComplete, passages }: ReadingSectionP
                             )}
                         </Card>
 
-                        <div className="flex justify-center">
+                        <div className="flex justify-center h-20 items-center">
                             {phase === 'prep' && (
-                                <Button variant="outline" onClick={() => { clearInterval(timerRef.current); startReading(); }} className="rounded-full">
+                                <Button variant="ghost" onClick={() => { clearInterval(timerRef.current); startReading(); }} className="rounded-2xl text-slate-500 font-bold px-8 hover:bg-slate-100">
                                     Skip Timer
                                 </Button>
                             )}
 
                             {phase === 'read' && (
-                                <Button onClick={stopReading} className="bg-red-500 hover:bg-red-600 rounded-full h-16 w-16 shadow-2xl animate-pulse flex items-center justify-center">
-                                    <Square size={24} fill="white" />
+                                <Button onClick={stopReading} className="bg-rose-500 hover:bg-rose-600 rounded-2xl h-16 w-48 shadow-lg shadow-rose-200 group text-lg font-bold transition-all relative overflow-hidden">
+                                    <div className="absolute inset-0 bg-white/20 animate-pulse mix-blend-overlay" />
+                                    <Square size={20} fill="currentColor" className="mr-3" />
+                                    Stop Recording
                                 </Button>
                             )}
                         </div>
@@ -190,17 +215,26 @@ export default function ReadingSection({ onComplete, passages }: ReadingSectionP
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-center space-y-6 max-w-md mx-auto"
+                        className="text-center space-y-6 max-w-md mx-auto w-full pt-10"
                     >
-                        <div className="bg-emerald-100 p-4 rounded-full w-20 h-20 mx-auto flex items-center justify-center text-emerald-600">
-                            <CheckCircle size={40} />
+                        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-3xl w-24 h-24 mx-auto flex items-center justify-center text-emerald-500 shadow-xl shadow-emerald-50">
+                            <CheckCircle size={48} />
                         </div>
 
-                        <h2 className="text-2xl font-bold text-slate-900">Passage Complete!</h2>
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Passage Recorded!</h2>
+                        <p className="text-slate-500">Great job. Prepare for the next section.</p>
 
-                        <Button onClick={handleNextLevel} className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 text-lg shadow-lg">
-                            {currentLevel < passages.length - 1 ? 'Next Passage' : 'Finish Reading Section'} <ArrowRight className="ml-2" />
-                        </Button>
+                        <div className="pt-8">
+                            {currentLevel < passages.length - 1 ? (
+                                <Button onClick={handleNextLevel} className="w-full bg-slate-900 hover:bg-indigo-600 h-16 text-lg font-bold rounded-2xl shadow-xl transition-all flex justify-between px-8">
+                                    Next Passage <ArrowRight size={20} />
+                                </Button>
+                            ) : (
+                                <Button onClick={handleFinalize} className="w-full bg-emerald-500 hover:bg-emerald-600 h-16 text-lg font-bold rounded-2xl shadow-xl shadow-emerald-200 transition-all text-white flex justify-between px-8">
+                                    Finish Reading Section <ArrowRight size={20} />
+                                </Button>
+                            )}
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

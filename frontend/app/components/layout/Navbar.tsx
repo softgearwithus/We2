@@ -18,6 +18,7 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [profileIncomplete, setProfileIncomplete] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
     const isDarkBg = !isScrolled && !mobileMenuOpen && pathname === '/curriculum';
 
@@ -35,9 +36,17 @@ export default function Navbar() {
         };
         document.addEventListener('mousedown', handleClickOutside);
 
+        const checkProfile = () => {
+            const status = localStorage.getItem('profile_completed');
+            setProfileIncomplete(!status || status === 'later');
+        };
+        checkProfile();
+        window.addEventListener('profile_status_changed', checkProfile);
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('profile_status_changed', checkProfile);
         };
     }, []);
 
@@ -128,8 +137,14 @@ export default function Navbar() {
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                                 className="flex items-center gap-2 hover:bg-gray-100 p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-gray-200"
                             >
-                                <div className="w-8 h-8 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm">
+                                <div className="relative w-8 h-8 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm">
                                     {user.email[0].toUpperCase()}
+                                    {profileIncomplete && (
+                                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border-2 border-white"></span>
+                                        </span>
+                                    )}
                                 </div>
                                 <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">{user.email.split('@')[0]}</span>
                                 <ChevronDown size={14} className="text-gray-400" />
@@ -150,13 +165,19 @@ export default function Navbar() {
                                             <p className="text-xs text-brand-orange mt-1 font-medium capitalize">{user.subscriptionPlan || 'Free'} Plan</p>
                                         </div>
 
-                                        <Link href="/dashboard/profile" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
-                                            <User size={16} />
-                                            Profile
+                                        <Link href="/dashboard/profile" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                            <div className="flex items-center gap-2">
+                                                <User size={16} />
+                                                Profile
+                                            </div>
+                                            {profileIncomplete && <span className="text-[10px] font-bold bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full">Incomplete</span>}
                                         </Link>
-                                        <Link href="/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
-                                            <Settings size={16} />
-                                            Settings
+                                        <Link href="/settings" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                            <div className="flex items-center gap-2">
+                                                <Settings size={16} />
+                                                Settings
+                                            </div>
+                                            {profileIncomplete && <span className="w-2 h-2 rounded-full bg-rose-500"></span>}
                                         </Link>
 
                                         <div className="border-t border-gray-50 mt-1">
