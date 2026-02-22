@@ -34,16 +34,17 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         icon: string;
         label: string;
         href: string;
-        subItems?: { label: string; href: string; icon: string }[];
+        subItems?: { label: string; href: string; icon: string; hasUpdate?: boolean }[];
+        hasUpdate?: boolean;
     }
 
     const placementMenu: MenuItem[] = [
         { icon: 'dashboard', label: 'Overview', href: '/dashboard' },
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation' },
         { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
-        { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa' },
+        { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa', hasUpdate: true },
         { icon: 'database', label: 'SQL Training', href: '/dashboard/sql' },
-        { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects' },
+        { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: true },
         {
             icon: 'mic',
             label: 'Mock Interview',
@@ -63,7 +64,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Git Testing', href: '/dashboard/github/testing', icon: 'bug_report' }
             ]
         },
-        { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar' },
+        { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar', hasUpdate: true },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
         {
             icon: 'group',
@@ -139,11 +140,14 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                                             {item.icon}
                                         </span>
                                         <span
-                                            className={`font-medium whitespace-nowrap transition-opacity duration-200 ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
+                                            className={`font-medium whitespace-nowrap transition-opacity duration-200 flex-1 ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
                                                 }`}
                                         >
                                             {item.label}
                                         </span>
+                                        {item.hasUpdate && (
+                                            <span className={`w-2 h-2 rounded-full bg-rose-500 animate-pulse ${sidebarOpen ? 'ml-auto' : 'absolute top-3 right-3'}`}></span>
+                                        )}
                                     </Link>
 
                                     {/* Sub-items rendering - only if sidebar is open and parent has subItems */}
@@ -161,7 +165,10 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                                                             }`}
                                                     >
                                                         <span className="material-symbols-outlined text-[18px]">{sub.icon}</span>
-                                                        <span>{sub.label}</span>
+                                                        <span className="flex-1">{sub.label}</span>
+                                                        {sub.hasUpdate && (
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse ml-auto"></span>
+                                                        )}
                                                     </Link>
                                                 );
                                             })}

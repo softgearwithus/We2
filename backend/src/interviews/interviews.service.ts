@@ -283,6 +283,7 @@ export class InterviewsService {
             reading: [] as any[],
             listening: [] as any[],
             extempore: null as any,
+            technical: [] as any[],
             overallScore: null as number | null
         };
 
@@ -393,7 +394,40 @@ export class InterviewsService {
                 }
             }
 
-            // 5. Aggregate & Update Session
+            // 5. Analyze Technical
+            if (metadata.technical && Array.isArray(metadata.technical)) {
+                for (let i = 0; i < metadata.technical.length; i++) {
+                    try {
+                        const file = getFile(`technical_${i}`);
+                        if (file) {
+                            console.log(`[Service] Analyzing technical_${i}, buffer size: ${file.buffer.length} bytes`);
+                            if (file.buffer.length < 1000) {
+                                console.warn(`[Service] technical_${i} buffer too small, skipping.`);
+                                continue;
+                            }
+                            const topic = metadata.technical[i].topic;
+                            const audioBase64 = file.buffer.toString('base64');
+                            const analysis = await this.geminiService.analyzeAudio(audioBase64, `Technical Interview Question: Answer this software engineering question out loud thoughtfully: "${topic}"`);
+                            if (analysis) {
+                                console.log(`[Service] technical_${i} score: ${analysis.overallScore}`);
+                                results.technical.push({ ...analysis, targetTopic: topic });
+                                totalScoreSum += (analysis.overallScore || 0);
+                                itemsCount++;
+                                if (analysis.strengths) allStrengths.push(...analysis.strengths);
+                                if (analysis.improvements) allImprovements.push(...analysis.improvements);
+                                if (analysis.actionableCoaching) allCoaching.push(...analysis.actionableCoaching);
+                                if (analysis.communicationPersona && mainPersona === "Assessment Pending") mainPersona = analysis.communicationPersona;
+                            }
+                        } else {
+                            console.warn(`[Service] Missing file for technical_${i}`);
+                        }
+                    } catch (e) {
+                        console.error(`[Service] Failed to analyze technical_${i}`, e);
+                    }
+                }
+            }
+
+            // 6. Aggregate & Update Session
             const finalScore = itemsCount > 0 ? Math.round(totalScoreSum / itemsCount) : null;
             results.overallScore = finalScore;
 

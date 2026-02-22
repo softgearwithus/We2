@@ -44,6 +44,8 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
     const [collectedData, setCollectedData] = useState<any>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [finalResult, setFinalResult] = useState<any>(null);
+    const [isCheckingReport, setIsCheckingReport] = useState(false);
+
 
     // Global Media State
     const [globalStream, setGlobalStream] = useState<MediaStream | null>(null);
@@ -204,16 +206,35 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
         return response.json();
     };
 
-    const fetchWithRetry = async (sessionId: string, attempts: number = 8) => {
+    const fetchWithRetry = async (sessionId: string, attempts: number = 30) => {
         for (let i = 0; i < attempts; i++) {
             const session = await fetchSessionDetails(sessionId);
-            if (session?.analysis && (session.analysis.reading || session.analysis.listening || session.analysis.extempore)) {
+            if (session?.analysis && (session.analysis.reading || session.analysis.listening || session.analysis.extempore || session.analysis.technical)) {
                 return session;
             }
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 3000));
         }
         throw new Error('Analysis still processing');
     };
+
+    // Auto-poll for results continuously
+    useEffect(() => {
+        let mounted = true;
+
+        const poll = async () => {
+            if (currentSection === 'results' && finalResult?.status === 'in_progress' && !isSubmitting) {
+                try {
+                    const session = await fetchWithRetry(finalResult.id, 30);
+                    if (mounted && onComplete) onComplete(session);
+                } catch (e) {
+                    console.error("Auto-poll polling timeout", e);
+                }
+            }
+        };
+
+        poll();
+        return () => { mounted = false; };
+    }, [currentSection, finalResult, isSubmitting, onComplete]);
 
     return (
         <div className="fixed inset-0 z-[100] bg-[#F8FAFC] flex font-sans overflow-hidden">
@@ -451,19 +472,24 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                     Back Home
                                                 </Button>
                                                 <Button
+                                                    disabled={isCheckingReport}
                                                     onClick={async () => {
+                                                        if (isCheckingReport) return;
+                                                        setIsCheckingReport(true);
                                                         try {
-                                                            const session = await fetchWithRetry(finalResult.id);
+                                                            const session = await fetchWithRetry(finalResult.id, 5); // Just 5 manual attempts if they click
                                                             if (onComplete) onComplete(session);
                                                         } catch (err) {
                                                             console.error(err);
-                                                            alert('Analysis is still processing. Please try again shortly.');
+                                                            alert('Analysis is still processing. The AI is analyzing your 12 audio files. Please wait.');
+                                                        } finally {
+                                                            setIsCheckingReport(false);
                                                         }
                                                     }}
                                                     size="lg"
-                                                    className="bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl px-8 h-14 shadow-xl hover:shadow-indigo-200 transition-all font-bold flex items-center gap-2"
+                                                    className="bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl px-8 h-14 shadow-xl hover:shadow-indigo-200 transition-all font-bold flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                                                 >
-                                                    View Detailed Report <ArrowRight size={20} />
+                                                    {isCheckingReport ? <><Loader2 size={20} className="animate-spin" /> Checking...</> : <>View Detailed Report <ArrowRight size={20} /></>}
                                                 </Button>
                                             </div>
                                         </motion.div>
@@ -488,6 +514,12 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                     score: typeof finalResult.overallScore === 'number' ? finalResult.overallScore : 0,
                                                     feedback: finalResult.analysis?.extempore?.feedback || finalResult.feedback || "",
                                                     data: finalResult.analysis?.extempore
+                                                },
+                                                {
+                                                    section: 'Technical',
+                                                    score: Math.round((finalResult.analysis?.technical || []).reduce((acc: any, curr: any) => acc + (curr.overallScore || 0), 0) / (finalResult.analysis?.technical?.length || 1)),
+                                                    feedback: (finalResult.analysis?.technical || []).map((t: any, i: number) => `### Q${i + 1}\n${t.feedback || "Analysis completed."}`).join('\n\n---\n\n'),
+                                                    data: finalResult.analysis?.technical
                                                 }
                                             ]}
                                             onRestart={() => window.location.reload()}
