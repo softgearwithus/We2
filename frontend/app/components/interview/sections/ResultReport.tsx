@@ -134,7 +134,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                                         <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
                                             <div className="space-y-1">
                                                 <p className="text-[10px] uppercase font-bold text-slate-400">Target Content (Part {i + 1})</p>
-                                                <p className="text-xs text-slate-700 leading-relaxed italic">"{item.targetText || '---'}"</p>
+                                                <p className="text-xs text-slate-700 leading-relaxed italic">"{item.targetText || item.targetTopic || '---'}"</p>
                                             </div>
                                             <div className="space-y-1 border-t md:border-t-0 md:border-l border-slate-100 pt-2 md:pt-0 md:pl-3">
                                                 <p className="text-[10px] uppercase font-bold text-indigo-400">Your Transcription</p>
@@ -201,7 +201,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                                                         animate={{ width: `${metric.value}%` }}
                                                         transition={{ duration: 1, delay: 0.5 }}
                                                         className={`h-full rounded-full ${metric.value >= 80 ? 'bg-emerald-500' :
-                                                                metric.value >= 60 ? 'bg-indigo-500' : 'bg-rose-500'
+                                                            metric.value >= 60 ? 'bg-indigo-500' : 'bg-rose-500'
                                                             }`}
                                                     />
                                                 </div>

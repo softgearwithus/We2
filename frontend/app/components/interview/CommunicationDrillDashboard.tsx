@@ -155,7 +155,8 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                     overallScore: results.overallScore,
                     reading: results.analysis?.reading,
                     listening: results.analysis?.listening,
-                    extempore: results.analysis?.extempore
+                    extempore: results.analysis?.extempore,
+                    technical: results.analysis?.technical
                 } : undefined
             };
 
@@ -203,6 +204,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
         const reading = session.analysis?.reading || [];
         const listening = session.analysis?.listening || [];
         const extempore = session.analysis?.extempore;
+        const technical = session.analysis?.technical || [];
 
         const avgScore = (items: any[]) => {
             if (!items || items.length === 0) return 0;
@@ -227,6 +229,12 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                 score: typeof extempore?.overallScore === 'number' ? extempore.overallScore : (session.overallScore || 0),
                 feedback: extempore?.feedback || session.feedback || session.analysis?.feedback || "",
                 data: extempore
+            },
+            {
+                section: 'Technical',
+                score: avgScore(technical),
+                feedback: (technical || []).map((t: any, i: number) => `### Q${i + 1}\n${t.feedback || "Analysis completed."}`).join('\n\n---\n\n'),
+                data: technical
             }
         ];
     };

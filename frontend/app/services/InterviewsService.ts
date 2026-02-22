@@ -12,6 +12,7 @@ export interface InterviewSession {
         reading?: any[];
         listening?: any[];
         extempore?: any;
+        technical?: any[];
         metrics?: any;
         transcript?: string;
         summary?: string;
@@ -52,6 +53,7 @@ export class InterviewsService {
                 reading: apiSession.analysis?.reading,
                 listening: apiSession.analysis?.listening,
                 extempore: apiSession.analysis?.extempore,
+                technical: apiSession.analysis?.technical,
                 metrics: apiSession.analysis?.metrics,
                 transcript: apiSession.analysis?.transcript,
                 summary: apiSession.analysis?.summary,

@@ -29,6 +29,7 @@ export default function AdminLayout({
         { icon: Briefcase, label: 'Companies', href: '/admin/companies', roles: ['super_admin'] },
         { icon: Code2, label: 'Project Labs', href: '/admin/projects', roles: ['super_admin'] },
         { icon: Radar, label: 'Market Radar', href: '/admin/market-radar', roles: ['super_admin'] },
+        { icon: Bell, label: 'Updates', href: '/admin/updates', roles: ['super_admin'] },
         { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['all'] },
         { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['all'] },
     ];

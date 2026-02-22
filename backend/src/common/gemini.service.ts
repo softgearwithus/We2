@@ -129,14 +129,17 @@ export class GeminiService {
             
             CRITICAL INSTRUCTIONS (HARD MARKING SCHEME):
             1. ACT AS A TOUGH INTERVIEWER: Apply a very strict marking scheme. A score of 90+ should be nearly impossible for anyone but a professional orator. 
-            2. SILENCE/NOISE: If the audio is silent, contains only noise, or has no discernible speech, return "overallScore": 0 and explicitly state this in "feedback".
-            3. CONTENT RELEVANCE (ZERO TOLERANCE):
-               - "Reading Task": Must be 100% VERBATIM. -5 points for every single word changed, missed, or added.
-               - "Listening Task": Must be EXACT. -10 points for every minor alteration.
-               - "Extempore Task": Must be logically sound and on-topic. If they drift or speak generic filler, score "Overall Score" below 15.
+            2. SILENCE/NOISE/EMPTY AUDIO (CRITICAL): If you cannot hear clear, distinct, and audible human speech, OR if it's just static/background noise, YOU MUST return "overallScore": 0, set all metrics to 0, return an empty string for "transcript", and explicitly state "No audible speech detected" in "feedback". DO NOT HALLUCINATE OR INVENT A TRANSCRIPT just because you have the Prompt Context.
+            3. CONTENT RELEVANCE (STRICT ENFORCEMENT - ZERO TOLERANCE FOR OFF-TOPIC):
+               - If the spoken content is COMPLETELY IRRELEVANT to the given Context/Prompt, YOU MUST return "overallScore": 0, set all metrics to 0, and explicitly state "The response was completely off-topic and irrelevant to the prompt" in your "feedback".
+               - "Reading Task": Must be 100% VERBATIM to the Context. If they speak about something else entirely, score 0. -5 points for every word changed.
+               - "Listening Task": Must be EXACT. If they speak about something else entirely, score 0. -10 points for every minor alteration.
+               - "Extempore Task": Must heavily focus on the specific topic provided. If they drift, speak generic filler, or ignore the actual prompt, score "overallScore" 0.
+               - "Technical/Interview Task": Must answer the specific question asked based on the Context. If they give a generic answer or discuss a different topic, score "overallScore" 0.
             4. FLUENCY & FILLERS: Deduct 5 points for every "um", "uh", or significant hesitation. 
             5. TONE & CLARITY: Any mumbling or low confidence should result in metrics below 40.
-            6. Verbatim transcript MUST be 100% accurate to what was actually said.
+            6. TRANSCRIPT ACCURACY: The transcript MUST BE EXACTLY WHAT WAS SAID. If they said nothing, the transcript MUST BE EMPTY.
+
 
             Provide a detailed "World Class" assessment based on the following metrics (scale 0-100 where applicable):
             1. Fluency (Strict: penalize every "uh/um")

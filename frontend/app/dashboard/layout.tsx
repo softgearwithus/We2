@@ -14,6 +14,32 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [updateIndicators, setUpdateIndicators] = useState<Record<string, boolean>>({});
+
+    useEffect(() => {
+        const fetchUpdates = () => {
+            const stored = localStorage.getItem('emble_admin_updates');
+            if (stored) {
+                try {
+                    setUpdateIndicators(JSON.parse(stored));
+                } catch (e) {
+                    console.error("Error parsing update state", e);
+                }
+            }
+        };
+
+        fetchUpdates();
+
+        // Listen for storage events (if admin changes in another tab)
+        window.addEventListener('storage', fetchUpdates);
+        // Custom event for same-window updates
+        window.addEventListener('admin_updates_changed', fetchUpdates);
+
+        return () => {
+            window.removeEventListener('storage', fetchUpdates);
+            window.removeEventListener('admin_updates_changed', fetchUpdates);
+        };
+    }, []);
 
     if (!dashboardContext) {
         throw new Error("DashboardContent must be used within DashboardModeProvider");
@@ -42,9 +68,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         { icon: 'dashboard', label: 'Overview', href: '/dashboard' },
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation' },
         { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
-        { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa', hasUpdate: true },
-        { icon: 'database', label: 'SQL Training', href: '/dashboard/sql' },
-        { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: true },
+        { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa', hasUpdate: updateIndicators['/dashboard/dsa'] },
+        { icon: 'database', label: 'SQL Training', href: '/dashboard/sql', hasUpdate: updateIndicators['/dashboard/sql'] },
+        { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },
         {
             icon: 'mic',
             label: 'Mock Interview',
@@ -64,7 +90,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Git Testing', href: '/dashboard/github/testing', icon: 'bug_report' }
             ]
         },
-        { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar', hasUpdate: true },
+        { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar', hasUpdate: updateIndicators['/dashboard/market-radar'] },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
         {
             icon: 'group',

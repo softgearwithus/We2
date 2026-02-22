@@ -501,25 +501,25 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                     section: 'Reading',
                                                     score: Math.round((finalResult.analysis.reading || []).reduce((acc: any, curr: any) => acc + (curr.overallScore || 0), 0) / (finalResult.analysis.reading?.length || 1)),
                                                     feedback: (finalResult.analysis.reading || []).map((r: any, i: number) => `### Passage ${i + 1}\n${r.feedback || "Analysis completed."}`).join('\n\n---\n\n'),
-                                                    data: finalResult.analysis.reading
+                                                    data: (finalResult.analysis.reading || []).map((r: any, i: number) => ({ ...r, blob: collectedData?.reading?.[i]?.blob }))
                                                 },
                                                 {
                                                     section: 'Listening',
                                                     score: Math.round((finalResult.analysis.listening || []).reduce((acc: any, curr: any) => acc + (curr.overallScore || 0), 0) / (finalResult.analysis.listening?.length || 1)),
                                                     feedback: (finalResult.analysis.listening || []).map((l: any, i: number) => `### Sentence ${i + 1}\n${l.feedback || "Analysis completed."}`).join('\n\n---\n\n'),
-                                                    data: finalResult.analysis.listening
+                                                    data: (finalResult.analysis.listening || []).map((l: any, i: number) => ({ ...l, blob: collectedData?.listening?.[i]?.blob }))
                                                 },
                                                 {
                                                     section: 'Extempore',
                                                     score: typeof finalResult.overallScore === 'number' ? finalResult.overallScore : 0,
                                                     feedback: finalResult.analysis?.extempore?.feedback || finalResult.feedback || "",
-                                                    data: finalResult.analysis?.extempore
+                                                    data: { ...finalResult.analysis?.extempore, blob: collectedData?.extempore?.blob }
                                                 },
                                                 {
                                                     section: 'Technical',
                                                     score: Math.round((finalResult.analysis?.technical || []).reduce((acc: any, curr: any) => acc + (curr.overallScore || 0), 0) / (finalResult.analysis?.technical?.length || 1)),
                                                     feedback: (finalResult.analysis?.technical || []).map((t: any, i: number) => `### Q${i + 1}\n${t.feedback || "Analysis completed."}`).join('\n\n---\n\n'),
-                                                    data: finalResult.analysis?.technical
+                                                    data: (finalResult.analysis?.technical || []).map((t: any, i: number) => ({ ...t, blob: collectedData?.technical?.[i]?.blob }))
                                                 }
                                             ]}
                                             onRestart={() => window.location.reload()}
