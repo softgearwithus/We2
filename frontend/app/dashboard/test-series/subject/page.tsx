@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 const SUBJECTS = [
     { key: 'english', title: 'English', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
@@ -30,6 +31,7 @@ const item: Variants = {
 
 export default function SubjectTestsPage() {
     const [counts, setCounts] = useState<Record<string, number>>({});
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_subject');
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
@@ -74,6 +76,11 @@ export default function SubjectTestsPage() {
                         <p className="text-lg text-slate-500 font-medium">
                             Rigorous evaluations designed for serious engineers. Select your subject below.
                         </p>
+                        {isFreePlan && (
+                            <div className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                Free plan time left in Subject Tests: {remainingLabel}
+                            </div>
+                        )}
                     </div>
                 </motion.header>
 
@@ -87,7 +94,7 @@ export default function SubjectTestsPage() {
                         <motion.div variants={item} key={idx}>
                             <Link
                                 href={`/dashboard/test-series/subject/${subject.key}`}
-                                className="group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative overflow-hidden"
+                                className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}
                             >
                                 <div className={`absolute top-0 right-0 w-32 h-32 ${subject.bg} rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 transition-colors`} />
 

@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Query, Patch, Delete, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -23,7 +23,28 @@ export class AdminController {
     @Get('analytics')
     @Roles(UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Admin analytics summary' })
-    async getAnalytics() {
-        return this.adminService.getAnalytics();
+    async getAnalytics(@Query('range') range?: string) {
+        return this.adminService.getAnalytics(range);
+    }
+
+    @Get('students')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Admin students listing' })
+    async getStudents() {
+        return this.adminService.getStudents();
+    }
+
+    @Patch('students/:id/disable')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Disable a student account' })
+    async disableStudent(@Param('id') id: string) {
+        return this.adminService.disableStudent(id);
+    }
+
+    @Delete('students/:id')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Delete a student account' })
+    async deleteStudent(@Param('id') id: string) {
+        return this.adminService.deleteStudent(id);
     }
 }

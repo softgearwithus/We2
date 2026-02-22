@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Panel, Group, Separator } from 'react-resizable-panels';
 import { ArrowRight, Clock, RefreshCcw, Info, Sparkles, ArrowLeft, ListFilter, GraduationCap, Copy, Maximize2, Minimize2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 import ProblemDescription from '@/app/components/dsa/ProblemDescription';
 import SqlSubmissionsTab from '@/app/components/sql/SqlSubmissionsTab';
@@ -43,6 +44,8 @@ export default function SqlTrainingPage() {
     const [trainingSubmissions, setTrainingSubmissions] = useState<SqlTrainingSubmission[]>([]);
     const [submissionsLoading, setSubmissionsLoading] = useState(false);
     const [maximizedSection, setMaximizedSection] = useState<MaximizedSection>(null);
+
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('sql');
 
     const problem = task?.problem;
     const canSubmit = task?.canSubmit ?? false;
@@ -293,6 +296,11 @@ export default function SqlTrainingPage() {
                     <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
                         <Sparkles size={12} /> Mastery {metadata?.mastery ?? 0}
                     </div>
+                    {isFreePlan && (
+                        <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full ${isLimited ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                            <Clock size={12} /> {remainingLabel} left
+                        </div>
+                    )}
                     {metadata?.nextReviewAt && (
                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
                             <Clock size={12} /> Next review {new Date(metadata.nextReviewAt).toLocaleDateString()}
@@ -308,6 +316,14 @@ export default function SqlTrainingPage() {
             </div>
 
             <div className="flex-1 w-full overflow-hidden relative">
+                {isLimited && (
+                    <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/85 backdrop-blur-sm">
+                        <div className="text-center max-w-md px-6">
+                            <h3 className="text-xl font-bold text-slate-900 mb-2">Free plan limit reached</h3>
+                            <p className="text-sm text-slate-500">Upgrade to continue your SQL practice.</p>
+                        </div>
+                    </div>
+                )}
                 <Group orientation="horizontal" className="flex h-full w-full">
                     {(maximizedSection === null || maximizedSection === 'description') && (
                         <Panel

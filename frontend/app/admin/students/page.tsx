@@ -14,7 +14,6 @@ import {
     UserCheck,
     Loader2,
     X,
-    Activity,
     User
 } from 'lucide-react';
 import { Student, StudentsData, fetchAdminStudents } from '@/app/lib/admin';
@@ -72,17 +71,29 @@ export default function AdminStudentsPage() {
         setActiveMenu(null);
     };
 
-    const handleConfirmAction = () => {
+    const handleConfirmAction = async () => {
         if (!selectedStudent || confirmationText.toLowerCase() !== actionType) return;
 
-        // Mock frontend update
-        if (actionType === 'delete') {
-            setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
-        } else {
-            setStudents(prev => prev.map(s => s.id === selectedStudent.id ? { ...s, status: 'disabled' } : s));
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) return;
+        try {
+            if (actionType === 'delete') {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/students/${selectedStudent.id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
+            } else {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/students/${selectedStudent.id}/disable`, {
+                    method: 'PATCH',
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setStudents(prev => prev.map(s => s.id === selectedStudent.id ? { ...s, status: 'disabled' } : s));
+            }
+        } finally {
+            setIsModalOpen(false);
         }
 
-        setIsModalOpen(false);
     };
 
     const formatRelativeTime = (isoString: string) => {
@@ -94,9 +105,10 @@ export default function AdminStudentsPage() {
     };
 
     const getSubscriptionBadge = (sub: string) => {
-        if (sub === 'Free') return <span className="px-2.5 py-1 text-xs font-bold text-slate-500 bg-slate-100 rounded-lg">Free Tier</span>;
-        if (sub.includes('Pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> {sub}</span>;
-        return <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg w-fit">{sub}</span>;
+        const label = sub.replace(/_/g, ' ').replace(/\w/g, (c) => c.toUpperCase());
+        if (sub === 'free') return <span className="px-2.5 py-1 text-xs font-bold text-slate-500 bg-slate-100 rounded-lg">Free Tier</span>;
+        if (sub.includes('pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> {label}</span>;
+        return <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg w-fit">{label}</span>;
     };
 
     if (isLoading || !data) {
@@ -156,9 +168,9 @@ export default function AdminStudentsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
                 {/* Main Table Area */}
-                <div className="lg:col-span-3 space-y-6">
+                <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="relative w-full max-w-md">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -225,7 +237,7 @@ export default function AdminStudentsPage() {
                                                     </div>
                                                     <div className="flex items-center gap-2 text-xs text-slate-600">
                                                         <Phone size={12} className="text-slate-400" />
-                                                        {student.mobile}
+                                                        {student.mobile || '--'}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 space-y-2">
@@ -279,32 +291,6 @@ export default function AdminStudentsPage() {
                     </div>
                 </div>
 
-                {/* Sidebar - Recent Registrations */}
-                <div className="space-y-6">
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-5 border-b border-slate-100 flex items-center gap-2">
-                            <Activity size={18} className="text-indigo-500" />
-                            <h3 className="font-bold text-slate-900">Recent Registrations</h3>
-                        </div>
-                        <div className="divide-y divide-slate-100">
-                            {data.recentRegistrations.map((user, i) => (
-                                <div key={i} className="p-4 hover:bg-slate-50 transition-colors flex items-start gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0 mt-0.5">
-                                        <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user.avatarBase}`} alt={user.name} />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-slate-900">{user.name}</p>
-                                        <p className="text-xs text-slate-500 mt-0.5 line-clamp-1" title={user.college}>{user.college}</p>
-                                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-wide">
-                                            <Clock size={10} />
-                                            {formatRelativeTime(user.joinedAt)}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {/* Security Confirmation Modal */}

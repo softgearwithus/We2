@@ -1,9 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AdminService } from '../admin/admin.service';
 import { CreateMcqQuestionDto } from './dto/create-mcq-question.dto';
 import { ImportMcqsDto } from './dto/import-mcqs.dto';
 import { ListMcqQueryDto, McqOrder } from './dto/list-mcq-query.dto';
+import { AdminMcqQueryDto } from './dto/admin-mcq-query.dto';
+import { UpdateMcqQuestionDto } from './dto/update-mcq-question.dto';
 import { McqQuestion, McqCategory } from './entities/mcq-question.entity';
 
 @Injectable()
@@ -11,6 +14,7 @@ export class McqsService {
     constructor(
         @InjectRepository(McqQuestion)
         private readonly mcqRepo: Repository<McqQuestion>,
+        private readonly adminService: AdminService,
     ) { }
 
     async create(dto: CreateMcqQuestionDto) {
@@ -33,7 +37,14 @@ export class McqsService {
             options,
             correctOptionIndex: dto.correctOptionIndex,
         });
-        return this.mcqRepo.save(question);
+        const saved = await this.mcqRepo.save(question);
+        await this.adminService.logAction({
+            action: 'MCQ Created',
+            target: saved.groupLabel,
+            severity: 'info',
+            metadata: { id: saved.id },
+        });
+        return saved;
     }
 
     async list(query: ListMcqQueryDto) {
@@ -63,6 +74,112 @@ export class McqsService {
             limit,
             hasNext: page * limit < total,
         };
+    }
+
+    async adminList(query: AdminMcqQueryDto) {
+        const page = query.page || 1;
+        const limit = query.limit || 50;
+        const order = query.order || McqOrder.LATEST;
+
+        const qb = this.mcqRepo.createQueryBuilder('mcq');
+
+        if (query.category) {
+            qb.andWhere('mcq.category = :category', { category: query.category });
+        }
+        if (query.groupKey) {
+            qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
+        }
+        if (query.search) {
+            qb.andWhere('(mcq.question ILIKE :search OR mcq.groupLabel ILIKE :search)', {
+                search: `%${query.search}%`,
+            });
+        }
+
+        if (order === McqOrder.RANDOM) {
+            qb.orderBy('RANDOM()');
+        } else if (order === McqOrder.OLDEST) {
+            qb.orderBy('mcq.createdAt', 'ASC');
+        } else {
+            qb.orderBy('mcq.createdAt', 'DESC');
+        }
+
+        qb.skip((page - 1) * limit).take(limit);
+
+        const [items, total] = await qb.getManyAndCount();
+        return {
+            items,
+            total,
+            page,
+            limit,
+            hasNext: page * limit < total,
+        };
+    }
+
+    async update(id: string, dto: UpdateMcqQuestionDto) {
+        const question = await this.mcqRepo.findOne({ where: { id } });
+        if (!question) {
+            throw new NotFoundException('MCQ not found');
+        }
+
+        const groupValue = typeof dto.group === 'string' ? dto.group.trim() : '';
+        if (groupValue) {
+            question.groupLabel = groupValue;
+            question.groupKey = this.normalizeKey(groupValue);
+        }
+
+        if (dto.category) {
+            question.category = dto.category;
+        }
+
+        if (typeof dto.question === 'string' && dto.question.trim()) {
+            question.question = dto.question.trim();
+        }
+
+        if (dto.options) {
+            const options = dto.options.map((opt) => opt.trim()).filter(Boolean);
+            if (options.length < 2) {
+                throw new BadRequestException('At least two options are required');
+            }
+            question.options = options;
+            if (dto.correctOptionIndex !== undefined && dto.correctOptionIndex >= options.length) {
+                throw new BadRequestException('correctOptionIndex is out of range');
+            }
+            if (dto.correctOptionIndex === undefined && question.correctOptionIndex >= options.length) {
+                question.correctOptionIndex = 0;
+            }
+        }
+
+        if (dto.correctOptionIndex !== undefined) {
+            const optionsLength = question.options?.length || 0;
+            if (dto.correctOptionIndex >= optionsLength) {
+                throw new BadRequestException('correctOptionIndex is out of range');
+            }
+            question.correctOptionIndex = dto.correctOptionIndex;
+        }
+
+        const saved = await this.mcqRepo.save(question);
+        await this.adminService.logAction({
+            action: 'MCQ Updated',
+            target: saved.groupLabel,
+            severity: 'info',
+            metadata: { id: saved.id },
+        });
+        return saved;
+    }
+
+    async remove(id: string) {
+        const question = await this.mcqRepo.findOne({ where: { id } });
+        if (!question) {
+            throw new NotFoundException('MCQ not found');
+        }
+        await this.mcqRepo.remove(question);
+        await this.adminService.logAction({
+            action: 'MCQ Deleted',
+            target: question.groupLabel,
+            severity: 'warning',
+            metadata: { id: question.id },
+        });
+        return { success: true };
     }
 
     async groups(category: McqCategory) {
@@ -98,6 +215,7 @@ export class McqsService {
         }
         return { created: created.length };
     }
+
 
     private parseCsv(csv: string) {
         const lines = csv

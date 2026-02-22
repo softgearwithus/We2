@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { ProjectType } from '@/app/lib/ProjectData';
+import { submitProjectLab } from '@/app/lib/project-labs';
 import { ChevronLeft, Code2, Clock, Github, ExternalLink, CheckCircle2, BookOpen, AlertCircle, Database, Layout, Server, Wrench, Layers, ListChecks, FileText, Figma, Video, Briefcase } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 interface ProjectDetailViewProps {
     project: ProjectType;
@@ -23,9 +25,11 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [repoUrl, setRepoUrl] = useState('');
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('project_labs');
 
     useEffect(() => {
-        // Check if already submitted on mount
         const stored = localStorage.getItem('emble_completed_projects');
         if (stored) {
             try {
@@ -37,29 +41,40 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                 console.error(e);
             }
         }
+        setIsInitialized(true);
     }, [project.id]);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!repoUrl && !submitted) return;
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            setSubmitError('Please sign in to submit your work.');
+            return;
+        }
+        setSubmitError(null);
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
+        try {
+            await submitProjectLab(token, project.id, { repositoryUrl: repoUrl });
             setSubmitted(true);
 
-            // Save to local storage for tier progression demo
             const stored = localStorage.getItem('emble_completed_projects');
             let projects = [];
             if (stored) {
                 try {
                     projects = JSON.parse(stored);
-                } catch (e) { }
+                } catch (e) {
+                    projects = [];
+                }
             }
             if (!projects.includes(project.id)) {
                 projects.push(project.id);
                 localStorage.setItem('emble_completed_projects', JSON.stringify(projects));
             }
-        }, 1500);
+        } catch (error: any) {
+            setSubmitError(error?.message || 'Submission failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -91,6 +106,11 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                     </span>
                                 </div>
                                 <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">{project.title}</h1>
+                                {isFreePlan && (
+                                    <div className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                        Free plan time left: {remainingLabel}
+                                    </div>
+                                )}
                             </div>
                             <div className="p-4 bg-indigo-50/50 rounded-2xl text-indigo-400 border border-indigo-100/50 shadow-sm shrink-0">
                                 <Code2 size={28} />
@@ -277,7 +297,8 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                                 value={repoUrl}
                                                 onChange={(e) => setRepoUrl(e.target.value)}
                                                 placeholder="https://github.com/..."
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal"
+                                                disabled={isLimited}
+                                                className={`w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500'}`}
                                             />
                                         </div>
                                     </div>
@@ -294,7 +315,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                     </div>
                                     <button
                                         onClick={handleSubmit}
-                                        disabled={isSubmitting || (!repoUrl && !submitted)}
+                                        disabled={isSubmitting || (!repoUrl && !submitted) || isLimited}
                                         className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 group-hover:scale-[1.02]"
                                     >
                                         {isSubmitting ? (
@@ -306,6 +327,11 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                             'Submit Solution'
                                         )}
                                     </button>
+                                    {submitError && (
+                                        <div className="text-xs font-medium text-rose-600 bg-rose-50 border border-rose-100 p-2.5 rounded-lg">
+                                            {submitError}
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         ) : (

@@ -31,4 +31,14 @@ export class UpdateInterviewDto {
     })
     @IsOptional()
     aiInterviewer?: string;
+
+    @ApiProperty({
+        example: 540,
+        description: 'Session duration in seconds',
+        required: false,
+    })
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    duration?: number;
 }

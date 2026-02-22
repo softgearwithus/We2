@@ -13,12 +13,13 @@ import { Certification } from './certifications/entities/certification.entity';
 import { Project } from './projects/entities/project.entity';
 import { InterviewSession } from './interviews/entities/interview-session.entity';
 import { Interview } from './interview/entities/interview.entity';
+import { resolveDbConfig } from './common/db-config';
 
 require('dotenv').config();
 
 const AppDataSource = new DataSource({
-    type: 'sqlite',
-    database: 'database.sqlite',
+    type: 'postgres',
+    ...resolveDbConfig(),
     entities: [
         CourseContent,
         DsaProblem,

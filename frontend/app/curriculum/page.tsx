@@ -20,8 +20,7 @@ import {
     Mic,
     Video,
     FileText,
-    Sparkles,
-    Newspaper
+    Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/app/components/layout/Navbar';
@@ -45,11 +44,11 @@ const unifiedTechStack = [
 const combinedFaqs = [
     {
         q: "What is India's First Integrated AI Placement Ecosystem Hub?",
-        a: "Emble is more than just a course - it's an end-to-end career ecosystem. We combine industry-exact DSA/SQL training with deep-tech AI simulations (Voice and Video) and 'Synapse' (our real-time industry intelligence feed) to ensure you don't just learn, but master the industrial logic required by top engineering teams."
+        a: "Emble is more than just a course - it's an end-to-end career ecosystem. We combine industry-exact DSA/SQL training with deep-tech AI simulations (Voice and Video) to ensure you don't just learn, but master the industrial logic required by top engineering teams."
     },
     {
-        q: "What is 'Synapse' and how does it help me?",
-        a: "Synapse is our real-time industry intelligence hub. Instead of static news, it delivers 'snappy' updates on new tech stacks, company-specific hiring trends, and technical shifts in the global engineering landscape, ensuring your knowledge is always current for interviews."
+        q: "How do you keep curriculum updates relevant?",
+        a: "We track industry hiring shifts and refresh modules regularly so the curriculum stays aligned with current interview expectations."
     },
     {
         q: "How does the AI Interview Simulation actually work?",
@@ -234,13 +233,6 @@ export default function CurriculumPage() {
                                 icon: FileText,
                                 color: "purple",
                                 badge: "ATS Optimized"
-                            },
-                            {
-                                title: "Synapse (Neural Growth Feed)",
-                                desc: "Stay ahead with a real-time feed of snappy industry intelligence, hiring trends, and technical shifts.",
-                                icon: Newspaper,
-                                color: "pink",
-                                badge: "Industry IQ"
                             },
                             {
                                 title: "Behavioral & HR Prep",

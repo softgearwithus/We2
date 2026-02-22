@@ -10,8 +10,6 @@ services:
       - ./backend/.env
     environment:
       PORT: 3001
-      DB_HOST: postgres
-      DB_PORT: 5432
       REDIS_HOST: redis
       REDIS_PORT: 6379
       NEST_CLI_CONFIG: /app/nest-cli.json

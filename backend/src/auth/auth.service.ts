@@ -11,7 +11,7 @@ export class AuthService {
     ) { }
 
     async register(registerDto: RegisterDto) {
-        const { email, password, role, subscriptionPlan, firstName, lastName } = registerDto;
+        const { email, password, role, subscriptionPlan, firstName, lastName, timezone } = registerDto;
         const user = await this.usersService.create(
             email,
             password,
@@ -19,6 +19,7 @@ export class AuthService {
             subscriptionPlan,
             firstName,
             lastName,
+            timezone,
         );
         return {
             id: user.id,
@@ -39,6 +40,9 @@ export class AuthService {
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
+        }
+        if (user.isActive === false) {
+            throw new UnauthorizedException('Account disabled');
         }
 
         const isPasswordValid = await this.usersService.validatePassword(

@@ -13,6 +13,7 @@ import { SqlTrainingSession } from './entities/sql-training-session.entity';
 import { SqlProblemInsight } from './entities/sql-problem-insight.entity';
 import { CreateSqlProblemDto } from './dto/create-sql-problem.dto';
 import { CreateSqlSubmissionDto } from './dto/create-sql-submission.dto';
+import { AdminSqlProblemQueryDto, SqlProblemOrder } from './dto/admin-sql-problem-query.dto';
 import { LeetCodeService } from '../dsa/services/leetcode.service';
 
 @Injectable()
@@ -182,6 +183,43 @@ export class SqlService {
             codeTemplates,
         });
         return this.problemsRepository.save(problem);
+    }
+
+    async adminListProblems(query: AdminSqlProblemQueryDto) {
+        const page = query.page || 1;
+        const limit = query.limit || 50;
+        const order = query.order || SqlProblemOrder.LATEST;
+
+        const qb = this.problemsRepository.createQueryBuilder('problem');
+
+        if (query.difficulty) {
+            qb.andWhere('problem.difficulty = :difficulty', { difficulty: query.difficulty });
+        }
+        if (query.category) {
+            qb.andWhere(':category = ANY(problem.categories)', { category: query.category });
+        }
+        if (query.search) {
+            qb.andWhere('(problem.title ILIKE :search OR problem.slug ILIKE :search)', {
+                search: `%${query.search}%`,
+            });
+        }
+
+        if (order === SqlProblemOrder.OLDEST) {
+            qb.orderBy('problem.createdAt', 'ASC');
+        } else {
+            qb.orderBy('problem.createdAt', 'DESC');
+        }
+
+        qb.skip((page - 1) * limit).take(limit);
+
+        const [items, total] = await qb.getManyAndCount();
+        return {
+            items,
+            total,
+            page,
+            limit,
+            hasNext: page * limit < total,
+        };
     }
 
     async getAllProblems(difficulty?: SqlDifficulty): Promise<SqlProblem[]> {

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash2, Activity, Globe, TrendingUp, Code2, Lightbulb, Sparkles } from 'lucide-react';
-import { MARKET_DATA, JobTrend, TopLanguage, MarketInsight, ProfileEnhancement } from '@/app/lib/market-data';
+import { MARKET_DATA, JobTrend, TopLanguage, MarketInsight, ProfileEnhancement, MarketRadarPayload } from '@/app/lib/market-data';
+import { fetchAdminMarketRadar, publishMarketRadar } from '@/app/lib/market-radar';
 
 export default function AdminMarketRadar() {
     // Flatten MARKET_DATA into a single state object for the form
@@ -13,6 +14,24 @@ export default function AdminMarketRadar() {
         insights: [...MARKET_DATA.insights],
         enhancements: [...MARKET_DATA.enhancements]
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadMarketRadar = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const data = await fetchAdminMarketRadar(token);
+                setFormData(data.payload as MarketRadarPayload);
+            } catch (err: any) {
+                setError('No market radar data found. Publish data to make it live.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadMarketRadar();
+    }, []);
 
     const handleGlobalStatsChange = (field: keyof typeof MARKET_DATA.globalStats, value: string | number) => {
         setFormData(prev => ({
@@ -49,10 +68,25 @@ export default function AdminMarketRadar() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, this is where the API PUT/POST request goes
-        console.log("READY FOR BACKEND - MARKET RADAR PAYLOAD:", JSON.stringify(formData, null, 2));
-        alert("Market Radar Data Saved! Check console for JSON payload.");
+        try {
+            setIsSaving(true);
+            setError(null);
+            const token = localStorage.getItem('accessToken') || '';
+            await publishMarketRadar(token, formData);
+        } catch (err: any) {
+            setError('Failed to publish market radar data.');
+        } finally {
+            setIsSaving(false);
+        }
     };
+
+    if (isLoading) {
+        return (
+            <div className="p-8 max-w-[1200px] mx-auto min-h-screen font-sans flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-8 max-w-[1200px] mx-auto min-h-screen font-sans pb-24">
@@ -63,11 +97,18 @@ export default function AdminMarketRadar() {
                 </div>
                 <button
                     onClick={handleSubmit}
+                    disabled={isSaving}
                     className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-md shadow-indigo-600/20 transition-all"
                 >
-                    <Save className="w-5 h-5" /> Save Updates
+                    <Save className="w-5 h-5" /> {isSaving ? 'Saving...' : 'Save Updates'}
                 </button>
             </header>
+
+            {error && (
+                <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">
+                    {error}
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
 

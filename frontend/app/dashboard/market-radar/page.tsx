@@ -1,15 +1,54 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Activity, Globe, TrendingUp, TrendingDown, Minus, Briefcase,
     Code2, Sparkles, Building2, Lightbulb, Target
 } from 'lucide-react';
-import { MARKET_DATA } from '@/app/lib/market-data';
+import { MarketRadarPayload } from '@/app/lib/market-data';
+import { fetchMarketRadar } from '@/app/lib/market-radar';
 
 export default function MarketRadarPage() {
-    const { globalStats, jobTrends, topLanguages, insights, enhancements } = MARKET_DATA;
+    const [data, setData] = useState<MarketRadarPayload | null>(null);
+    const [publishedAt, setPublishedAt] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadMarketRadar = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const result = await fetchMarketRadar(token);
+                setData(result.payload);
+                setPublishedAt(result.publishedAt || null);
+            } catch (err: any) {
+                setError('Market radar data not found yet.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadMarketRadar();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="max-w-[1400px] mx-auto min-h-[calc(100vh-8rem)] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
+        );
+    }
+
+    if (error || !data) {
+        return (
+            <div className="max-w-[1400px] mx-auto min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center text-center px-6">
+                <div className="text-4xl font-black text-slate-900 mb-3">Market Radar data not available</div>
+                <p className="text-slate-500">Check back later or contact support if this persists.</p>
+            </div>
+        );
+    }
+
+    const { globalStats, jobTrends, topLanguages, insights, enhancements } = data;
 
     return (
         <div className="max-w-[1400px] mx-auto min-h-[calc(100vh-8rem)] flex flex-col pt-6 font-sans pb-12">
@@ -25,10 +64,17 @@ export default function MarketRadarPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl border border-emerald-100 font-bold text-sm">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Live Data Simulation
-                </div>
+                {publishedAt ? (
+                    <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl border border-emerald-100 font-bold text-sm">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        Live Data Simulation
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-2 bg-slate-100 text-slate-500 px-4 py-2 rounded-xl border border-slate-200 font-bold text-sm">
+                        <div className="w-2 h-2 rounded-full bg-slate-300" />
+                        Draft Data
+                    </div>
+                )}
             </header>
 
             {/* Dashboard Grid */}

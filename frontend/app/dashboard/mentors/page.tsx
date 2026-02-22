@@ -1,98 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, SlidersHorizontal, Star, Briefcase, BadgeCheck, TrendingUp, ShieldCheck, Calendar, Clock, Info } from 'lucide-react';
-import Image from 'next/image';
-
-const MENTORS = [
-    {
-        id: '1',
-        name: 'Shivam kumar Jha',
-        headline: 'Software Developer | Tech Career Expert',
-        companies: 'Divinetalk, Flatmate',
-        experience: '2+ Years of Experience',
-        about: "I'm a full-stack software developer with strong backend & real-time system expertise. I help start-ups scale their products and guide students to crack their dream roles...",
-        rating: 4.6,
-        sessions: 131,
-        priceINR: 4,
-        isOnline: true,
-        tags: ['Career Guidance', 'Resume Review', '+4'],
-        avatarUrl: 'https://ui-avatars.com/api/?name=Shivam+Kumar&background=0D8ABC&color=fff'
-    },
-    {
-        id: '2',
-        name: 'Krishan Sharma',
-        headline: 'SDE III 8 years | Building Scalable Platforms',
-        companies: 'Fidelity Investments',
-        experience: '7+ Years of Experience',
-        about: "I'm a platform engineer working in New York, with 7+ years of experience loves solving the toughest distributed systems problems...",
-        rating: null,
-        sessions: 0,
-        priceINR: 13,
-        isOnline: true,
-        tags: ['Career Guidance', 'Resume Review', '+4'],
-        avatarUrl: 'https://ui-avatars.com/api/?name=Krishan+Sharma&background=F59E0B&color=fff'
-    },
-    {
-        id: '3',
-        name: 'Abhishek Prasad',
-        headline: 'Senior SDE | SpringBoot | DEVOPS | CONDECMF9WCM',
-        companies: 'Cisco Systems',
-        experience: '6+ Years of Experience',
-        about: "Senior Software Engineer (6+ years) with a B.Tech in Computer Science, passionate about Java backend development, system design, and building resilient microservices...",
-        rating: 4.8,
-        sessions: 106,
-        priceINR: 8,
-        isOnline: true,
-        tags: ['Career Guidance', 'Resume Review', '+2'],
-        avatarUrl: 'https://ui-avatars.com/api/?name=Abhishek+Prasad&background=10B981&color=fff'
-    }
-];
-
-const RECENTLY_ONLINE = [
-    { id: '4', name: 'Harsh Kumar Sharma', role: 'BCG, DRDO, NCRTC', avatarUrl: 'https://ui-avatars.com/api/?name=Harsh+Kumar&background=random' },
-    { id: '1', name: 'Shivam kumar Jha', role: 'Divinetalk, Flatmate', avatarUrl: 'https://ui-avatars.com/api/?name=Shivam+Jha&background=0D8ABC&color=fff' },
-    { id: '3', name: 'Abhishek Prasad', role: 'Cisco Systems', avatarUrl: 'https://ui-avatars.com/api/?name=Abhishek+Prasad&background=10B981&color=fff' },
-    { id: '5', name: 'Sandeep Kumar', role: 'HCL Technologies, Paytm', avatarUrl: 'https://ui-avatars.com/api/?name=Sandeep+Kumar&background=random' },
-    { id: '6', name: 'Md Faisal Imam', role: 'Hewlett Packard Enterprise...', avatarUrl: 'https://ui-avatars.com/api/?name=Faisal+Imam&background=random' },
-    { id: '7', name: 'Khushboo Garg', role: 'Xebia, 3Pillar Global...', avatarUrl: 'https://ui-avatars.com/api/?name=Khushboo+Garg&background=random' },
-];
-
-const TOP_OFFERINGS = [
-    'System Design', 'Mock Interviews', 'DSA Prep', 'Resume Review',
-    'Career Guidance', 'Project Review', 'React.js', 'Node.js', 'AWS'
-];
-
-const STUDENT_UPCOMING_SESSIONS = [
-    {
-        id: 'sess1',
-        mentorName: 'Harsh Kumar Sharma',
-        topic: 'System Design Interview Prep',
-        date: 'Today, 8:00 PM',
-        duration: 45,
-        status: 'accepted',
-        link: 'https://meet.google.com/abc-defg-hij',
-        avatarUrl: 'https://ui-avatars.com/api/?name=Harsh+Kumar&background=random'
-    },
-    {
-        id: 'sess2',
-        mentorName: 'Shivam kumar Jha',
-        topic: 'Mock Interview (Backend)',
-        date: 'Tomorrow, 10:00 AM',
-        duration: 60,
-        status: 'pending',
-        link: null,
-        avatarUrl: 'https://ui-avatars.com/api/?name=Shivam+Jha&background=0D8ABC&color=fff'
-    }
-];
+import { Search, SlidersHorizontal, Star, Briefcase, Calendar, Clock } from 'lucide-react';
+import { createMentorPaymentOrder, fetchMentors, fetchStudentMentorSessions, verifyMentorPayment, MentorProfile, MentorSession } from '@/app/lib/mentors';
 
 export default function MentorsDiscoveryPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedBios, setExpandedBios] = useState<Record<string, boolean>>({});
+    const [mentors, setMentors] = useState<MentorProfile[]>([]);
+    const [sessions, setSessions] = useState<MentorSession[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     // Modal States
-    const [activeModal, setActiveModal] = useState<'none' | 'connect' | 'success' | 'tag' | 'filter'>('none');
-    const [selectedMentor, setSelectedMentor] = useState<typeof MENTORS[0] | null>(null);
+    const [activeModal, setActiveModal] = useState<'none' | 'connect' | 'success' | 'filter'>('none');
+    const [selectedMentor, setSelectedMentor] = useState<MentorProfile | null>(null);
     const [selectedDuration, setSelectedDuration] = useState(15);
     const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
 
@@ -108,43 +30,86 @@ export default function MentorsDiscoveryPage() {
         loadRazorpay();
     }, []);
 
+    useEffect(() => {
+        const loadMentors = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const data = await fetchMentors(token);
+                setMentors(data || []);
+                const sessionData = await fetchStudentMentorSessions(token);
+                setSessions(sessionData || []);
+            } catch (err: any) {
+                setError('No mentors available yet.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadMentors();
+    }, []);
+
     // Derived State
-    const filteredMentors = MENTORS.filter(m =>
+    const filteredMentors = mentors.filter(m =>
         m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.companies.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.headline.toLowerCase().includes(searchQuery.toLowerCase())
+        (m.companies || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (m.headline || '').toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const formatSessionDate = (session: MentorSession) => {
+        const timestamp = session.scheduledAt || session.createdAt;
+        if (!timestamp) return 'Scheduled';
+        const parsed = new Date(timestamp);
+        if (Number.isNaN(parsed.getTime())) return 'Scheduled';
+        return parsed.toLocaleString();
+    };
 
     const toggleBio = (id: string) => {
         setExpandedBios(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const openConnect = (mentor: typeof MENTORS[0]) => {
+    const openConnect = (mentor: MentorProfile) => {
         setSelectedMentor(mentor);
         setSelectedDuration(15); // Reset
         setActiveModal('connect');
     };
 
-    const handleRazorpayPayment = () => {
+    const handleRazorpayPayment = async () => {
+        if (!selectedMentor) {
+            alert('Please select a mentor first.');
+            return;
+        }
+
         if (!isRazorpayLoaded) {
             alert('Payment system is loading. Please try again.');
             return;
         }
 
-        const amount = selectedMentor!.priceINR * selectedDuration * 100; // Amount in paise
+        const token = localStorage.getItem('accessToken') || '';
+        const order = await createMentorPaymentOrder(token, {
+            mentorId: selectedMentor!.id,
+            durationMinutes: selectedDuration,
+        });
 
         const options = {
-            key: 'rzp_test_YourTestKeyHere', // Replace with actual test/live key
-            amount: amount,
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_YourTestKeyHere',
+            amount: order.amountInr * 100,
             currency: 'INR',
             name: 'EMBLE',
             description: `1:1 Session with ${selectedMentor!.name}`,
             image: '/logo.png', // Update with actual logo if available
+            order_id: order.orderId,
             handler: function (response: any) {
-                // Handle successful payment here
-                setActiveModal('success');
-                // You would typically verify the payment on your backend here
-                console.log('Payment ID:', response.razorpay_payment_id);
+                verifyMentorPayment(token, {
+                    mentorId: selectedMentor!.id,
+                    paymentId: response.razorpay_payment_id,
+                    orderId: response.razorpay_order_id || order.orderId,
+                    signature: response.razorpay_signature || '',
+                    topic: `Session with ${selectedMentor!.name}`,
+                    durationMinutes: selectedDuration,
+                }).then(() => {
+                    setActiveModal('success');
+                }).catch(() => {
+                    alert('Payment verified but session could not be created.');
+                });
             },
             prefill: {
                 name: 'Student Name',
@@ -163,10 +128,23 @@ export default function MentorsDiscoveryPage() {
         rzp.open();
     };
 
-    const openTagAndAsk = (mentor: typeof MENTORS[0]) => {
-        setSelectedMentor(mentor);
-        setActiveModal('tag');
-    };
+
+    if (loading) {
+        return (
+            <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[60vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Mentors not available</h2>
+                <p className="text-slate-500">Please check back later.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -193,31 +171,43 @@ export default function MentorsDiscoveryPage() {
             </div>
 
             {/* Student's Booked Sessions */}
-            {STUDENT_UPCOMING_SESSIONS.length > 0 && (
+            {sessions.length > 0 && (
                 <div className="mb-8">
                     <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                         <Calendar size={18} className="text-emerald-600" />
                         Your Booked Sessions
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {STUDENT_UPCOMING_SESSIONS.map(session => (
+                        {sessions.map((session: MentorSession) => (
                             <div key={session.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-start gap-4">
-                                <img src={session.avatarUrl} alt="" className="w-12 h-12 rounded-full border border-slate-100 shrink-0" />
+                                <img src={session.avatarUrl || 'https://ui-avatars.com/api/?name=Mentor'} alt="" className="w-12 h-12 rounded-full border border-slate-100 shrink-0" />
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-sm font-bold text-slate-900">{session.mentorName}</h3>
+                                    <h3 className="text-sm font-bold text-slate-900">{session.mentorName || 'Mentor'}</h3>
                                     <p className="text-xs text-slate-500 truncate">{session.topic}</p>
                                     <div className="flex items-center gap-3 mt-2 text-xs font-medium text-slate-600">
-                                        <span className="flex items-center gap-1"><Clock size={12} /> {session.duration}m</span>
-                                        <span className="flex items-center gap-1"><Calendar size={12} /> {session.date}</span>
+                                        <span className="flex items-center gap-1"><Clock size={12} /> {session.durationMinutes}m</span>
+                                        <span className="flex items-center gap-1"><Calendar size={12} /> {formatSessionDate(session)}</span>
                                     </div>
                                     <div className="mt-3">
-                                        {session.status === 'accepted' ? (
+                                        {session.status === 'accepted' && session.meetingLink ? (
                                             <button
-                                                onClick={() => window.open(session.link!, '_blank')}
+                                                onClick={() => window.open(session.meetingLink!, '_blank')}
                                                 className="w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
                                             >
                                                 Join Meeting
                                             </button>
+                                        ) : session.status === 'accepted' ? (
+                                            <div className="w-full py-2 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-200 text-center flex items-center justify-center gap-1">
+                                                <Clock size={12} /> Meeting link pending
+                                            </div>
+                                        ) : session.status === 'declined' ? (
+                                            <div className="w-full py-2 bg-red-50 text-red-700 text-xs font-bold rounded-lg border border-red-200 text-center flex items-center justify-center gap-1">
+                                                <Clock size={12} /> Declined by mentor
+                                            </div>
+                                        ) : session.status === 'completed' ? (
+                                            <div className="w-full py-2 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg border border-emerald-200 text-center flex items-center justify-center gap-1">
+                                                <Clock size={12} /> Session completed
+                                            </div>
                                         ) : (
                                             <div className="w-full py-2 bg-amber-50 text-amber-700 text-xs font-bold rounded-lg border border-amber-200 text-center flex items-center justify-center gap-1">
                                                 <Clock size={12} /> Awaiting Mentor Confirmation
@@ -259,11 +249,9 @@ export default function MentorsDiscoveryPage() {
                                         <div className="w-24 h-24 rounded-full border-4 border-emerald-600 overflow-hidden shadow-sm">
                                             <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
                                         </div>
-                                        {mentor.isOnline && (
-                                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border-2 border-white uppercase tracking-wider shadow-sm">
-                                                Online
-                                            </div>
-                                        )}
+                                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border-2 border-white uppercase tracking-wider shadow-sm">
+                                            Mentor
+                                        </div>
                                     </div>
                                 </div>
 
@@ -276,11 +264,11 @@ export default function MentorsDiscoveryPage() {
                                             <h3 className="text-xl font-extrabold text-slate-900 truncate mb-1">{mentor.name}</h3>
                                             <p className="text-sm text-slate-700 font-medium mb-1 truncate">{mentor.headline}</p>
                                             <p className="text-xs text-slate-500 mb-1 flex items-center gap-1">
-                                                <span className="font-bold text-emerald-700">Company:</span> {mentor.companies}
+                                                <span className="font-bold text-emerald-700">Company:</span> {mentor.companies || '—'}
                                             </p>
                                             <p className="text-xs text-slate-500 mb-4 flex items-center gap-1">
                                                 <Briefcase size={12} className="text-slate-400" />
-                                                {mentor.experience}
+                                                {mentor.experience || 'Experience details'}
                                             </p>
 
                                             <p className="text-sm text-slate-600 mb-6 leading-relaxed">
@@ -295,22 +283,18 @@ export default function MentorsDiscoveryPage() {
                                                 </button>
                                             </p>
 
-                                            <div className="flex flex-wrap gap-2">
-                                                {mentor.tags.map(tag => {
-                                                    const isExceedTag = tag.startsWith('+');
-                                                    return (
+                                            {mentor.tags && mentor.tags.length > 0 && (
+                                                <div className="flex flex-wrap gap-2">
+                                                    {mentor.tags.map(tag => (
                                                         <span
                                                             key={tag}
-                                                            onClick={() => {
-                                                                if (!isExceedTag) setSearchQuery(tag);
-                                                            }}
-                                                            className={`px-4 py-1.5 rounded-full border border-slate-200 text-xs font-medium text-slate-600 bg-white transition-colors ${!isExceedTag ? 'hover:bg-slate-50 cursor-pointer hover:border-emerald-300' : ''}`}
+                                                            className="px-4 py-1.5 rounded-full border border-slate-200 text-xs font-medium text-slate-600 bg-white"
                                                         >
                                                             {tag}
                                                         </span>
-                                                    )
-                                                })}
-                                            </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Action Box */}
@@ -324,7 +308,7 @@ export default function MentorsDiscoveryPage() {
                                                                 <span className="font-extrabold text-slate-900">{mentor.rating}</span>
                                                                 <Star size={14} className="fill-brand-orange text-brand-orange" />
                                                             </div>
-                                                            <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">{mentor.sessions} Sessions</span>
+                                                            <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">{mentor.sessionsCount} Sessions</span>
                                                         </>
                                                     ) : (
                                                         <div className="flex flex-col items-center h-full justify-center">
@@ -334,18 +318,12 @@ export default function MentorsDiscoveryPage() {
                                                     )}
                                                 </div>
                                                 <div className="flex flex-col items-center flex-1 pl-2">
-                                                    <span className="font-extrabold text-slate-900">₹ {mentor.priceINR}</span>
+                                                    <span className="font-extrabold text-slate-900">₹ {mentor.pricePerMinute}</span>
                                                     <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Per Min</span>
                                                 </div>
                                             </div>
 
                                             <div className="flex flex-col gap-2 w-full mt-auto">
-                                                <button
-                                                    onClick={() => openTagAndAsk(mentor)}
-                                                    className="w-full px-4 py-2 rounded-full border border-emerald-600 text-emerald-700 font-bold text-sm hover:bg-emerald-50 hover:shadow-sm transition-all text-center"
-                                                >
-                                                    Tag & Ask
-                                                </button>
                                                 <button
                                                     onClick={() => openConnect(mentor)}
                                                     className="w-full px-4 py-2 rounded-full bg-emerald-700 text-white font-bold text-sm hover:bg-emerald-800 transition-colors shadow-sm shadow-emerald-700/20 text-center"
@@ -362,69 +340,7 @@ export default function MentorsDiscoveryPage() {
                     )}
                 </div>
 
-                {/* Right Column: Widgets */}
-                <div className="lg:col-span-4 space-y-6">
-
-                    {/* Recently Online */}
-                    <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                        <h3 className="text-slate-900 font-bold mb-6 flex items-center justify-between">
-                            Recently Online Mentors
-                            <span className="flex h-2 w-2 relative">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                        </h3>
-
-                        <div className="space-y-5">
-                            {RECENTLY_ONLINE.map((mentor) => (
-                                <div
-                                    key={mentor.id}
-                                    className="flex items-center gap-4 group cursor-pointer"
-                                    onClick={() => setSearchQuery(mentor.name)}
-                                >
-                                    <img src={mentor.avatarUrl} alt={mentor.name} className="w-10 h-10 rounded-full border border-slate-200 group-hover:border-emerald-500 transition-colors" />
-                                    <div className="min-w-0 flex-1">
-                                        <h4 className="text-sm font-bold text-slate-900 truncate flex items-center gap-1 group-hover:text-emerald-700 transition-colors">
-                                            {mentor.name}
-                                            <BadgeCheck size={14} className="text-blue-500 shrink-0" />
-                                        </h4>
-                                        <p className="text-xs text-slate-500 truncate">{mentor.role}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Top Offerings */}
-                    <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                            <TrendingUp size={64} className="text-emerald-600" />
-                        </div>
-                        <h3 className="text-slate-900 font-bold mb-6 flex items-center gap-2 relative z-10">
-                            Top Offerings
-                            <TrendingUp size={16} className="text-emerald-600" />
-                        </h3>
-
-                        <div className="flex flex-wrap gap-2.5 relative z-10">
-                            {TOP_OFFERINGS.map((offer) => (
-                                <span
-                                    key={offer}
-                                    onClick={() => setSearchQuery(offer)}
-                                    className="px-4 py-2 border border-slate-200 rounded-full text-xs font-medium text-slate-600 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 cursor-pointer transition-colors bg-white shadow-sm"
-                                >
-                                    {offer}
-                                </span>
-                            ))}
-                        </div>
-
-                        <div className="mt-8 text-center relative z-10">
-                            <button className="text-sm font-bold text-emerald-700 hover:underline">
-                                View All
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
+                <div className="lg:col-span-4 space-y-6"></div>
             </div>
 
             {/* Overlays / Modals */}
@@ -453,7 +369,7 @@ export default function MentorsDiscoveryPage() {
                                     <div className="flex flex-col items-center text-center mb-6">
                                         <img src={selectedMentor.avatarUrl} alt="" className="w-20 h-20 rounded-full border-4 border-emerald-50 shadow-md mb-4" />
                                         <h3 className="text-xl font-extrabold text-slate-900">Book 1:1 with {selectedMentor.name.split(' ')[0]}</h3>
-                                        <p className="text-sm text-slate-500 mt-1">₹ {selectedMentor.priceINR} / Min • Voice & Video</p>
+                                        <p className="text-sm text-slate-500 mt-1">₹ {selectedMentor.pricePerMinute} / Min • Voice & Video</p>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
@@ -463,48 +379,22 @@ export default function MentorsDiscoveryPage() {
                                                 onChange={(e) => setSelectedDuration(Number(e.target.value))}
                                                 className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                                             >
-                                                <option value={15}>15 Minutes (₹ {selectedMentor.priceINR * 15})</option>
-                                                <option value={30}>30 Minutes (₹ {selectedMentor.priceINR * 30})</option>
-                                                <option value={60}>60 Minutes (₹ {selectedMentor.priceINR * 60})</option>
-                                            </select>
-                                        </div>
+                                            <option value={15}>15 Minutes (₹ {selectedMentor.pricePerMinute * 15})</option>
+                                            <option value={30}>30 Minutes (₹ {selectedMentor.pricePerMinute * 30})</option>
+                                            <option value={60}>60 Minutes (₹ {selectedMentor.pricePerMinute * 60})</option>
+                                        </select>
+                                    </div>
 
-                                        <button
-                                            onClick={handleRazorpayPayment}
-                                            className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-600/20 transition-all font-sans flex items-center justify-center gap-2"
-                                        >
-                                            Pay ₹{selectedMentor.priceINR * selectedDuration}
-                                        </button>
+                                    <button
+                                        onClick={handleRazorpayPayment}
+                                        className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-600/20 transition-all font-sans flex items-center justify-center gap-2"
+                                    >
+                                        Pay ₹{selectedMentor.pricePerMinute * selectedDuration}
+                                    </button>
                                     </div>
                                 </div>
                             )}
 
-                            {/* Modal Body: Tag & Ask */}
-                            {activeModal === 'tag' && selectedMentor && (
-                                <div className="p-8">
-                                    <h3 className="text-xl font-extrabold text-slate-900 mb-2">Tag & Ask</h3>
-                                    <p className="text-sm text-slate-500 mb-6">Send a direct query to <span className="font-bold text-slate-700">{selectedMentor.name}</span>. They usually reply within 24 hours.</p>
-
-                                    <div className="space-y-4">
-                                        <div className="relative">
-                                            <textarea
-                                                placeholder="Type your question here..."
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 min-h-[150px] resize-y"
-                                                maxLength={500}
-                                            ></textarea>
-                                        </div>
-                                        <button
-                                            onClick={() => {
-                                                alert(`Question successfully sent to ${selectedMentor!.name}!`);
-                                                setActiveModal('none');
-                                            }}
-                                            className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-600/20 transition-all font-sans"
-                                        >
-                                            Send Message
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
 
                             {/* Modal Body: Filter */}
                             {activeModal === 'filter' && (

@@ -74,6 +74,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Upgrade user subscription plan' })
     @ApiBody({ schema: { type: 'object', properties: { plan: { type: 'string', example: 'placement_plus' } } } })
     @ApiResponse({ status: 200, description: 'Subscription upgraded successfully' })
+    @ApiResponse({ status: 403, description: 'Upgrades are temporarily disabled' })
     async upgradeSubscription(@Request() req: any, @Body('plan') plan: string) {
         return this.usersService.upgradeSubscription(req.user.id, plan);
     }

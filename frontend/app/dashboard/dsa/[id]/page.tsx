@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Dynamically import initVimMode to avoid SSR issues
 import { initVimMode } from 'monaco-vim';
 
-import { problems as mockProblems, fetchProblemBySlug } from '@/app/lib/problems';
+import { fetchProblemBySlug, Problem } from '@/app/lib/problems';
 import { executeCode, ExecutionResult } from '@/app/lib/executor';
 import ProblemDescription from '@/app/components/dsa/ProblemDescription';
 import Console from '@/app/components/dsa/Console';
@@ -46,7 +46,7 @@ export default function DsaProblemPage() {
     const problemId = params?.id as string;
 
     // State
-    const [problem, setProblem] = useState(mockProblems[0]);
+    const [problem, setProblem] = useState<Problem | null>(null);
     const [language, setLanguage] = useState('cpp');
     const [code, setCode] = useState('');
     const [isRunning, setIsRunning] = useState(false);
@@ -92,6 +92,8 @@ export default function DsaProblemPage() {
                         expected: tc.expected,
                         status: 'Pending'
                     })));
+                } else {
+                    setProblem(null);
                 }
                 setLoading(false);
             };
@@ -143,7 +145,7 @@ export default function DsaProblemPage() {
         const token = localStorage.getItem('accessToken') || '';
 
         // Pass UUID instead of ID (slug)
-        const res = await executeCode(problem.uuid || 'mock-uuid-two-sum', code, language, token);
+        const res = await executeCode(problem.uuid, code, language, token);
         // Update Test Case Statuses based on Execution Result
         // We rely on res.passedTests to know how many passed
         setTestCases(prev => prev.map((tc, index) => {
@@ -188,13 +190,13 @@ export default function DsaProblemPage() {
     const handleLanguageChange = (lang: string) => {
         setLanguage(lang);
         const savedCode = localStorage.getItem(`dsa_code_${problemId}_${lang}`);
-        const template = problem.codeTemplates?.[lang] || problem.starterCode[lang] || '';
+        const template = problem?.codeTemplates?.[lang] || problem?.starterCode?.[lang] || '';
         setCode(savedCode || template);
     };
 
     const handleResetCode = () => {
         if (confirm('Are you sure you want to reset your code to the starter template?')) {
-            setCode(problem.starterCode[language] || '');
+            setCode(problem?.starterCode?.[language] || '');
         }
     };
 
@@ -204,7 +206,7 @@ export default function DsaProblemPage() {
 
     // Auto-save effect
     useEffect(() => {
-        if (!loading && code) {
+        if (!loading && code && problem?.id) {
             setSaveStatus('saving');
             const timeout = setTimeout(() => {
                 localStorage.setItem(`dsa_code_${problem.id}_${language}`, code);
@@ -212,9 +214,17 @@ export default function DsaProblemPage() {
             }, 1000);
             return () => clearTimeout(timeout);
         }
-    }, [code, problem.id, language, loading]);
+    }, [code, problem?.id, language, loading]);
 
     if (loading) return <div className="h-screen flex items-center justify-center text-slate-500 font-medium">Loading Problem Context...</div>;
+    if (!problem) {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center text-slate-500 font-medium gap-4">
+                <div className="text-xl text-slate-800 font-bold">Problem not found</div>
+                <Link href="/dashboard/dsa/all" className="text-indigo-600 font-semibold">Browse all questions</Link>
+            </div>
+        );
+    }
 
     return (
         <div className="h-[calc(100vh-6rem)] w-full bg-slate-50 flex flex-col font-sans overflow-hidden">

@@ -1,22 +1,77 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { roadmapData, RoadmapPhase, Topic } from '@/app/lib/data/roadmapData';
 import { ArrowLeft, BookOpen, Video, Code, CheckCircle, ExternalLink, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
+import API_BASE_URL from '@/app/lib/api-config';
 
 export default function TopicPage() {
     const params = useParams();
-    const router = useRouter();
     const phaseId = params.phaseId as string;
     const phase = (roadmapData as RoadmapPhase[]).find((p: RoadmapPhase) => p.id === phaseId);
 
     const [selectedLanguage, setSelectedLanguage] = useState('C++');
     const [activeTopicIndex, setActiveTopicIndex] = useState(0);
+    const [completedPhases, setCompletedPhases] = useState<string[]>([]);
+    const [isProgressLoaded, setIsProgressLoaded] = useState(false);
 
     if (!phase) return <div className="min-h-screen flex items-center justify-center">Phase not found</div>;
+
+    useEffect(() => {
+        const loadProgress = async () => {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) {
+                setIsProgressLoaded(true);
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
+                setCompletedPhases(completed);
+            } catch (error) {
+                console.error('Failed to load preparation progress', error);
+            } finally {
+                setIsProgressLoaded(true);
+            }
+        };
+
+        loadProgress();
+    }, []);
+
+    useEffect(() => {
+        const persistProgress = async () => {
+            if (!isProgressLoaded) return;
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) return;
+            try {
+                await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completedPhaseIds: completedPhases }),
+                });
+            } catch (error) {
+                console.error('Failed to update preparation progress', error);
+            }
+        };
+
+        persistProgress();
+    }, [completedPhases, isProgressLoaded]);
+
+    const isPhaseCompleted = completedPhases.includes(phase.id);
+    const handleCompletePhase = () => {
+        if (isPhaseCompleted) return;
+        setCompletedPhases((prev) => (prev.includes(phase.id) ? prev : [...prev, phase.id]));
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900">
@@ -43,8 +98,11 @@ export default function TopicPage() {
                         ))}
                     </div>
 
-                    <button className="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md hover:bg-slate-800 transition-colors">
-                        Mark Phase Complete
+                    <button
+                        onClick={handleCompletePhase}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold shadow-md transition-colors ${isPhaseCompleted ? 'bg-emerald-100 text-emerald-700 cursor-default' : 'bg-slate-900 text-white hover:bg-slate-800'}`}
+                    >
+                        {isPhaseCompleted ? 'Phase Completed' : 'Mark Phase Complete'}
                     </button>
                 </div>
             </header>

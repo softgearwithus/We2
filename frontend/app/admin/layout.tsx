@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, Search, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function AdminLayout({
@@ -28,6 +28,8 @@ export default function AdminLayout({
         { icon: Building2, label: 'Colleges', href: '/admin/colleges', roles: ['super_admin'] },
         { icon: Briefcase, label: 'Companies', href: '/admin/companies', roles: ['super_admin'] },
         { icon: Code2, label: 'Project Labs', href: '/admin/projects', roles: ['super_admin'] },
+        { icon: Sparkles, label: 'Training', href: '/admin/training', roles: ['super_admin'] },
+        { icon: BookOpen, label: 'Test Series', href: '/admin/test-series', roles: ['super_admin'] },
         { icon: Radar, label: 'Market Radar', href: '/admin/market-radar', roles: ['super_admin'] },
         { icon: Bell, label: 'Updates', href: '/admin/updates', roles: ['super_admin'] },
         { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['all'] },

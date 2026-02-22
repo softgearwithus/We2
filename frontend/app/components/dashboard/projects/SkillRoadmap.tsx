@@ -2,33 +2,21 @@
 
 import { motion } from 'framer-motion';
 import { TechStack, ProjectType } from '@/app/lib/ProjectData';
-import { Lock, Clock, CheckCircle2, ChevronDown, ChevronUp, Briefcase } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Lock, Clock, CheckCircle2, ChevronUp, Briefcase } from 'lucide-react';
+import { useState } from 'react';
 
 interface SkillRoadmapProps {
     stack: TechStack;
     onSelectProject: (project: ProjectType) => void;
+    completedProjectIds?: string[];
 }
 
-export default function SkillRoadmap({ stack, onSelectProject }: SkillRoadmapProps) {
-    const [completedProjects, setCompletedProjects] = useState<string[]>([]);
+export default function SkillRoadmap({ stack, onSelectProject, completedProjectIds = [] }: SkillRoadmapProps) {
     const [expandedTiers, setExpandedTiers] = useState<{ [key: string]: boolean }>({
         beginner: false,
         intermediate: false,
         advanced: false
     });
-
-    useEffect(() => {
-        // Load completed projects from local storage to test progression
-        const stored = localStorage.getItem('emble_completed_projects');
-        if (stored) {
-            try {
-                setCompletedProjects(JSON.parse(stored));
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }, []);
 
     const toggleExpanded = (tier: string) => {
         setExpandedTiers(prev => ({ ...prev, [tier]: !prev[tier] }));
@@ -36,7 +24,7 @@ export default function SkillRoadmap({ stack, onSelectProject }: SkillRoadmapPro
 
     // Calculate completions per tier
     const getCompletedCount = (tierProjects: ProjectType[]) => {
-        return tierProjects.filter(p => completedProjects.includes(p.id)).length;
+        return tierProjects.filter(p => completedProjectIds.includes(p.id)).length;
     };
 
     const beginnerCompleted = getCompletedCount(stack.tiers.beginner);
@@ -46,7 +34,7 @@ export default function SkillRoadmap({ stack, onSelectProject }: SkillRoadmapPro
     const isAdvancedUnlocked = intermediateCompleted >= 3;
 
     const renderProjectCard = (project: ProjectType, isLocked: boolean) => {
-        const isCompleted = completedProjects.includes(project.id);
+        const isCompleted = completedProjectIds.includes(project.id);
 
         return (
             <div
@@ -164,7 +152,7 @@ export default function SkillRoadmap({ stack, onSelectProject }: SkillRoadmapPro
             className="w-full h-full"
         >
             <h2 className="text-2xl font-black mb-8 text-slate-900 tracking-tight">
-                Roadmap <span className="text-slate-300 font-normal mx-2">/</span> <span className="text-indigo-600">{stack.name}</span>
+                Projects <span className="text-slate-300 font-normal mx-2">/</span> <span className="text-indigo-600">{stack.name}</span>
             </h2>
 
             {/* Resume Banner */}

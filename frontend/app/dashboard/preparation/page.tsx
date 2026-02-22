@@ -1,14 +1,28 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, Lock, ChevronRight, ExternalLink, Play, SkipForward } from 'lucide-react';
+import {
+    ArrowLeft,
+    CheckCircle2,
+    Lock,
+    ChevronRight,
+    Play,
+    SkipForward,
+    ShieldCheck,
+    Brain,
+    Crosshair,
+    Sparkles,
+    Zap,
+} from 'lucide-react';
 import { roadmapData } from '@/app/lib/data/roadmapData';
+import API_BASE_URL from '@/app/lib/api-config';
 
 export default function PreparationPage() {
     // State to track completed phases. Default: Phase 1 is unlocked (so 0 completed).
     const [completedPhases, setCompletedPhases] = useState<string[]>([]);
+    const [isProgressLoaded, setIsProgressLoaded] = useState(false);
 
     // Helper to check if a phase is locked
     const isLocked = (index: number) => {
@@ -21,35 +35,149 @@ export default function PreparationPage() {
 
     const handleSkip = (id: string) => {
         if (!completedPhases.includes(id)) {
-            setCompletedPhases([...completedPhases, id]);
+            setCompletedPhases((prev) => [...prev, id]);
         }
     };
+
+    useEffect(() => {
+        const loadProgress = async () => {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) {
+                setIsProgressLoaded(true);
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
+                setCompletedPhases(completed);
+            } catch (error) {
+                console.error('Failed to load preparation progress', error);
+            } finally {
+                setIsProgressLoaded(true);
+            }
+        };
+
+        loadProgress();
+    }, []);
+
+    useEffect(() => {
+        const persistProgress = async () => {
+            if (!isProgressLoaded) return;
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) return;
+            try {
+                await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completedPhaseIds: completedPhases }),
+                });
+            } catch (error) {
+                console.error('Failed to update preparation progress', error);
+            }
+        };
+
+        persistProgress();
+    }, [completedPhases, isProgressLoaded]);
+
+    const progressPercent = Math.min(100, Math.round((completedPhases.length / Math.max(roadmapData.length, 1)) * 100));
+    const currentIndex = roadmapData.findIndex((_, index) => !isLocked(index) && !completedPhases.includes(roadmapData[index].id));
+    const currentPhase = roadmapData[currentIndex] || roadmapData[0];
 
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
             {/* Ambient Background */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute -top-32 right-0 w-[520px] h-[520px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-[480px] h-[480px] bg-brand-orange/10 rounded-full blur-[140px] pointer-events-none"></div>
 
-            <div className="relative z-10 max-w-5xl mx-auto p-6 lg:p-12">
+            <div className="relative z-10 max-w-6xl mx-auto p-6 lg:p-12 space-y-10">
                 {/* Header */}
-                <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-6 transition-colors group">
-                            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
-                        </Link>
-                        <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
-                            Placement Preparation <span className="text-brand-orange">.</span>
-                        </h1>
-                        <p className="text-lg text-slate-500 max-w-2xl">
-                            Your interactive path to success. Complete or skip phases to unlock the next steps.
-                        </p>
-                    </div>
-                    <Link href="/dashboard/preparation/test-series" className="group relative bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 hover:shadow-2xl hover:shadow-indigo-300 transition-all flex items-center gap-3 overflow-hidden">
-                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                        <span className="relative">Explore Test Series</span>
-                        <ChevronRight size={20} className="relative group-hover:translate-x-1 transition-transform" />
+                <header className="flex flex-col gap-8">
+                    <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium transition-colors group">
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
                     </Link>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] gap-8 items-start">
+                        <div>
+                            <div className="inline-flex items-center gap-2 bg-white/90 border border-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                                <Sparkles size={12} /> Placement Mode Journey
+                            </div>
+                            <h1 className="mt-4 text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+                                Placement Preparation <span className="text-brand-orange">.</span>
+                            </h1>
+                            <p className="text-lg text-slate-500 mt-3 max-w-2xl">
+                                A structured, milestone-based path mapped to your dashboard. Track progress, unlock phases, and ship outcomes each week.
+                            </p>
+
+                            <div className="mt-8 flex flex-wrap items-center gap-4">
+                                <Link href="/dashboard/preparation/test-series" className="group relative bg-indigo-600 text-white px-7 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-indigo-200 hover:bg-indigo-700 hover:shadow-2xl hover:shadow-indigo-300 transition-all flex items-center gap-3 overflow-hidden">
+                                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                    <span className="relative">Explore Test Series</span>
+                                    <ChevronRight size={18} className="relative group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                                <Link href={`/dashboard/preparation/${currentPhase?.id || roadmapData[0].id}`} className="group inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 font-bold text-sm hover:border-indigo-200 hover:text-indigo-700 transition-colors">
+                                    Continue Phase <Play size={16} className="fill-current" />
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-[0_15px_45px_-20px_rgba(15,23,42,0.35)]">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Placement Status</p>
+                                    <h2 className="text-2xl font-extrabold text-slate-900 mt-2">{progressPercent}% Complete</h2>
+                                    <p className="text-sm text-slate-500 mt-1">Phase {Math.max(currentIndex + 1, 1)} in progress</p>
+                                </div>
+                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                    <ShieldCheck size={22} />
+                                </div>
+                            </div>
+
+                            <div className="mt-6">
+                                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400" style={{ width: `${progressPercent}%` }} />
+                                </div>
+                                <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
+                                    <div className="bg-slate-50 rounded-xl px-3 py-2">
+                                        <p className="text-slate-400 font-bold uppercase">Phases Done</p>
+                                        <p className="text-slate-900 font-extrabold text-lg">{completedPhases.length}</p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-xl px-3 py-2">
+                                        <p className="text-slate-400 font-bold uppercase">Active Phase</p>
+                                        <p className="text-slate-900 font-extrabold text-lg">{currentPhase?.title.split(':')[0] || 'Phase 1'}</p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-xl px-3 py-2">
+                                        <p className="text-slate-400 font-bold uppercase">Fast Track</p>
+                                        <p className="text-slate-900 font-extrabold text-lg">{currentPhase?.fastTrack || '2 Weeks'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </header>
+
+                {/* Milestones */}
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                        { title: 'Daily Focus', desc: '2-hour sprint with DSA + SQL drills.', icon: Brain, color: 'bg-indigo-50 text-indigo-600' },
+                        { title: 'Weekly Outcome', desc: 'Ship one project or lab submission.', icon: Crosshair, color: 'bg-emerald-50 text-emerald-600' },
+                        { title: 'Mock Cycle', desc: '1 interview + analysis loop.', icon: Zap, color: 'bg-orange-50 text-brand-orange' },
+                    ].map((item) => (
+                        <div key={item.title} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
+                                <item.icon size={18} />
+                            </div>
+                            <h3 className="mt-4 text-sm font-bold text-slate-900">{item.title}</h3>
+                            <p className="text-xs text-slate-500 mt-1">{item.desc}</p>
+                        </div>
+                    ))}
+                </section>
 
                 {/* Timeline */}
                 <div className="relative border-l-2 border-slate-200 ml-6 lg:ml-10 space-y-12 pb-12">

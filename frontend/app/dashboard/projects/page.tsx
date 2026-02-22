@@ -1,38 +1,123 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { DomainType, TechStack, ProjectType } from '@/app/lib/ProjectData';
-import { ChevronLeft, BarChart2, Layout, Layers } from 'lucide-react';
+import { DomainType, TechStack, ProjectType, PROJECT_DOMAINS } from '@/app/lib/ProjectData';
+import { ChevronLeft, Layers } from 'lucide-react';
 
-import DomainSelector from '@/app/components/dashboard/projects/DomainSelector';
-import StackSelector from '@/app/components/dashboard/projects/StackSelector';
+import DomainSelector, { ProjectLabDomainOption } from '@/app/components/dashboard/projects/DomainSelector';
 import SkillRoadmap from '@/app/components/dashboard/projects/SkillRoadmap';
 import ProjectDetailView from '@/app/components/dashboard/projects/ProjectDetailView';
-import StudentAnalytics from '@/app/components/dashboard/projects/StudentAnalytics';
-import CareerPathfinder from '@/app/components/dashboard/projects/CareerPathfinder';
+import { fetchProjectLabDomains, fetchProjectLabProgress, fetchProjectLabs } from '@/app/lib/project-labs';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 export default function DevGenesisPage() {
-    const [viewMode, setViewMode] = useState<'projects' | 'analytics'>('projects');
-    const [stage, setStage] = useState<'domain' | 'stack' | 'tier' | 'project' | 'pathfinder'>('domain');
+    const [stage, setStage] = useState<'domain' | 'projects'>('domain');
     const [selectedDomain, setSelectedDomain] = useState<DomainType | null>(null);
-    const [selectedStack, setSelectedStack] = useState<TechStack | null>(null);
     const [selectedProject, setSelectedProject] = useState<ProjectType | null>(null);
+    const [domainOptions, setDomainOptions] = useState<ProjectLabDomainOption[]>([]);
+    const [projects, setProjects] = useState<ProjectType[]>([]);
+    const [completedProjectIds, setCompletedProjectIds] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('project_labs');
+
+    const domainLookup = useMemo(() => {
+        const map = new Map<string, DomainType>();
+        PROJECT_DOMAINS.forEach((domain) => map.set(domain.id, domain));
+        return map;
+    }, []);
 
     // --- Navigation Handlers ---
     const handleDomainSelect = (domain: DomainType) => {
         setSelectedDomain(domain);
-        setStage('stack');
-    };
-
-    const handleStackSelect = (stack: TechStack) => {
-        setSelectedStack(stack);
-        setStage('tier');
+        setSelectedProject(null);
+        setStage('projects');
     };
 
     const handleProjectSelect = (project: ProjectType) => {
         setSelectedProject(project);
     };
+
+    const buildDomainStack = (domain: DomainType, domainProjects: ProjectType[]): TechStack => {
+        const byComplexity = (level: ProjectType['complexity']) =>
+            domainProjects.filter((project) => project.complexity === level);
+        const popularity = domain.stacks.length
+            ? Math.round(domain.stacks.reduce((total, stack) => total + stack.popularity, 0) / domain.stacks.length)
+            : 0;
+
+        return {
+            id: `${domain.id}_all`,
+            name: domain.title,
+            icon: domain.icon,
+            description: domain.description,
+            popularity,
+            difficulty: 'Medium',
+            tiers: {
+                beginner: byComplexity('Beginner'),
+                intermediate: byComplexity('Intermediate'),
+                advanced: byComplexity('Advanced')
+            }
+        };
+    };
+
+    useEffect(() => {
+        const loadDomains = async () => {
+            try {
+                setIsLoading(true);
+                setLoadError(null);
+                const summaries = await fetchProjectLabDomains();
+                const options: ProjectLabDomainOption[] = summaries
+                    .map((summary) => {
+                        const domain = domainLookup.get(summary.domainId);
+                        if (!domain) return null;
+                        return {
+                            id: domain.id,
+                            title: domain.title,
+                            description: domain.description,
+                            icon: domain.icon,
+                            count: summary.count,
+                            disabled: summary.count === 0,
+                        };
+                    })
+                    .filter(Boolean) as ProjectLabDomainOption[];
+
+                setDomainOptions(options);
+            } catch (error: any) {
+                setLoadError(error?.message || 'Failed to load domains.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadDomains();
+    }, [domainLookup]);
+
+    useEffect(() => {
+        if (!selectedDomain) return;
+        const loadProjects = async () => {
+            try {
+                setIsLoading(true);
+                setLoadError(null);
+                const data = await fetchProjectLabs(selectedDomain.id);
+                setProjects(data as ProjectType[]);
+            } catch (error: any) {
+                setLoadError(error?.message || 'Failed to load projects.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadProjects();
+    }, [selectedDomain]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+        fetchProjectLabProgress(token)
+            .then((progress) => setCompletedProjectIds(progress.completedProjectIds || []))
+            .catch(() => null);
+    }, []);
 
     // Back navigation
     const goBack = () => {
@@ -40,19 +125,10 @@ export default function DevGenesisPage() {
             setSelectedProject(null);
             return;
         }
-        if (stage === 'tier') {
-            setStage('stack');
-            setSelectedStack(null);
-            return;
-        }
-        if (stage === 'stack') {
+        if (stage === 'projects') {
             setStage('domain');
             setSelectedDomain(null);
-            return;
-        }
-        if (stage === 'pathfinder') {
-            setStage('domain');
-            return;
+            setProjects([]);
         }
     };
 
@@ -62,7 +138,7 @@ export default function DevGenesisPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        {(stage !== 'domain' || viewMode === 'analytics') && (
+                        {stage !== 'domain' && (
                             <button
                                 onClick={goBack}
                                 className="p-2 -ml-2 rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
@@ -76,71 +152,60 @@ export default function DevGenesisPage() {
                                 Project Labs
                             </h1>
                             <p className="text-slate-500 text-sm">Build real-world applications and boost your portfolio.</p>
+                            {isFreePlan && (
+                                <div className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                    Free plan time left in Project Labs: {remainingLabel}
+                                </div>
+                            )}
                         </div>
-                    </div>
-
-                    {/* View Switcher - Tab Style */}
-                    <div className="bg-slate-200/50 p-1 rounded-lg flex self-start md:self-auto">
-                        <button
-                            onClick={() => setViewMode('projects')}
-                            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${viewMode === 'projects' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-700'}`}
-                        >
-                            <Layout size={16} /> Projects
-                        </button>
-                        <button
-                            onClick={() => setViewMode('analytics')}
-                            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${viewMode === 'analytics' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-700'}`}
-                        >
-                            <BarChart2 size={16} /> Progress
-                        </button>
                     </div>
                 </div>
 
                 {/* Main Content Area */}
                 <div className="flex-1 min-h-[500px]">
                     <AnimatePresence mode="wait">
-                        {viewMode === 'analytics' ? (
-                            <StudentAnalytics key="analytics" />
-                        ) : (
-                            <>
-                                {stage === 'domain' && (
-                                    <>
-                                        {/* Pathfinder Banner */}
-                                        <div className="mb-8 p-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
-                                            <div>
-                                                <h2 className="text-xl font-bold mb-1">Total Beginner? Don't know where to start?</h2>
-                                                <p className="text-indigo-100">Use our Career Pathfinder to discover the perfect coding path for you.</p>
-                                            </div>
-                                            <button
-                                                onClick={() => setStage('pathfinder')}
-                                                className="px-6 py-3 bg-white text-indigo-600 rounded-lg font-bold shadow-sm hover:bg-slate-50 transition-colors whitespace-nowrap"
-                                            >
-                                                Launch Pathfinder
-                                            </button>
+                        {selectedProject ? (
+                            <div className="relative">
+                                {isLimited && (
+                                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/85 backdrop-blur-sm rounded-2xl border border-rose-200">
+                                        <div className="text-center max-w-md px-6">
+                                            <h3 className="text-xl font-bold text-slate-900 mb-2">Free plan limit reached</h3>
+                                            <p className="text-sm text-slate-500">Upgrade to continue your Project Labs work.</p>
                                         </div>
-                                        <DomainSelector key="domain" onSelect={handleDomainSelect} />
-                                    </>
+                                    </div>
                                 )}
-
-                                {stage === 'pathfinder' && (
-                                    <CareerPathfinder onComplete={(domain) => {
-                                        setSelectedDomain(domain);
-                                        setStage('stack');
-                                    }} />
+                                <ProjectDetailView key="project" project={selectedProject} onBack={() => setSelectedProject(null)} />
+                            </div>
+                        ) : stage === 'domain' ? (
+                            <>
+                                {loadError && (
+                                    <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                                        {loadError}
+                                    </div>
                                 )}
-
-                                {stage === 'stack' && selectedDomain && (
-                                    <StackSelector key="stack" domain={selectedDomain} onSelect={handleStackSelect} />
-                                )}
-
-                                {stage === 'tier' && selectedStack && !selectedProject && (
-                                    <SkillRoadmap key="tier" stack={selectedStack} onSelectProject={handleProjectSelect} />
-                                )}
-
-                                {selectedProject && (
-                                    <ProjectDetailView key="project" project={selectedProject} onBack={() => setSelectedProject(null)} />
-                                )}
+                                <DomainSelector
+                                    key="domain"
+                                    domains={domainOptions.map((option) => ({
+                                        ...option,
+                                        disabled: option.disabled || isLimited,
+                                    }))}
+                                    onSelect={(domain) => {
+                                        const selected = domainLookup.get(domain.id);
+                                        if (selected) {
+                                            handleDomainSelect(selected);
+                                        }
+                                    }}
+                                />
                             </>
+                        ) : (
+                            selectedDomain && (
+                                <SkillRoadmap
+                                    key="projects"
+                                    stack={buildDomainStack(selectedDomain, projects)}
+                                    onSelectProject={handleProjectSelect}
+                                    completedProjectIds={completedProjectIds}
+                                />
+                            )
                         )}
                     </AnimatePresence>
                 </div>

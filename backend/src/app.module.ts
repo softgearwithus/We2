@@ -14,6 +14,7 @@ import { AchievementsModule } from './achievements/achievements.module';
 import { InterviewsModule } from './interviews/interviews.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ProjectLabsModule } from './project-labs/project-labs.module';
 import { DsaModule } from './dsa/dsa.module';
 import { User } from './users/user.entity';
 import { Simulation } from './simulations/entities/simulation.entity';
@@ -24,6 +25,8 @@ import { Performance } from './performance/entities/performance.entity';
 import { Achievement } from './achievements/entities/achievement.entity';
 import { Certification } from './certifications/entities/certification.entity';
 import { Project } from './projects/entities/project.entity';
+import { ProjectLab } from './project-labs/entities/project-lab.entity';
+import { ProjectLabSubmission } from './project-labs/entities/project-lab-submission.entity';
 import { InterviewSession } from './interviews/entities/interview-session.entity';
 import { DsaProblem } from './dsa/entities/dsa-problem.entity';
 import { Submission } from './dsa/entities/submission.entity';
@@ -43,8 +46,18 @@ import { CollegeStaff } from './colleges/entities/college-staff.entity';
 import { StudentCohort } from './colleges/entities/student-cohort.entity';
 import { CollegeStudent } from './colleges/entities/college-student.entity';
 import { AdminModule } from './admin/admin.module';
+import { AdminSettingsModule } from './admin-settings/admin-settings.module';
 import { AdminActivityLog } from './admin/entities/admin-activity-log.entity';
+import { AdminUpdateFlag } from './admin-settings/entities/admin-update-flag.entity';
+import { PlatformSettings } from './admin-settings/entities/platform-settings.entity';
 import { InstituteModule } from './institute/institute.module';
+import { MarketRadarModule } from './market-radar/market-radar.module';
+import { MarketRadar } from './market-radar/entities/market-radar.entity';
+import { MentorsModule } from './mentors/mentors.module';
+import { MentorProfile } from './mentors/entities/mentor-profile.entity';
+import { MentorApplication } from './mentors/entities/mentor-application.entity';
+import { MentorSession } from './mentors/entities/mentor-session.entity';
+import { MentorPayout } from './mentors/entities/mentor-payout.entity';
 import { CourseContent } from './course-content/entities/course-content.entity';
 import { InterviewModule } from './interview/interview.module';
 import { CourseContentModule } from './course-content/course-content.module';
@@ -60,6 +73,11 @@ import { McqsModule } from './mcqs/mcqs.module';
 import { McqQuestion } from './mcqs/entities/mcq-question.entity';
 import { WriteXModule } from './writex/writex.module';
 import { WriteXQuestion } from './writex/entities/writex-question.entity';
+import { UsageModule } from './usage/usage.module';
+import { UserSectionUsage } from './usage/entities/user-section-usage.entity';
+import { PreparationModule } from './preparation/preparation.module';
+import { PreparationProgress } from './preparation/entities/preparation-progress.entity';
+import { resolveDbConfig } from './common/db-config';
 
 @Module({
   imports: [
@@ -77,7 +95,9 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           Performance,
           Achievement,
           Certification,
-          Project,
+           Project,
+           ProjectLab,
+           ProjectLabSubmission,
           InterviewSession,
           Interview,
           DsaProblem,
@@ -97,21 +117,27 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
           Resume,
           McqQuestion,
           WriteXQuestion,
+          UserSectionUsage,
+          PreparationProgress,
           College,
           CollegeStaff,
           StudentCohort,
           CollegeStudent,
-          AdminActivityLog,
+           AdminActivityLog,
+           AdminUpdateFlag,
+           PlatformSettings,
+          MarketRadar,
+          MentorProfile,
+          MentorApplication,
+          MentorSession,
+          MentorPayout,
         ];
 
         if (dbType === 'postgres') {
+          const dbConfig = resolveDbConfig(configService);
           return {
             type: 'postgres',
-            host: configService.get<string>('DB_HOST') || 'localhost',
-            port: parseInt(configService.get<string>('DB_PORT') || '5432', 10),
-            username: configService.get<string>('DB_USER') || 'admin',
-            password: configService.get<string>('DB_PASSWORD') || 'password',
-            database: configService.get<string>('DB_NAME') || 'college_prep_db',
+            ...dbConfig,
             entities,
             synchronize: true,
             logging: false,
@@ -132,7 +158,8 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
     AchievementsModule,
     InterviewsModule,
     CertificationsModule,
-    ProjectsModule,
+     ProjectsModule,
+     ProjectLabsModule,
     DsaModule,
     SqlModule,
     InterviewModule,
@@ -141,11 +168,16 @@ import { WriteXQuestion } from './writex/entities/writex-question.entity';
     GamificationModule,
     AnalyticsModule,
     CollegesModule,
-    AdminModule,
+     AdminModule,
+     AdminSettingsModule,
     InstituteModule,
+    MarketRadarModule,
+    MentorsModule,
     ResumeModule,
     McqsModule,
     WriteXModule,
+    UsageModule,
+    PreparationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

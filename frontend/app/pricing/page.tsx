@@ -64,7 +64,6 @@ const PLANS = [STANDARD_PLAN, PRO_PLAN];
 
 const ALL_FEATURES = [
     { category: 'Foundation', name: 'Company-Specific DSA & SQL', std: true, pro: true },
-    { category: 'Foundation', name: 'Industry Intelligence Hub (Synapse)', std: true, pro: true },
     { category: 'Real-World Experience', name: 'Full-Stack Web Projects', std: true, pro: true },
     { category: 'Real-World Experience', name: 'GitHub & Cloud Deployments', std: true, pro: true },
     { category: 'Interview Practice', name: 'AI Voice Interviews', std: '5/mo', pro: '15/mo' },
@@ -79,6 +78,7 @@ export default function PricingPage() {
     const [activeTab, setActiveTab] = useState('students');
     const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
     const [showComparison, setShowComparison] = useState(false);
+    const upgradesLocked = true;
 
     return (
         <div className="min-h-screen bg-white font-sans text-brand-black relative selection:bg-brand-orange-hover selection:text-white">
@@ -194,10 +194,19 @@ export default function PricingPage() {
                                                     savings={billingCycle === 'yearly' ? plan.savings : undefined}
                                                     delay={idx}
                                                     onCtaClick={() => console.log('Clicked', plan.title)}
+                                                    isUpgradeLocked={upgradesLocked}
                                                 />
                                             );
                                         })}
                                     </div>
+
+                                    {upgradesLocked && (
+                                        <div className="text-center">
+                                            <p className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-4 py-2 rounded-full">
+                                                Upgrades are temporarily paused. Please check back soon.
+                                            </p>
+                                        </div>
+                                    )}
 
                                     {/* Comparison Table Toggle */}
                                     <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-subtle border border-gray-200 overflow-hidden">

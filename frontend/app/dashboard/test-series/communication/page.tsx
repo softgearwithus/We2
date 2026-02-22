@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, PenTool, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 interface WriteXQuestion {
     id: string;
@@ -29,6 +30,7 @@ export default function CommunicationTestsPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [result, setResult] = useState<WriteXResult | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_communication');
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
@@ -104,6 +106,11 @@ export default function CommunicationTestsPage() {
                         <p className="text-lg text-slate-500 font-medium max-w-2xl">
                             Submit your response and receive an instant AI score with actionable feedback.
                         </p>
+                        {isFreePlan && (
+                            <div className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                Free plan time left in WriteX: {remainingLabel}
+                            </div>
+                        )}
                     </div>
                 </motion.header>
 
@@ -132,13 +139,14 @@ export default function CommunicationTestsPage() {
                                 value={answer}
                                 onChange={(e) => setAnswer(e.target.value)}
                                 placeholder="Type your response here..."
-                                className="w-full h-48 p-5 border border-slate-200 rounded-2xl bg-white focus:bg-slate-50/50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none resize-none shadow-inner"
+                                disabled={isLimited}
+                                className={`w-full h-48 p-5 border border-slate-200 rounded-2xl bg-white text-sm font-medium transition-all outline-none resize-none shadow-inner ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:bg-slate-50/50 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500'}`}
                             />
                             <div className="flex items-center justify-between pt-2">
                                 <p className="text-xs text-slate-400 font-bold uppercase tracking-widest hidden sm:block">Aim for clarity & structure</p>
                                 <button
                                     onClick={submitAnswer}
-                                    disabled={isSubmitting || answer.trim().length === 0}
+                                    disabled={isSubmitting || answer.trim().length === 0 || isLimited}
                                     className="px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-emerald-600 transition-colors disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}

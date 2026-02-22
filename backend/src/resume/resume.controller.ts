@@ -4,6 +4,8 @@ import { ResumeService } from './resume.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SaveResumeDto } from './dto/save-resume.dto';
+import { RequireSectionUsage } from '../usage/guards/usage.guard';
+import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 
 @ApiTags('resume')
 @Controller('resume')
@@ -15,6 +17,7 @@ export class ResumeController {
     @Get('me')
     @ApiOperation({ summary: 'Get my saved resume' })
     @ApiResponse({ status: 200, description: 'Resume data retrieved' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
     async getMyResume(@Request() req: any) {
         return this.resumeService.getResumeByUser(req.user.id);
     }
@@ -24,12 +27,14 @@ export class ResumeController {
     @Post('me')
     @ApiOperation({ summary: 'Save my resume' })
     @ApiResponse({ status: 200, description: 'Resume saved' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
     async saveMyResume(@Request() req: any, @Body() body: SaveResumeDto) {
         return this.resumeService.saveResume(req.user.id, body.data);
     }
 
     @Post('analyze')
     @UseInterceptors(FileInterceptor('file'))
+    @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
     async analyzeResume(
         @UploadedFile() file: any,
         @Body('jobDescription') jobDescription?: string

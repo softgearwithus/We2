@@ -32,6 +32,19 @@ export interface ProfileEnhancement {
     difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
 }
 
+export type MarketRadarPayload = {
+    globalStats: {
+        totalActiveJobs: string;
+        newJobsToday: string;
+        remoteWorkPercentage: number;
+        averageHiringTime: string;
+    };
+    jobTrends: JobTrend[];
+    topLanguages: TopLanguage[];
+    insights: MarketInsight[];
+    enhancements: ProfileEnhancement[];
+};
+
 export const MARKET_DATA = {
     globalStats: {
         totalActiveJobs: '3.2M+',
@@ -136,4 +149,4 @@ export const MARKET_DATA = {
             difficulty: 'Advanced',
         }
     ] as ProfileEnhancement[]
-};
+} satisfies MarketRadarPayload;

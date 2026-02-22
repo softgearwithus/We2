@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Building2, Sparkles, TrendingUp, ChevronRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 const COLOR_OPTIONS = [
     { color: 'text-orange-600', bg: 'bg-orange-50', hoverBg: 'group-hover:bg-orange-600', hoverBorder: 'hover:border-orange-100' },
@@ -31,6 +32,7 @@ const item: Variants = {
 
 export default function CompanyTestsPage() {
     const [companies, setCompanies] = useState<{ key: string; label: string; count: number }[]>([]);
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_company');
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
@@ -71,6 +73,11 @@ export default function CompanyTestsPage() {
                         <p className="text-lg text-slate-500 font-medium">
                             Targeted mock tests mirroring the exact interviews of top-tier firms.
                         </p>
+                        {isFreePlan && (
+                            <div className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                Free plan time left in Company Tests: {remainingLabel}
+                            </div>
+                        )}
                     </div>
                 </motion.header>
 
@@ -86,7 +93,7 @@ export default function CompanyTestsPage() {
                             <motion.div variants={item} key={idx}>
                                 <Link
                                     href={`/dashboard/test-series/company/${company.key}`}
-                                    className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl ${palette.hoverBorder} transition-all duration-300 relative overflow-hidden`}
+                                    className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : `hover:shadow-xl ${palette.hoverBorder}`}`}
                                 >
                                     <div className={`absolute top-0 right-0 w-32 h-32 ${palette.bg} rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 transition-colors`} />
 

@@ -1,19 +1,52 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { BookOpen, Code, Layers, MessageSquare, Briefcase, CheckCircle2, Lock, ArrowRight } from 'lucide-react';
-
-const steps = [
-    { title: 'Foundations', desc: 'C++ / Java Basics', icon: BookOpen, status: 'completed' },
-    { title: 'DSA Mastery', desc: 'Arrays to Graphs', icon: Code, status: 'current' },
-    { title: 'Development', desc: 'Build 2 Projects', icon: Layers, status: 'upcoming' },
-    { title: 'CS Core', desc: 'OS, DBMS, CN', icon: Briefcase, status: 'locked' },
-    { title: 'Interviews', desc: 'Mocks & HR Prep', icon: MessageSquare, status: 'locked' }
-];
+import { roadmapData } from '@/app/lib/data/roadmapData';
+import API_BASE_URL from '@/app/lib/api-config';
 
 export default function PlacementRoadmap() {
+    const [completedPhases, setCompletedPhases] = useState<string[]>([]);
+
+    useEffect(() => {
+        const loadProgress = async () => {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) return;
+            try {
+                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
+                setCompletedPhases(completed);
+            } catch (error) {
+                console.error('Failed to load preparation progress', error);
+            }
+        };
+
+        loadProgress();
+    }, []);
+
+    const currentIndex = roadmapData.findIndex((phase) => !completedPhases.includes(phase.id));
+    const resolvedCurrentIndex = currentIndex === -1 ? roadmapData.length - 1 : currentIndex;
+    const steps = roadmapData.map((phase, index) => {
+        const status = completedPhases.includes(phase.id)
+            ? 'completed'
+            : index === resolvedCurrentIndex
+                ? 'current'
+                : index > resolvedCurrentIndex
+                    ? 'locked'
+                    : 'upcoming';
+        return {
+            title: phase.title.replace(/^Phase\s*\d+:\s*/i, ''),
+            desc: phase.desc,
+            icon: phase.icon,
+            status,
+        };
+    });
     return (
         <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden">
             {/* Header */}
@@ -35,7 +68,7 @@ export default function PlacementRoadmap() {
                 <div className="absolute top-6 left-0 w-full h-1 bg-slate-100 -z-0 hidden md:block rounded-full overflow-hidden">
                     <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: '35%' }}
+                        animate={{ width: `${Math.min(100, Math.round((completedPhases.length / Math.max(roadmapData.length, 1)) * 100))}%` }}
                         transition={{ duration: 1.5, ease: "easeInOut" }}
                         className="h-full bg-gradient-to-r from-emerald-400 to-brand-orange"
                     />

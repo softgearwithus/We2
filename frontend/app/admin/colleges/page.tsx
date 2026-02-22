@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Plus, Search, Filter, MoreVertical, GraduationCap, MapPin, Users, Settings2, Trash2, ExternalLink, Download, Building2, TrendingUp } from 'lucide-react';
+import { Plus, Search, Filter, MoreVertical, GraduationCap, MapPin, Users, Settings2, Trash2, ExternalLink, Download, Building2 } from 'lucide-react';
 import CollegeManager from '@/app/components/admin/CollegeManager';
 
 export default function CollegesPage() {
@@ -112,10 +112,9 @@ export default function CollegesPage() {
             </div>
 
             {/* Simple Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                     { label: 'Total Institutions', value: colleges.length, icon: Building2, color: 'text-blue-600' },
-                    { label: 'Active Placements', value: 12, icon: TrendingUp, color: 'text-emerald-600' },
                     { label: 'Total Students', value: colleges.reduce((acc, c) => acc + (c.students || 0), 0).toLocaleString(), icon: Users, color: 'text-indigo-600' }
                 ].map((stat, i) => (
                     <div key={i} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">

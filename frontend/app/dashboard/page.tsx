@@ -8,7 +8,6 @@ import SimulationDashboard from '../components/dashboard/SimulationDashboard';
 import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
-import SynapseWidget from '../components/dashboard/prep0/SynapseWidget';
 import { Sparkles, Target, GraduationCap, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -124,11 +123,6 @@ export default function DashboardPage() {
                                 { subject: 'Company Prep', A: stats.skillProficiency?.[5] ?? 0, fullMark: 100 },
                             ]}
                         />
-
-                        {/* Synapse Intelligence Widget */}
-                        <div className="h-64 mb-8">
-                            <SynapseWidget recentActivity={stats.recentActivity} />
-                        </div>
 
                         {/* Become a Mentor Earn CTA */}
                         <Link href="/mentor/apply" className="block mt-12 md:mt-16 group">

@@ -7,6 +7,7 @@ import { ArrowLeft, Search, ListFilter } from 'lucide-react';
 
 import { fetchSqlProblems, SqlProblem } from '@/app/lib/sql-problems';
 import { fetchSqlTrainingTaskForProblem } from '@/app/lib/sql-training';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 export default function SqlAllProblemsPage() {
     const router = useRouter();
@@ -15,6 +16,8 @@ export default function SqlAllProblemsPage() {
     const [query, setQuery] = useState('');
     const [difficulty, setDifficulty] = useState<'all' | 'Easy' | 'Medium' | 'Hard'>('all');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('sql');
 
     useEffect(() => {
         const loadProblems = async () => {
@@ -71,6 +74,14 @@ export default function SqlAllProblemsPage() {
                 </div>
             </div>
 
+            {isFreePlan && (
+                <div className="max-w-6xl mx-auto px-6 pt-4">
+                    <div className={`rounded-xl border px-4 py-3 text-sm font-semibold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                        Free plan time left in SQL: {remainingLabel}
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-6xl mx-auto px-6 py-6">
                 <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-4">
                     <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -105,7 +116,8 @@ export default function SqlAllProblemsPage() {
                                 <button
                                     key={problem.uuid}
                                     onClick={() => handleSelect(problem)}
-                                    className="w-full text-left px-3 py-4 hover:bg-slate-50 transition-colors"
+                                    disabled={isLimited}
+                                    className={`w-full text-left px-3 py-4 transition-colors ${isLimited ? 'opacity-60 cursor-not-allowed' : 'hover:bg-slate-50'}`}
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <div>

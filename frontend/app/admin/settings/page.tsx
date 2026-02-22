@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Save, User, Shield, Bell, Key, Globe, LayoutTemplate, AlertCircle, CheckCircle2, Loader2, Database } from 'lucide-react';
+import { Save, User, Shield, Key, Globe, AlertCircle, CheckCircle2, Loader2, Database } from 'lucide-react';
+import {
+    fetchPlatformSettings,
+    updateAdminProfile,
+    updateAdminSecurity,
+    updatePlatformSettings,
+} from '@/app/lib/admin-settings';
 
 // --- Types ---
 interface ProfileSettings {
@@ -20,20 +26,13 @@ interface SecuritySettings {
 interface PlatformSettings {
     maintenanceMode: boolean;
     allowRegistrations: boolean;
-    betaFeatures: boolean;
     supportEmail: string;
     maxUploadSizeMB: number;
 }
 
-interface NotificationPreference {
-    id: string;
-    title: string;
-    desc: string;
-    active: boolean;
-}
 
 export default function AdminSettingsPage() {
-    const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'platform' | 'notifications'>('profile');
+    const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'platform'>('profile');
 
     // --- Global State ---
     const [isLoadingInitial, setIsLoadingInitial] = useState(true);
@@ -55,48 +54,52 @@ export default function AdminSettingsPage() {
     const [platform, setPlatform] = useState<PlatformSettings>({
         maintenanceMode: false,
         allowRegistrations: true,
-        betaFeatures: false,
         supportEmail: '',
         maxUploadSizeMB: 10
     });
 
-    const [notifications, setNotifications] = useState<NotificationPreference[]>([]);
 
     // --- Mock API Fetch ---
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                // Simulating an API call to fetch admin settings
-                await new Promise(resolve => setTimeout(resolve, 800));
+                const token = localStorage.getItem('accessToken') || '';
+                if (!token) {
+                    throw new Error('Missing admin token.');
+                }
+
+                const [platformData, profileRes] = await Promise.all([
+                    fetchPlatformSettings(token),
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/profile`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }),
+                ]);
+
+                if (!profileRes.ok) {
+                    throw new Error('Failed to fetch settings');
+                }
+
+                const profileData = await profileRes.json();
 
                 setProfile({
-                    fullName: 'Super Admin',
-                    email: 'admin@emble.co.in',
-                    role: 'Super Administrator',
-                    timezone: 'Asia/Kolkata',
-                    avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Admin'
+                    fullName: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim(),
+                    email: profileData.email || '',
+                    role: profileData.role || 'Super Administrator',
+                    timezone: profileData.timezone || 'Asia/Kolkata',
+                    avatarUrl: profileData.avatarUrl || 'https://api.dicebear.com/7.x/adventurer/svg?seed=Admin'
                 });
 
                 setSecurity({
-                    twoFactorEnabled: false,
-                    lastPasswordChange: '2 months ago'
+                    twoFactorEnabled: Boolean(profileData.isTwoFactorEnabled),
+                    lastPasswordChange: 'Recently'
                 });
 
                 setPlatform({
-                    maintenanceMode: false,
-                    allowRegistrations: true,
-                    betaFeatures: true,
-                    supportEmail: 'support@emble.co.in',
-                    maxUploadSizeMB: 50
+                    maintenanceMode: platformData.maintenanceMode,
+                    allowRegistrations: platformData.allowRegistrations,
+                    supportEmail: platformData.supportEmail || '',
+                    maxUploadSizeMB: platformData.maxUploadSizeMB || 10
                 });
-
-                setNotifications([
-                    { id: 'n1', title: 'New Mentor Applications', desc: 'Get alerted when a mentor applies to join the platform.', active: true },
-                    { id: 'n2', title: 'Large Platform Payments', desc: 'Receive emails for transactions above ₹10,000.', active: true },
-                    { id: 'n3', title: 'System Errors & Outages', desc: 'Critical alerts related to server downtime or API failures.', active: true },
-                    { id: 'n4', title: 'Daily Student Analytics', desc: 'A daily automated email summarizing new signups and activity.', active: false }
-                ]);
-
             } catch (error) {
                 console.error("Failed to fetch settings", error);
             } finally {
@@ -109,31 +112,35 @@ export default function AdminSettingsPage() {
 
     // --- Save Handlers ---
     const handleSaveProfile = async () => {
-        // Backend Logic: POST/PUT /api/admin/settings/profile
-        console.log('Saving Profile Data:', profile);
-        return new Promise(resolve => setTimeout(resolve, 1000));
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) throw new Error('Missing admin token.');
+        await updateAdminProfile(token, {
+            fullName: profile.fullName,
+            email: profile.email,
+            timezone: profile.timezone,
+            avatarUrl: profile.avatarUrl,
+        });
     };
 
     const handleSaveSecurity = async () => {
         if (passwords.new && passwords.new !== passwords.confirm) {
             throw new Error("New passwords do not match.");
         }
-        // Backend Logic: POST /api/admin/settings/security/password
-        console.log('Updating Password/Security. 2FA:', security.twoFactorEnabled);
-        return new Promise(resolve => setTimeout(resolve, 1000));
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) throw new Error('Missing admin token.');
+        await updateAdminSecurity(token, {
+            currentPassword: passwords.current || undefined,
+            newPassword: passwords.new || undefined,
+            twoFactorEnabled: security.twoFactorEnabled,
+        });
     };
 
     const handleSavePlatform = async () => {
-        // Backend Logic: POST/PUT /api/admin/settings/platform
-        console.log('Saving Platform Config:', platform);
-        return new Promise(resolve => setTimeout(resolve, 1000));
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) throw new Error('Missing admin token.');
+        await updatePlatformSettings(token, platform);
     };
 
-    const handleSaveNotifications = async () => {
-        // Backend Logic: POST/PUT /api/admin/settings/notifications
-        console.log('Saving Notification Prefs:', notifications);
-        return new Promise(resolve => setTimeout(resolve, 1000));
-    };
 
     // --- Main Save Action ---
     const handleSave = async () => {
@@ -145,7 +152,6 @@ export default function AdminSettingsPage() {
             if (activeTab === 'profile') await handleSaveProfile();
             if (activeTab === 'security') await handleSaveSecurity();
             if (activeTab === 'platform') await handleSavePlatform();
-            if (activeTab === 'notifications') await handleSaveNotifications();
 
             setSaveMessage({ type: 'success', text: `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} settings updated successfully.` });
 
@@ -201,13 +207,6 @@ export default function AdminSettingsPage() {
                                 }`}
                         >
                             <Globe size={18} /> Platform Config
-                        </button>
-                        <button
-                            onClick={() => { setActiveTab('notifications'); setSaveMessage(null); }}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all whitespace-nowrap ${activeTab === 'notifications' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-200'
-                                }`}
-                        >
-                            <Bell size={18} /> Notifications
                         </button>
                     </nav>
                 </aside>
@@ -393,52 +392,10 @@ export default function AdminSettingsPage() {
                                         </label>
                                     </div>
 
-                                    <div className="flex items-center justify-between p-5 border border-slate-200 rounded-2xl bg-slate-50/50">
-                                        <div>
-                                            <h3 className="font-bold text-slate-900 flex items-center gap-2"><LayoutTemplate size={16} /> Beta Features</h3>
-                                            <p className="text-sm text-slate-500 mt-1 max-w-lg">Enable experimental features for student testing (e.g. AI voice simulation tests).</p>
-                                        </div>
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" className="sr-only peer" checked={platform.betaFeatures} onChange={() => setPlatform({ ...platform, betaFeatures: !platform.betaFeatures })} />
-                                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* --- NOTIFICATIONS TAB --- */}
-                        {activeTab === 'notifications' && (
-                            <div className="space-y-8 animate-in fade-in duration-300">
-                                <div>
-                                    <h2 className="text-xl font-black text-slate-900 mb-1">Notification Preferences</h2>
-                                    <p className="text-sm text-slate-500 font-medium pb-6 border-b border-slate-100">Control what automated email alerts you receive as an administrator.</p>
-                                </div>
-
-                                <div className="space-y-3">
-                                    {notifications.map((notif) => (
-                                        <div key={notif.id} className="flex items-center justify-between p-4 bg-white hover:bg-slate-50 border border-slate-100 rounded-xl transition-colors shadow-sm">
-                                            <div>
-                                                <h3 className="font-bold text-slate-800 text-sm">{notif.title}</h3>
-                                                <p className="text-xs text-slate-500 mt-0.5">{notif.desc}</p>
-                                            </div>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="sr-only peer"
-                                                    checked={notif.active}
-                                                    onChange={() => {
-                                                        const updated = notifications.map(n => n.id === notif.id ? { ...n, active: !n.active } : n);
-                                                        setNotifications(updated);
-                                                    }}
-                                                />
-                                                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                                            </label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     {/* --- GLOBAL SAVE BAR --- */}

@@ -2,6 +2,8 @@ import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFile
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InterviewService } from './interview.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RequireSectionUsage } from '../usage/guards/usage.guard';
+import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 
 @Controller('interview')
 export class InterviewController {
@@ -46,6 +48,7 @@ export class InterviewController {
 
   @Post('vapi/analysis')
   @UseGuards(JwtAuthGuard)
+  @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_VIDEO)
   async getVapiAnalysis(@Body('callId') callId: string, @Request() req: any) {
     return this.interviewService.getVapiAnalysis(callId, req.user?.id);
   }

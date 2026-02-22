@@ -34,10 +34,6 @@ const faqs = [
         a: "Absolutely. We exclusively focus on the high-demand stack - React, NestJS, PostgreSQL, Docker, and AWS. Mastering these ensures you are competent in the technologies used by the fastest-growing tech companies today."
     },
     {
-        q: "Will the Synapse feed help me stay updated with industrial trends for my interviews?",
-        a: "Yes. Technical rounds often include discussions on industry trends. Synapse provides a daily briefing of critical AI news and industrial signals - ensuring you always have an informed perspective during your technical discussions."
-    },
-    {
         q: "How do I prove my 'Placement Readiness' with the Skill Scorecard?",
         a: "Your Scorecard provides a data-driven view of your logic, coding, and communication skills. It's a holistic metric used by our placement partners to identify top talent who are ready for immediate industrial contribution."
     },

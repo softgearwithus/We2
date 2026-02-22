@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert } from 'typeorm';
+import { randomUUID } from 'crypto';
 
 export enum UserRole {
     STUDENT = 'student',
@@ -55,11 +56,44 @@ export class User {
     @Column({ type: 'timestamp', nullable: true })
     subscriptionEndDate: Date;
 
+    @Column({ default: true })
+    isActive: boolean;
+
     @Column({ default: false })
     isTwoFactorEnabled: boolean;
 
     @Column({ nullable: true })
     twoFactorSecret?: string;
+
+    @Column({ type: 'varchar', length: 80, nullable: true })
+    timezone?: string | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    avatarUrl?: string | null;
+
+    @Column({ type: 'varchar', length: 60, nullable: true })
+    username?: string | null;
+
+    @Column({ type: 'varchar', length: 120, nullable: true })
+    roleTitle?: string | null;
+
+    @Column({ type: 'varchar', length: 120, nullable: true })
+    location?: string | null;
+
+    @Column({ type: 'text', nullable: true })
+    bio?: string | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    websiteUrl?: string | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    githubUrl?: string | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    linkedinUrl?: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    lastActiveAt?: Date | null;
 
     // --- Usage Limits ---
     @Column({ type: 'timestamp', nullable: true })
@@ -79,4 +113,11 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @BeforeInsert()
+    ensureId() {
+        if (!this.id) {
+            this.id = randomUUID();
+        }
+    }
 }

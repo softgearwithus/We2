@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 interface McqQuestion {
     id: string;
@@ -26,6 +27,8 @@ export default function CompanyMcqsPage() {
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState<Record<string, number>>({});
+
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_company');
 
     const hasNext = page * limit < total;
 
@@ -71,6 +74,11 @@ export default function CompanyMcqsPage() {
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Company Series</p>
                         <h1 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 mt-2">{displayLabel} MCQs</h1>
                         <p className="text-slate-500 mt-3 font-medium">Practice in continuous sets of 50 questions.</p>
+                        {isFreePlan && (
+                            <div className={`mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                Free plan time left: {remainingLabel}
+                            </div>
+                        )}
                     </div>
                     <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-2xl px-6 py-4 shadow-sm">
                         <div>
@@ -104,12 +112,13 @@ export default function CompanyMcqsPage() {
                                                         <button
                                                             key={optIndex}
                                                             onClick={() => handleSelect(mcq.id, optIndex)}
+                                                            disabled={isLimited}
                                                             className={`w-full text-left px-4 py-3 rounded-2xl border transition-all font-medium ${
                                                                 showCorrect && isCorrect
                                                                     ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
                                                                     : isWrong
                                                                         ? 'border-rose-400 bg-rose-50 text-rose-700'
-                                                                        : 'border-slate-200 bg-white text-slate-700 hover:border-orange-200 hover:bg-orange-50/40'
+                                                                        : `border-slate-200 bg-white text-slate-700 ${isLimited ? 'opacity-60 cursor-not-allowed' : 'hover:border-orange-200 hover:bg-orange-50/40'}`
                                                             }`}
                                                         >
                                                             <div className="flex items-center justify-between">

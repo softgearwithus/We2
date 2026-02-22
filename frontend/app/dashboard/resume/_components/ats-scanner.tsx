@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, CheckCircle2, X, AlertTriangle, Loader2, Sparkles } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 interface AnalysisResult {
     score: number;
@@ -21,6 +22,7 @@ export default function ATSScanner() {
     const [result, setResult] = useState<AnalysisResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { isLimited } = useSectionUsage('resume');
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -94,12 +96,13 @@ export default function ATSScanner() {
                 className={clsx(
                     "border-2 border-dashed rounded-3xl p-12 text-center transition-all cursor-pointer bg-white",
                     isDragging ? "border-emerald-500 bg-emerald-50" : "border-slate-200 hover:border-emerald-400 hover:bg-slate-50",
-                    file ? "bg-emerald-50/30 border-emerald-200" : ""
+                    file ? "bg-emerald-50/30 border-emerald-200" : "",
+                    isLimited ? "opacity-60 cursor-not-allowed" : ""
                 )}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isLimited && fileInputRef.current?.click()}
             >
                 <input
                     type="file"
@@ -171,7 +174,8 @@ export default function ATSScanner() {
                                 value={jobDescription}
                                 onChange={(e) => setJobDescription(e.target.value)}
                                 placeholder="Paste the job requirements here to get a match score and targeted improvements..."
-                                className="w-full h-40 p-4 border border-slate-100 rounded-2xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none resize-none custom-scrollbar"
+                                disabled={isLimited}
+                                className={`w-full h-40 p-4 border border-slate-100 rounded-2xl bg-slate-50 text-sm font-medium transition-all outline-none resize-none custom-scrollbar ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500'}`}
                             />
                             <p className="mt-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider ml-1">
                                 {jobDescription.length === 0 ? "Analyzing against standard ATS benchmarks" : "Targeting specific job requirements"}
@@ -192,7 +196,7 @@ export default function ATSScanner() {
                 <div className="flex justify-center">
                     <button
                         onClick={analyzeResume}
-                        disabled={isAnalyzing}
+                        disabled={isAnalyzing || isLimited}
                         className="flex items-center gap-2 px-8 py-4 bg-slate-900 font-bold text-white rounded-xl shadow-xl shadow-slate-200 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800"
                     >
                         {isAnalyzing ? (

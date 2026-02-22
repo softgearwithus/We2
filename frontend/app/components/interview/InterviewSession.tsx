@@ -8,12 +8,12 @@ import { VideoMetrics } from './AssessmentReport';
 import { useRouter } from 'next/navigation';
 
 interface InterviewSessionProps {
-    interviewId?: string;
-    onEnd: (metrics: VideoMetrics) => void;
+    onEnd: (metrics: VideoMetrics, durationSeconds: number) => void;
     onCancel: () => void;
+    initialSeconds?: number;
 }
 
-export default function InterviewSession({ interviewId = `mock-${Date.now()}`, onEnd, onCancel }: InterviewSessionProps) {
+export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600 }: InterviewSessionProps) {
     const { status, isMuted, volumeLevel, messages, callId, error: vapiError, startInterview, stopInterview, toggleMute } = useVapi();
     const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID || '';
     const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -22,8 +22,10 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
     const scrollRef = useRef<HTMLDivElement>(null);
     const [cameraActive, setCameraActive] = useState(false);
     const [sessionState, setSessionState] = useState<'idle' | 'active' | 'processing'>('idle');
-    const [timeLeft, setTimeLeft] = useState(600); // 10 minutes (600 seconds)
+    const [timeLeft, setTimeLeft] = useState(() => Math.max(0, Math.min(initialSeconds, 600)));
     const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const sessionStartedAtRef = useRef<number | null>(null);
+    const durationSecondsRef = useRef<number | null>(null);
     const router = useRouter();
 
     // Timer Logic
@@ -155,6 +157,26 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                     throw new Error('Analysis not ready');
                 }
 
+                const durationSeconds = durationSecondsRef.current ?? 0;
+                const token = localStorage.getItem('accessToken');
+                if (token) {
+                    try {
+                        if (durationSeconds === 0) {
+                            durationSecondsRef.current = Math.max(0, initialSeconds - timeLeft);
+                        }
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/${session.id}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ duration: durationSecondsRef.current ?? durationSeconds })
+                        });
+                    } catch (err) {
+                        console.warn('Failed to update interview duration', err);
+                    }
+                }
+
                 const finalMetrics: VideoMetrics = {
                     overall: typeof session?.overallScore === 'number' ? session.overallScore : 0,
                     technical: typeof metrics.technical === 'number' ? metrics.technical : 0,
@@ -167,7 +189,7 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                     logUrl: session?.analysis?.logUrl
                 };
 
-                onEnd(finalMetrics);
+                onEnd(finalMetrics, durationSeconds);
             } catch (error) {
                 attempts += 1;
                 if (Date.now() - startTime > timeoutMs) {
@@ -190,6 +212,8 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
             const userId = localStorage.getItem('userId');
             const metadata = userId ? { userId } : undefined;
             await startInterview(assistantId, metadata);
+            sessionStartedAtRef.current = Date.now();
+            durationSecondsRef.current = null;
             setSessionState('active');
         } catch (e) {
             console.error("Failed to start:", e);
@@ -197,6 +221,10 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
     };
 
     const handleEnd = async () => {
+        const elapsed = sessionStartedAtRef.current
+            ? Math.max(0, Math.round((Date.now() - sessionStartedAtRef.current) / 1000))
+            : Math.max(0, initialSeconds - timeLeft);
+        durationSecondsRef.current = elapsed;
         // TTS Announcement
         if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance("Interview Ended");

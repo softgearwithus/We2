@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CreateDsaProblemDto } from './dto/create-dsa-problem.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
+import { AdminDsaProblemQueryDto, ProblemOrder } from './dto/admin-dsa-problem-query.dto';
 import { LeetCodeService } from './services/leetcode.service';
 
 @Injectable()
@@ -181,6 +182,43 @@ export class DsaService {
             codeTemplates,
         });
         return this.problemsRepository.save(problem);
+    }
+
+    async adminListProblems(query: AdminDsaProblemQueryDto) {
+        const page = query.page || 1;
+        const limit = query.limit || 50;
+        const order = query.order || ProblemOrder.LATEST;
+
+        const qb = this.problemsRepository.createQueryBuilder('problem');
+
+        if (query.difficulty) {
+            qb.andWhere('problem.difficulty = :difficulty', { difficulty: query.difficulty });
+        }
+        if (query.category) {
+            qb.andWhere(':category = ANY(problem.categories)', { category: query.category });
+        }
+        if (query.search) {
+            qb.andWhere('(problem.title ILIKE :search OR problem.slug ILIKE :search)', {
+                search: `%${query.search}%`,
+            });
+        }
+
+        if (order === ProblemOrder.OLDEST) {
+            qb.orderBy('problem.createdAt', 'ASC');
+        } else {
+            qb.orderBy('problem.createdAt', 'DESC');
+        }
+
+        qb.skip((page - 1) * limit).take(limit);
+
+        const [items, total] = await qb.getManyAndCount();
+        return {
+            items,
+            total,
+            page,
+            limit,
+            hasNext: page * limit < total,
+        };
     }
 
     async getAllProblems(difficulty?: Difficulty): Promise<DsaProblem[]> {

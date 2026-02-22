@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Building2, ChevronRight, Mic, Sparkles } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 const container: Variants = {
     hidden: { opacity: 0 },
@@ -22,6 +23,7 @@ const item: Variants = {
 };
 
 export default function TestSeriesPage() {
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_subject');
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 overflow-x-hidden pb-20 relative">
             {/* Minimalist Background pattern */}
@@ -48,6 +50,11 @@ export default function TestSeriesPage() {
                         <p className="text-lg text-slate-500 font-medium">
                             Master your skills. Train with focused, high-speed practice simulations.
                         </p>
+                        {isFreePlan && (
+                            <div className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                Free plan time left in Test Series: {remainingLabel}
+                            </div>
+                        )}
                     </div>
                 </motion.header>
 
@@ -59,7 +66,7 @@ export default function TestSeriesPage() {
                 >
                     {/* Subject Wise Card */}
                     <motion.div variants={item}>
-                        <Link href="/dashboard/test-series/subject" className="group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative overflow-hidden">
+                        <Link href="/dashboard/test-series/subject" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-100 transition-colors" />
 
                             <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
@@ -81,7 +88,7 @@ export default function TestSeriesPage() {
 
                     {/* Company Wise Card */}
                     <motion.div variants={item}>
-                        <Link href="/dashboard/test-series/company" className="group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:border-orange-100 transition-all duration-300 relative overflow-hidden">
+                        <Link href="/dashboard/test-series/company" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-orange-100'}`}>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-orange-100 transition-colors" />
 
                             <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
@@ -103,7 +110,7 @@ export default function TestSeriesPage() {
 
                     {/* WriteX Analysis Card */}
                     <motion.div variants={item}>
-                        <Link href="/dashboard/test-series/communication" className="group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all duration-300 relative overflow-hidden">
+                        <Link href="/dashboard/test-series/communication" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-emerald-100'}`}>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-100 transition-colors" />
 
                             <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">

@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Code, Database, Globe, Layers, ArrowRight, Check, Sparkles } from 'lucide-react';
+import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 export default function ProjectBuilderWizard() {
     const [step, setStep] = useState(1);
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('project_builder');
 
     // Mock Domains
     const domains = [
@@ -17,6 +19,7 @@ export default function ProjectBuilderWizard() {
     ];
 
     const toggleInterest = (id: string) => {
+        if (isLimited) return;
         if (selectedInterests.includes(id)) {
             setSelectedInterests(selectedInterests.filter(i => i !== id));
         } else {
@@ -37,6 +40,11 @@ export default function ProjectBuilderWizard() {
                             </div>
                             <h1 className="font-bold text-xl">Project Forge</h1>
                         </div>
+                        {isFreePlan && (
+                            <div className={`mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${isLimited ? 'border-rose-500/40 bg-rose-500/10 text-rose-200' : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'}`}>
+                                {remainingLabel} left
+                            </div>
+                        )}
 
                         <div className="space-y-6 relative">
                             {/* Connector Line */}
@@ -92,7 +100,7 @@ export default function ProjectBuilderWizard() {
                                         <div
                                             key={domain.id}
                                             onClick={() => toggleInterest(domain.id)}
-                                            className={`p-6 rounded-2xl border-2 cursor-pointer transition-all flex items-center gap-4
+                                            className={`p-6 rounded-2xl border-2 transition-all flex items-center gap-4 ${isLimited ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
                                                 ${selectedInterests.includes(domain.id)
                                                     ? 'border-indigo-500 bg-indigo-50'
                                                     : 'border-slate-100 bg-white hover:border-indigo-100 hover:shadow-md'}
@@ -116,7 +124,7 @@ export default function ProjectBuilderWizard() {
                                 <div className="mt-auto flex justify-end">
                                     <button
                                         onClick={() => setStep(2)}
-                                        disabled={selectedInterests.length === 0}
+                                        disabled={selectedInterests.length === 0 || isLimited}
                                         className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200"
                                     >
                                         Next Step <ArrowRight size={18} />

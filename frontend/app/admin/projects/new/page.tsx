@@ -2,17 +2,20 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Info, Settings, Code, LayoutDashboard, Send, Plus, Trash2, BookOpen, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Info, Settings, Code, LayoutDashboard, Send, Trash2, BookOpen, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PROJECT_DOMAINS } from '@/app/lib/ProjectData';
+import { createProjectLab } from '@/app/lib/project-labs';
+import { useRouter } from 'next/navigation';
 
 export default function NewProjectForm() {
+    const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     // Core Form State mapping directly to ProjectType
     const [formData, setFormData] = useState({
         targetDomain: '',
-        targetStack: '',
         title: '',
         description: '',
         complexity: 'Beginner',
@@ -121,20 +124,36 @@ export default function NewProjectForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setSubmitError(null);
 
-        // Add ID and format payload
-        const finalPayload = {
-            id: `proj-${Date.now()}`,
-            ...formData
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) {
+            setSubmitError('Missing admin token.');
+            setIsSubmitting(false);
+            return;
+        }
+
+        const payload = {
+            domainId: formData.targetDomain,
+            title: formData.title,
+            description: formData.description,
+            complexity: formData.complexity,
+            estimatedTime: formData.estimatedTime,
+            skills: formData.skills,
+            tags: formData.tags,
+            tasks: formData.tasks,
+            readme: formData.readme,
+            details: formData.details,
         };
 
-        // TODO: In a real app, POST to backend
-        console.log("READY FOR BACKEND - PROJECT PAYLOAD:", finalPayload);
-
-        setTimeout(() => {
+        try {
+            await createProjectLab(token, payload);
+            router.push('/admin/projects');
+        } catch (error: any) {
+            setSubmitError(error?.message || 'Failed to create project lab.');
+        } finally {
             setIsSubmitting(false);
-            alert("Project printed to console successfully! (Mock submission)");
-        }, 1000);
+        }
     };
 
     // Generic Array Input Component
@@ -203,15 +222,6 @@ export default function NewProjectForm() {
                                 <option value="">Select Domain...</option>
                                 {PROJECT_DOMAINS.map(domain => (
                                     <option key={domain.id} value={domain.id}>{domain.title}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700">Target Tech Stack</label>
-                            <select required name="targetStack" value={formData.targetStack} onChange={handleBasicChange} disabled={!formData.targetDomain} className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none font-medium bg-white disabled:bg-slate-50 disabled:text-slate-400">
-                                <option value="">Select Stack...</option>
-                                {formData.targetDomain && PROJECT_DOMAINS.find(d => d.id === formData.targetDomain)?.stacks.map(stack => (
-                                    <option key={stack.id} value={stack.id}>{stack.name}</option>
                                 ))}
                             </select>
                         </div>
@@ -360,6 +370,11 @@ export default function NewProjectForm() {
                         <AlertCircle size={18} />
                         Ensure all array constraints are validated before submission.
                     </div>
+                    {submitError && (
+                        <div className="text-xs font-medium text-rose-600 bg-rose-50 border border-rose-100 p-2.5 rounded-lg">
+                            {submitError}
+                        </div>
+                    )}
                     <button
                         type="submit"
                         disabled={isSubmitting}

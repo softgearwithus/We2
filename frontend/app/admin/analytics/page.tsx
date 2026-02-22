@@ -2,18 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import {
-    Users,
     MousePointer2,
     Clock,
-    TrendingUp,
-    ArrowUpRight,
-    ArrowDownRight,
-    Activity,
     Target,
     Zap,
     CreditCard,
-    ChevronRight,
-    BarChart3,
     Loader2
 } from 'lucide-react';
 import { AnalyticsData, fetchAdminAnalytics } from '@/app/lib/admin';
@@ -34,7 +27,7 @@ export default function AnalyticsPage() {
             setIsLoading(true);
             try {
                 const token = localStorage.getItem('accessToken') || '';
-                const data = await fetchAdminAnalytics(token);
+                const data = await fetchAdminAnalytics(token, timeRange);
                 setStats({
                     visitors: data.visitors,
                     subscribers: data.subscribers,
@@ -50,15 +43,8 @@ export default function AnalyticsPage() {
 
         loadAnalytics();
 
-        const interval = setInterval(() => {
-            setStats(prev => ({
-                ...prev,
-                activeNow: Math.max(0, prev.activeNow + (Math.floor(Math.random() * 5) - 2))
-            }));
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, []);
+        return () => {};
+    }, [timeRange]);
 
     if (isLoading || !analyticsData) {
         return (
@@ -74,14 +60,13 @@ export default function AnalyticsPage() {
     const conversionRate = stats.visitors > 0 ? ((stats.subscribers / stats.visitors) * 100).toFixed(1) : '0.0';
 
     const overviewStats = [
-        { label: 'Total Visitors', value: stats.visitors.toLocaleString(), change: '+14%', trend: 'up', icon: MousePointer2, color: 'text-blue-600' },
-        { label: 'Total Subscribers', value: stats.subscribers.toLocaleString(), change: '+22%', trend: 'up', icon: CreditCard, color: 'text-emerald-600' },
-        { label: 'Conversion Rate', value: `${conversionRate}%`, change: '+5%', trend: 'up', icon: Target, subtitle: 'Visitors to Subscribers', color: 'text-indigo-600' },
-        { label: 'Avg. Session Time', value: '24m 12s', change: '-2%', trend: 'down', icon: Clock, color: 'text-slate-600' },
+        { label: 'Total Visitors', value: stats.visitors.toLocaleString(), icon: MousePointer2, color: 'text-blue-600' },
+        { label: 'Total Subscribers', value: stats.subscribers.toLocaleString(), icon: CreditCard, color: 'text-emerald-600' },
+        { label: 'Conversion Rate', value: `${conversionRate}%`, icon: Target, subtitle: 'Visitors to Subscribers', color: 'text-indigo-600' },
+        { label: 'Active Now', value: stats.activeNow.toLocaleString(), icon: Clock, color: 'text-slate-600' },
     ];
 
     const featureEngagement = analyticsData.featureEngagement;
-    const engagementFunnels = analyticsData.funnels;
 
     return (
         <div className="max-w-[1400px] mx-auto space-y-10 pb-20 pt-4">
@@ -108,30 +93,25 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Core Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {overviewStats.map((stat, i) => (
-                    <div key={i} className="bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm transition-transform hover:scale-[1.02] duration-300">
-                        <div className="flex items-start justify-between mb-6">
-                            <div className={`w-12 h-12 rounded-2xl bg-slate-50 ${stat.color} border border-slate-100 flex items-center justify-center`}>
-                                <stat.icon size={24} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {overviewStats.map((stat, i) => (
+                            <div key={i} className="bg-white p-8 rounded-[2rem] border border-slate-200/60 shadow-sm transition-transform hover:scale-[1.02] duration-300">
+                                <div className="flex items-start justify-between mb-6">
+                                    <div className={`w-12 h-12 rounded-2xl bg-slate-50 ${stat.color} border border-slate-100 flex items-center justify-center`}>
+                                        <stat.icon size={24} />
+                                    </div>
+                                </div>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
+                                <h3 className="text-4xl font-black text-slate-900">{stat.value}</h3>
+                                {stat.subtitle && <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-tight">{stat.subtitle}</p>}
                             </div>
-                            <div className={`flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full ${stat.trend === 'up' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
-                                }`}>
-                                {stat.trend === 'up' ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                                {stat.change}
-                            </div>
-                        </div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
-                        <h3 className="text-4xl font-black text-slate-900">{stat.value}</h3>
-                        {stat.subtitle && <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-tight">{stat.subtitle}</p>}
-                    </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                {/* Feature Engagement - Simplified */}
-                <div className="lg:col-span-2">
-                    <div className="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-sm overflow-hidden p-10 h-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-10">
+                        {/* Feature Engagement - Simplified */}
+                        <div>
+                            <div className="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-sm overflow-hidden p-10 h-full">
                         <div className="flex items-center justify-between mb-10">
                             <div>
                                 <h3 className="text-xl font-bold text-slate-900 flex items-center gap-3">
@@ -165,51 +145,7 @@ export default function AnalyticsPage() {
                     </div>
                 </div>
 
-                {/* Conversion Funnel - Simple */}
-                <div className="space-y-10">
-                    <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200/60 shadow-sm">
-                        <h3 className="text-lg font-black text-slate-900 mb-8 flex items-center gap-3">
-                            <BarChart3 size={22} className="text-indigo-500" />
-                            User Journey
-                        </h3>
-                        <div className="space-y-6">
-                            {engagementFunnels.map((step, i) => (
-                                <div key={i} className="relative">
-                                    <div className="flex items-center justify-between mb-2 px-1">
-                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{step.stage}</span>
-                                        <span className="text-xs font-black text-slate-900">{step.count}</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-indigo-500 rounded-full"
-                                            style={{ width: `${step.percentage}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="mt-10 pt-8 border-t border-slate-100">
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                <p className="text-[10px] font-black text-slate-400 uppercase mb-2">Strategy Note</p>
-                                <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                                    Current data shows <span className="text-indigo-600 font-bold">{conversionRate}%</span> of visitors become paid subscribers. Focus on bridging the gap between "Started Training" and "Subscribed".
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-slate-900 p-10 rounded-[2.5rem] text-white relative overflow-hidden group">
-                        <div className="relative z-10">
-                            <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Growth Target</p>
-                            <h4 className="text-2xl font-black mb-2">1,000 Subscribers</h4>
-                            <p className="text-sm font-medium text-slate-400 mb-8">Increase your subscriber base by 15% to hit the next milestone.</p>
-                            <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
-                                <div className="w-[84.8%] h-full bg-emerald-400" />
-                            </div>
-                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
     );
 }

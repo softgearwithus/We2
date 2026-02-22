@@ -4,6 +4,7 @@ import {
     Post,
     Body,
     Param,
+    Query,
     UseGuards,
     Request,
 } from '@nestjs/common';
@@ -14,7 +15,10 @@ import {
     ApiParam,
 } from '@nestjs/swagger';
 import { SqlService } from './sql.service';
+import { RequireSectionUsage } from '../usage/guards/usage.guard';
+import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { CreateSqlProblemDto } from './dto/create-sql-problem.dto';
+import { AdminSqlProblemQueryDto } from './dto/admin-sql-problem-query.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
@@ -29,6 +33,7 @@ export class SqlTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('task')
     @ApiOperation({ summary: 'Get next SQL training task' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async getTrainingTask(@Request() req: any) {
         return this.sqlService.getNextTrainingTask(req.user.id);
     }
@@ -38,6 +43,7 @@ export class SqlTrainingController {
     @Get('task/:problemId')
     @ApiOperation({ summary: 'Get SQL training task for a selected problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async getSelectedTrainingTask(@Request() req: any, @Param('problemId') problemId: string) {
         return this.sqlService.getTrainingProblem(req.user.id, problemId);
     }
@@ -46,6 +52,7 @@ export class SqlTrainingController {
     @UseGuards(JwtAuthGuard)
     @Post('submit')
     @ApiOperation({ summary: 'Submit SQL training solution (Gemini graded)' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async submitTrainingTask(
         @Request() req: any,
         @Body() payload: { sessionId: string; code: string; language: string },
@@ -58,6 +65,7 @@ export class SqlTrainingController {
     @Get('learn/:problemId')
     @ApiOperation({ summary: 'Get learning insight for SQL problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async getTrainingInsight(@Param('problemId') problemId: string) {
         return this.sqlService.getLearningInsight(problemId);
     }
@@ -67,6 +75,7 @@ export class SqlTrainingController {
     @Post('learn/:problemId')
     @ApiOperation({ summary: 'Generate learning insight for SQL problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async generateTrainingInsightForUser(@Param('problemId') problemId: string) {
         return this.sqlService.generateInsightForProblem(problemId);
     }
@@ -75,6 +84,7 @@ export class SqlTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('submissions')
     @ApiOperation({ summary: 'Get my SQL training submissions' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async getTrainingSubmissions(@Request() req: any) {
         return this.sqlService.getUserTrainingSubmissions(req.user.id);
     }
@@ -84,8 +94,18 @@ export class SqlTrainingController {
     @Get('submissions/:problemId')
     @ApiOperation({ summary: 'Get my SQL training submissions for a problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
     async getTrainingSubmissionsForProblem(@Request() req: any, @Param('problemId') problemId: string) {
         return this.sqlService.getUserTrainingSubmissions(req.user.id, problemId);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('admin/problems')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'List SQL training problems (Admin only)' })
+    async listTrainingProblems(@Query() query: AdminSqlProblemQueryDto) {
+        return this.sqlService.adminListProblems(query);
     }
 
     @ApiBearerAuth('JWT-auth')

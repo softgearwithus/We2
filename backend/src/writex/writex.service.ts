@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { AdminService } from '../admin/admin.service';
 import { WriteXQuestion } from './entities/writex-question.entity';
+import { UpdateWriteXQuestionDto } from './dto/update-writex-question.dto';
 
 @Injectable()
 export class WriteXService {
@@ -14,6 +16,7 @@ export class WriteXService {
         @InjectRepository(WriteXQuestion)
         private readonly questionRepo: Repository<WriteXQuestion>,
         private readonly configService: ConfigService,
+        private readonly adminService: AdminService,
     ) {
         this.initializeModel();
     }
@@ -37,7 +40,57 @@ export class WriteXService {
             prompt: prompt.trim(),
             active,
         });
-        return this.questionRepo.save(question);
+        const saved = await this.questionRepo.save(question);
+        await this.adminService.logAction({
+            action: 'WriteX Question Created',
+            target: saved.id,
+            severity: 'info',
+        });
+        return saved;
+    }
+
+    async listQuestions() {
+        return this.questionRepo.find({ order: { createdAt: 'DESC' } });
+    }
+
+    async updateQuestion(id: string, dto: UpdateWriteXQuestionDto) {
+        const question = await this.questionRepo.findOne({ where: { id } });
+        if (!question) {
+            throw new NotFoundException('Question not found');
+        }
+
+        if (typeof dto.prompt === 'string' && dto.prompt.trim()) {
+            question.prompt = dto.prompt.trim();
+        }
+
+        if (dto.active !== undefined) {
+            if (dto.active) {
+                await this.questionRepo.update({ active: true }, { active: false });
+            }
+            question.active = dto.active;
+        }
+
+        const saved = await this.questionRepo.save(question);
+        await this.adminService.logAction({
+            action: 'WriteX Question Updated',
+            target: saved.id,
+            severity: 'info',
+        });
+        return saved;
+    }
+
+    async deleteQuestion(id: string) {
+        const question = await this.questionRepo.findOne({ where: { id } });
+        if (!question) {
+            throw new NotFoundException('Question not found');
+        }
+        await this.questionRepo.remove(question);
+        await this.adminService.logAction({
+            action: 'WriteX Question Deleted',
+            target: question.id,
+            severity: 'warning',
+        });
+        return { success: true };
     }
 
     async getActiveQuestion() {

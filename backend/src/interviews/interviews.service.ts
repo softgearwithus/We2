@@ -76,6 +76,9 @@ export class InterviewsService {
             throw new BadRequestException('Cannot update completed interview');
         }
 
+        if (typeof dto.duration === 'number') {
+            interview.duration = dto.duration;
+        }
         Object.assign(interview, dto);
 
         // Auto-set completion timestamp

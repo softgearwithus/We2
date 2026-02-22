@@ -14,6 +14,14 @@ interface User {
     subscriptionEndDate?: string;
     firstName?: string | null;
     lastName?: string | null;
+    avatarUrl?: string | null;
+    username?: string | null;
+    roleTitle?: string | null;
+    location?: string | null;
+    bio?: string | null;
+    websiteUrl?: string | null;
+    githubUrl?: string | null;
+    linkedinUrl?: string | null;
 }
 
 interface AuthContextType {

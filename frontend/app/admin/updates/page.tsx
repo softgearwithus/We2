@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Save, Bell, Code2, Database, Rocket, Radar, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { fetchAdminUpdateFlags, saveAdminUpdateFlags } from '@/app/lib/admin-settings';
 
 interface UpdateState {
     [href: string]: boolean;
@@ -20,41 +21,46 @@ export default function AdminUpdatesPage() {
     const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     useEffect(() => {
-        // Load existing state from localStorage (simulating DB fetch)
-        const stored = localStorage.getItem('emble_admin_updates');
-        if (stored) {
+        const loadUpdates = async () => {
             try {
-                setUpdates(prev => ({ ...prev, ...JSON.parse(stored) }));
+                const token = localStorage.getItem('accessToken') || '';
+                if (!token) throw new Error('Missing admin token.');
+                const data = await fetchAdminUpdateFlags(token);
+                const mapped: UpdateState = {};
+                data.forEach((item: { href: string; enabled: boolean }) => {
+                    mapped[item.href] = item.enabled;
+                });
+                setUpdates(prev => ({ ...prev, ...mapped }));
             } catch (e) {
-                console.error("Failed to parse stored updates", e);
+                console.error('Failed to load updates', e);
+            } finally {
+                setIsLoading(false);
             }
-        }
-        setIsLoading(false);
+        };
+
+        loadUpdates();
     }, []);
 
     const handleToggle = (href: string) => {
         setUpdates(prev => ({ ...prev, [href]: !prev[href] }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaving(true);
         setSaveMessage(null);
 
-        // Simulate API delay
-        setTimeout(() => {
-            try {
-                localStorage.setItem('emble_admin_updates', JSON.stringify(updates));
-                // Dispatch event so other tabs/windows update immediately
-                window.dispatchEvent(new Event('admin_updates_changed'));
-
-                setSaveMessage({ type: 'success', text: 'Dashboard updates indicators synced successfully.' });
-            } catch (error) {
-                setSaveMessage({ type: 'error', text: 'Failed to save update configuration.' });
-            } finally {
-                setIsSaving(false);
-                setTimeout(() => setSaveMessage(null), 4000);
-            }
-        }, 600);
+        try {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) throw new Error('Missing admin token.');
+            await saveAdminUpdateFlags(token, Object.entries(updates).map(([href, enabled]) => ({ href, enabled })));
+            window.dispatchEvent(new Event('admin_updates_changed'));
+            setSaveMessage({ type: 'success', text: 'Dashboard updates indicators synced successfully.' });
+        } catch (error) {
+            setSaveMessage({ type: 'error', text: 'Failed to save update configuration.' });
+        } finally {
+            setIsSaving(false);
+            setTimeout(() => setSaveMessage(null), 4000);
+        }
     };
 
     const modules = [
@@ -68,7 +74,6 @@ export default function AdminUpdatesPage() {
         { id: '/dashboard/resume', label: 'Resume', icon: <div className="text-sky-500 material-symbols-outlined">description</div>, desc: 'Show indicator for new resume templates or feedback.' },
         { id: '/dashboard/github', label: 'Git Mastery', icon: <div className="text-orange-500 material-symbols-outlined">memory</div>, desc: 'Show indicator for new Git lessons or pipelines.' },
         { id: '/dashboard/market-radar', label: 'Market Radar', icon: <Radar size={20} className="text-rose-500" />, desc: 'Show indicator for updated hiring data and trends.' },
-        { id: '/dashboard/intelligence', label: 'Synapse', icon: <div className="text-fuchsia-500 material-symbols-outlined">psychology</div>, desc: 'Show indicator for AI insights or new Synapse features.' },
         { id: '/dashboard/mentors', label: 'Mentors', icon: <div className="text-teal-500 material-symbols-outlined">group</div>, desc: 'Show indicator for new mentors joining the platform.' },
     ];
 

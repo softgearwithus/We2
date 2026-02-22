@@ -6,6 +6,7 @@ import {
     IsInt,
     Min,
     Max,
+    IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import {
@@ -18,8 +19,9 @@ export class CreateInterviewDto {
         example: '550e8400-e29b-41d4-a716-446655440000',
         description: 'User ID taking the interview',
     })
+    @IsOptional()
     @IsUUID()
-    userId: string;
+    userId?: string;
 
     @ApiProperty({
         enum: InterviewType,
@@ -36,6 +38,15 @@ export class CreateInterviewDto {
     })
     @IsEnum(InterviewDifficulty)
     difficulty: InterviewDifficulty;
+
+    @ApiProperty({
+        example: ['Intro', 'Problem Solving'],
+        description: 'Optional interview questions or context',
+        required: false,
+    })
+    @IsOptional()
+    @IsArray()
+    questions?: any[];
 
     @ApiProperty({
         example: 'Senior Software Engineer',

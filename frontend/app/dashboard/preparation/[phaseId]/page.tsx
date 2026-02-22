@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { roadmapData } from '@/app/lib/data/roadmapData';
 import { ArrowLeft, BookOpen, Video, Code, CheckCircle, ExternalLink, Globe, Lightbulb, ChevronRight, X, Loader2, Sparkles, Star, Target, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -80,6 +80,8 @@ export default function TopicPage() {
 
     const [selectedLanguage, setSelectedLanguage] = useState('C++');
     const [activeTopicIndex, setActiveTopicIndex] = useState(0);
+    const [completedPhases, setCompletedPhases] = useState<string[]>([]);
+    const [isProgressLoaded, setIsProgressLoaded] = useState(false);
 
     const [showDetails, setShowDetails] = useState(false);
     const [detailedContent, setDetailedContent] = useState<{ title: string, content: string } | null>(null);
@@ -258,8 +260,11 @@ export default function TopicPage() {
                                     Next Topic <ChevronRight size={16} />
                                 </button>
                             ) : (
-                                <button className="bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-emerald-200 shadow-lg">
-                                    Complete Phase <CheckCircle size={16} />
+                                <button
+                                    onClick={handleCompletePhase}
+                                    className={`px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg ${isPhaseCompleted ? 'bg-emerald-100 text-emerald-700 cursor-default shadow-emerald-100' : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200'}`}
+                                >
+                                    {isPhaseCompleted ? 'Phase Completed' : 'Complete Phase'} <CheckCircle size={16} />
                                 </button>
                             )}
                         </div>
@@ -360,3 +365,55 @@ export default function TopicPage() {
         </div>
     );
 }
+    useEffect(() => {
+        const loadProgress = async () => {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) {
+                setIsProgressLoaded(true);
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
+                setCompletedPhases(completed);
+            } catch (error) {
+                console.error('Failed to load preparation progress', error);
+            } finally {
+                setIsProgressLoaded(true);
+            }
+        };
+
+        loadProgress();
+    }, []);
+
+    useEffect(() => {
+        const persistProgress = async () => {
+            if (!isProgressLoaded) return;
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) return;
+            try {
+                await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completedPhaseIds: completedPhases }),
+                });
+            } catch (error) {
+                console.error('Failed to update preparation progress', error);
+            }
+        };
+
+        persistProgress();
+    }, [completedPhases, isProgressLoaded]);
+
+    const isPhaseCompleted = completedPhases.includes(phase.id);
+    const handleCompletePhase = () => {
+        if (isPhaseCompleted) return;
+        setCompletedPhases((prev) => (prev.includes(phase.id) ? prev : [...prev, phase.id]));
+    };

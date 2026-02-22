@@ -33,11 +33,12 @@ interface CommunicationAssessmentProps {
     onBack: () => void;
     onComplete?: (result: any) => void;
     drillContent: DrillContent;
+    onStart?: () => void;
 }
 
 export type AssessmentSection = 'intro' | 'reading' | 'repeat' | 'extempore' | 'technical' | 'results';
 
-export default function CommunicationAssessment({ onBack, onComplete, drillContent }: CommunicationAssessmentProps) {
+export default function CommunicationAssessment({ onBack, onComplete, drillContent, onStart }: CommunicationAssessmentProps) {
     const [currentSection, setCurrentSection] = useState<AssessmentSection>('intro');
     const [scores, setScores] = useState<SectionScore[]>([]);
 
@@ -45,6 +46,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [finalResult, setFinalResult] = useState<any>(null);
     const [isCheckingReport, setIsCheckingReport] = useState(false);
+    const assessmentStartedAtRef = useRef<number | null>(null);
 
 
     // Global Media State
@@ -165,7 +167,10 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 reading: readingMeta,
                 listening: listeningMeta,
                 extempore: { topic: fullData.extempore?.topic || '' },
-                technical: fullData.technical?.map((t: any) => ({ topic: t.topic, role: drillContent.technical?.role || 'Software Engineer' })) || []
+                technical: fullData.technical?.map((t: any) => ({ topic: t.topic, role: drillContent.technical?.role || 'Software Engineer' })) || [],
+                durationSeconds: assessmentStartedAtRef.current
+                    ? Math.max(0, Math.round((Date.now() - assessmentStartedAtRef.current) / 1000))
+                    : undefined,
             };
             formData.append('metadata', JSON.stringify(metadata));
 
@@ -185,6 +190,22 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 throw new Error('Invalid submission response');
             }
             setFinalResult(result);
+
+            const durationSeconds = metadata.durationSeconds;
+            if (typeof durationSeconds === 'number' && result.id) {
+                try {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/${result.id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ duration: durationSeconds })
+                    });
+                } catch (error) {
+                    console.warn('Failed to update interview duration', error);
+                }
+            }
 
         } catch (error) {
             console.error("Final submission error", error);
@@ -385,7 +406,11 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                     <CheckCircle2 size={20} /> Permissions Granted
                                                 </div>
                                                 <Button
-                                                    onClick={() => setCurrentSection('reading')}
+                                                    onClick={() => {
+                                                        assessmentStartedAtRef.current = Date.now();
+                                                        if (onStart) onStart();
+                                                        setCurrentSection('reading');
+                                                    }}
                                                     className="w-full md:w-auto h-16 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-lg rounded-2xl px-12 shadow-xl shadow-indigo-200 transition-all font-bold group"
                                                 >
                                                     Start Interview <ArrowRight size={20} className="ml-3 group-hover:translate-x-1.5 transition-transform" />

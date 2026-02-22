@@ -4,6 +4,7 @@ import {
     Post,
     Body,
     Param,
+    Query,
     UseGuards,
     Request,
 } from '@nestjs/common';
@@ -14,7 +15,10 @@ import {
     ApiParam,
 } from '@nestjs/swagger';
 import { DsaService } from './dsa.service';
+import { RequireSectionUsage } from '../usage/guards/usage.guard';
+import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { CreateDsaProblemDto } from './dto/create-dsa-problem.dto';
+import { AdminDsaProblemQueryDto } from './dto/admin-dsa-problem-query.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
@@ -29,6 +33,7 @@ export class DsaTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('task')
     @ApiOperation({ summary: 'Get next SRS training task' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async getTrainingTask(@Request() req: any) {
         return this.dsaService.getNextTrainingTask(req.user.id);
     }
@@ -38,6 +43,7 @@ export class DsaTrainingController {
     @Get('task/:problemId')
     @ApiOperation({ summary: 'Get training task for a selected problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async getSelectedTrainingTask(@Request() req: any, @Param('problemId') problemId: string) {
         return this.dsaService.getTrainingProblem(req.user.id, problemId);
     }
@@ -46,6 +52,7 @@ export class DsaTrainingController {
     @UseGuards(JwtAuthGuard)
     @Post('submit')
     @ApiOperation({ summary: 'Submit training solution (Gemini graded)' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async submitTrainingTask(
         @Request() req: any,
         @Body() payload: { sessionId: string; code: string; language: string },
@@ -58,6 +65,7 @@ export class DsaTrainingController {
     @Get('learn/:problemId')
     @ApiOperation({ summary: 'Get learning insight for problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async getTrainingInsight(@Param('problemId') problemId: string) {
         return this.dsaService.getLearningInsight(problemId);
     }
@@ -67,6 +75,7 @@ export class DsaTrainingController {
     @Post('learn/:problemId')
     @ApiOperation({ summary: 'Generate learning insight for problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async generateTrainingInsightForUser(@Param('problemId') problemId: string) {
         return this.dsaService.generateInsightForProblem(problemId);
     }
@@ -75,6 +84,7 @@ export class DsaTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('submissions')
     @ApiOperation({ summary: 'Get my training submissions' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async getTrainingSubmissions(@Request() req: any) {
         return this.dsaService.getUserTrainingSubmissions(req.user.id);
     }
@@ -84,8 +94,18 @@ export class DsaTrainingController {
     @Get('submissions/:problemId')
     @ApiOperation({ summary: 'Get my training submissions for a problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
     async getTrainingSubmissionsForProblem(@Request() req: any, @Param('problemId') problemId: string) {
         return this.dsaService.getUserTrainingSubmissions(req.user.id, problemId);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('admin/problems')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'List training problems (Admin only)' })
+    async listTrainingProblems(@Query() query: AdminDsaProblemQueryDto) {
+        return this.dsaService.adminListProblems(query);
     }
 
     @ApiBearerAuth('JWT-auth')

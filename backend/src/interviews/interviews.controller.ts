@@ -27,6 +27,8 @@ import { UpdateInterviewDto } from './dto/update-interview.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
+import { RequireSectionUsage } from '../usage/guards/usage.guard';
+import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UserRole } from '../users/user.entity';
 
 @ApiTags('interviews')
@@ -40,8 +42,8 @@ export class InterviewsController {
     @ApiOperation({ summary: 'Create a new mock interview session' })
     @ApiResponse({ status: 201, description: 'Interview session created' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
-    async create(@Body() dto: CreateInterviewDto) {
-        return this.interviewsService.create(dto);
+    async create(@Body() dto: CreateInterviewDto, @Request() req: any) {
+        return this.interviewsService.create({ ...dto, userId: req.user.id });
     }
 
     @Get('me')
@@ -117,24 +119,28 @@ export class InterviewsController {
         return this.interviewsService.update(id, req.user.id, dto);
     }
     @Post('audio/generate')
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async generateAudioDrill(@Body() body: { topic: string }, @Request() req: any) {
         return this.interviewsService.generateAudioDrill(req.user.id, body.topic);
     }
 
     @Post('communication/generate')
     @ApiOperation({ summary: 'Generate 4-part communication drill' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async generateCommunicationDrill(@Body() body: { topic?: string }, @Request() req: any) {
         return this.interviewsService.generateCommunicationDrill(req.user.id, body.topic);
     }
 
     @Post('audio/analyze')
     @ApiOperation({ summary: 'Analyze audio drill submission' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async analyzeAudioDrill(@Body() body: { audio: string; context: string }, @Request() req: any) {
         return this.interviewsService.analyzeAudioDrill(req.user.id, body.audio, body.context);
     }
     @Post('communication/submit')
     @UseInterceptors(AnyFilesInterceptor())
     @ApiOperation({ summary: 'Submit communication drill audio' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async submitCommunicationDrill(
         @UploadedFiles() files: Array<Express.Multer.File>,
         @Body() body: { metadata: string },

@@ -1,18 +1,40 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, Lock, Map, Star } from 'lucide-react';
 import { roadmapData } from '@/app/lib/data/roadmapData';
+import API_BASE_URL from '@/app/lib/api-config';
 
 export default function RoadmapPage() {
     const [expandedStep, setExpandedStep] = useState<string | null>(null);
+    const [completedPhases, setCompletedPhases] = useState<string[]>([]);
 
-    // Mock Progress
-    const progress = 35;
-    const currentStepIndex = 1; // 0-based index
+    useEffect(() => {
+        const loadProgress = async () => {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) return;
+            try {
+                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
+                setCompletedPhases(completed);
+            } catch (error) {
+                console.error('Failed to load preparation progress', error);
+            }
+        };
+
+        loadProgress();
+    }, []);
+
+    const progress = Math.min(100, Math.round((completedPhases.length / Math.max(roadmapData.length, 1)) * 100));
+    const rawCurrentIndex = roadmapData.findIndex((step) => !completedPhases.includes(step.id));
+    const currentStepIndex = rawCurrentIndex === -1 ? roadmapData.length - 1 : rawCurrentIndex;
 
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900">
@@ -56,9 +78,9 @@ export default function RoadmapPage() {
                 {/* Vertical Timeline */}
                 <div className="relative border-l-2 border-indigo-100 ml-6 lg:ml-10 space-y-8 pb-12">
                     {roadmapData.map((step, index) => {
-                        const isCompleted = index < currentStepIndex;
-                        const isCurrent = index === currentStepIndex;
-                        const isLocked = index > currentStepIndex;
+                        const isCompleted = completedPhases.includes(step.id);
+                        const isCurrent = !isCompleted && index === currentStepIndex;
+                        const isLocked = !isCompleted && index > currentStepIndex;
                         const isExpanded = expandedStep === step.id;
 
                         return (

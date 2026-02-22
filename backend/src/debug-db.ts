@@ -1,16 +1,13 @@
 import { DataSource } from 'typeorm';
 import { Interview } from './interview/entities/interview.entity';
 import { User } from './users/user.entity';
+import { resolveDbConfig } from './common/db-config';
 
 require('dotenv').config();
 
 const AppDataSource = new DataSource({
     type: 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    username: process.env.DB_USERNAME || 'admin',
-    password: process.env.DB_PASSWORD || 'password',
-    database: process.env.DB_DATABASE || 'college_prep_db',
+    ...resolveDbConfig(),
     entities: [Interview, User],
     synchronize: true, // This mimics dev behavior
 });

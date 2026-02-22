@@ -1,46 +1,44 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Filter, MoreVertical, Code2, Clock, CalendarDays, ExternalLink, Edit } from 'lucide-react';
+import { Plus, Search, Filter, Code2, Clock, CalendarDays, ExternalLink, Edit } from 'lucide-react';
 import Link from 'next/link';
-
-// Helper to flatten the domain structure from ProjectData.ts to a single list of projects
-import { PROJECT_DOMAINS, ProjectType } from '@/app/lib/ProjectData';
-
-const getFlattenedProjects = (): (ProjectType & { domain: string, stack: string })[] => {
-    const list: (ProjectType & { domain: string, stack: string })[] = [];
-    PROJECT_DOMAINS.forEach(domain => {
-        domain.stacks.forEach(stack => {
-            const addProjects = (tier: ProjectType[]) => {
-                tier.forEach(p => {
-                    list.push({ ...p, domain: domain.title, stack: stack.name });
-                });
-            }
-            if (stack.tiers.beginner) addProjects(stack.tiers.beginner);
-            if (stack.tiers.intermediate) addProjects(stack.tiers.intermediate);
-            if (stack.tiers.advanced) addProjects(stack.tiers.advanced);
-        });
-    });
-    return list;
-};
+import { fetchProjectLabsAdmin, ProjectLab } from '@/app/lib/project-labs';
 
 export default function AdminProjects() {
-    const allProjects = useMemo(() => getFlattenedProjects(), []);
+    const [allProjects, setAllProjects] = useState<ProjectLab[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [loadError, setLoadError] = useState<string | null>(null);
 
-    // Simplistic search filter on title, stack, or domain
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) {
+            setLoadError('Missing admin token.');
+            return;
+        }
+        fetchProjectLabsAdmin(token)
+            .then(setAllProjects)
+            .catch((error) => setLoadError(error?.message || 'Failed to load projects.'));
+    }, []);
+
+    // Simplistic search filter on title or domain
     const filteredProjects = useMemo(() => {
         const query = searchQuery.toLowerCase();
         return allProjects.filter(p =>
             p.title.toLowerCase().includes(query) ||
-            p.stack.toLowerCase().includes(query) ||
-            p.domain.toLowerCase().includes(query)
+            (p.domainId || '').toLowerCase().includes(query)
         );
     }, [allProjects, searchQuery]);
 
+    const domainCount = useMemo(() => {
+        const set = new Set(allProjects.map((project) => project.domainId));
+        return set.size;
+    }, [allProjects]);
+
+
     return (
-        <div className="space-y-6 max-w-7xl mx-auto">
+            <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -61,6 +59,12 @@ export default function AdminProjects() {
                     </Link>
                 </div>
             </div>
+
+            {loadError && (
+                <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                    {loadError}
+                </div>
+            )}
 
             {/* Stats/Metrics Row */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -92,18 +96,16 @@ export default function AdminProjects() {
                         </div>
                         <h3 className="text-sm font-medium text-slate-600">Domains</h3>
                     </div>
-                    <p className="text-2xl font-bold text-slate-900">{PROJECT_DOMAINS.length}</p>
+                    <p className="text-2xl font-bold text-slate-900">{domainCount}</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
                             <Search size={20} />
                         </div>
-                        <h3 className="text-sm font-medium text-slate-600">Tech Stacks</h3>
+                        <h3 className="text-sm font-medium text-slate-600">Search Results</h3>
                     </div>
-                    <p className="text-2xl font-bold text-slate-900">
-                        {PROJECT_DOMAINS.reduce((acc, curr) => acc + curr.stacks.length, 0)}
-                    </p>
+                    <p className="text-2xl font-bold text-slate-900">{filteredProjects.length}</p>
                 </div>
             </div>
 
@@ -112,13 +114,13 @@ export default function AdminProjects() {
                 <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
                     <div className="relative w-full max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                        <input
-                            type="text"
-                            placeholder="Search by title, stack, or domain..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-sm bg-white"
-                        />
+                            <input
+                                type="text"
+                                placeholder="Search by title or domain..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-sm bg-white"
+                            />
                     </div>
                     {/* Optional: Add Pagination controls here later */}
                 </div>
@@ -128,7 +130,7 @@ export default function AdminProjects() {
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-200">
                                 <th className="py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Project</th>
-                                <th className="py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Domain & Stack</th>
+                                <th className="py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Domain</th>
                                 <th className="py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Complexity</th>
                                 <th className="py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Time</th>
                                 <th className="py-3 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
@@ -148,11 +150,7 @@ export default function AdminProjects() {
                                         <div className="text-xs text-slate-500 mt-0.5 truncate max-w-xs">{project.description}</div>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm font-medium text-slate-700">{project.stack}</span>
-                                            <span className="text-xs text-slate-400">&bull;</span>
-                                            <span className="text-xs text-slate-500">{project.domain}</span>
-                                        </div>
+                                        <span className="text-xs text-slate-500">{project.domainId}</span>
                                     </td>
                                     <td className="py-4 px-6">
                                         <span className={`inline-flex px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${project.complexity === 'Beginner' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :

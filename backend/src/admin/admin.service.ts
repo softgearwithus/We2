@@ -5,6 +5,10 @@ import { College } from '../colleges/entities/college.entity';
 import { CollegeStaff } from '../colleges/entities/college-staff.entity';
 import { AdminActivityLog } from './entities/admin-activity-log.entity';
 import { User } from '../users/user.entity';
+import { Submission } from '../dsa/entities/submission.entity';
+import { SqlSubmission } from '../sql/entities/sql-submission.entity';
+import { InterviewSession } from '../interviews/entities/interview-session.entity';
+import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submission.entity';
 
 @Injectable()
 export class AdminService {
@@ -15,6 +19,16 @@ export class AdminService {
         private staffRepo: Repository<CollegeStaff>,
         @InjectRepository(AdminActivityLog)
         private logRepo: Repository<AdminActivityLog>,
+        @InjectRepository(User)
+        private usersRepo: Repository<User>,
+        @InjectRepository(Submission)
+        private dsaSubmissionsRepo: Repository<Submission>,
+        @InjectRepository(SqlSubmission)
+        private sqlSubmissionsRepo: Repository<SqlSubmission>,
+        @InjectRepository(InterviewSession)
+        private interviewSessionsRepo: Repository<InterviewSession>,
+        @InjectRepository(ProjectLabSubmission)
+        private projectLabSubmissionsRepo: Repository<ProjectLabSubmission>,
     ) {}
 
     async getOverview() {
@@ -26,33 +40,75 @@ export class AdminService {
         const recentLogs = await this.logRepo.find({ order: { createdAt: 'DESC' }, take: 5 });
         const recentSignups = await this.staffRepo.find({ order: { createdAt: 'DESC' }, take: 5 });
 
+        const activePartners = await this.collegesRepo.count({ where: { status: 'Active' } });
         return {
             totalColleges,
             totalStudents: Number(totalStudents?.total || 0),
-            partners: 48,
-            uptime: '99.9%',
+            partners: activePartners,
+            uptime: `${Math.floor(process.uptime() / 3600)}h`,
             recentLogs,
             recentSignups,
         };
     }
 
-    async getAnalytics() {
+    async getAnalytics(range?: string) {
+        const now = Date.now();
+        const windowMs = range === '24h' ? 24 * 60 * 60 * 1000 : range === '30d' ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
+        const since = new Date(now - windowMs);
+        const visitors = await this.usersRepo
+            .createQueryBuilder('user')
+            .where('user.role = :role', { role: 'student' })
+            .andWhere('user.createdAt >= :since', { since })
+            .getCount();
+        const subscribers = await this.usersRepo
+            .createQueryBuilder('user')
+            .where('user.role = :role', { role: 'student' })
+            .andWhere('user.subscriptionStatus = :status', { status: 'active' })
+            .andWhere('user.subscriptionPlan <> :plan', { plan: 'free' })
+            .getCount();
+        const activeNow = await this.usersRepo
+            .createQueryBuilder('user')
+            .where('user.role = :role', { role: 'student' })
+            .andWhere('user.lastActiveAt >= :threshold', {
+                threshold: new Date(Date.now() - 15 * 60 * 1000),
+            })
+            .getCount();
+
+        const dsaCount = await this.dsaSubmissionsRepo
+            .createQueryBuilder('submission')
+            .where('submission.submittedAt >= :since', { since })
+            .getCount();
+        const sqlCount = await this.sqlSubmissionsRepo
+            .createQueryBuilder('submission')
+            .where('submission.submittedAt >= :since', { since })
+            .getCount();
+        const interviewCount = await this.interviewSessionsRepo
+            .createQueryBuilder('session')
+            .where('session.createdAt >= :since', { since })
+            .getCount();
+        const projectCount = await this.projectLabSubmissionsRepo
+            .createQueryBuilder('submission')
+            .where('submission.submittedAt >= :since', { since })
+            .getCount();
+
+        const totalEngagement = dsaCount + sqlCount + interviewCount + projectCount || 1;
+        const percent = (count: number) => Math.round((count / totalEngagement) * 100);
+
         return {
-            visitors: 12402,
-            subscribers: 848,
-            activeNow: 124,
+            visitors,
+            subscribers,
+            activeNow,
             funnels: [
-                { stage: 'Platform Landing', count: '12.4k', percentage: 100 },
-                { stage: 'Entered Placement Mode', count: '8.2k', percentage: 66 },
-                { stage: 'Started Training', count: '4.1k', percentage: 33 },
-                { stage: 'Subscribed to Pro', count: '848', percentage: 7 },
+                { stage: 'Registered', count: String(visitors), percentage: 100 },
+                { stage: 'Started Training', count: String(dsaCount + sqlCount), percentage: percent(dsaCount + sqlCount) },
+                { stage: 'Submitted Project', count: String(projectCount), percentage: percent(projectCount) },
+                { stage: 'Subscribed', count: String(subscribers), percentage: percent(subscribers) },
             ],
             featureEngagement: [
-                { name: 'DSA Training', time: '840h users', percentage: 90, color: 'bg-blue-500' },
-                { name: 'VS School (Prep)', time: '620h users', percentage: 75, color: 'bg-indigo-500' },
-                { name: 'Mock Interviews', time: '410h users', percentage: 60, color: 'bg-rose-500' },
-                { name: 'Placement Mode Dashboard', time: '580h users', percentage: 70, color: 'bg-emerald-500' },
-                { name: 'Synapse Intelligence', time: '340h users', percentage: 45, color: 'bg-amber-500' },
+                { name: 'DSA Training', time: `${dsaCount} submissions`, percentage: percent(dsaCount), color: 'bg-blue-500' },
+                { name: 'SQL Training', time: `${sqlCount} submissions`, percentage: percent(sqlCount), color: 'bg-emerald-500' },
+                { name: 'Mock Interviews', time: `${interviewCount} sessions`, percentage: percent(interviewCount), color: 'bg-rose-500' },
+                { name: 'Project Labs', time: `${projectCount} submissions`, percentage: percent(projectCount), color: 'bg-amber-500' },
             ],
         };
     }
@@ -67,5 +123,54 @@ export class AdminService {
             metadata: payload.metadata || null,
         });
         return this.logRepo.save(log);
+    }
+
+    async getStudents() {
+        const students = await this.usersRepo.find({
+            where: { role: 'student' },
+            order: { createdAt: 'DESC' },
+        });
+        const colleges = await this.collegesRepo.find();
+        const collegeMap = new Map(colleges.map((c) => [c.id, c.name]));
+
+        const premiumUsers = students.filter((s) => s.subscriptionPlan !== 'free' && s.subscriptionStatus === 'active').length;
+        const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        const newThisWeek = students.filter((s) => s.createdAt && new Date(s.createdAt).getTime() >= weekAgo).length;
+
+        return {
+            totalStudents: students.length,
+            premiumUsers,
+            newThisWeek,
+            students: students.map((s) => ({
+                id: s.id,
+                name: `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.email,
+                email: s.email,
+                mobile: '',
+                college: s.collegeId ? collegeMap.get(s.collegeId) || 'Unknown' : 'Independent Learner',
+                subscription: s.subscriptionPlan,
+                joinedAt: s.createdAt,
+                status: s.isActive ? 'active' : 'disabled',
+                avatarBase: s.firstName || s.email?.split('@')[0] || 'Student',
+            })),
+        };
+    }
+
+    async disableStudent(id: string) {
+        const student = await this.usersRepo.findOne({ where: { id, role: 'student' } });
+        if (!student) {
+            return { success: false };
+        }
+        student.isActive = false;
+        await this.usersRepo.save(student);
+        return { success: true };
+    }
+
+    async deleteStudent(id: string) {
+        const student = await this.usersRepo.findOne({ where: { id, role: 'student' } });
+        if (!student) {
+            return { success: false };
+        }
+        await this.usersRepo.remove(student);
+        return { success: true };
     }
 }

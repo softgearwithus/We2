@@ -63,6 +63,15 @@ export class RegisterDto {
     @IsOptional()
     @IsIn(['free', 'placement_plus', 'industry_plus', 'we2_max'])
     subscriptionPlan?: string;
+
+    @ApiProperty({
+        example: 'Asia/Kolkata',
+        description: 'User timezone',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    timezone?: string;
 }
 
 export class LoginDto {

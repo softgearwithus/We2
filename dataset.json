@@ -222,7 +222,7 @@
     "difficulty": "Medium",
     "patterns": [],
     "mastery_score": 100,
-    "next_review": "2026-02-18",
+    "next_review": "2026-03-04",
     "history": [
       {
         "date": "2026-01-18",
@@ -235,6 +235,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal DFS (O(N) time, O(H) space). Correctly tracked max value. Clean use of recursive lambda."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) DFS solution using recursive lambda. Correctly tracks path max."
       }
     ],
     "leetcode_slug": "count-good-nodes-in-binary-tree"
@@ -296,8 +302,8 @@
     "description": "",
     "difficulty": "Medium",
     "patterns": [],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-19",
@@ -328,6 +334,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Correct Multi-source BFS logic. Handled edge cases like no fresh oranges [[0]] by initial check."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Correct Multi-source BFS logic. Handled edge cases (fresh==0) and queue initialization correctly. Optimal O(MN)."
       }
     ],
     "leetcode_slug": "rotting-oranges"
@@ -526,8 +538,8 @@
     "description": "",
     "difficulty": "Easy",
     "patterns": [],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-22",
@@ -540,6 +552,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal O(N) time and O(H) space solution. Used an elegant recursive lambda to calculate height and update diameter simultaneously. No memory leaks in the Solution class."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(N) DFS solution. Used recursive lambda correctly. No memory leaks."
       }
     ],
     "leetcode_slug": "diameter-of-binary-tree"
@@ -554,7 +572,7 @@
       "Array"
     ],
     "mastery_score": 100,
-    "next_review": "2026-02-18",
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-19",
@@ -579,6 +597,18 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal O(log N) solution. Correctly identified sorted halves using nums[low] <= nums[mid] and handled range checks perfectly."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Hard",
+        "score": 2,
+        "notes": "Correct logic for modified binary search, but significant out-of-bounds error: initialized high = nums.size() and used target <= nums[high]."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(log N) solution. Fixed the out-of-bounds error from the previous attempt. Logic is robust and correctly handles the rotation."
       }
     ],
     "leetcode_slug": "search-in-rotated-sorted-array"
@@ -733,8 +763,8 @@
     "patterns": [
       "Backtracking"
     ],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-20",
@@ -753,6 +783,18 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal Backtracking solution using 'swap' approach (space optimized, no 'visited' array). Clean recursive lambda."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Correct backtracking solution using visited array. Clean modern C++ recursion."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal backtracking solution using visited array. Clean modern C++ recursion."
       }
     ],
     "leetcode_slug": "permutations"
@@ -789,8 +831,8 @@
     "description": "",
     "difficulty": "Medium",
     "patterns": [],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-20",
@@ -809,6 +851,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal O(N*K) solution using frequency key (string representation). Handled hashing correctly."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(NK log K) solution using sorting-based keys. Logic is correct and implementation is concise."
       }
     ],
     "leetcode_slug": "group-anagrams"
@@ -1046,8 +1094,8 @@
     "description": "",
     "difficulty": "Medium",
     "patterns": [],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-25",
@@ -1060,6 +1108,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal DP (O(MN) time/space). Cleaner implementation than previous."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal O(MN) bottom-up DP solution. Logic is correct and implementation is clean."
       }
     ],
     "leetcode_slug": "unique-paths"
@@ -1104,8 +1158,8 @@
     "patterns": [
       "Dynamic Programming"
     ],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-26",
@@ -1118,6 +1172,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal Top-Down DP solution (O(MN) time/space). Used recursive lambda with memoization efficiently."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal top-down DP solution. Used elegant recursive lambda with memoization. Logic is correct and implementation is clean."
       }
     ],
     "leetcode_slug": "edit-distance"
@@ -1558,8 +1618,8 @@
     "description": "",
     "difficulty": "Medium",
     "patterns": [],
-    "mastery_score": 90,
-    "next_review": "2026-02-18",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-24",
@@ -1572,6 +1632,12 @@
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal Bottom-Up DP (O(N^^3) time). Clean implementation using unordered_set."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal bottom-up DP solution. Correct use of unordered_set for O(1) average word lookups. Clean logic."
       }
     ],
     "leetcode_slug": "word-break"
@@ -1976,14 +2042,20 @@
     "description": "",
     "difficulty": "Medium",
     "patterns": [],
-    "mastery_score": 50,
-    "next_review": "2026-02-12",
+    "mastery_score": 100,
+    "next_review": "2026-03-01",
     "history": [
       {
         "date": "2026-01-29",
         "result": "Perfect",
         "score": 5,
         "notes": "Optimal Dijkstra implementation using Min-Heap. Logic is flawless."
+      },
+      {
+        "date": "2026-02-18",
+        "result": "Perfect",
+        "score": 5,
+        "notes": "Optimal Dijkstra implementation using Min-Heap. Logic is clean and idiomatic C++."
       }
     ],
     "leetcode_slug": "network-delay-time"

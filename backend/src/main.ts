@@ -2,6 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { PlatformGuard } from './admin-settings/guards/platform.guard';
+import { LastActiveInterceptor } from './admin-settings/interceptors/last-active.interceptor';
+import { UsageGuard } from './usage/guards/usage.guard';
 
 import compression from 'compression';
 import helmet from 'helmet';
@@ -32,6 +35,10 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalGuards(app.get(PlatformGuard));
+  app.useGlobalGuards(app.get(UsageGuard));
+  app.useGlobalInterceptors(app.get(LastActiveInterceptor));
 
   // Enable CORS
   const isDevelopment = process.env.NODE_ENV === 'development';

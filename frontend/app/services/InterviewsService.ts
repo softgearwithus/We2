@@ -7,6 +7,7 @@ export interface InterviewSession {
     provider?: string;
     status?: 'completed' | 'analyzing' | 'error';
     overallScore?: number;
+    durationSeconds?: number;
     analysis?: {
         overallScore: number;
         reading?: any[];
@@ -25,7 +26,6 @@ export interface InterviewSession {
 }
 
 export class InterviewsService {
-    private storageKey = 'prep0_interview_sessions';
     private apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
     private mapStatus(status?: string): 'completed' | 'analyzing' | 'error' {
@@ -48,6 +48,7 @@ export class InterviewsService {
             provider: apiSession.analysisProvider,
             status: this.mapStatus(apiSession.status),
             overallScore,
+            durationSeconds: typeof apiSession.duration === 'number' ? apiSession.duration : undefined,
             analysis: apiSession.analysis ? {
                 overallScore: overallScore as number,
                 reading: apiSession.analysis?.reading,
@@ -92,14 +93,7 @@ export class InterviewsService {
     }
 
     async saveSession(session: InterviewSession): Promise<void> {
-        const sessions = await this.getSessions();
-        const existingIndex = sessions.findIndex((s) => s.id === session.id);
-        if (existingIndex >= 0) {
-            sessions[existingIndex] = session;
-        } else {
-            sessions.push(session);
-        }
-        localStorage.setItem(this.storageKey, JSON.stringify(sessions));
+        return;
     }
 
     async getSessionById(id: string): Promise<InterviewSession | undefined> {

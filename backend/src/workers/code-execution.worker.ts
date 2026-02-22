@@ -10,6 +10,7 @@ import { User } from '../users/user.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
 import { Badge } from '../gamification/entities/badge.entity';
 import * as dotenv from 'dotenv';
+import { resolveDbConfig } from '../common/db-config';
 
 dotenv.config();
 
@@ -20,11 +21,7 @@ if (dbType !== 'postgres') {
 }
 const AppDataSource = new DataSource({
     type: 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432', 10),
-    username: process.env.DB_USER || 'admin',
-    password: process.env.DB_PASSWORD || 'password',
-    database: process.env.DB_NAME || 'college_prep_db',
+    ...resolveDbConfig(),
     entities: [Submission, DsaProblem, User, UserGamification, Badge],
     synchronize: true,
 });

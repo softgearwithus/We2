@@ -7,6 +7,7 @@ import Navbar from '@/app/components/layout/Navbar';
 import Footer from '@/app/components/layout/Footer';
 import { cn } from '@/app/lib/utils';
 import Link from 'next/link';
+import { submitMentorApplication } from '@/app/lib/mentors';
 
 export default function MentorApplicationPage() {
     const [formData, setFormData] = useState({
@@ -29,9 +30,20 @@ export default function MentorApplicationPage() {
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mocking an API call
+        await submitMentorApplication({
+            name: formData.name,
+            email: formData.email,
+            phone: `${formData.countryCode}${formData.phone}`,
+            headline: formData.headline,
+            bio: formData.bio,
+            feePerMinuteInr: Number(formData.feeINR.replace(/[^0-9]/g, '')) || 0,
+            expertise: formData.expertise,
+            offerings: formData.offerings,
+            linkedin: formData.linkedin,
+            totalExperience: `${formData.totalExpYears} Years ${formData.totalExpMonths} Months`,
+        });
         setIsSubmitted(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };

@@ -33,6 +33,7 @@ interface PricingCardProps {
     delay?: number;
     savings?: string;
     planId?: string; // e.g., 'placement_plus', 'industry_plus', 'we2_max'
+    isUpgradeLocked?: boolean;
 }
 
 export default function PricingCard({
@@ -49,7 +50,8 @@ export default function PricingCard({
     icon,
     delay = 0,
     savings,
-    planId
+    planId,
+    isUpgradeLocked = false
 }: PricingCardProps) {
     const isPopular = variant === 'popular';
     const isPremium = variant === 'premium';
@@ -72,6 +74,9 @@ export default function PricingCard({
     };
 
     const handleUpgrade = async () => {
+        if (isUpgradeLocked) {
+            return;
+        }
         if (!planId) {
             if (onCtaClick) onCtaClick();
             return;
@@ -236,7 +241,7 @@ export default function PricingCard({
 
             <button
                 onClick={handleUpgrade}
-                disabled={isLoading}
+                disabled={isLoading || isUpgradeLocked}
                 className={cn(
                     "w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2",
                     isPremium
@@ -244,10 +249,11 @@ export default function PricingCard({
                         : (isPopular
                             ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 hover:-translate-y-0.5"
                             : "bg-white text-slate-700 border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50"),
-                    isLoading && "opacity-70 cursor-wait"
+                    isLoading && "opacity-70 cursor-wait",
+                    isUpgradeLocked && "opacity-60 cursor-not-allowed"
                 )}
             >
-                {isLoading ? <Loader2 className="animate-spin" size={16} /> : ctaText}
+                {isLoading ? <Loader2 className="animate-spin" size={16} /> : (isUpgradeLocked ? 'Upgrades Paused' : ctaText)}
             </button>
         </motion.div>
     );

@@ -1,62 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Filter, MoreVertical, CheckCircle2, XCircle, Clock, IndianRupee, Video, Users, GraduationCap, AlertCircle, ArrowUpRight } from 'lucide-react';
-import Image from 'next/image';
+import { approveMentorApplication, createAdminMentorPayout, fetchAdminMentorApplications, fetchAdminMentorPayouts, fetchAdminMentorSessions, fetchAdminMentors, rejectMentorApplication, toggleMentorStatus as updateMentorStatus } from '@/app/lib/mentors';
 
 // MOCK DATA
-const MOCK_STATS = {
-    totalMentors: 45,
-    activeSessionsThisMonth: 128,
-    pendingApplications: 12,
-    payoutsPending: 24500
-};
-
-const MOCK_MENTORS = [
-    { id: 'm1', name: 'Harsh Kumar Sharma', expertise: 'Full Stack & DSA', rating: 4.9, sessions: 142, status: 'Active', joined: 'Jan 2023', avatar: 'https://ui-avatars.com/api/?name=Harsh+Kumar+Sharma&background=random' },
-    { id: 'm2', name: 'Priya Patel', expertise: 'System Design', rating: 4.8, sessions: 85, status: 'Active', joined: 'Mar 2023', avatar: 'https://ui-avatars.com/api/?name=Priya+Patel&background=random' },
-    { id: 'm3', name: 'Rahul Verma', expertise: 'Frontend Architecture', rating: 4.7, sessions: 42, status: 'Disabled', joined: 'Jun 2023', avatar: 'https://ui-avatars.com/api/?name=Rahul+Verma&background=random' }
-];
-
-const MOCK_APPLICATIONS = [
-    { id: 'a1', name: 'Anjali Desai', expertise: 'Backend (Node.js/AWS)', experience: '5 Years', appliedDate: '2 Days Ago', status: 'Pending', avatar: 'https://ui-avatars.com/api/?name=Anjali+Desai&background=random' },
-    { id: 'a2', name: 'Vikram Singh', expertise: 'Data Engineering', experience: '3 Years', appliedDate: 'Today', status: 'Pending', avatar: 'https://ui-avatars.com/api/?name=Vikram+Singh&background=random' }
-];
-
-const MOCK_PAYOUTS = [
-    { id: 'p1', mentorName: 'Harsh Kumar Sharma', grossAmount: 56800, deductions: 12846, amount: 43954, period: 'Oct 2023', status: 'Pending' },
-    { id: 'p2', mentorName: 'Priya Patel', grossAmount: 34000, deductions: 7480, amount: 26520, period: 'Oct 2023', status: 'Pending' }
-];
-
-const MOCK_REFUNDS = [
-    { id: 'ref1', studentName: 'Aman Gupta', amount: 900, source: 'System Design Interview Prep', mentorName: 'Rahul Verma', status: 'Pending', requestedAt: '2 Hours Ago' },
-    { id: 'ref2', studentName: 'Priya Sharma', amount: 800, source: 'Frontend Architecture', mentorName: 'Rahul Verma', status: 'Pending', requestedAt: '1 Day Ago' }
-];
-
-const MOCK_REFUND_HISTORY = [
-    { id: 'rh1', studentName: 'Karan Singh', amount: 1200, source: 'Backend Node.js Check', mentorName: 'Priya Patel', status: 'Refunded', date: 'Oct 25, 2023', upiRef: 'UPI555666777' }
-];
-
-const MOCK_ANALYTICS = [
-    { id: 'm1', name: 'Harsh Kumar Sharma', totalGross: 56800, platformCut: 11360, declineCut: 350, razorpayFee: 1136, netMentorPayout: 43954 },
-    { id: 'm2', name: 'Priya Patel', totalGross: 34000, platformCut: 6800, declineCut: 0, razorpayFee: 680, netMentorPayout: 26520 },
-    { id: 'm3', name: 'Rahul Verma', totalGross: 16800, platformCut: 3360, declineCut: 120, razorpayFee: 336, netMentorPayout: 12984 }
-];
-
-const MOCK_SESSIONS = [
-    { id: 's1', mentorId: 'm1', studentName: 'Aman Gupta', date: 'Oct 28, 2023', topic: 'React System Design', status: 'Completed', amount: 400, platformCut: 80, razorpayFee: 8, netAmount: 312 },
-    { id: 's2', mentorId: 'm1', studentName: 'Kriti Sanon', date: 'Oct 29, 2023', topic: 'Next.js App Router', status: 'Rejected', amount: 400, platformCut: 0, declineCut: 8, razorpayFee: 0, netAmount: -8 },
-    { id: 's3', mentorId: 'm2', studentName: 'Rahul Kumar', date: 'Oct 25, 2023', topic: 'Database Normalization', status: 'Completed', amount: 400, platformCut: 80, razorpayFee: 8, netAmount: 312 },
-    { id: 's4', mentorId: 'm1', studentName: 'Priya Verma', date: 'Oct 30, 2023', topic: 'Frontend Architecture', status: 'Accepted', amount: 400, platformCut: 80, razorpayFee: 8, netAmount: 312 }
-];
-
 export default function AdminMentorsPage() {
     const [activeTab, setActiveTab] = useState<'directory' | 'applications' | 'payouts' | 'refunds' | 'analytics' | 'sessions'>('directory');
-    const [applications, setApplications] = useState(MOCK_APPLICATIONS);
-    const [payouts, setPayouts] = useState(MOCK_PAYOUTS);
-    const [refunds, setRefunds] = useState(MOCK_REFUNDS);
-    const [refundHistory, setRefundHistory] = useState(MOCK_REFUND_HISTORY);
+    const [applications, setApplications] = useState<any[]>([]);
+    const [payouts, setPayouts] = useState<any[]>([]);
+    const [refunds, setRefunds] = useState<any[]>([]);
+    const [refundHistory, setRefundHistory] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [refundSubTab, setRefundSubTab] = useState<'pending' | 'history'>('pending');
+    const [analytics, setAnalytics] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<any[]>([]);
+    const [usersById, setUsersById] = useState<Record<string, any>>({});
 
     // Modal States for Action Dialogs
     const [processingPayoutModal, setProcessingPayoutModal] = useState<string | null>(null);
@@ -71,18 +31,37 @@ export default function AdminMentorsPage() {
     // Directory Interactive States
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const [mentors, setMentors] = useState(MOCK_MENTORS);
+    const [mentors, setMentors] = useState<any[]>([]);
     const [showActiveFilters, setShowActiveFilters] = useState({ active: true, disabled: false });
 
     // View Profile Modal
     const [viewingProfile, setViewingProfile] = useState<any | null>(null);
 
-    const toggleMentorStatus = (id: string, currentStatus: string) => {
+    const toggleMentorStatus = async (id: string, currentStatus: string) => {
         const newStatus = currentStatus === 'Active' ? 'Disabled' : 'Active';
+        const token = localStorage.getItem('accessToken') || '';
+        await updateMentorStatus(token, id, newStatus === 'Active');
         setMentors(mentors.map(m => m.id === id ? { ...m, status: newStatus } : m));
         setActiveDropdown(null);
         alert(`Mentor account has been ${newStatus.toLowerCase()}. They will not be visible to users.`);
     };
+
+    if (loading) {
+        return (
+            <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-center">
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Mentor admin unavailable</h2>
+                <p className="text-slate-500">Please check back later.</p>
+            </div>
+        );
+    }
 
     const deleteMentor = (id: string) => {
         if (window.confirm("Are you sure you want to permanently delete this mentor? This action cannot be undone.")) {
@@ -91,34 +70,40 @@ export default function AdminMentorsPage() {
         }
     };
 
-    const handleApproveApp = (app: typeof MOCK_APPLICATIONS[0]) => {
+    const handleApproveApp = async (app: any) => {
+        const token = localStorage.getItem('accessToken') || '';
+        const mentor = await approveMentorApplication(token, app.id);
         setApplications(apps => apps.filter(a => a.id !== app.id));
-        const newMentorId = `m${Math.floor(Date.now() / 1000).toString().slice(-4)}`;
-        const newMentor = {
-            id: newMentorId,
-            name: app.name,
+        setMentors([{
+            id: mentor.id,
+            name: mentor.name,
             expertise: app.expertise,
-            rating: 0,
-            sessions: 0,
-            status: 'Active',
+            rating: mentor.rating,
+            sessions: mentor.sessionsCount,
+            status: mentor.isActive ? 'Active' : 'Disabled',
             joined: 'Just Now',
-            avatar: app.avatar
-        };
-        setMentors([newMentor, ...mentors]);
-        alert(`Application Approved! Generated Mentor ID: ${newMentorId}. They have been added to the Active Mentors directory.`);
+            avatar: app.avatar || 'https://ui-avatars.com/api/?name=Mentor'
+        }, ...mentors]);
+        alert('Application Approved! The mentor is now visible on the platform.');
     };
 
-    const handleRejectApp = (id: string) => {
+    const handleRejectApp = async (id: string) => {
+        const token = localStorage.getItem('accessToken') || '';
+        await rejectMentorApplication(token, id);
         setApplications(apps => apps.filter(a => a.id !== id));
         alert('Application Rejected.');
     };
 
-    const handleSettlePayout = () => {
+    const handleSettlePayout = async () => {
         if (!upiRefInput.trim()) {
             alert('Please enter a valid UPI Reference number.');
             return;
         }
-
+        const token = localStorage.getItem('accessToken') || '';
+        const payout = payouts.find((p) => p.id === processingPayoutModal);
+        if (payout) {
+            await createAdminMentorPayout(token, { mentorId: payout.mentorId, amountInr: payout.amount, referenceId: upiRefInput });
+        }
         setPayouts(p => p.filter(pay => pay.id !== processingPayoutModal));
         setProcessingPayoutModal(null);
         setUpiRefInput('');
@@ -164,6 +149,107 @@ export default function AdminMentorsPage() {
         alert(`Refund Processed!\n\n₹${processingRefundModal.amount} has been logged with Ref: ${refundUpiInput}.\n\nAn automated Email/SMS notification has been sent to the student stating their refund has been initiated.`);
     };
 
+    useEffect(() => {
+        const loadAdminMentors = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const [mentorData, applicationData, payoutData, sessionData] = await Promise.all([
+                    fetchAdminMentors(token),
+                    fetchAdminMentorApplications(token),
+                    fetchAdminMentorPayouts(token),
+                    fetchAdminMentorSessions(token),
+                ]);
+                const mentorMap = new Map((mentorData || []).map((m: any) => [m.id, m]));
+                const mentorUserIds = (mentorData || []).map((m: any) => m.userId).filter(Boolean);
+                const studentUserIds = (sessionData || []).map((s: any) => s.studentId).filter(Boolean);
+                const userIds = Array.from(new Set([...mentorUserIds, ...studentUserIds]));
+                const userResponses = await Promise.all(
+                    userIds.map((id) => fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/${id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }).then((res) => (res.ok ? res.json() : null)))
+                );
+                const userMap = userResponses.filter(Boolean).reduce((acc: Record<string, any>, user: any) => {
+                    acc[user.id] = user;
+                    return acc;
+                }, {});
+                setUsersById(userMap);
+                setMentors((mentorData || []).map((m: any) => ({
+                    id: m.id,
+                    name: m.name,
+                    expertise: m.companies || 'Expert',
+                    rating: m.rating || 0,
+                    sessions: m.sessionsCount || 0,
+                    status: m.isActive ? 'Active' : 'Disabled',
+                    joined: new Date(m.createdAt).toLocaleDateString(),
+                    avatar: m.avatarUrl || 'https://ui-avatars.com/api/?name=Mentor',
+                    feePerMinuteInr: m.pricePerMinute,
+                    headline: m.headline,
+                    about: m.about,
+                    totalExperience: m.experience,
+                    userId: m.userId,
+                })));
+                setApplications((applicationData || []).map((a: any) => ({
+                    id: a.id,
+                    name: a.name,
+                    expertise: a.expertise || 'General',
+                    experience: a.totalExperience || 'N/A',
+                    appliedDate: new Date(a.createdAt).toLocaleDateString(),
+                    status: a.status,
+                    avatar: 'https://ui-avatars.com/api/?name=Applicant',
+                    feePerMinuteInr: a.feePerMinuteInr,
+                    headline: a.headline,
+                    about: a.bio,
+                    offerings: a.offerings,
+                    linkedin: a.linkedin,
+                })));
+                setPayouts((payoutData || []).map((p: any) => ({
+                    id: p.id,
+                    mentorId: p.mentorId,
+                    mentorName: mentorMap.get(p.mentorId)?.name || 'Mentor',
+                    grossAmount: p.amountInr,
+                    deductions: 0,
+                    amount: p.amountInr,
+                    period: p.paidAt || p.createdAt,
+                    status: 'Paid',
+                })));
+                setRefunds((sessionData || []).filter((s: any) => s.status === 'declined').map((s: any) => ({
+                    id: s.id,
+                    studentName: s.studentName || userMap[s.studentId]?.email?.split('@')[0] || 'Student',
+                    amount: s.priceInr,
+                    source: s.topic,
+                    mentorName: mentorMap.get(s.mentorId)?.name || 'Mentor',
+                    status: 'Pending',
+                    requestedAt: s.createdAt,
+                })));
+                setRefundHistory((sessionData || []).filter((s: any) => s.status === 'completed').map((s: any) => ({
+                    id: s.id,
+                    studentName: s.studentName || userMap[s.studentId]?.email?.split('@')[0] || 'Student',
+                    amount: s.priceInr,
+                    source: s.topic,
+                    mentorName: mentorMap.get(s.mentorId)?.name || 'Mentor',
+                    status: 'Refunded',
+                    date: s.updatedAt || s.createdAt,
+                    upiRef: 'N/A',
+                })));
+                setAnalytics((sessionData || []).map((s: any) => ({
+                    id: s.id,
+                    name: mentorMap.get(s.mentorId)?.name || 'Mentor',
+                    totalGross: s.priceInr,
+                    platformCut: Math.round(s.priceInr * 0.2),
+                    declineCut: s.status === 'declined' ? Math.round(s.priceInr * 0.02) : 0,
+                    razorpayFee: Math.round(s.priceInr * 0.02),
+                    netMentorPayout: Math.round(s.priceInr * 0.78),
+                })));
+                setSessions(sessionData || []);
+            } catch (err: any) {
+                setError('Mentor admin data unavailable.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadAdminMentors();
+    }, []);
+
     return (
         <div className="space-y-6">
             {/* Page Header */}
@@ -182,20 +268,20 @@ export default function AdminMentorsPage() {
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-2xl font-extrabold text-slate-900">{MOCK_STATS.totalMentors}</h3>
+                        <h3 className="text-2xl font-extrabold text-slate-900">{mentors.length}</h3>
                         <span className="text-xs font-medium text-emerald-600 flex items-center"><ArrowUpRight size={12} /> +12%</span>
                     </div>
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-medium text-slate-500">Sessions This Month</p>
+                                <p className="text-sm font-medium text-slate-500">Sessions This Month</p>
                         <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
                             <Video size={16} />
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-2xl font-extrabold text-slate-900">{MOCK_STATS.activeSessionsThisMonth}</h3>
+                                <h3 className="text-2xl font-extrabold text-slate-900">{sessions.length}</h3>
                         <span className="text-xs font-medium text-emerald-600 flex items-center"><ArrowUpRight size={12} /> +24%</span>
                     </div>
                 </div>
@@ -220,13 +306,13 @@ export default function AdminMentorsPage() {
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <h3 className="text-2xl font-extrabold">₹ {MOCK_STATS.payoutsPending.toLocaleString()}</h3>
+                        <h3 className="text-2xl font-extrabold">₹ {payouts.reduce((sum, p) => sum + (p.amount || 0), 0).toLocaleString()}</h3>
                     </div>
                 </div>
             </div>
 
             {/* Main Content Area */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px]">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-visible min-h-[500px]">
                 {/* Tabs */}
                 <div className="flex border-b border-slate-200 bg-slate-50/50">
                     <button
@@ -328,7 +414,7 @@ export default function AdminMentorsPage() {
                                 )}
                             </div>
                         </div>
-                        <div className="overflow-visible pb-12">
+                        <div className="overflow-visible pb-12 relative">
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
@@ -599,25 +685,25 @@ export default function AdminMentorsPage() {
                 {activeTab === 'analytics' && (
                     <div className="p-0">
                         {/* Summary Metrics */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-50/50 border-b border-slate-100">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-50/50 border-b border-slate-100">
                             <div className="bg-white p-4 rounded-xl border border-slate-200">
                                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Platform Gross</p>
-                                <p className="text-xl font-extrabold text-slate-900">₹ {MOCK_ANALYTICS.reduce((acc, curr) => acc + curr.totalGross, 0).toLocaleString()}</p>
+                                <p className="text-xl font-extrabold text-slate-900">₹ {analytics.reduce((acc, curr) => acc + curr.totalGross, 0).toLocaleString()}</p>
                             </div>
                             <div className="bg-white p-4 rounded-xl border border-emerald-200 bg-emerald-50">
                                 <p className="text-xs text-emerald-600 uppercase font-bold tracking-wider mb-1">Platform Revenue (20%)</p>
-                                <p className="text-xl font-extrabold text-emerald-700">₹ {MOCK_ANALYTICS.reduce((acc, curr) => acc + curr.platformCut, 0).toLocaleString()}</p>
+                                <p className="text-xl font-extrabold text-emerald-700">₹ {analytics.reduce((acc, curr) => acc + curr.platformCut, 0).toLocaleString()}</p>
                             </div>
                             <div className="bg-white p-4 rounded-xl border border-orange-200 bg-orange-50">
                                 <p className="text-xs text-orange-600 uppercase font-bold tracking-wider mb-1">Total Fees & Cuts</p>
                                 <p className="text-sm text-orange-700 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
-                                    ₹ {MOCK_ANALYTICS.reduce((acc, curr) => acc + curr.declineCut + curr.razorpayFee, 0).toLocaleString()} (Decline + Gateway)
+                                    ₹ {analytics.reduce((acc, curr) => acc + curr.declineCut + curr.razorpayFee, 0).toLocaleString()} (Decline + Gateway)
                                 </p>
                             </div>
                             <div className="bg-white p-4 rounded-xl border border-blue-200 bg-blue-50">
                                 <p className="text-xs text-blue-600 uppercase font-bold tracking-wider mb-1">Net Platform Profit</p>
                                 <p className="text-xl font-extrabold text-blue-700">
-                                    ₹ {(MOCK_ANALYTICS.reduce((acc, curr) => acc + curr.platformCut, 0) + MOCK_ANALYTICS.reduce((acc, curr) => acc + curr.declineCut, 0) - MOCK_ANALYTICS.reduce((acc, curr) => acc + curr.razorpayFee, 0)).toLocaleString()}
+                                    ₹ {(analytics.reduce((acc, curr) => acc + curr.platformCut, 0) + analytics.reduce((acc, curr) => acc + curr.declineCut, 0) - analytics.reduce((acc, curr) => acc + curr.razorpayFee, 0)).toLocaleString()}
                                 </p>
                             </div>
                         </div>
@@ -636,7 +722,7 @@ export default function AdminMentorsPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
-                                    {MOCK_ANALYTICS.map((data) => (
+                                    {analytics.map((data) => (
                                         <tr key={data.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="px-6 py-4 font-bold text-slate-900">{data.name}</td>
                                             <td className="px-6 py-4 text-right font-mono text-slate-600">₹ {data.totalGross.toLocaleString()}</td>
@@ -658,13 +744,13 @@ export default function AdminMentorsPage() {
                         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4">
                             <div className="relative flex-1 max-w-md">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                <input
-                                    type="text"
-                                    placeholder="Search by Mentor ID (e.g. m1, m2)..."
-                                    value={sessionSearchId}
-                                    onChange={(e) => setSessionSearchId(e.target.value)}
-                                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                                />
+                            <input
+                                type="text"
+                                placeholder="Search by Mentor ID (UUID)..."
+                                value={sessionSearchId}
+                                onChange={(e) => setSessionSearchId(e.target.value)}
+                                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                            />
                             </div>
                         </div>
 
@@ -687,39 +773,39 @@ export default function AdminMentorsPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
-                                        {MOCK_SESSIONS.filter(s => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).length === 0 ? (
-                                            <tr>
-                                                <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
-                                                    No sessions found for Mentor ID "{sessionSearchId}".
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            MOCK_SESSIONS.filter(s => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).map(session => (
-                                                <tr key={session.id} className="hover:bg-slate-50/50 transition-colors">
-                                                    <td className="px-6 py-4 text-sm text-slate-600">{session.date}</td>
-                                                    <td className="px-6 py-4 font-bold text-slate-900">{session.studentName}</td>
+                                    {sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).length === 0 ? (
+                                        <tr>
+                                            <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                                                No sessions found for Mentor ID "{sessionSearchId}".
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).map((session: any) => (
+                                            <tr key={session.id} className="hover:bg-slate-50/50 transition-colors">
+                                                <td className="px-6 py-4 text-sm text-slate-600">{session.updatedAt || session.createdAt}</td>
+                                                <td className="px-6 py-4 font-bold text-slate-900">{session.studentName || usersById[session.studentId]?.email?.split('@')[0] || 'Student'}</td>
                                                     <td className="px-6 py-4 text-sm text-slate-600">{session.topic}</td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${session.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : session.status === 'Rejected' ? 'bg-red-100 text-red-700' : session.status === 'Accepted' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${session.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : session.status === 'declined' ? 'bg-red-100 text-red-700' : session.status === 'accepted' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
                                                             {session.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-right font-mono text-slate-600">₹{session.amount}</td>
-                                                    <td className="px-6 py-4 text-right font-mono text-orange-600">
-                                                        -₹{(session.platformCut + session.razorpayFee + (session.declineCut || 0))}
-                                                    </td>
-                                                    <td className={`px-6 py-4 text-right font-mono font-black tracking-tight ${session.netAmount < 0 ? 'text-red-500' : 'text-purple-600'}`}>
-                                                        ₹{session.netAmount}
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
-                )}
+                                                    <td className="px-6 py-4 text-right font-mono text-slate-600">₹{session.priceInr}</td>
+                                                <td className="px-6 py-4 text-right font-mono text-orange-600">
+                                                    -₹{Math.round(session.priceInr * 0.22)}
+                                                </td>
+                                                <td className="px-6 py-4 text-right font-mono font-black tracking-tight text-purple-600">
+                                                    ₹{Math.round(session.priceInr * 0.78)}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            )}
             </div>
 
             {/* Refund Modal */}
@@ -836,48 +922,48 @@ export default function AdminMentorsPage() {
                             </div>
 
                             <div className="space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Session Fee (15m)</p>
-                                        <p className="text-lg font-extrabold text-slate-900">₹400 / $5</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                            <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Session Fee (15m)</p>
+                                            <p className="text-lg font-extrabold text-slate-900">₹{viewingProfile.feePerMinuteInr ? viewingProfile.feePerMinuteInr * 15 : 0}</p>
+                                        </div>
+                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                            <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Sessions Taught</p>
+                                            <p className="text-lg font-extrabold text-slate-900">{viewingProfile.sessions ?? 0}</p>
+                                        </div>
                                     </div>
-                                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Sessions Taught</p>
-                                        <p className="text-lg font-extrabold text-slate-900">{viewingProfile.sessions ?? 0}</p>
-                                    </div>
-                                </div>
 
                                 <div>
                                     <h4 className="text-sm font-bold text-slate-900 mb-2 border-b border-slate-100 pb-2">Professional Headline</h4>
                                     <p className="text-sm text-slate-600 relative pl-4">
                                         <span className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-full"></span>
-                                        Ex-Amazon SDE II | Helping students crack FAANG interviews with scalable systems design logic.
+                                        {viewingProfile.headline || 'Not provided.'}
                                     </p>
                                 </div>
 
                                 <div>
                                     <h4 className="text-sm font-bold text-slate-900 mb-2 border-b border-slate-100 pb-2">About & Bio</h4>
                                     <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">
-                                        Hi! I am a passionate software engineer with 5+ years of experience building high-scale distributed systems. I specialize in backend architecture (Node.js, AWS, Kubernetes).
-
-                                        I love mentoring young engineers because the gap between college and industry is huge. My sessions focus on real-world engineering, not just theory.
+                                        {viewingProfile.about || 'Not provided.'}
                                     </p>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <h4 className="text-sm font-bold text-slate-900 mb-2 border-b border-slate-100 pb-2">Experience & Qualifications</h4>
-                                        <ul className="text-sm text-slate-600 space-y-2 list-disc pl-4">
-                                            <li>Senior Engineer @ TechCorp Inc. (2020 - Present)</li>
-                                            <li>B.Tech Computer Science (Tier 1)</li>
-                                            <li>Codeforces Master (Peak Rating: 2150)</li>
-                                        </ul>
+                                        <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">
+                                            {viewingProfile.totalExperience || 'Not provided.'}
+                                        </p>
                                     </div>
                                     <div>
                                         <h4 className="text-sm font-bold text-slate-900 mb-2 border-b border-slate-100 pb-2">Verified Links</h4>
-                                        <a href="#" className="text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium">
-                                            <ArrowUpRight size={14} /> linkedin.com/in/{viewingProfile.name.toLowerCase().replace(' ', '')}
-                                        </a>
+                                        {viewingProfile.linkedin ? (
+                                            <a href={viewingProfile.linkedin} className="text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium" target="_blank" rel="noreferrer">
+                                                <ArrowUpRight size={14} /> {viewingProfile.linkedin}
+                                            </a>
+                                        ) : (
+                                            <p className="text-sm text-slate-500">No links provided.</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

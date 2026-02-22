@@ -1,132 +1,70 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { IndianRupee, Clock, Users, ArrowUpRight, Check, X, Calendar, Video, MessageSquare, AlertCircle } from 'lucide-react';
-import Image from 'next/image';
-
-const PENDING_REQUESTS = [
-    {
-        id: 'req1',
-        studentName: 'Aman Gupta',
-        topic: 'System Design Interview Prep',
-        duration: 45,
-        price: 900, // 45 * 20
-        date: 'Today, 8:00 PM',
-        avatar: 'https://ui-avatars.com/api/?name=Aman+Gupta&background=random',
-        requestedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() // 2 hours ago
-    },
-    {
-        id: 'req2',
-        studentName: 'Sneha Reddy',
-        topic: 'Resume Review & Career Guidance',
-        duration: 30,
-        price: 600, // 30 * 20
-        date: 'Tomorrow, 10:00 AM',
-        avatar: 'https://ui-avatars.com/api/?name=Sneha+Reddy&background=random',
-        requestedAt: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString() // 10 hours ago
-    },
-    {
-        id: 'req3',
-        studentName: 'Karan Sharma',
-        topic: 'Mock Interview (Backend)',
-        duration: 60,
-        price: 1200,
-        date: 'Tomorrow, 2:00 PM',
-        avatar: 'https://ui-avatars.com/api/?name=Karan+Sharma&background=random',
-        requestedAt: new Date(Date.now() - 13 * 60 * 60 * 1000).toISOString() // 13 hours ago (Will trigger auto-reject)
-    }
-];
-
-const INITIAL_UPCOMING_SESSIONS = [
-    {
-        id: 'sess1',
-        studentName: 'Rahul Verma',
-        topic: 'Mock Interview (Frontend)',
-        duration: 60,
-        date: 'Today, 5:00 PM',
-        avatar: 'https://ui-avatars.com/api/?name=Rahul+Verma&background=random',
-        link: 'https://meet.google.com/abc-defg-hij'
-    }
-];
-
-const INITIAL_HISTORY = [
-    {
-        id: 'hist1',
-        studentName: 'Vivek Singh',
-        action: 'Accepted (After 20% Platform Cut)',
-        date: 'Yesterday, 2:00 PM',
-        amount: 960 // 1200 * 0.8
-    },
-    {
-        id: 'hist2',
-        studentName: 'Priya Sharma',
-        action: 'Declined (Refunded)',
-        date: '2 Days Ago',
-        amount: 0 // No earnings
-    }
-];
-
-const INITIAL_PAYOUTS = [
-    {
-        id: 'pay1',
-        amount: 4500,
-        date: 'Oct 24, 2023',
-        status: 'Sent by Admin',
-        upiRef: 'UPI1234567890',
-        mentorConfirmed: false
-    },
-    {
-        id: 'pay2',
-        amount: 12450,
-        date: 'Oct 15, 2023',
-        status: 'Confirmed',
-        upiRef: 'UPI0987654321',
-        mentorConfirmed: true
-    }
-];
+import { IndianRupee, Clock, Users, Check, Calendar, Video, MessageSquare, AlertCircle, X } from 'lucide-react';
+import { acceptMentorRequest, declineMentorRequest, fetchMentorPayouts, fetchMentorRequests, fetchMentorSessions, MentorPayout, MentorSession } from '@/app/lib/mentors';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function MentorConsolePage() {
-    const [requests, setRequests] = useState(PENDING_REQUESTS);
-    const [upcomingSessions, setUpcomingSessions] = useState(INITIAL_UPCOMING_SESSIONS);
-    const [history, setHistory] = useState(INITIAL_HISTORY);
-    const [payouts, setPayouts] = useState(INITIAL_PAYOUTS);
+    const [requests, setRequests] = useState<MentorSession[]>([]);
+    const [upcomingSessions, setUpcomingSessions] = useState<MentorSession[]>([]);
+    const [history, setHistory] = useState<MentorSession[]>([]);
+    const [allSessions, setAllSessions] = useState<MentorSession[]>([]);
+    const [payouts, setPayouts] = useState<MentorPayout[]>([]);
     const [activeTab, setActiveTab] = useState<'requests' | 'upcoming' | 'history' | 'payouts'>('requests');
-    const [walletBalance, setWalletBalance] = useState(12450);
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const { user } = useAuth();
 
     // Modal State
     const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
     const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
     const [meetingLink, setMeetingLink] = useState('');
 
-    // Auto-Reject Logic Effect
+    const mentorDisplayName = (() => {
+        if (!user) return 'Mentor';
+        const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
+        if (fullName) return fullName;
+        if (user.email) return user.email.split('@')[0];
+        return 'Mentor';
+    })();
+
+    const mentorIdLabel = user?.id ? user.id.slice(0, 8) : null;
+
+    const formatSessionDate = (session: MentorSession) => {
+        const timestamp = session.scheduledAt || session.createdAt;
+        if (!timestamp) return 'Scheduled';
+        const parsed = new Date(timestamp);
+        if (Number.isNaN(parsed.getTime())) return 'Scheduled';
+        return parsed.toLocaleString();
+    };
+
+    // Load mentor console data
     useEffect(() => {
-        const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
-
-        setRequests(prevRequests => {
-            const now = Date.now();
-            let newHistoryLogs: typeof INITIAL_HISTORY = [];
-
-            const validRequests = prevRequests.filter(req => {
-                const requestedTime = new Date(req.requestedAt).getTime();
-                if (now - requestedTime > TWELVE_HOURS_MS) {
-                    newHistoryLogs.push({
-                        id: `hist-auto-${Date.now()}-${Math.random()}`,
-                        studentName: req.studentName,
-                        action: 'Auto-Rejected (Expired)',
-                        date: 'Just Now',
-                        amount: req.price
-                    });
-                    return false; // Remove it
-                }
-                return true;
-            });
-
-            if (newHistoryLogs.length > 0) {
-                setHistory(prev => [...newHistoryLogs, ...prev]);
-                return validRequests;
+        const loadMentorConsole = async () => {
+            try {
+                const token = localStorage.getItem('accessToken') || '';
+                const [reqData, sessionData, payoutData] = await Promise.all([
+                    fetchMentorRequests(token),
+                    fetchMentorSessions(token),
+                    fetchMentorPayouts(token),
+                ]);
+                const sessionList = sessionData || [];
+                setRequests(reqData || []);
+                setAllSessions(sessionList);
+                setUpcomingSessions(sessionList.filter((s: any) => s.status === 'accepted'));
+                setHistory(sessionList.filter((s: any) => s.status !== 'accepted' && s.status !== 'requested'));
+                setPayouts(payoutData || []);
+                const total = (payoutData || []).reduce((sum: number, p: MentorPayout) => sum + (p.amountInr || 0), 0);
+                setWalletBalance(total);
+            } catch (err: any) {
+                setError('Mentor console data unavailable.');
+            } finally {
+                setLoading(false);
             }
-            return prevRequests;
-        });
+        };
+        loadMentorConsole();
     }, []);
 
     const handleAcceptClick = (id: string) => {
@@ -134,97 +72,61 @@ export default function MentorConsolePage() {
         setIsAcceptModalOpen(true);
     };
 
-    const confirmAccept = () => {
+    const confirmAccept = async () => {
         if (!selectedRequestId || !meetingLink.trim()) {
             alert("Please provide a valid meeting link.");
             return;
         }
-
-        const requestToAccept = requests.find(r => r.id === selectedRequestId);
-        if (requestToAccept) {
-            const earningsAfterCut = requestToAccept.price * 0.8;
-            setWalletBalance(prev => prev + earningsAfterCut);
-
-            // Move from pending to upcoming
-            setUpcomingSessions(prev => [
-                {
-                    id: `sess-${Date.now()}`,
-                    studentName: requestToAccept.studentName,
-                    topic: requestToAccept.topic,
-                    duration: requestToAccept.duration,
-                    date: requestToAccept.date,
-                    avatar: requestToAccept.avatar,
-                    link: meetingLink
-                },
-                ...prev
-            ]);
-
-            // Log to history
-            setHistory(prev => [
-                {
-                    id: `hist-${Date.now()}`,
-                    studentName: requestToAccept.studentName,
-                    action: 'Accepted (After 20% Platform Cut)',
-                    date: 'Just Now',
-                    amount: earningsAfterCut
-                },
-                ...prev
-            ]);
-
-            // Remove from pending
-            setRequests(requests.filter(r => r.id !== selectedRequestId));
-        }
-
+        const token = localStorage.getItem('accessToken') || '';
+        const updatedSession = await acceptMentorRequest(token, selectedRequestId, meetingLink);
+        setRequests(requests.filter(r => r.id !== selectedRequestId));
+        setUpcomingSessions((prev) => [updatedSession, ...prev]);
+        setAllSessions((prev) => [updatedSession, ...prev]);
         setIsAcceptModalOpen(false);
         setMeetingLink('');
         setSelectedRequestId(null);
         alert('Session Accepted! Notification & Link sent to the student.');
     };
 
-    const handleReject = (id: string, price: number, studentName: string) => {
-        const cancellationFee = Math.round(price * 0.02); // 2% Razorpay Fee
-        setWalletBalance(prev => prev - cancellationFee);
-
+    const handleReject = async (id: string) => {
+        const token = localStorage.getItem('accessToken') || '';
+        const updatedSession = await declineMentorRequest(token, id);
         setRequests(requests.filter(r => r.id !== id));
-        setHistory(prev => [
-            {
-                id: `hist-fee-${Date.now()}`,
-                studentName: 'Platform/Payment Gateway Fee',
-                action: 'Cancellation Charge (2%)',
-                date: 'Just Now',
-                amount: -cancellationFee
-            },
-            {
-                id: `hist-${Date.now()}`,
-                studentName: studentName,
-                action: 'Declined (Refunded)',
-                date: 'Just Now',
-                amount: price
-            },
-            ...prev
-        ]);
-        alert(`Session Declined.\n\nA full refund of ₹${price} has been initiated to the student.\nNote: A basic 2% Razorpay refund processing fee (₹${cancellationFee}) has been deducted from your mentor ledger.`);
+        setHistory((prev) => [updatedSession, ...prev]);
+        setAllSessions((prev) => [updatedSession, ...prev]);
+        alert('Session Declined. The student will be notified by admin.');
     };
 
-    const confirmPayout = (id: string, received: boolean) => {
-        setPayouts(payouts.map(p => {
-            if (p.id === id) {
-                return { ...p, status: received ? 'Confirmed' : 'Disputed', mentorConfirmed: received };
-            }
-            return p;
-        }));
-        if (!received) {
-            alert('Payout marked as "Not Received". An admin will look into this discrepancy.');
-        } else {
-            alert('Payout receipt confirmed successfully!');
-        }
-    };
-
-    const getRemainingHours = (requestedAt: string) => {
-        const elapsedMs = Date.now() - new Date(requestedAt).getTime();
+    const getRemainingHours = (requestedAt?: string | null) => {
+        if (!requestedAt) return null;
+        const requestedTime = new Date(requestedAt).getTime();
+        if (Number.isNaN(requestedTime)) return null;
+        const elapsedMs = Date.now() - requestedTime;
         const remainingMs = (12 * 60 * 60 * 1000) - elapsedMs;
         return Math.max(0, Math.floor(remainingMs / (1000 * 60 * 60)));
     };
+
+    const totalStudents = Array.from(new Set(allSessions.map((s) => s.studentId).filter(Boolean))).length;
+    const totalMinutes = allSessions
+        .filter((s) => s.status === 'accepted' || s.status === 'completed')
+        .reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+
+    if (loading) {
+        return (
+            <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[60vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Mentor console unavailable</h2>
+                <p className="text-slate-500">Please check back later.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -235,14 +137,16 @@ export default function MentorConsolePage() {
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-5">
                         <img
-                            src="https://ui-avatars.com/api/?name=Mentor&background=10B981&color=fff"
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(mentorDisplayName)}&background=10B981&color=fff`}
                             alt="Profile"
                             className="w-16 h-16 rounded-full border-2 border-emerald-400/50 shadow-md"
                         />
                         <div>
                             <div className="flex items-center gap-4">
-                                <h1 className="text-2xl font-extrabold tracking-tight">Welcome back, Mentor!</h1>
-                                <span className="text-xs font-mono bg-emerald-800/80 text-emerald-200 px-2.5 py-1 rounded-md border border-emerald-600/50 shadow-inner tracking-wider">ID: m4892</span>
+                                <h1 className="text-2xl font-extrabold tracking-tight">Welcome back, {mentorDisplayName}!</h1>
+                                {mentorIdLabel && (
+                                    <span className="text-xs font-mono bg-emerald-800/80 text-emerald-200 px-2.5 py-1 rounded-md border border-emerald-600/50 shadow-inner tracking-wider">ID: {mentorIdLabel}</span>
+                                )}
                             </div>
                             <p className="text-emerald-100 font-medium mt-1">Ready to guide the next generation of engineers?</p>
                         </div>
@@ -268,7 +172,7 @@ export default function MentorConsolePage() {
                     </div>
                     <div>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Students Taught</p>
-                        <p className="text-2xl font-extrabold text-slate-900 mt-1">48</p>
+                        <p className="text-2xl font-extrabold text-slate-900 mt-1">{totalStudents}</p>
                     </div>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
@@ -277,7 +181,7 @@ export default function MentorConsolePage() {
                     </div>
                     <div>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Session Minutes</p>
-                        <p className="text-2xl font-extrabold text-slate-900 mt-1">1,240</p>
+                        <p className="text-2xl font-extrabold text-slate-900 mt-1">{totalMinutes.toLocaleString()}</p>
                     </div>
                 </div>
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
@@ -286,7 +190,7 @@ export default function MentorConsolePage() {
                     </div>
                     <div>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Rating</p>
-                        <p className="text-2xl font-extrabold text-slate-900 mt-1">4.9 <span className="text-sm font-medium text-slate-500">/ 5.0</span></p>
+                        <p className="text-2xl font-extrabold text-slate-900 mt-1">— <span className="text-sm font-medium text-slate-500">/ 5.0</span></p>
                     </div>
                 </div>
             </div>
@@ -330,33 +234,36 @@ export default function MentorConsolePage() {
                                 </div>
                             ) : (
                                 <div className="divide-y divide-slate-100">
-                                    {requests.map(req => (
+                                    {requests.map(req => {
+                                        const studentName = req.studentName || 'Student';
+                                        const remainingHours = getRemainingHours(req.requestedAt || req.createdAt);
+                                        return (
                                         <div key={req.id} className="p-6 transition-colors hover:bg-slate-50">
                                             <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
                                                 <div className="flex items-start gap-4">
-                                                    <img src={req.avatar} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
+                                                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
                                                     <div>
-                                                        <h3 className="text-sm font-bold text-slate-900">{req.studentName}</h3>
+                                                        <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
                                                         <p className="text-sm text-slate-700 font-medium mt-1">{req.topic}</p>
                                                         <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
-                                                            <span className="flex items-center gap-1"><Clock size={14} /> {req.duration} Mins</span>
-                                                            <span className="flex items-center gap-1"><Calendar size={14} /> {req.date}</span>
+                                                            <span className="flex items-center gap-1"><Clock size={14} /> {req.durationMinutes} Mins</span>
+                                                            <span className="flex items-center gap-1"><Calendar size={14} /> {formatSessionDate(req)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col items-end gap-3 w-full sm:w-auto mt-4 sm:mt-0">
                                                     <div className="text-right">
-                                                        <div className="text-lg font-extrabold text-slate-900">₹ {req.price}</div>
+                                                        <div className="text-lg font-extrabold text-slate-900">₹ {req.priceInr}</div>
                                                         <div className="flex items-center gap-1 text-[11px] font-bold text-orange-600 mt-1 bg-orange-50 px-2 py-0.5 rounded-md">
                                                             <AlertCircle size={12} />
-                                                            Expires in {getRemainingHours(req.requestedAt)}h (Auto-Refund)
+                                                            {remainingHours === null ? 'Expiry pending' : `Expires in ${remainingHours}h (Auto-Refund)`}
                                                         </div>
                                                     </div>
-                                                    <div className="flex gap-2 w-full sm:w-auto mt-2">
-                                                        <button
-                                                            onClick={() => handleReject(req.id, req.price, req.studentName)}
-                                                            className="flex-1 sm:flex-none px-4 py-2 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-1"
-                                                        >
+                                            <div className="flex gap-2 w-full sm:w-auto mt-2">
+                                                <button
+                                                    onClick={() => handleReject(req.id)}
+                                                    className="flex-1 sm:flex-none px-4 py-2 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-1"
+                                                >
                                                             <X size={16} /> Decline
                                                         </button>
                                                         <button
@@ -369,7 +276,8 @@ export default function MentorConsolePage() {
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
@@ -393,38 +301,47 @@ export default function MentorConsolePage() {
                                 </div>
                             ) : (
                                 <div className="divide-y divide-slate-100">
-                                    {upcomingSessions.map(session => (
+                                    {upcomingSessions.map(session => {
+                                        const studentName = session.studentName || 'Student';
+                                        return (
                                         <div key={session.id} className="p-6">
                                             <div className="flex items-center gap-4 mb-4">
-                                                <img src={session.avatar} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
+                                                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
                                                 <div>
-                                                    <h3 className="text-sm font-bold text-slate-900">{session.studentName}</h3>
-                                                    <p className="text-xs text-slate-500">{session.date}</p>
+                                                    <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
+                                                    <p className="text-xs text-slate-500">{formatSessionDate(session)}</p>
                                                 </div>
                                             </div>
                                             <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
                                                 <p className="text-sm font-medium text-slate-800 mb-2">{session.topic}</p>
-                                                <p className="text-xs text-slate-500 flex items-center gap-1"><Clock size={12} /> {session.duration} Minutes</p>
+                                                <p className="text-xs text-slate-500 flex items-center gap-1"><Clock size={12} /> {session.durationMinutes} Minutes</p>
                                             </div>
 
-                                            <div className="flex bg-blue-50/50 border border-blue-100 rounded-xl p-3 items-center justify-between mb-4">
-                                                <div className="text-xs text-blue-800 font-medium truncate max-w-[200px]">{session.link}</div>
-                                                <button
-                                                    onClick={() => navigator.clipboard.writeText(session.link)}
-                                                    className="text-xs font-bold text-blue-600 hover:text-blue-700 shrink-0"
-                                                >
-                                                    Copy Link
-                                                </button>
-                                            </div>
+                                            {session.meetingLink ? (
+                                                <div className="flex bg-blue-50/50 border border-blue-100 rounded-xl p-3 items-center justify-between mb-4">
+                                                    <div className="text-xs text-blue-800 font-medium truncate max-w-[200px]">{session.meetingLink}</div>
+                                                    <button
+                                                        onClick={() => navigator.clipboard.writeText(session.meetingLink || '')}
+                                                        className="text-xs font-bold text-blue-600 hover:text-blue-700 shrink-0"
+                                                    >
+                                                        Copy Link
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="flex bg-amber-50 border border-amber-100 rounded-xl p-3 items-center justify-between mb-4">
+                                                    <div className="text-xs text-amber-700 font-medium">Meeting link pending</div>
+                                                </div>
+                                            )}
 
                                             <button
-                                                onClick={() => window.open(session.link, '_blank')}
-                                                className="w-full py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-md hover:bg-slate-800 transition-colors"
+                                                onClick={() => session.meetingLink && window.open(session.meetingLink, '_blank')}
+                                                className={`w-full py-2.5 rounded-xl text-sm font-bold shadow-md transition-colors ${session.meetingLink ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}`}
                                             >
-                                                Join Meeting Room
+                                                {session.meetingLink ? 'Join Meeting Room' : 'Link Pending'}
                                             </button>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
@@ -445,23 +362,23 @@ export default function MentorConsolePage() {
                                 <div className="p-8 text-center text-slate-500">No history found.</div>
                             ) : (
                                 <div className="divide-y divide-slate-100">
-                                    {history.map(item => (
-                                        <div key={item.id} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                                            <div>
-                                                <h3 className="text-sm font-bold text-slate-900">{item.studentName}</h3>
-                                                <p className="text-xs text-slate-500 mt-1">{item.date}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="text-sm font-bold text-slate-900 mb-1">₹ {item.amount}</div>
-                                                <span className={`text-[11px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${item.action.includes('Accepted') ? 'bg-emerald-100 text-emerald-700' :
-                                                    item.action.includes('Auto-Rejected') ? 'bg-orange-100 text-orange-700' :
-                                                        'bg-red-100 text-red-700'
-                                                    }`}>
-                                                    {item.action}
-                                                </span>
-                                            </div>
+                                {history.map(item => (
+                                    <div key={item.id} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-slate-900">Session {item.topic}</h3>
+                                            <p className="text-xs text-slate-500 mt-1">{formatSessionDate(item)}</p>
                                         </div>
-                                    ))}
+                                        <div className="text-right">
+                                            <div className="text-sm font-bold text-slate-900 mb-1">₹ {item.priceInr}</div>
+                                            <span className={`text-[11px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${item.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                                                item.status === 'declined' ? 'bg-red-100 text-red-700' :
+                                                    'bg-orange-100 text-orange-700'
+                                                }`}>
+                                                {item.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
                                 </div>
                             )}
                         </div>
@@ -485,37 +402,20 @@ export default function MentorConsolePage() {
                                     {payouts.map(payment => (
                                         <div key={payment.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
                                             <div>
-                                                <div className="flex items-center gap-3 mb-1">
-                                                    <h3 className="text-lg font-extrabold text-slate-900">₹ {payment.amount}</h3>
-                                                    <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${payment.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-700' :
-                                                        payment.status === 'Disputed' ? 'bg-red-100 text-red-700' :
-                                                            'bg-brand-orange/10 text-brand-orange'
-                                                        }`}>
-                                                        {payment.status}
-                                                    </span>
-                                                </div>
-                                                <p className="text-sm text-slate-600 font-medium font-mono">Ref: {payment.upiRef}</p>
-                                                <p className="text-xs text-slate-500 mt-1">Initiated on {payment.date}</p>
-                                            </div>
-
-                                            {!payment.mentorConfirmed && payment.status !== 'Disputed' && (
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => confirmPayout(payment.id, true)}
-                                                        className="px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1"
-                                                    >
-                                                        <Check size={16} /> Received
-                                                    </button>
-                                                    <button
-                                                        onClick={() => confirmPayout(payment.id, false)}
-                                                        className="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-bold transition-colors flex items-center gap-1"
-                                                    >
-                                                        <X size={16} /> Not Received
-                                                    </button>
-                                                </div>
-                                            )}
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h3 className="text-lg font-extrabold text-slate-900">₹ {payment.amountInr}</h3>
+                                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                                                Paid
+                                            </span>
                                         </div>
-                                    ))}
+                                        <p className="text-sm text-slate-600 font-medium font-mono">Ref: {payment.referenceId || 'N/A'}</p>
+                                        <p className="text-xs text-slate-500 mt-1">Initiated on {payment.paidAt || payment.createdAt}</p>
+                                    </div>
+                                    <div className="text-xs text-slate-500 font-medium">
+                                        Contact admin if there is any discrepancy.
+                                    </div>
+                                </div>
+                            ))}
                                 </div>
                             )}
                         </div>
