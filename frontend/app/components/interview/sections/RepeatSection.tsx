@@ -121,8 +121,8 @@ export default function RepeatSection({ onComplete, sentences, globalStream }: R
                                 onClick={playSentence}
                                 disabled={isPlaying || isRecording}
                                 className={`relative h-24 w-24 rounded-full border-[6px] shadow-2xl transition-all duration-300 flex items-center justify-center ${isPlaying
-                                        ? 'bg-purple-50 border-purple-200 text-purple-600'
-                                        : 'bg-slate-900 border-slate-800 text-white hover:bg-purple-600 hover:border-purple-500 hover:scale-105'
+                                    ? 'bg-purple-50 border-purple-200 text-purple-600'
+                                    : 'bg-slate-900 border-slate-800 text-white hover:bg-purple-600 hover:border-purple-500 hover:scale-105'
                                     }`}
                             >
                                 {isPlaying ? <Volume2 size={36} className="animate-bounce" /> : <Play size={36} fill="currentColor" className="ml-2" />}
@@ -173,12 +173,12 @@ export default function RepeatSection({ onComplete, sentences, globalStream }: R
                                     <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 px-6 py-3 rounded-full font-bold">
                                         <CheckCircle size={20} /> Audio captured successfully
                                     </div>
-                                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                                        <Button variant="outline" onClick={() => setAudioBlob(null)} className="rounded-2xl h-14 px-8 font-bold text-slate-600 border-slate-200">
-                                            Retry Recording
+                                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-6">
+                                        <Button variant="outline" onClick={() => setAudioBlob(null)} className="rounded-full h-14 w-full sm:w-auto px-10 font-bold text-slate-600 border-slate-200">
+                                            Retry
                                         </Button>
-                                        <Button onClick={handleNext} className="bg-slate-900 hover:bg-indigo-600 rounded-2xl h-14 px-8 font-bold text-lg shadow-xl hover:shadow-indigo-200 transition-all text-white flex gap-2">
-                                            {step < sentences.length - 1 ? 'Next Phrase' : 'Finish Listening Section'} <ArrowRight size={20} />
+                                        <Button onClick={handleNext} className="bg-slate-900 hover:bg-indigo-600 rounded-full h-14 w-full sm:w-auto px-10 font-bold text-base shadow-lg hover:shadow-indigo-200 transition-all text-white flex items-center justify-center gap-2">
+                                            {step < sentences.length - 1 ? 'Next Phrase' : 'Submit Listening Section'} <ArrowRight size={18} />
                                         </Button>
                                     </div>
                                 </div>

@@ -224,14 +224,14 @@ export default function ReadingSection({ onComplete, passages, globalStream }: R
                         <h2 className="text-3xl font-black text-slate-900 tracking-tight">Passage Recorded!</h2>
                         <p className="text-slate-500">Great job. Prepare for the next section.</p>
 
-                        <div className="pt-8">
+                        <div className="pt-8 flex justify-center gap-4">
                             {currentLevel < passages.length - 1 ? (
-                                <Button onClick={handleNextLevel} className="w-full bg-slate-900 hover:bg-indigo-600 h-16 text-lg font-bold rounded-2xl shadow-xl transition-all flex justify-between px-8">
-                                    Next Passage <ArrowRight size={20} />
+                                <Button onClick={handleNextLevel} className="bg-slate-900 hover:bg-indigo-600 h-14 text-base font-bold rounded-full shadow-lg transition-all flex items-center justify-center gap-2 px-10 w-auto text-white">
+                                    Next Passage <ArrowRight size={18} />
                                 </Button>
                             ) : (
-                                <Button onClick={handleFinalize} className="w-full bg-emerald-500 hover:bg-emerald-600 h-16 text-lg font-bold rounded-2xl shadow-xl shadow-emerald-200 transition-all text-white flex justify-between px-8">
-                                    Finish Reading Section <ArrowRight size={20} />
+                                <Button onClick={handleFinalize} className="bg-emerald-500 hover:bg-emerald-600 h-14 text-base font-bold rounded-full shadow-lg shadow-emerald-200 transition-all text-white flex items-center justify-center gap-2 px-10 w-auto">
+                                    Submit Reading Section <ArrowRight size={18} />
                                 </Button>
                             )}
                         </div>

@@ -211,8 +211,8 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
 
     return (
         <div className="fixed inset-0 z-[100] bg-[#F8FAFC] flex font-sans overflow-hidden">
-            {/* Left Pane: Active Drill Content (60%) */}
-            <div className="flex-1 w-full lg:w-[60%] shrink-0 flex flex-col relative bg-white shadow-2xl z-10 overflow-y-auto custom-scrollbar">
+            {/* Main Pane: Active Drill Content */}
+            <div className="flex-1 w-full flex flex-col relative bg-white shadow-2xl z-10 overflow-y-auto custom-scrollbar">
 
                 {/* Header */}
                 <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 p-6 xl:px-12 flex items-center justify-between">
@@ -466,63 +466,41 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 </div>
             </div>
 
-            {/* Right Pane: Live Camera Feed (40%) */}
-            <div className="hidden lg:flex flex-col flex-1 w-[40%] bg-slate-100 border-l border-slate-200 relative p-6 justify-center items-center">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
-
-                <div className="relative w-full max-w-lg aspect-[4/5] bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-300 ring-8 ring-white/50 object-cover z-10 flex flex-col justify-center items-center">
-
-                    {!globalStream ? (
-                        <div className="flex flex-col items-center text-slate-500 animate-pulse">
-                            <CameraOff size={48} className="mb-4 opacity-50" />
-                            <p className="font-medium text-sm">Initializing Camera...</p>
-                        </div>
-                    ) : (
+            {/* Floating PIP Camera Feed */}
+            {globalStream && currentSection !== 'results' && (
+                <div className="hidden lg:flex flex-col absolute bottom-8 right-8 w-64 aspect-[3/4] z-50 transition-transform duration-300 hover:scale-105 shadow-2xl rounded-3xl overflow-hidden pointer-events-none">
+                    <div className="relative w-full h-full bg-slate-900 ring-4 ring-white/50 flex flex-col justify-center items-center group pointer-events-auto">
                         <video
                             ref={videoRef}
                             autoPlay
                             playsInline
                             muted
-                            className="absolute inset-0 w-full h-full object-cover rounded-[2.5rem] transform -scale-x-100"
+                            className="absolute inset-0 w-full h-full object-cover transform -scale-x-100"
                         />
-                    )}
 
-                    {/* Camera overlay indicators */}
-                    {globalStream && (
-                        <>
-                            <div className="absolute top-6 left-6 bg-slate-900/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-xs text-white font-bold tracking-wider uppercase">Live</span>
-                            </div>
+                        {/* Camera overlay indicators */}
+                        <div className="absolute top-4 left-4 bg-slate-900/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 transition-opacity">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] text-white font-bold tracking-wider uppercase">Live</span>
+                        </div>
 
-                            {/* Audio reactive bar (visual only) */}
-                            <div className="absolute bottom-6 inset-x-12 h-1.5 bg-white/20 rounded-full overflow-hidden backdrop-blur-md">
-                                <motion.div
-                                    className="h-full bg-white/70"
-                                    animate={{
-                                        width: ['10%', '40%', '20%', '60%', '30%', '80%', '40%', '10%']
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        ease: "easeInOut"
-                                    }}
-                                />
-                            </div>
-                        </>
-                    )}
-                </div>
-
-                <div className="relative z-10 mt-8 text-center max-w-sm">
-                    <div className="flex items-center justify-center gap-2 text-slate-400 mb-2">
-                        <Camera size={16} /> <Mic size={16} />
+                        {/* Audio reactive bar (visual only) */}
+                        <div className="absolute bottom-4 inset-x-8 h-1 bg-white/20 rounded-full overflow-hidden backdrop-blur-md">
+                            <motion.div
+                                className="h-full bg-white/70"
+                                animate={{
+                                    width: ['10%', '40%', '20%', '60%', '30%', '80%', '40%', '10%']
+                                }}
+                                transition={{
+                                    duration: 2,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                            />
+                        </div>
                     </div>
-                    <p className="text-sm text-slate-500">
-                        Maintain eye contact with the camera and speak clearly when prompted.
-                    </p>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

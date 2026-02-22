@@ -32,11 +32,11 @@ const USER_DATA = {
 };
 
 const SOLVED_DATA = {
-    total: 350,
-    totalAttempted: 400,
-    easy: { solved: 150, total: 800, color: 'text-emerald-500', bg: 'bg-emerald-500' },
-    medium: { solved: 150, total: 1600, color: 'text-amber-500', bg: 'bg-amber-500' },
-    hard: { solved: 50, total: 700, color: 'text-rose-500', bg: 'bg-rose-500' }
+    total: 128,
+    totalAttempted: 262,
+    dsa: { label: 'DSA Problems', solved: 95, total: 192, color: 'text-indigo-500', bg: 'bg-indigo-500' },
+    sql: { label: 'SQL Problems', solved: 25, total: 50, color: 'text-blue-500', bg: 'bg-blue-500' },
+    projects: { label: 'Project Labs', solved: 8, total: 20, color: 'text-amber-500', bg: 'bg-amber-500' }
 };
 
 const BADGES = [
@@ -55,11 +55,11 @@ const SKILLS = [
 ];
 
 const RECENT_SUBMISSIONS = [
-    { title: 'Two Sum', difficulty: 'Easy', status: 'Accepted', time: '10 mins ago', lang: 'JavaScript' },
-    { title: 'Median of Two Sorted Arrays', difficulty: 'Hard', status: 'Accepted', time: '2 hours ago', lang: 'Python' },
-    { title: 'Longest Palindromic Substring', difficulty: 'Medium', status: 'Wrong Answer', time: '5 hours ago', lang: 'Python' },
-    { title: 'Add Two Numbers', difficulty: 'Medium', status: 'Accepted', time: '1 day ago', lang: 'Java' },
-    { title: 'LRU Cache', difficulty: 'Medium', status: 'Accepted', time: '2 days ago', lang: 'JavaScript' },
+    { title: 'Two Sum', type: 'DSA', status: 'Accepted', time: '10 mins ago', lang: 'JavaScript' },
+    { title: 'Employee Bonus (Join)', type: 'SQL', status: 'Accepted', time: '2 hours ago', lang: 'PostgreSQL' },
+    { title: 'E-Commerce Dashboard UI', type: 'Project Lab', status: 'Uploaded', time: '5 hours ago', lang: 'React' },
+    { title: 'Add Two Numbers', type: 'DSA', status: 'Accepted', time: '1 day ago', lang: 'Java' },
+    { title: 'Task Management API', type: 'Project Lab', status: 'Uploaded', time: '2 days ago', lang: 'Node.js' },
 ];
 
 export default function LeetCodeProfile() {
@@ -149,7 +149,7 @@ export default function LeetCodeProfile() {
                                     <circle
                                         cx="72" cy="72" r="64" fill="none"
                                         stroke="#f59e0b" strokeWidth="8"
-                                        strokeDasharray={`${(SOLVED_DATA.total / 3100) * 402} 402`}
+                                        strokeDasharray={`${(SOLVED_DATA.total / SOLVED_DATA.totalAttempted) * 402} 402`}
                                         className="transition-all duration-1000"
                                     />
                                 </svg>
@@ -162,21 +162,21 @@ export default function LeetCodeProfile() {
                             {/* Linear Progress Bars */}
                             <div className="flex-1 w-full space-y-4 text-sm font-bold">
                                 {[
-                                    { label: 'Easy', data: SOLVED_DATA.easy },
-                                    { label: 'Medium', data: SOLVED_DATA.medium },
-                                    { label: 'Hard', data: SOLVED_DATA.hard }
+                                    SOLVED_DATA.dsa,
+                                    SOLVED_DATA.sql,
+                                    SOLVED_DATA.projects
                                 ].map((tier) => (
                                     <div key={tier.label}>
                                         <div className="flex justify-between items-center mb-1.5">
-                                            <span className={`${tier.data.color}`}>{tier.label}</span>
+                                            <span className={`${tier.color}`}>{tier.label}</span>
                                             <span className="text-slate-900 font-medium">
-                                                {tier.data.solved} <span className="text-slate-400 text-xs">/ {tier.data.total}</span>
+                                                {tier.solved} <span className="text-slate-400 text-xs">/ {tier.total}</span>
                                             </span>
                                         </div>
                                         <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                                             <div
-                                                className={`h-full rounded-full ${tier.data.bg}`}
-                                                style={{ width: `${(tier.data.solved / tier.data.total) * 100}%` }}
+                                                className={`h-full rounded-full ${tier.bg}`}
+                                                style={{ width: `${(tier.solved / tier.total) * 100}%` }}
                                             />
                                         </div>
                                     </div>

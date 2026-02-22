@@ -274,15 +274,15 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
                             </div>
 
                             <div className="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t border-slate-100">
-                                <Button variant="outline" onClick={() => window.location.reload()} className="rounded-2xl h-14 px-8 text-slate-600 font-bold border-slate-200">
+                                <Button variant="outline" onClick={() => window.location.reload()} className="rounded-full h-14 px-10 text-slate-600 font-bold border-slate-200 w-full sm:w-auto">
                                     Discard & Restart Drill
                                 </Button>
                                 <Button
                                     onClick={handleSubmit}
                                     disabled={!audioBlob}
-                                    className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl h-14 px-10 shadow-xl shadow-emerald-200 transition-all font-bold flex items-center gap-2 disabled:opacity-50"
+                                    className="bg-slate-900 hover:bg-indigo-600 text-white rounded-full h-14 px-10 shadow-lg shadow-slate-200 hover:shadow-indigo-200 transition-all font-bold flex items-center justify-center gap-2 disabled:opacity-50 w-full sm:w-auto"
                                 >
-                                    Submit for AI Analysis <Sparkles size={20} className="ml-1" />
+                                    Proceed to Technical Section <ArrowRight size={18} />
                                 </Button>
                             </div>
                         </Card>

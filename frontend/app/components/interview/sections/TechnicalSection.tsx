@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Mic, Square, ArrowRight, Loader2, Code2, AlertCircle } from 'lucide-react';
+import { Mic, Square, ArrowRight, Loader2, Code2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { SectionScore } from '../CommunicationAssessment';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,17 +14,27 @@ interface TechnicalSectionProps {
 }
 
 export default function TechnicalSection({ onComplete, topicContent, globalStream }: TechnicalSectionProps) {
-    const [phase, setPhase] = useState<'prep' | 'interview' | 'complete'>('prep');
+    const [phase, setPhase] = useState<'prep' | 'interview' | 'q_complete' | 'all_complete'>('prep');
+    const [currentQIndex, setCurrentQIndex] = useState(0);
+    const [allRecordings, setAllRecordings] = useState<{ topic: string, blob: Blob }[]>([]);
 
-    // Total 10 minutes = 600 seconds
-    const TOTAL_TIME = 600;
+    // Per question time limit (e.g. 3 mins each)
+    const TOTAL_TIME = 180;
     const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
     const [isRecording, setIsRecording] = useState(false);
-    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<any>(null);
+
+    const questions = [
+        { title: "Introduction", prompt: "Please introduce yourself, including your name, current designation, and your background in computer science." },
+        { title: "Core CS Concepts", prompt: "Explain the difference between an Array and a Linked List. What are the time complexities for searching and inserting in both?" },
+        { title: "Architecture & Design", prompt: topicContent.topic },
+        { title: "Problem Solving Experience", prompt: "Describe a complex logic problem you solved in the past. How did you approach it and handle edge cases?" }
+    ];
+
+    const currentQuestion = questions[currentQIndex];
 
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
@@ -71,7 +81,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
 
             mediaRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                setAudioBlob(blob);
+                handleRecordingSaved(blob);
             };
 
             mediaRecorderRef.current.start();
@@ -88,16 +98,29 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
             setIsRecording(false);
         }
         clearInterval(timerRef.current);
-        setPhase('complete');
+    };
+
+    const handleRecordingSaved = (blob: Blob) => {
+        setAllRecordings(prev => [...prev, { topic: currentQuestion.prompt, blob }]);
+
+        if (currentQIndex < questions.length - 1) {
+            setPhase('q_complete');
+        } else {
+            setPhase('all_complete');
+        }
+    };
+
+    const handleNextQuestion = () => {
+        setCurrentQIndex(prev => prev + 1);
+        setPhase('prep');
     };
 
     const handleSubmit = () => {
-        if (!audioBlob) return;
         onComplete({
             section: 'Technical',
             score: 0,
             feedback: "",
-            data: { topic: topicContent.topic, blob: audioBlob }
+            data: allRecordings // Send the array of 4 blobs
         });
     };
 
@@ -106,7 +129,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
             <AnimatePresence mode="wait">
                 {phase === 'prep' && (
                     <motion.div
-                        key="prep"
+                        key={`prep-${currentQIndex}`}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, y: -20, filter: 'blur(4px)' }}
@@ -118,28 +141,23 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                             </div>
                             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Technical Deep Dive</h2>
                             <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">
-                                {topicContent.role} Interview
+                                Question {currentQIndex + 1} of {questions.length} • {currentQuestion.title}
                             </p>
                         </div>
 
-                        <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-xl shadow-slate-100 rounded-[2.5rem] relative overflow-hidden text-center space-y-8">
-                            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 max-w-2xl mx-auto text-left shadow-inner">
+                        <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-xl shadow-slate-100 rounded-[2.5rem] relative overflow-hidden text-center space-y-8 flex flex-col items-center">
+                            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 max-w-2xl mx-auto w-full text-center shadow-inner">
                                 <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-4">Prompt</h3>
                                 <p className="text-xl font-bold text-slate-900 leading-relaxed mb-6">
-                                    "{topicContent.topic}"
+                                    "{currentQuestion.prompt}"
                                 </p>
-                                <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                                    <p className="text-sm text-emerald-800 font-medium">
-                                        You will have exactly 10 minutes to walk through your solution. Explain your thought process, data structures, and edge cases clearly. The AI will evaluate your technical logic.
-                                    </p>
-                                </div>
                             </div>
 
                             <Button
                                 onClick={startInterview}
-                                className="bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl h-16 px-10 shadow-lg shadow-slate-200 text-lg font-bold hover:shadow-emerald-200 transition-all w-full max-w-sm group"
+                                className="bg-slate-900 hover:bg-emerald-600 text-white rounded-full h-14 px-10 shadow-lg shadow-slate-200 text-base font-bold hover:shadow-emerald-200 transition-all group w-auto"
                             >
-                                Start 10-Min Interview <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                Start Recording <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </Button>
                         </Card>
                     </motion.div>
@@ -154,15 +172,15 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                     >
                         <div className="text-center space-y-4 mb-8 flex flex-col items-center">
                             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-5 py-2.5 rounded-full font-bold text-sm border border-emerald-100 shadow-sm animate-pulse">
-                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Active Technical Session
+                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Recording Active
                             </div>
                         </div>
 
                         <Card className="p-8 md:p-12 bg-white border-emerald-200 shadow-2xl shadow-emerald-100 ring-4 ring-emerald-50 rounded-[2.5rem] flex flex-col items-center min-h-[500px]">
 
-                            <div className="w-full bg-slate-50 border border-slate-200 rounded-3xl p-6 text-left mb-12 shadow-inner">
+                            <div className="w-full bg-slate-50 border border-slate-200 rounded-3xl p-6 text-center mb-12 shadow-inner max-w-2xl">
                                 <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-3">Your Prompt</h3>
-                                <p className="text-lg font-bold text-slate-800 leading-snug">"{topicContent.topic}"</p>
+                                <p className="text-lg font-bold text-slate-800 leading-snug">"{currentQuestion.prompt}"</p>
                             </div>
 
                             <div className="relative flex items-center justify-center mb-12">
@@ -178,18 +196,40 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
 
                             <Button
                                 onClick={stopRecording}
-                                className="bg-rose-500 hover:bg-rose-600 rounded-2xl h-16 w-64 shadow-xl shadow-rose-200 text-lg font-bold group relative overflow-hidden"
+                                className="bg-rose-500 hover:bg-rose-600 rounded-full h-14 px-10 shadow-xl shadow-rose-200 text-base font-bold group relative overflow-hidden transition-all text-white w-auto"
                             >
                                 <div className="absolute inset-0 bg-white/20 animate-pulse mix-blend-overlay" />
-                                <Square size={20} fill="currentColor" className="mr-3" /> Finish Early
+                                <Square size={18} fill="currentColor" className="mr-3" /> Stop Recording
                             </Button>
                         </Card>
                     </motion.div>
                 )}
 
-                {phase === 'complete' && (
+                {phase === 'q_complete' && (
                     <motion.div
-                        key="complete"
+                        key="q_complete"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-center space-y-6 max-w-md mx-auto w-full pt-10"
+                    >
+                        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-3xl w-24 h-24 mx-auto flex items-center justify-center text-emerald-500 shadow-xl shadow-emerald-50">
+                            <CheckCircle2 size={48} />
+                        </div>
+
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Answer Recorded!</h2>
+                        <p className="text-slate-500 text-lg">Question {currentQIndex + 1} completed.</p>
+
+                        <div className="pt-8 flex justify-center">
+                            <Button onClick={handleNextQuestion} className="bg-slate-900 hover:bg-indigo-600 h-14 text-base font-bold rounded-full shadow-lg transition-all text-white flex items-center justify-center gap-2 px-10 w-auto">
+                                Next Technical Question <ArrowRight size={18} />
+                            </Button>
+                        </div>
+                    </motion.div>
+                )}
+
+                {phase === 'all_complete' && (
+                    <motion.div
+                        key="all_complete"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="w-full text-center space-y-8 pt-10"
@@ -198,14 +238,28 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                             <Code2 size={48} />
                         </div>
 
-                        <h2 className="text-4xl font-black text-slate-900 tracking-tight">Technical Response Recorded!</h2>
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tight">Technical Deep Dive Finished!</h2>
                         <p className="text-slate-500 text-lg max-w-lg mx-auto">
-                            Your 10-minute technical response has been saved. You have now completed all 4 steps of the assessment.
+                            You have successfully answered all 4 technical prompts. Your entire session is ready for Gemini 2.5 analysis.
                         </p>
 
-                        <div className="pt-8">
-                            <Button onClick={handleSubmit} className="w-full max-w-md mx-auto bg-slate-900 hover:bg-indigo-600 h-16 text-lg font-bold rounded-2xl shadow-xl transition-all flex justify-between px-8 text-white">
-                                Finalize & View Full AI Report <ArrowRight size={20} />
+                        {/* List Audio Summaries */}
+                        <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto mt-6">
+                            {allRecordings.map((rec, i) => (
+                                <div key={i} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-left">
+                                    <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                        <Mic size={14} />
+                                    </div>
+                                    <div className="text-xs font-medium text-slate-700 truncate w-full">
+                                        Q{i + 1}: Recorded
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="pt-8 flex justify-center">
+                            <Button onClick={handleSubmit} className="bg-slate-900 hover:bg-indigo-600 h-14 text-base font-bold rounded-full shadow-xl transition-all flex items-center justify-center gap-2 px-10 text-white w-auto">
+                                Submit For Deep Analysis <ArrowRight size={18} />
                             </Button>
                         </div>
                     </motion.div>
