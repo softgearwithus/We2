@@ -49,9 +49,6 @@ export default function Navbar() {
 
     const authNavItems = [
         { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-        { label: 'Problems', href: '/dsa', icon: Code2 },
-        { label: 'Interview', href: '/dashboard/interview', icon: Video },
-        { label: 'Simulations', href: '/simulations', icon: Terminal },
         { label: 'Pricing', href: '/pricing', icon: null } // Kept for upgrades
     ];
 
@@ -59,19 +56,7 @@ export default function Navbar() {
 
     // Items to show specifically when INSIDE the dashboard layout (context is present)
     const dashboardNavItems = [
-        {
-            label: 'Placement Mode',
-            action: () => { dashboardContext?.setMode('prep'); router.push('/dashboard'); },
-            active: dashboardContext?.mode === 'prep',
-            icon: School
-        },
-        {
-            label: 'Job Simulation',
-            action: () => { dashboardContext?.setMode('work'); router.push('/dashboard'); },
-            active: dashboardContext?.mode === 'work',
-            icon: CircuitBoard
-        },
-        { label: 'Roadmap', href: '/dashboard/roadmap', icon: Map },
+        { label: 'Roadmap', href: '/dashboard/preparation', icon: Map },
         { label: 'Pricing', href: '/pricing', icon: null }
     ];
 
@@ -104,28 +89,15 @@ export default function Navbar() {
                     {isDashboardLayout ? (
                         // Dashboard Mode Items
                         dashboardNavItems.map((item) => (
-                            item.href ? (
-                                <Link
-                                    key={item.label}
-                                    href={item.href}
-                                    className="hover:text-brand-orange transition-colors py-2 flex items-center gap-1.5"
-                                >
-                                    {item.label}
-                                </Link>
-                            ) : (
-                                <button
-                                    key={item.label}
-                                    onClick={item.action}
-                                    className={cn(
-                                        "hover:text-brand-orange transition-colors py-2 flex items-center gap-1.5",
-                                        item.active ? "text-brand-black font-extrabold" : ""
-                                    )}
-                                >
-                                    {/* @ts-ignore */}
-                                    {item.icon && <item.icon size={16} />}
-                                    {item.label}
-                                </button>
-                            )
+                            <Link
+                                key={item.label}
+                                href={item.href!}
+                                className="hover:text-brand-orange transition-colors py-2 flex items-center gap-1.5"
+                            >
+                                {/* @ts-ignore */}
+                                {item.icon && <item.icon size={16} />}
+                                {item.label}
+                            </Link>
                         ))
                     ) : (
                         // Standard Auth/Guest Items

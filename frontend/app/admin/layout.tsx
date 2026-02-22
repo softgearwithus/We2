@@ -4,7 +4,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Briefcase, GraduationCap, Code2, Radar } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Shield, Bell, Search, School, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function AdminLayout({
     children,
@@ -12,7 +13,13 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    const handleLogout = () => {
+        localStorage.removeItem('accessToken');
+        router.push('/login');
+    };
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['all'] },
@@ -62,14 +69,23 @@ export default function AdminLayout({
                 </nav>
 
                 <div className="p-4 border-t border-slate-800">
-                    <div className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center'}`}>
-                        <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden">
-                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Admin" alt="Admin" />
+                    <div className={`flex items-center justify-between ${!sidebarOpen && 'justify-center'}`}>
+                        <div className={`flex items-center gap-3 ${!sidebarOpen && 'hidden'}`}>
+                            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Admin" alt="Admin" />
+                            </div>
+                            <div className="overflow-hidden">
+                                <p className="text-sm font-bold truncate">Super Admin</p>
+                                <p className="text-xs text-slate-500 truncate">admin@platform.com</p>
+                            </div>
                         </div>
-                        <div className={`overflow-hidden transition-all duration-300 ${!sidebarOpen && 'hidden w-0'}`}>
-                            <p className="text-sm font-bold">Super Admin</p>
-                            <p className="text-xs text-slate-500">admin@platform.com</p>
-                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0"
+                            title="Logout"
+                        >
+                            <LogOut size={20} />
+                        </button>
                     </div>
                 </div>
             </aside>

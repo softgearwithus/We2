@@ -1,10 +1,11 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { DashboardModeProvider, useDashboardMode } from '../context/DashboardModeContext';
+
 import Navbar from '../components/layout/Navbar';
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
@@ -51,29 +52,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Mock Analysis', href: '/dashboard/interview?mode=analysis', icon: 'analytics' }
             ]
         },
+        { icon: 'construction', label: 'Skill Forge', href: '/dashboard/skillforge' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
-        {
-            icon: 'memory',
-            label: 'Git Mastery',
-            href: '/dashboard/github',
-            subItems: [
-                { label: 'Commands & Lessons', href: '/dashboard/github', icon: 'terminal' },
-                { label: 'CI/CD Pipelines', href: '/dashboard/github/cicd', icon: 'settings_ethernet' },
-                { label: 'Git Testing', href: '/dashboard/github/testing', icon: 'bug_report' }
-            ]
-        },
-        { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar' },
         { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
-        {
-            icon: 'group',
-            label: 'Mentors',
-            href: '/dashboard/mentors',
-            subItems: [
-                { label: 'Find a Mentor', href: '/dashboard/mentors', icon: 'search' },
-                { label: 'Mentor Console', href: '/dashboard/mentor-console', icon: 'dashboard' },
-                { label: 'Join as a Mentor', href: '/mentor/apply', icon: 'person_add' }
-            ]
-        },
     ];
 
     const simulationMenu: MenuItem[] = [
@@ -97,12 +78,11 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 >
                     <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 shrink-0">
                         {/* Mode Indicator / Brand moved here or simplified */}
-                        {/* Mode Indicator / Brand moved here or simplified */}
                         <div className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ${!sidebarOpen ? 'opacity-0 w-0' : 'opacity-100'}`}>
-                            <div className="min-w-[8px] h-8 rounded-full bg-emerald-500"></div>
+                            <div className={`min-w-[8px] h-8 rounded-full ${mode === 'prep' ? 'bg-emerald-500' : 'bg-indigo-500'}`}></div>
                             <div>
-                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Workspace</p>
-                                <p className="text-sm font-bold text-slate-900 whitespace-nowrap">Placement Prep</p>
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Mode</p>
+                                <p className="text-sm font-bold text-slate-900 whitespace-nowrap">{mode === 'prep' ? 'Placement' : 'Simulation'}</p>
                             </div>
                         </div>
 
@@ -114,6 +94,28 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                                 {sidebarOpen ? 'menu_open' : 'menu'}
                             </span>
                         </button>
+                    </div>
+
+                    {/* Mode Switcher */}
+                    <div className={`px-4 py-4 transition-all duration-300 ${!sidebarOpen && 'px-2'}`}>
+                        <div className={`bg-slate-100 p-1 rounded-xl flex ${!sidebarOpen && 'flex-col gap-2 bg-transparent p-0'}`}>
+                            <button
+                                onClick={() => setMode('prep')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${mode === 'prep' ? 'bg-white text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${!sidebarOpen && 'aspect-square p-0'}`}
+                                title="Placement Prep"
+                            >
+                                <span className="material-symbols-outlined text-lg">school</span>
+                                <span className={!sidebarOpen ? 'hidden' : ''}>Prep</span>
+                            </button>
+                            <button
+                                onClick={() => setMode('work')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${mode === 'work' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${!sidebarOpen && 'aspect-square p-0'}`}
+                                title="Work Simulation"
+                            >
+                                <span className="material-symbols-outlined text-lg">work</span>
+                                <span className={!sidebarOpen ? 'hidden' : ''}>Work</span>
+                            </button>
+                        </div>
                     </div>
 
                     <nav className="p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar">
