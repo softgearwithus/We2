@@ -30,7 +30,7 @@ export default function CompleteProfileModal() {
 
     const handleCompleteNow = () => {
         setIsOpen(false);
-        router.push('/settings');
+        router.push('/dashboard/settings');
     };
 
     return (

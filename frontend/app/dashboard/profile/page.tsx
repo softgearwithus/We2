@@ -76,7 +76,7 @@ export default function LeetCodeProfile() {
                                 <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
                                     <Image src={USER_DATA.avatar} alt="Avatar" width={96} height={96} className="object-cover" />
                                 </div>
-                                <Link href="/settings" className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
+                                <Link href="/dashboard/settings" className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
                                     <Edit3 size={18} />
                                 </Link>
                             </div>
@@ -91,7 +91,7 @@ export default function LeetCodeProfile() {
                                 <Briefcase size={14} /> {USER_DATA.role}
                             </p>
 
-                            <Link href="/settings" className="w-full block text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors mb-6">
+                            <Link href="/dashboard/settings" className="w-full block text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors mb-6">
                                 Edit Profile
                             </Link>
 

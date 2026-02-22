@@ -10,6 +10,7 @@ import { ArrowRight, CheckCircle2, Loader2, Sparkles, MoveRight, Camera, Mic, Ca
 import ReadingSection from './sections/ReadingSection';
 import RepeatSection from './sections/RepeatSection';
 import ExtemporeSection from './sections/ExtemporeSection';
+import TechnicalSection from './sections/TechnicalSection';
 import ResultReport from './sections/ResultReport';
 
 export interface SectionScore {
@@ -24,6 +25,7 @@ export interface DrillContent {
     reading: { level: string, text: string }[];
     listening: string[];
     extempore: { topic: string, keyPoints: string[] };
+    technical?: { topic: string, role: string };
     metadata?: any;
 }
 
@@ -33,7 +35,7 @@ interface CommunicationAssessmentProps {
     drillContent: DrillContent;
 }
 
-export type AssessmentSection = 'intro' | 'reading' | 'repeat' | 'extempore' | 'results';
+export type AssessmentSection = 'intro' | 'reading' | 'repeat' | 'extempore' | 'technical' | 'results';
 
 export default function CommunicationAssessment({ onBack, onComplete, drillContent }: CommunicationAssessmentProps) {
     const [currentSection, setCurrentSection] = useState<AssessmentSection>('intro');
@@ -46,34 +48,43 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
     // Global Media State
     const [globalStream, setGlobalStream] = useState<MediaStream | null>(null);
     const [mediaError, setMediaError] = useState<string | null>(null);
+    const [isCameraStarting, setIsCameraStarting] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Initialize Camera on Mount
+    // Initialize Camera manually
+    const initCamera = async () => {
+        setIsCameraStarting(true);
+        setMediaError(null);
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            setGlobalStream(stream);
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+            }
+        } catch (err: any) {
+            console.error("Camera access denied or failed", err);
+            setMediaError("Camera and microphone access is required for EMBLE's AI to deeply analyze your logical structuring and communication. Please allow permissions in your browser.");
+        } finally {
+            setIsCameraStarting(false);
+        }
+    };
+
+    const stopGlobalStream = () => {
+        if (globalStream) {
+            globalStream.getTracks().forEach(track => track.stop());
+            setGlobalStream(null);
+            if (videoRef.current) {
+                videoRef.current.srcObject = null;
+            }
+        }
+    }
+
+    // Cleanup on unmount
     useEffect(() => {
-        let activeStream: MediaStream | null = null;
-        const initCamera = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                activeStream = stream;
-                setGlobalStream(stream);
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
-            } catch (err: any) {
-                console.error("Camera access denied or failed", err);
-                setMediaError("Camera and microphone access is required for the full experience. Please allow permissions in your browser.");
-            }
-        };
-
-        initCamera();
-
         return () => {
-            // Cleanup stream on unmount
-            if (activeStream) {
-                activeStream.getTracks().forEach(track => track.stop());
-            }
+            stopGlobalStream();
         };
-    }, []);
+    }, [globalStream]);
 
     const handleSectionComplete = (scoreData: SectionScore) => {
         const newScores = [...scores, scoreData];
@@ -90,9 +101,25 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
             setCurrentSection('extempore');
         }
         else if (currentSection === 'extempore') {
-            const finalData = { ...collectedData, extempore: scoreData.data };
+            const nextData = { ...collectedData, extempore: scoreData.data };
+            setCollectedData(nextData);
+            // Default Technical Prompt
+            if (!drillContent.technical) {
+                drillContent.technical = {
+                    role: "Software Engineer",
+                    topic: "Explain how you would design a scalable URL shortening service like Bitly. Discuss the data structures, APIs, and potential bottlenecks."
+                }
+            }
+            setCurrentSection('technical');
+        }
+        else if (currentSection === 'technical') {
+            const finalData = { ...collectedData, technical: scoreData.data };
             setCollectedData(finalData);
             setCurrentSection('results');
+
+            // Critical Secure Hardware Management: Kill camera/mic light immediately when all 4 steps end
+            stopGlobalStream();
+
             submitAssessment(finalData);
         }
     };
@@ -120,11 +147,17 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 formData.append('extempore', fullData.extempore.blob, 'extempore.webm');
             }
 
+            // Append Technical File
+            if (fullData.technical) {
+                formData.append('technical', fullData.technical.blob, 'technical.webm');
+            }
+
             const metadata = {
                 theme: drillContent.theme,
                 reading: readingMeta,
                 listening: listeningMeta,
-                extempore: { topic: fullData.extempore.topic }
+                extempore: { topic: fullData.extempore.topic },
+                technical: { topic: fullData.technical.topic, role: drillContent.technical?.role }
             };
             formData.append('metadata', JSON.stringify(metadata));
 
@@ -201,17 +234,20 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 <div className="flex-1 flex flex-col items-center justify-center p-6 xl:px-12 w-full max-w-4xl mx-auto">
 
                     {/* Progress Bar (Hidden during results) */}
-                    {currentSection !== 'results' && (
+                    {currentSection !== 'results' && currentSection !== 'intro' && (
                         <div className="w-full flex items-center gap-4 mb-12">
-                            {['Reading', 'Listening', 'Extempore'].map((step, idx) => {
-                                const isCompleted = (currentSection === 'extempore' && idx < 2) || (currentSection === 'repeat' && idx < 1);
-                                const isCurrent = step.toLowerCase().includes(currentSection);
+                            {['Reading', 'Listening', 'Extempore', 'Technical'].map((step, idx) => {
+                                const sections = ['reading', 'repeat', 'extempore', 'technical'];
+                                const currentIndex = sections.indexOf(currentSection);
+                                const isCompleted = currentIndex > idx;
+                                const isCurrent = currentIndex === idx;
+
                                 return (
                                     <div key={step} className={`flex-1 flex items-center gap-3 border-t-4 pt-3 transition-colors duration-500 ${isCompleted ? 'border-emerald-500 text-emerald-600' : isCurrent ? 'border-indigo-600 text-indigo-600' : 'border-slate-200 text-slate-400'}`}>
-                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm ${isCompleted ? 'bg-emerald-500' : isCurrent ? 'bg-indigo-600' : 'bg-slate-300'}`}>
+                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm transition-all duration-300 ${isCompleted ? 'bg-emerald-500 scale-110' : isCurrent ? 'bg-indigo-600 scale-110' : 'bg-slate-300'}`}>
                                             {isCompleted ? '✓' : idx + 1}
                                         </div>
-                                        <span className="font-bold text-sm hidden sm:block">{step}</span>
+                                        <span className={`font-bold text-[11px] sm:text-xs tracking-widest uppercase transition-opacity ${isCurrent ? 'opacity-100' : 'opacity-70'}`}>{step}</span>
                                     </div>
                                 );
                             })}
@@ -223,66 +259,82 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                             {currentSection === 'intro' && (
                                 <motion.div
                                     key="intro"
-                                    initial={{ opacity: 0, y: 20 }}
+                                    initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20, filter: 'blur(4px)' }}
-                                    className="space-y-8"
+                                    exit={{ opacity: 0, scale: 0.95, filter: 'blur(8px)' }}
+                                    className="space-y-12"
                                 >
-                                    <div className="space-y-4">
-                                        <h1 className="text-4xl xl:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                                            Prepare for <br />
-                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">The Assessment</span>
+                                    <div className="space-y-6">
+                                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-2">
+                                            <Sparkles size={14} className="text-indigo-600" />
+                                            <span className="text-xs font-bold text-indigo-700 uppercase tracking-widest">Powered By Gemini 2.5 AI</span>
+                                        </div>
+                                        <h1 className="text-4xl xl:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
+                                            Advanced <br />
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
+                                                Mock Interview
+                                            </span>
                                         </h1>
                                         <p className="text-lg text-slate-600 max-w-xl leading-relaxed">
-                                            This drill evaluates your verbal communication fluency. Ensure you are in a quiet environment and your microphone is working correctly.
+                                            Prepare to have your critical thinking, system design knowledge, and communication clarity deeply evaluated across 4 modules.
                                         </p>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-                                        <Card className="p-6 border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all rounded-3xl group">
-                                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="font-black text-xl">1</span>
-                                            </div>
-                                            <h3 className="font-bold text-slate-900 mb-2">Reading</h3>
-                                            <p className="text-sm text-slate-500">Read 3 passages aloud exactly as displayed.</p>
-                                        </Card>
-                                        <Card className="p-6 border-slate-100 hover:border-purple-200 hover:shadow-lg transition-all rounded-3xl group">
-                                            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="font-black text-xl">2</span>
-                                            </div>
-                                            <h3 className="font-bold text-slate-900 mb-2">Listening</h3>
-                                            <p className="text-sm text-slate-500">Listen, wait, and repeat 3 distinct phrases softly.</p>
-                                        </Card>
-                                        <Card className="p-6 border-slate-100 hover:border-pink-200 hover:shadow-lg transition-all rounded-3xl group">
-                                            <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <span className="font-black text-xl">3</span>
-                                            </div>
-                                            <h3 className="font-bold text-slate-900 mb-2">Extempore</h3>
-                                            <p className="text-sm text-slate-500">Speak spontaneously on a given topic for 60s.</p>
-                                        </Card>
+                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div className="p-5 border border-slate-100 rounded-3xl bg-slate-50">
+                                            <h3 className="font-bold text-slate-900 text-lg mb-1">Passages</h3>
+                                            <p className="text-xs text-slate-500 leading-tight">Focus on dictation and articulation clarity.</p>
+                                        </div>
+                                        <div className="p-5 border border-slate-100 rounded-3xl bg-slate-50">
+                                            <h3 className="font-bold text-slate-900 text-lg mb-1">Listening</h3>
+                                            <p className="text-xs text-slate-500 leading-tight">Test cognitive retention and repetition.</p>
+                                        </div>
+                                        <div className="p-5 border border-slate-100 rounded-3xl bg-slate-50">
+                                            <h3 className="font-bold text-slate-900 text-lg mb-1">Extempore</h3>
+                                            <p className="text-xs text-slate-500 leading-tight">60s spontaneous logical structuring.</p>
+                                        </div>
+                                        <div className="p-5 border border-emerald-100 rounded-3xl bg-emerald-50">
+                                            <h3 className="font-bold text-emerald-900 text-lg mb-1">Technical</h3>
+                                            <p className="text-xs text-emerald-700 leading-tight">10m intensive CS software deep dive.</p>
+                                        </div>
                                     </div>
 
                                     {mediaError && (
-                                        <div className="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-2xl flex items-center gap-3">
-                                            <AlertCircle className="shrink-0" />
-                                            <p className="text-sm font-medium">{mediaError}</p>
+                                        <div className="bg-rose-50 border border-rose-200 text-rose-700 p-5 rounded-2xl flex items-start gap-3">
+                                            <AlertCircle className="shrink-0 mt-0.5 text-rose-500" />
+                                            <p className="text-sm font-medium leading-relaxed">{mediaError}</p>
                                         </div>
                                     )}
 
-                                    <div className="pt-8 flex flex-col sm:flex-row items-center gap-4 border-t border-slate-100">
-                                        <Button
-                                            onClick={() => setCurrentSection('reading')}
-                                            disabled={!globalStream}
-                                            className="w-full sm:w-auto h-14 bg-slate-900 hover:bg-indigo-600 text-white text-lg rounded-2xl px-10 shadow-xl shadow-slate-200 hover:shadow-indigo-200 transition-all font-bold flex items-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            Start Drill <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                                        </Button>
-                                        {!globalStream && !mediaError && (
-                                            <p className="text-sm text-slate-500 flex items-center gap-2">
-                                                <Loader2 size={16} className="animate-spin" /> Requesting Camera / Mic...
-                                            </p>
+                                    <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row gap-6 items-center bg-slate-50 p-6 rounded-[2.5rem]">
+
+                                        {!globalStream ? (
+                                            <Button
+                                                onClick={initCamera}
+                                                disabled={isCameraStarting}
+                                                className="w-full h-16 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-10 shadow-xl shadow-slate-200 text-lg font-bold transition-all disabled:opacity-50"
+                                            >
+                                                {isCameraStarting ? <Loader2 size={24} className="animate-spin" /> : "Enable Camera & Microphone"}
+                                            </Button>
+                                        ) : (
+                                            <div className="w-full flex flex-col md:flex-row gap-4 items-center justify-between">
+                                                <div className="flex items-center gap-3 bg-emerald-100 text-emerald-700 px-5 py-3 rounded-2xl font-bold w-full md:w-auto justify-center">
+                                                    <CheckCircle2 size={20} /> Permissions Granted
+                                                </div>
+                                                <Button
+                                                    onClick={() => setCurrentSection('reading')}
+                                                    className="w-full md:w-auto h-16 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-lg rounded-2xl px-12 shadow-xl shadow-indigo-200 transition-all font-bold group"
+                                                >
+                                                    Start Interview <ArrowRight size={20} className="ml-3 group-hover:translate-x-1.5 transition-transform" />
+                                                </Button>
+                                            </div>
                                         )}
+
                                     </div>
+
+                                    {!globalStream && (
+                                        <p className="text-center text-xs text-slate-400 font-medium">By enabling these permissions, you allow EMBLE to record your audio strictly for mock interview evaluation.</p>
+                                    )}
                                 </motion.div>
                             )}
 
@@ -309,7 +361,15 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                     key="extempore"
                                     onComplete={handleSectionComplete}
                                     topicContent={drillContent.extempore}
-                                    previousRecordings={collectedData}
+                                    globalStream={globalStream}
+                                />
+                            )}
+
+                            {currentSection === 'technical' && globalStream && (
+                                <TechnicalSection
+                                    key="technical"
+                                    onComplete={handleSectionComplete}
+                                    topicContent={drillContent.technical || { role: "Software Engineer", topic: "Explain the architecture of a real-time messaging application like WhatsApp." }}
                                     globalStream={globalStream}
                                 />
                             )}

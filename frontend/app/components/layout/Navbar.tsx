@@ -172,7 +172,7 @@ export default function Navbar() {
                                             </div>
                                             {profileIncomplete && <span className="text-[10px] font-bold bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full">Incomplete</span>}
                                         </Link>
-                                        <Link href="/settings" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                        <Link href="/dashboard/settings" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
                                             <div className="flex items-center gap-2">
                                                 <Settings size={16} />
                                                 Settings
@@ -257,7 +257,7 @@ export default function Navbar() {
                             <Link href="/dashboard/profile" className="flex items-center gap-3 py-2 text-gray-600" onClick={() => setMobileMenuOpen(false)}>
                                 <User size={20} /> Profile
                             </Link>
-                            <Link href="/settings" className="flex items-center gap-3 py-2 text-gray-600" onClick={() => setMobileMenuOpen(false)}>
+                            <Link href="/dashboard/settings" className="flex items-center gap-3 py-2 text-gray-600" onClick={() => setMobileMenuOpen(false)}>
                                 <Settings size={20} /> Settings
                             </Link>
                             <button
