@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { roadmapData } from '@/app/lib/data/roadmapData';
-import { ArrowLeft, Save, Loader2, CheckCircle, AlertCircle, Edit3, Eye, FileText, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, CheckCircle, AlertCircle, Edit3, Eye, FileText, Sparkles, Wand2, RefreshCw } from 'lucide-react';
 import API_BASE_URL from '@/app/lib/api-config';
 import Link from 'next/link';
 
@@ -118,14 +118,16 @@ export default function AdminContentPage() {
 
             if (response.ok) {
                 const data = await response.json();
+                setMessage({ type: 'success', text: 'EMBLE AI generated a Pro-level guide for you!' });
                 setContent(data.content);
-                setMessage({ type: 'success', text: 'Gemini generated a Pro-level guide for you!' });
+            } else if (response.status === 429) {
+                setMessage({ type: 'error', text: 'EMBLE AI is currently busy. Try again later.' });
             } else {
-                setMessage({ type: 'error', text: 'Gemini is currently busy. Try again later.' });
+                setMessage({ type: 'error', text: 'Failed to generate content.' });
             }
         } catch (error) {
             console.error('Error generating AI content:', error);
-            setMessage({ type: 'error', text: 'Network error while calling Gemini.' });
+            setMessage({ type: 'error', text: 'Network error while calling EMBLE AI.' });
         } finally {
             setGenerating(false);
         }
@@ -237,8 +239,8 @@ export default function AdminContentPage() {
                                             disabled={generating || loading}
                                             className="bg-brand-orange text-white px-6 py-2 rounded-xl font-bold text-sm hover:bg-orange-600 transition-all flex items-center gap-2 shadow-lg shadow-orange-100 disabled:opacity-50"
                                         >
-                                            {generating ? <Loader2 className="animate-spin" size={16} /> : <Wand2 size={16} />}
-                                            {generating ? 'Gemini is thinking...' : 'Generate with Gemini'}
+                                            {generating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                                            {generating ? 'EMBLE AI is thinking...' : 'Generate with EMBLE AI'}
                                         </button>
                                         <button
                                             onClick={handleSave}
@@ -268,8 +270,8 @@ export default function AdminContentPage() {
                                             />
                                             {preview ? (
                                                 <div className="flex-1 overflow-y-auto prose prose-slate max-w-none pt-6 border-t border-slate-100">
-                                                    <div className="whitespace-pre-wrap font-sans text-slate-700 leading-relaxed text-lg">
-                                                        {content || "No content to preview yet. Start typing or use Gemini!"}
+                                                    <div className="prose prose-slate max-w-none">
+                                                        {content || "No content to preview yet. Start typing or use EMBLE AI!"}
                                                     </div>
                                                 </div>
                                             ) : (

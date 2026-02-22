@@ -84,9 +84,9 @@ export default function AiMentorsPage() {
                     {/* How it works (Interactive Demo Placeholder) */}
                     <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-subtle">
                         <BrainCircuit className="mx-auto text-gray-400 mb-6" size={48} />
-                        <h3 className="text-2xl font-bold text-brand-black mb-4">Powered by Advanced LLMs</h3>
+                        <h3 className="text-2xl font-bold text-brand-black mb-4">Powered by EMBLE AI</h3>
                         <p className="text-gray-500 max-w-2xl mx-auto">
-                            We use fine-tuned versions of GPT-4 and Gemimi to ensure high accuracy and deep contextual understanding of your codebase.
+                            We use the proprietary EMBLE AI engine to ensure high accuracy and deep contextual understanding of your codebase.
                         </p>
                     </div>
                 </div>

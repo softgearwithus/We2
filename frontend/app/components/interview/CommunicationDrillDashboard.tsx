@@ -284,7 +284,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                         <div className="space-y-4">
                             <h2 className="text-4xl font-black text-slate-900 tracking-tight">Designing Drill...</h2>
                             <p className="text-slate-500 text-lg leading-relaxed">
-                                Calling Gemini AI to architect a unique Software Engineering assessment module tailored for you.
+                                Initializing EMBLE AI to architect a unique Software Engineering assessment module tailored for you.
                             </p>
                         </div>
                     </div>

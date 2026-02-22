@@ -65,9 +65,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     }
 
     const placementMenu: MenuItem[] = [
-        { icon: 'dashboard', label: 'Overview', href: '/dashboard' },
-        { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation' },
-        { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series' },
+        { icon: 'dashboard', label: 'Overview', href: '/dashboard', hasUpdate: updateIndicators['/dashboard'] },
+        { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation', hasUpdate: updateIndicators['/dashboard/preparation'] },
+        { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series', hasUpdate: updateIndicators['/dashboard/test-series'] },
         { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa', hasUpdate: updateIndicators['/dashboard/dsa'] },
         { icon: 'database', label: 'SQL Training', href: '/dashboard/sql', hasUpdate: updateIndicators['/dashboard/sql'] },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },
@@ -75,15 +75,17 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             icon: 'mic',
             label: 'Mock Interview',
             href: '/dashboard/interview',
+            hasUpdate: updateIndicators['/dashboard/interview'],
             subItems: [
                 { label: 'Mock Analysis', href: '/dashboard/interview?mode=analysis', icon: 'analytics' }
             ]
         },
-        { icon: 'description', label: 'Resume', href: '/dashboard/resume' },
+        { icon: 'description', label: 'Resume', href: '/dashboard/resume', hasUpdate: updateIndicators['/dashboard/resume'] },
         {
             icon: 'memory',
             label: 'Git Mastery',
             href: '/dashboard/github',
+            hasUpdate: updateIndicators['/dashboard/github'],
             subItems: [
                 { label: 'Commands & Lessons', href: '/dashboard/github', icon: 'terminal' },
                 { label: 'CI/CD Pipelines', href: '/dashboard/github/cicd', icon: 'settings_ethernet' },
@@ -91,11 +93,12 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             ]
         },
         { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar', hasUpdate: updateIndicators['/dashboard/market-radar'] },
-        { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence' },
+        { icon: 'psychology', label: 'Synapse', href: '/dashboard/intelligence', hasUpdate: updateIndicators['/dashboard/intelligence'] },
         {
             icon: 'group',
             label: 'Mentors',
             href: '/dashboard/mentors',
+            hasUpdate: updateIndicators['/dashboard/mentors'],
             subItems: [
                 { label: 'Find a Mentor', href: '/dashboard/mentors', icon: 'search' },
                 { label: 'Mentor Console', href: '/dashboard/mentor-console', icon: 'dashboard' },

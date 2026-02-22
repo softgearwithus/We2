@@ -289,7 +289,7 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                             <div className="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-3xl mx-auto mb-4 shadow-lg flex items-center justify-center">
                                 <Volume2 className={cn("w-10 h-10 text-white transition-opacity", status === 'speaking' ? "opacity-100" : "opacity-50")} />
                             </div>
-                            <h3 className="font-bold text-lg text-slate-900">Sophia</h3>
+                            <h3 className="font-bold text-lg text-slate-900">EMBLE AI</h3>
                             <p className="text-xs font-medium text-indigo-600 uppercase tracking-widest">Placement Mode AI Lead</p>
                         </div>
 
@@ -315,29 +315,32 @@ export default function InterviewSession({ interviewId = `mock-${Date.now()}`, o
                                         Waiting to start...
                                     </div>
                                 )}
-                                {messages.map((msg, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className={cn(
-                                            "flex flex-col gap-1",
-                                            msg.role === 'user' ? "items-end" : "items-start"
-                                        )}
-                                    >
-                                        <div className={cn(
-                                            "max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed shadow-sm",
-                                            msg.role === 'user'
-                                                ? "bg-slate-900 text-white rounded-tr-sm"
-                                                : "bg-white text-slate-700 border border-slate-100 rounded-tl-sm"
-                                        )}>
-                                            {msg.text}
-                                        </div>
-                                        <span className="text-[10px] font-bold text-slate-400 px-2">
-                                            {msg.role === 'user' ? 'You' : 'Sophia'}
-                                        </span>
-                                    </motion.div>
-                                ))}
+                                {messages.map((msg, idx) => {
+                                    if (idx === 0) return null; // Hide the initial automated prompt message
+                                    return (
+                                        <motion.div
+                                            key={idx}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            className={cn(
+                                                "flex flex-col gap-1",
+                                                msg.role === 'user' ? "items-end" : "items-start"
+                                            )}
+                                        >
+                                            <div className={cn(
+                                                "max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed shadow-sm",
+                                                msg.role === 'user'
+                                                    ? "bg-slate-900 text-white rounded-tr-sm"
+                                                    : "bg-white text-slate-700 border border-slate-100 rounded-tl-sm"
+                                            )}>
+                                                {msg.text}
+                                            </div>
+                                            <span className="text-[10px] font-bold text-slate-400 px-2">
+                                                {msg.role === 'user' ? 'You' : 'EMBLE AI'}
+                                            </span>
+                                        </motion.div>
+                                    )
+                                })}
                             </AnimatePresence>
                         </div>
                     </div>

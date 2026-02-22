@@ -330,7 +330,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                     <div className="space-y-6">
                                         <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-2">
                                             <Sparkles size={14} className="text-indigo-600" />
-                                            <span className="text-xs font-bold text-indigo-700 uppercase tracking-widest">Powered By Gemini 2.5 AI</span>
+                                            <span className="text-xs font-bold text-indigo-700 uppercase tracking-widest">Powered By EMBLE AI</span>
                                         </div>
                                         <h1 className="text-4xl xl:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
                                             Advanced <br />

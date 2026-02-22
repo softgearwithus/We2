@@ -240,7 +240,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
 
                         <h2 className="text-4xl font-black text-slate-900 tracking-tight">Technical Deep Dive Finished!</h2>
                         <p className="text-slate-500 text-lg max-w-lg mx-auto">
-                            You have successfully answered all 4 technical prompts. Your entire session is ready for Gemini 2.5 analysis.
+                            You have successfully answered all 4 technical prompts. Your entire session is ready for EMBLE AI analysis.
                         </p>
 
                         {/* List Audio Summaries */}
