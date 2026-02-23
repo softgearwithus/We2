@@ -112,6 +112,59 @@ export default function TopicPage() {
         }
     };
 
+    useEffect(() => {
+        const loadProgress = async () => {
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) {
+                setIsProgressLoaded(true);
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
+                setCompletedPhases(completed);
+            } catch (error) {
+                console.error('Failed to load preparation progress', error);
+            } finally {
+                setIsProgressLoaded(true);
+            }
+        };
+
+        loadProgress();
+    }, []);
+
+    useEffect(() => {
+        const persistProgress = async () => {
+            if (!isProgressLoaded) return;
+            const token = localStorage.getItem('accessToken') || '';
+            if (!token) return;
+            try {
+                await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completedPhaseIds: completedPhases }),
+                });
+            } catch (error) {
+                console.error('Failed to update preparation progress', error);
+            }
+        };
+
+        persistProgress();
+    }, [completedPhases, isProgressLoaded]);
+
+    const isPhaseCompleted = completedPhases.includes(phase.id);
+    const handleCompletePhase = () => {
+        if (isPhaseCompleted) return;
+        setCompletedPhases((prev) => (prev.includes(phase.id) ? prev : [...prev, phase.id]));
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
             {/* Header */}
@@ -365,55 +418,3 @@ export default function TopicPage() {
         </div>
     );
 }
-    useEffect(() => {
-        const loadProgress = async () => {
-            const token = localStorage.getItem('accessToken') || '';
-            if (!token) {
-                setIsProgressLoaded(true);
-                return;
-            }
-            try {
-                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                const completed = Array.isArray(data.completedPhaseIds) ? data.completedPhaseIds : [];
-                setCompletedPhases(completed);
-            } catch (error) {
-                console.error('Failed to load preparation progress', error);
-            } finally {
-                setIsProgressLoaded(true);
-            }
-        };
-
-        loadProgress();
-    }, []);
-
-    useEffect(() => {
-        const persistProgress = async () => {
-            if (!isProgressLoaded) return;
-            const token = localStorage.getItem('accessToken') || '';
-            if (!token) return;
-            try {
-                await fetch(`${API_BASE_URL}/preparation/me/progress`, {
-                    method: 'PATCH',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ completedPhaseIds: completedPhases }),
-                });
-            } catch (error) {
-                console.error('Failed to update preparation progress', error);
-            }
-        };
-
-        persistProgress();
-    }, [completedPhases, isProgressLoaded]);
-
-    const isPhaseCompleted = completedPhases.includes(phase.id);
-    const handleCompletePhase = () => {
-        if (isPhaseCompleted) return;
-        setCompletedPhases((prev) => (prev.includes(phase.id) ? prev : [...prev, phase.id]));
-    };
