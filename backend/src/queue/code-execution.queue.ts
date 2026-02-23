@@ -1,16 +1,29 @@
 import { Queue, QueueOptions } from 'bullmq';
 import IORedis from 'ioredis';
 
-// Redis connection configuration
-const connection = new IORedis({
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    maxRetriesPerRequest: null,
-});
+let connection: IORedis | null = null;
+let codeExecutionQueue: Queue | null = null;
 
-// Queue options
-const queueOptions: QueueOptions = {
-    connection,
+export const isCodeExecutionEnabled = () => {
+    const flag = process.env.CODE_EXECUTION_ENABLED;
+    if (flag === 'true') return true;
+    if (flag === 'false') return false;
+    return process.env.NODE_ENV !== 'production';
+};
+
+const getConnection = () => {
+    if (!connection) {
+        connection = new IORedis({
+            host: process.env.REDIS_HOST || 'localhost',
+            port: parseInt(process.env.REDIS_PORT || '6379'),
+            maxRetriesPerRequest: null,
+        });
+    }
+    return connection;
+};
+
+const getQueueOptions = (): QueueOptions => ({
+    connection: getConnection(),
     defaultJobOptions: {
         attempts: 3,
         backoff: {
@@ -18,17 +31,24 @@ const queueOptions: QueueOptions = {
             delay: 1000,
         },
         removeOnComplete: {
-            age: 3600, // Remove completed jobs after 1 hour
-            count: 1000, // Keep last 1000 completed jobs
+            age: 3600,
+            count: 1000,
         },
         removeOnFail: {
-            age: 86400, // Remove failed jobs after 24 hours
+            age: 86400,
         },
     },
-};
+});
 
-// Code execution queue
-export const codeExecutionQueue = new Queue('code-execution', queueOptions);
+const getQueue = () => {
+    if (!isCodeExecutionEnabled()) {
+        throw new Error('Code execution queue is disabled. Set CODE_EXECUTION_ENABLED=true to enable.');
+    }
+    if (!codeExecutionQueue) {
+        codeExecutionQueue = new Queue('code-execution', getQueueOptions());
+    }
+    return codeExecutionQueue;
+};
 
 // Job data interfaces
 export interface CodeExecutionJob {
@@ -47,7 +67,8 @@ export interface CodeExecutionJob {
 
 // Queue operations
 export async function addCodeExecutionJob(data: CodeExecutionJob) {
-    const job = await codeExecutionQueue.add('execute', data, {
+    const queue = getQueue();
+    const job = await queue.add('execute', data, {
         priority: 1, // Higher priority for faster processing
     });
 
@@ -59,13 +80,15 @@ export async function addCodeExecutionJob(data: CodeExecutionJob) {
 }
 
 export async function getQueuePosition(jobId: string): Promise<number> {
-    const waiting = await codeExecutionQueue.getWaiting();
+    const queue = getQueue();
+    const waiting = await queue.getWaiting();
     const position = waiting.findIndex((job) => job.id === jobId);
     return position === -1 ? 0 : position + 1;
 }
 
 export async function getJobStatus(jobId: string) {
-    const job = await codeExecutionQueue.getJob(jobId);
+    const queue = getQueue();
+    const job = await queue.getJob(jobId);
     if (!job) {
         return null;
     }
@@ -83,6 +106,12 @@ export async function getJobStatus(jobId: string) {
 
 // Graceful shutdown
 export async function closeQueue() {
-    await codeExecutionQueue.close();
-    await connection.quit();
+    if (codeExecutionQueue) {
+        await codeExecutionQueue.close();
+        codeExecutionQueue = null;
+    }
+    if (connection) {
+        await connection.quit();
+        connection = null;
+    }
 }

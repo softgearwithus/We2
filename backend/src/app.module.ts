@@ -78,73 +78,99 @@ import { UserSectionUsage } from './usage/entities/user-section-usage.entity';
 import { PreparationModule } from './preparation/preparation.module';
 import { PreparationProgress } from './preparation/entities/preparation-progress.entity';
 import { resolveDbConfig } from './common/db-config';
+import { Client } from 'pg';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
+      useFactory: async (configService: ConfigService) => {
         const dbType = configService.get<string>('DB_TYPE') || 'postgres';
-        const entities = [
-          User,
-          Simulation,
-          Task,
-          Team,
-          TeamMember,
-          Performance,
-          Achievement,
-          Certification,
-           Project,
-           ProjectLab,
-           ProjectLabSubmission,
-          InterviewSession,
-          Interview,
-          DsaProblem,
-          Submission,
-          DsaUserState,
-          DsaTrainingSession,
-          DsaProblemInsight,
-          SqlProblem,
-          SqlSubmission,
-          SqlUserState,
-          SqlTrainingSession,
-          SqlProblemInsight,
-          CourseContent,
-          UserGamification,
-          Badge,
-          UserBadge,
-          Resume,
-          McqQuestion,
-          WriteXQuestion,
-          UserSectionUsage,
-          PreparationProgress,
-          College,
-          CollegeStaff,
-          StudentCohort,
-          CollegeStudent,
-           AdminActivityLog,
-           AdminUpdateFlag,
-           PlatformSettings,
-          MarketRadar,
-          MentorProfile,
-          MentorApplication,
-          MentorSession,
-          MentorPayout,
-        ];
-
-        if (dbType === 'postgres') {
-          const dbConfig = resolveDbConfig(configService);
-          return {
-            type: 'postgres',
-            ...dbConfig,
-            entities,
-            synchronize: true,
-            logging: false,
-          };
+        if (dbType !== 'postgres') {
+          throw new Error('SQLite is not supported. Set DB_TYPE=postgres.');
         }
 
-        throw new Error('SQLite is not supported. Set DB_TYPE=postgres.');
+        const dbConfig = resolveDbConfig(configService);
+        if (dbConfig.autoCreate) {
+          const adminClient = new Client({
+            host: dbConfig.host,
+            port: dbConfig.port,
+            user: dbConfig.username,
+            password: dbConfig.password,
+            database: dbConfig.defaultDatabase,
+            ssl: dbConfig.ssl ? { rejectUnauthorized: false } : undefined,
+          });
+          await adminClient.connect();
+          const result = await adminClient.query(
+            'SELECT 1 FROM pg_database WHERE datname = $1',
+            [dbConfig.database],
+          );
+          if (result.rowCount === 0) {
+            await adminClient.query(`CREATE DATABASE "${dbConfig.database}"`);
+          }
+          await adminClient.end();
+        }
+
+        return {
+          type: 'postgres',
+          host: dbConfig.host,
+          port: dbConfig.port,
+          username: dbConfig.username,
+          password: dbConfig.password,
+          database: dbConfig.database,
+          ssl: dbConfig.ssl,
+          entities: [
+            User,
+            Simulation,
+            Task,
+            Team,
+            TeamMember,
+            Performance,
+            Achievement,
+            Certification,
+            Project,
+            ProjectLab,
+            ProjectLabSubmission,
+            InterviewSession,
+            Interview,
+            DsaProblem,
+            Submission,
+            DsaUserState,
+            DsaTrainingSession,
+            DsaProblemInsight,
+            SqlProblem,
+            SqlSubmission,
+            SqlUserState,
+            SqlTrainingSession,
+            SqlProblemInsight,
+            CourseContent,
+            UserGamification,
+            Badge,
+            UserBadge,
+            Resume,
+            McqQuestion,
+            WriteXQuestion,
+            UserSectionUsage,
+            PreparationProgress,
+            College,
+            CollegeStaff,
+            StudentCohort,
+            CollegeStudent,
+            AdminActivityLog,
+            AdminUpdateFlag,
+            PlatformSettings,
+            MarketRadar,
+            MentorProfile,
+            MentorApplication,
+            MentorSession,
+            MentorPayout,
+          ],
+          synchronize: true,
+          logging: false,
+          autoLoadEntities: false,
+          name: 'default',
+        };
       },
       inject: [ConfigService],
     }),

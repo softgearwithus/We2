@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DsaProblem } from '../dsa/entities/dsa-problem.entity';
 import { Submission, SubmissionSource, SubmissionStatus } from '../dsa/entities/submission.entity';
 import { CreateSubmissionDto } from '../dsa/dto/create-submission.dto';
-import { addCodeExecutionJob } from './code-execution.queue';
+import { addCodeExecutionJob, isCodeExecutionEnabled } from './code-execution.queue';
 
 @Injectable()
 export class SubmissionQueueService {
@@ -20,6 +20,9 @@ export class SubmissionQueueService {
      * Creates submission record and adds job to queue
      */
     async submitCode(userId: string, dto: CreateSubmissionDto) {
+        if (!isCodeExecutionEnabled()) {
+            throw new ServiceUnavailableException('Code execution is disabled in this environment.');
+        }
         // Get problem with test cases
         const problem = await this.problemsRepository.findOne({
             where: { id: dto.problemId, isActive: true },

@@ -6,8 +6,10 @@ export type DbConfig = {
   username: string;
   password: string;
   database: string;
+  defaultDatabase: string;
   ssl?: { rejectUnauthorized: boolean };
   uuidExtension?: 'pgcrypto' | 'uuid-ossp';
+  autoCreate?: boolean;
 };
 
 export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
@@ -21,12 +23,14 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
   const password = read('PGPASSWORD') || read('DB_PASSWORD') || 'password';
   const database =
     read('PGDATABASE') || read('DB_NAME') || read('DB_DATABASE') || 'college_prep_db';
+  const defaultDatabase = read('DB_DEFAULT_DATABASE') || 'postgres';
   const sslMode = read('PGSSLMODE');
   const sslEnabled =
     read('DB_SSL') === 'true' ||
     sslMode === 'require' ||
     sslMode === 'verify-ca' ||
     sslMode === 'verify-full';
+  const autoCreate = read('DB_AUTO_CREATE') === 'true';
   const uuidExtensionRaw = read('DB_UUID_EXTENSION') || 'pgcrypto';
   const uuidExtension =
     uuidExtensionRaw === 'uuid-ossp' ? 'uuid-ossp' : 'pgcrypto';
@@ -38,7 +42,9 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
     username,
     password,
     database,
+    defaultDatabase,
     ssl,
     uuidExtension,
+    autoCreate,
   };
 };
