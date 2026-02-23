@@ -144,6 +144,12 @@ export default function DsaProblemPage() {
         // Execute Code against ALL cases
         const token = localStorage.getItem('accessToken') || '';
 
+        // Ensure problem is loaded before executing
+        if (!problem) {
+            setIsRunning(false);
+            return;
+        }
+
         // Pass UUID instead of ID (slug)
         const res = await executeCode(problem.uuid, code, language, token);
         // Update Test Case Statuses based on Execution Result
