@@ -131,7 +131,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         if (path !== pathname) return false;
         if (!queryString) return true;
         const targetParams = new URLSearchParams(queryString);
-        for (const [key, value] of targetParams.entries()) {
+        const entries = Array.from(targetParams.entries());
+        for (const [key, value] of entries) {
             if (searchParams.get(key) !== value) return false;
         }
         return true;
