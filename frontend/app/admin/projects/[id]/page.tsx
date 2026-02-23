@@ -51,20 +51,20 @@ export default function EditProjectLabPage() {
         estimatedTime: project.estimatedTime || '',
         skills: project.skills || [],
         tags: project.tags || [],
-        details: project.details || {
-            frontend: '',
-            backend: '',
-            database: '',
-            architecture: '',
-            prerequisites: [],
-            tools: [],
-            resources: [],
+        details: {
+            frontend: project.details?.frontend || '',
+            backend: project.details?.backend || '',
+            database: project.details?.database || '',
+            architecture: project.details?.architecture || '',
+            prerequisites: project.details?.prerequisites || [],
+            tools: project.details?.tools || [],
+            resources: project.details?.resources || [],
         },
-        readme: project.readme || {
-            problem: '',
-            solution: '',
-            features: [],
-            outcomes: [],
+        readme: {
+            problem: project.readme?.problem || '',
+            solution: project.readme?.solution || '',
+            features: project.readme?.features || [],
+            outcomes: project.readme?.outcomes || [],
         },
         tasks: project.tasks || [],
     };
