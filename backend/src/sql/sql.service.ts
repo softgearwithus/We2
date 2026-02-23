@@ -552,20 +552,29 @@ ${problem.description}`;
         }
 
         const raw = fs.readFileSync(datasetPath, 'utf-8');
+        return this.importProblemsFromJson(raw);
+    }
+
+    async importProblemsFromJson(raw: string) {
         const dataset = JSON.parse(raw) as any;
         const groups = dataset?.data?.studyPlanV2Detail?.planSubGroups || [];
         const created: string[] = [];
         const updated: string[] = [];
+        const skipped: string[] = [];
 
-        const questions: Array<any> = [];
-        for (const group of groups) {
-            if (!group?.questions?.length) continue;
-            group.questions.forEach((question: any) => {
-                questions.push({
-                    ...question,
-                    groupName: group.name,
+        let questions: Array<any> = [];
+        if (Array.isArray(dataset)) {
+            questions = dataset;
+        } else {
+            for (const group of groups) {
+                if (!group?.questions?.length) continue;
+                group.questions.forEach((question: any) => {
+                    questions.push({
+                        ...question,
+                        groupName: group.name,
+                    });
                 });
-            });
+            }
         }
 
         for (const entry of questions) {
@@ -574,7 +583,10 @@ ${problem.description}`;
                 .trim()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-+|-+$)/g, '');
-            if (!slug) continue;
+            if (!slug) {
+                skipped.push(entry.title || 'unknown');
+                continue;
+            }
 
             const existing = await this.problemsRepository.findOne({ where: { slug } });
             const rawDifficulty = String(entry.difficulty || 'easy').toLowerCase();
@@ -623,6 +635,6 @@ ${problem.description}`;
             }
         }
 
-        return { createdCount: created.length, updatedCount: updated.length };
+        return { createdCount: created.length, updatedCount: updated.length, skippedCount: skipped.length };
     }
 }

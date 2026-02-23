@@ -15,6 +15,7 @@ import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { ExecutionContext } from '@nestjs/common';
 import { McqCategory } from './entities/mcq-question.entity';
 import { McqApiKeyGuard } from './guards/mcq-api-key.guard';
+import { AdminDeleteMcqQueryDto } from './dto/admin-delete-mcq-query.dto';
 
 @ApiTags('mcqs')
 @Controller('mcqs')
@@ -91,6 +92,16 @@ export class McqsController {
     @ApiResponse({ status: 200, description: 'MCQ deleted' })
     async remove(@Param('id') id: string) {
         return this.mcqsService.remove(id);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.SUPER_ADMIN)
+    @Delete('admin')
+    @ApiOperation({ summary: 'Bulk delete MCQs (Admin only)' })
+    @ApiResponse({ status: 200, description: 'MCQs deleted' })
+    async bulkRemove(@Query() query: AdminDeleteMcqQueryDto) {
+        return this.mcqsService.bulkRemove(query);
     }
 
     @UseGuards(McqApiKeyGuard)

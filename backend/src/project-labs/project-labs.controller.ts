@@ -3,6 +3,7 @@ import {
     Get,
     Post,
     Patch,
+    Delete,
     Param,
     Body,
     Query,
@@ -111,6 +112,15 @@ export class ProjectLabsController {
     @ApiOperation({ summary: 'Update a project lab (Admin only)' })
     async update(@Param('id') id: string, @Body() dto: UpdateProjectLabDto) {
         return this.projectLabsService.update(id, dto);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Delete(':id')
+    @Roles(UserRole.SUPER_ADMIN, UserRole.COLLEGE_ADMIN, UserRole.COMPANY_ADMIN)
+    @ApiOperation({ summary: 'Delete a project lab (Admin only)' })
+    async remove(@Param('id') id: string) {
+        return this.projectLabsService.remove(id);
     }
 
     @ApiBearerAuth('JWT-auth')

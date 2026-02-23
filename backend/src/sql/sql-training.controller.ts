@@ -7,6 +7,7 @@ import {
     Query,
     UseGuards,
     Request,
+    BadRequestException,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -23,6 +24,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
 
 @ApiTags('sql-training')
 @Controller('sql-training')
@@ -124,5 +127,19 @@ export class SqlTrainingController {
     @ApiOperation({ summary: 'Seed SQL problems from sql_dataset.json (Admin only)' })
     async seedTrainingProblems() {
         return this.sqlService.seedProblemsFromDataset();
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post('admin/import')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Import SQL problems from JSON (Admin only)' })
+    @UseInterceptors(FileInterceptor('file'))
+    async importTrainingProblems(@UploadedFile() file?: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('Missing JSON file.');
+        }
+        const raw = file.buffer?.toString('utf-8') || '';
+        return this.sqlService.importProblemsFromJson(raw);
     }
 }

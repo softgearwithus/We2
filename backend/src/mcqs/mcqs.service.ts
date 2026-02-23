@@ -6,6 +6,7 @@ import { CreateMcqQuestionDto } from './dto/create-mcq-question.dto';
 import { ImportMcqsDto } from './dto/import-mcqs.dto';
 import { ListMcqQueryDto, McqOrder } from './dto/list-mcq-query.dto';
 import { AdminMcqQueryDto } from './dto/admin-mcq-query.dto';
+import { AdminDeleteMcqQueryDto } from './dto/admin-delete-mcq-query.dto';
 import { UpdateMcqQuestionDto } from './dto/update-mcq-question.dto';
 import { McqQuestion, McqCategory } from './entities/mcq-question.entity';
 
@@ -180,6 +181,36 @@ export class McqsService {
             metadata: { id: question.id },
         });
         return { success: true };
+    }
+
+    async bulkRemove(query: AdminDeleteMcqQueryDto) {
+        const qb = this.mcqRepo.createQueryBuilder('mcq');
+
+        if (query.category) {
+            qb.andWhere('mcq.category = :category', { category: query.category });
+        }
+        if (query.groupKey) {
+            qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
+        }
+        if (query.search) {
+            qb.andWhere('(mcq.question ILIKE :search OR mcq.groupLabel ILIKE :search)', {
+                search: `%${query.search}%`,
+            });
+        }
+
+        const ids = await qb.select('mcq.id', 'id').getRawMany<{ id: string }>();
+        if (ids.length === 0) {
+            return { deletedCount: 0 };
+        }
+
+        await this.mcqRepo.delete(ids.map((row) => row.id));
+        await this.adminService.logAction({
+            action: 'MCQ Bulk Deleted',
+            target: query.groupKey || query.category || 'filtered',
+            severity: 'warning',
+            metadata: { deletedCount: ids.length },
+        });
+        return { deletedCount: ids.length };
     }
 
     async groups(category: McqCategory) {

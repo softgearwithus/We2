@@ -161,6 +161,15 @@ export const updateProjectLab = async (
     return response.json();
 };
 
+export const deleteProjectLab = async (token: string, id: string) => {
+    const response = await fetch(`${API_BASE_URL}/project-labs/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete project lab');
+    return response.json();
+};
+
 export const updateProjectLabSubmission = async (
     token: string,
     submissionId: string,

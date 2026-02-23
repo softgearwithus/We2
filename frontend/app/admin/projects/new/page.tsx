@@ -8,37 +8,90 @@ import { PROJECT_DOMAINS } from '@/app/lib/ProjectData';
 import { createProjectLab, type ProjectLabComplexity } from '@/app/lib/project-labs';
 import { useRouter } from 'next/navigation';
 
-export default function NewProjectForm() {
+type ProjectLabFormState = {
+    targetDomain: string;
+    title: string;
+    description: string;
+    complexity: ProjectLabComplexity;
+    estimatedTime: string;
+    skills: string[];
+    tags: string[];
+    details: {
+        frontend: string;
+        backend: string;
+        database: string;
+        architecture: string;
+        prerequisites: string[];
+        tools: string[];
+        resources: Array<{ title: string; url: string; type: 'docs' | 'design' | 'guide' | 'video' }>;
+    };
+    readme: {
+        problem: string;
+        solution: string;
+        features: string[];
+        outcomes: string[];
+    };
+    tasks: Array<{ id: string; title: string; status: string }>;
+};
+
+type ProjectLabFormProps = {
+    mode?: 'create' | 'edit';
+    initialData?: ProjectLabFormState;
+    onSubmit?: (payload: {
+        domainId: string;
+        title: string;
+        description: string;
+        complexity: ProjectLabComplexity;
+        estimatedTime: string;
+        skills: string[];
+        tags: string[];
+        tasks: Array<{ id: string; title: string; status: string }>;
+        readme: ProjectLabFormState['readme'];
+        details: ProjectLabFormState['details'];
+    }) => Promise<void>;
+    isSubmitting?: boolean;
+    submitError?: string | null;
+};
+
+export default function NewProjectForm({
+    mode = 'create',
+    initialData,
+    onSubmit,
+    isSubmitting: externalSubmitting,
+    submitError: externalSubmitError,
+}: ProjectLabFormProps) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
     // Core Form State mapping directly to ProjectType
-    const [formData, setFormData] = useState({
-        targetDomain: '',
-        title: '',
-        description: '',
-        complexity: 'Beginner',
-        estimatedTime: '',
-        skills: [] as string[],
-        tags: [] as string[],
-        details: {
-            frontend: '',
-            backend: '',
-            database: '',
-            architecture: '',
-            prerequisites: [] as string[],
-            tools: [] as string[],
-            resources: [] as { title: string; url: string; type: 'docs' | 'design' | 'guide' | 'video' }[]
-        },
-        readme: {
-            problem: '',
-            solution: '',
-            features: [] as string[],
-            outcomes: [] as string[],
-        },
-        tasks: [] as { id: string, title: string, status: string }[]
-    });
+    const [formData, setFormData] = useState<ProjectLabFormState>(
+        initialData || {
+            targetDomain: '',
+            title: '',
+            description: '',
+            complexity: 'Beginner',
+            estimatedTime: '',
+            skills: [],
+            tags: [],
+            details: {
+                frontend: '',
+                backend: '',
+                database: '',
+                architecture: '',
+                prerequisites: [],
+                tools: [],
+                resources: [],
+            },
+            readme: {
+                problem: '',
+                solution: '',
+                features: [],
+                outcomes: [],
+            },
+            tasks: [],
+        }
+    );
 
     // Temp states for arrays
     const [tempInputs, setTempInputs] = useState({
@@ -123,11 +176,14 @@ export default function NewProjectForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitError(null);
+        const isExternal = !!onSubmit;
+        if (!isExternal) {
+            setIsSubmitting(true);
+            setSubmitError(null);
+        }
 
         const token = localStorage.getItem('accessToken') || '';
-        if (!token) {
+        if (!token && !onSubmit) {
             setSubmitError('Missing admin token.');
             setIsSubmitting(false);
             return;
@@ -147,12 +203,20 @@ export default function NewProjectForm() {
         };
 
         try {
-            await createProjectLab(token, payload);
-            router.push('/admin/projects');
+            if (onSubmit) {
+                await onSubmit(payload);
+            } else {
+                await createProjectLab(token, payload);
+                router.push('/admin/projects');
+            }
         } catch (error: any) {
-            setSubmitError(error?.message || 'Failed to create project lab.');
+            if (!onSubmit) {
+                setSubmitError(error?.message || 'Failed to create project lab.');
+            }
         } finally {
-            setIsSubmitting(false);
+            if (!onSubmit) {
+                setIsSubmitting(false);
+            }
         }
     };
 
@@ -370,22 +434,22 @@ export default function NewProjectForm() {
                         <AlertCircle size={18} />
                         Ensure all array constraints are validated before submission.
                     </div>
-                    {submitError && (
-                        <div className="text-xs font-medium text-rose-600 bg-rose-50 border border-rose-100 p-2.5 rounded-lg">
-                            {submitError}
-                        </div>
-                    )}
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-xl font-bold transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2"
-                    >
-                        {isSubmitting ? (
-                            <><span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> Processing...</>
-                        ) : (
-                            <><Send size={18} /> Launch to Project Labs</>
-                        )}
-                    </button>
+                     {(externalSubmitError || submitError) && (
+                         <div className="text-xs font-medium text-rose-600 bg-rose-50 border border-rose-100 p-2.5 rounded-lg">
+                             {externalSubmitError || submitError}
+                         </div>
+                     )}
+                     <button
+                         type="submit"
+                         disabled={externalSubmitting ?? isSubmitting}
+                         className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-xl font-bold transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2"
+                     >
+                         {(externalSubmitting ?? isSubmitting) ? (
+                             <><span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> Processing...</>
+                         ) : (
+                             <><Send size={18} /> {mode === 'edit' ? 'Save Changes' : 'Launch to Project Labs'}</>
+                         )}
+                     </button>
                 </div>
             </form>
         </div>

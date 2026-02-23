@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Code2, Loader2, Search } from 'lucide-react';
+import { ArrowLeft, Code2, Loader2, Search, Upload } from 'lucide-react';
 import { DsaAdminProblem, fetchAdminDsaProblems } from '@/app/lib/training-admin';
 
 const DIFFICULTIES = [
@@ -30,6 +30,8 @@ export default function AdminDsaTrainingList() {
     const [items, setItems] = useState<DsaAdminProblem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [message, setMessage] = useState<string | null>(null);
+    const [importMessage, setImportMessage] = useState<string | null>(null);
+    const [importing, setImporting] = useState(false);
     const [filters, setFilters] = useState({
         difficulty: '',
         category: '',
@@ -38,6 +40,31 @@ export default function AdminDsaTrainingList() {
     });
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') || '' : '';
+
+    const handleImport = async (file: File | null) => {
+        if (!file) return;
+        setImporting(true);
+        setImportMessage(null);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/dsa-training/admin/import`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData,
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data?.message || 'Import failed');
+            }
+            setImportMessage(`Imported. Created: ${data.createdCount || 0}, Updated: ${data.updatedCount || 0}, Skipped: ${data.skippedCount || 0}`);
+            await loadData();
+        } catch (error: any) {
+            setImportMessage(error.message || 'Import failed');
+        } finally {
+            setImporting(false);
+        }
+    };
 
     const loadData = async () => {
         setIsLoading(true);
@@ -81,6 +108,19 @@ export default function AdminDsaTrainingList() {
                         <Code2 size={18} /> Problem Index
                     </div>
                     <div className="flex-1" />
+                    <div>
+                        <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm cursor-pointer hover:bg-slate-50">
+                            <Upload size={16} />
+                            {importing ? 'Importing...' : 'Import JSON'}
+                            <input
+                                type="file"
+                                accept="application/json"
+                                className="hidden"
+                                disabled={importing}
+                                onChange={(e) => handleImport(e.target.files?.[0] || null)}
+                            />
+                        </label>
+                    </div>
                     <div className="flex flex-1 gap-3">
                         <div className="flex-1 relative">
                             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -115,6 +155,11 @@ export default function AdminDsaTrainingList() {
                 {message && (
                     <div className="mt-4 px-4 py-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-100 text-sm font-bold">
                         {message}
+                    </div>
+                )}
+                {importMessage && (
+                    <div className="mt-4 px-4 py-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 text-sm font-bold">
+                        {importMessage}
                     </div>
                 )}
 

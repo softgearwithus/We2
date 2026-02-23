@@ -7,6 +7,7 @@ import {
     Query,
     UseGuards,
     Request,
+    BadRequestException,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -23,6 +24,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
 
 @ApiTags('dsa-training')
 @Controller('dsa-training')
@@ -124,6 +127,20 @@ export class DsaTrainingController {
     @ApiOperation({ summary: 'Seed DSA problems from dataset.json (Admin only)' })
     async seedTrainingProblems() {
         return this.dsaService.seedProblemsFromDataset();
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Post('admin/import')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Import DSA problems from JSON (Admin only)' })
+    @UseInterceptors(FileInterceptor('file'))
+    async importTrainingProblems(@UploadedFile() file?: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('Missing JSON file.');
+        }
+        const raw = file.buffer?.toString('utf-8') || '';
+        return this.dsaService.importProblemsFromJson(raw);
     }
 
     @ApiBearerAuth('JWT-auth')

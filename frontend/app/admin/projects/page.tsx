@@ -2,14 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Filter, Code2, Clock, CalendarDays, ExternalLink, Edit } from 'lucide-react';
+import { Plus, Search, Filter, Code2, Clock, CalendarDays, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { fetchProjectLabsAdmin, ProjectLab } from '@/app/lib/project-labs';
+import { deleteProjectLab, fetchProjectLabsAdmin, ProjectLab } from '@/app/lib/project-labs';
 
 export default function AdminProjects() {
     const [allProjects, setAllProjects] = useState<ProjectLab[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loadError, setLoadError] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken') || '';
@@ -21,6 +22,25 @@ export default function AdminProjects() {
             .then(setAllProjects)
             .catch((error) => setLoadError(error?.message || 'Failed to load projects.'));
     }, []);
+
+    const handleDelete = async (id: string) => {
+        const token = localStorage.getItem('accessToken') || '';
+        if (!token) {
+            setLoadError('Missing admin token.');
+            return;
+        }
+        const confirmed = window.confirm('Delete this project lab? This will hide it from students.');
+        if (!confirmed) return;
+        setIsDeleting(true);
+        try {
+            await deleteProjectLab(token, id);
+            setAllProjects((prev) => prev.filter((project) => project.id !== id));
+        } catch (error: any) {
+            setLoadError(error?.message || 'Failed to delete project.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     // Simplistic search filter on title or domain
     const filteredProjects = useMemo(() => {
@@ -168,8 +188,20 @@ export default function AdminProjects() {
                                     </td>
                                     <td className="py-4 px-6 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors" title="Edit">
+                                            <Link
+                                                href={`/admin/projects/${project.id}`}
+                                                className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                                title="Edit"
+                                            >
                                                 <Edit size={16} />
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(project.id)}
+                                                disabled={isDeleting}
+                                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={16} />
                                             </button>
                                             <button className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="View details">
                                                 <ExternalLink size={16} />

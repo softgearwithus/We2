@@ -24,6 +24,7 @@ import {
     McqGroup,
     UpdateMcqPayload,
     updateMcq,
+    bulkDeleteMcqs,
 } from '@/app/lib/test-series-admin';
 
 const SUBJECT_KEYS = [
@@ -153,6 +154,30 @@ export default function AdminMcqManager() {
             await loadData();
         } catch (error: any) {
             setMessage({ type: 'error', text: error.message || 'Failed to delete MCQ.' });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!filters.search && !filters.groupKey && !filters.category) {
+            setMessage({ type: 'error', text: 'Add a search or filter before bulk delete.' });
+            return;
+        }
+        const confirmed = window.confirm('Delete all MCQs that match the current filters? This cannot be undone.');
+        if (!confirmed) return;
+        setIsSaving(true);
+        setMessage(null);
+        try {
+            const result = await bulkDeleteMcqs(token, {
+                category: filters.category,
+                groupKey: filters.groupKey,
+                search: filters.search,
+            });
+            setMessage({ type: 'success', text: `Deleted ${result.deletedCount || 0} MCQs.` });
+            await loadData();
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error.message || 'Failed to bulk delete MCQs.' });
         } finally {
             setIsSaving(false);
         }
@@ -357,6 +382,15 @@ export default function AdminMcqManager() {
                                 </option>
                             ))}
                         </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handleBulkDelete}
+                            disabled={isSaving}
+                            className="px-4 py-2 rounded-xl border border-rose-200 text-rose-600 font-semibold text-sm hover:bg-rose-50 disabled:opacity-50"
+                        >
+                            Bulk Delete
+                        </button>
                     </div>
                 </div>
 

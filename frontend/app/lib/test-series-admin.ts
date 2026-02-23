@@ -96,6 +96,24 @@ export const deleteMcq = async (token: string, id: string) => {
     return response.json();
 };
 
+export const bulkDeleteMcqs = async (
+    token: string,
+    query: Record<string, string | number | undefined>,
+) => {
+    const params = new URLSearchParams();
+    Object.entries(query).forEach(([key, value]) => {
+        if (value !== undefined && value !== '') {
+            params.append(key, String(value));
+        }
+    });
+    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to bulk delete MCQs');
+    return response.json();
+};
+
 export const importMcqsCsv = async (apiKey: string, csv: string) => {
     const response = await fetch(`${API_BASE_URL}/mcqs/import`, {
         method: 'POST',

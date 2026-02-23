@@ -615,9 +615,14 @@ ${problem.description}`;
         }
 
         const raw = fs.readFileSync(datasetPath, 'utf-8');
+        return this.importProblemsFromJson(raw);
+    }
+
+    async importProblemsFromJson(raw: string) {
         const dataset = JSON.parse(raw) as Array<any>;
         const created: string[] = [];
         const updated: string[] = [];
+        const skipped: string[] = [];
 
         for (const entry of dataset) {
             const slug = (entry.leetcode_slug || entry.title || '')
@@ -625,7 +630,10 @@ ${problem.description}`;
                 .trim()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-+|-+$)/g, '');
-            if (!slug) continue;
+            if (!slug) {
+                skipped.push(entry.title || 'unknown');
+                continue;
+            }
 
             const existing = await this.problemsRepository.findOne({ where: { slug } });
             const rawDifficulty = String(entry.difficulty || 'easy').toLowerCase();
@@ -665,6 +673,6 @@ ${problem.description}`;
             }
         }
 
-        return { createdCount: created.length, updatedCount: updated.length };
+        return { createdCount: created.length, updatedCount: updated.length, skippedCount: skipped.length };
     }
 }

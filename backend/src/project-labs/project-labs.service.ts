@@ -72,6 +72,12 @@ export class ProjectLabsService {
         return this.projectRepo.save(project);
     }
 
+    async remove(id: string) {
+        const project = await this.findOne(id);
+        project.isActive = false;
+        return this.projectRepo.save(project);
+    }
+
     async submit(userId: string, projectId: string, dto: CreateProjectLabSubmissionDto) {
         const project = await this.findOne(projectId);
         if (!project.isActive) {
