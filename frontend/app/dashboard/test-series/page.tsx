@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpen, Building2, ChevronRight, Mic, Sparkles } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 const container: Variants = {
     hidden: { opacity: 0 },
@@ -58,12 +59,16 @@ export default function TestSeriesPage() {
                     </div>
                 </motion.header>
 
-                <motion.div
-                    variants={container}
-                    initial="hidden"
-                    animate="show"
-                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
-                >
+                <div className="relative">
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your test series." />
+                    )}
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                    >
                     {/* Subject Wise Card */}
                     <motion.div variants={item}>
                         <Link href="/dashboard/test-series/subject" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}>
@@ -129,7 +134,8 @@ export default function TestSeriesPage() {
                             </div>
                         </Link>
                     </motion.div>
-                </motion.div>
+                    </motion.div>
+                </div>
             </div>
         </div>
     );

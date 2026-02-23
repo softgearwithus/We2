@@ -9,6 +9,7 @@ import { Download, Layout, ArrowRight, Sparkles, FileText, CheckCircle2 } from '
 import ATSScanner from './_components/ats-scanner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function ResumeBuilderPage() {
     const [view, setView] = useState<'landing' | 'builder' | 'scanner'>('landing');
@@ -85,7 +86,10 @@ export default function ResumeBuilderPage() {
     };
 
     return (
-        <div className="h-[calc(100vh-7rem)] flex flex-col bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 rounded-2xl border border-slate-200">
+        <div className="h-[calc(100vh-7rem)] flex flex-col bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 rounded-2xl border border-slate-200 relative">
+            {isLimited && (
+                <UsageUpgradeGate message="Upgrade to continue your resume tools." />
+            )}
             {/* Header */}
             <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20 shrink-0 sticky top-0">
                 <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('landing')}>

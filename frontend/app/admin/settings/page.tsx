@@ -138,7 +138,12 @@ export default function AdminSettingsPage() {
     const handleSavePlatform = async () => {
         const token = localStorage.getItem('accessToken') || '';
         if (!token) throw new Error('Missing admin token.');
-        await updatePlatformSettings(token, platform);
+        const payload = {
+            ...platform,
+            maxUploadSizeMB: Math.min(100, Math.max(1, platform.maxUploadSizeMB || 1)),
+        };
+        await updatePlatformSettings(token, payload);
+        setPlatform(payload);
     };
 
 
@@ -368,6 +373,19 @@ export default function AdminSettingsPage() {
                                             onChange={(e) => setPlatform({ ...platform, supportEmail: e.target.value })}
                                             className="w-full max-w-md p-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-sm transition-all"
                                         />
+                                    </div>
+
+                                    <div className="space-y-2 mb-8">
+                                        <label className="text-sm font-bold text-slate-700 flex items-center gap-2"><Database size={16} /> Max Upload Size (MB)</label>
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            max={100}
+                                            value={platform.maxUploadSizeMB}
+                                            onChange={(e) => setPlatform({ ...platform, maxUploadSizeMB: Number(e.target.value) })}
+                                            className="w-full max-w-xs p-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-sm transition-all"
+                                        />
+                                        <p className="text-xs text-slate-500">Applies to resume and audio uploads across the platform.</p>
                                     </div>
 
                                     <div className="flex items-center justify-between p-5 border border-slate-200 rounded-2xl bg-slate-50/50">

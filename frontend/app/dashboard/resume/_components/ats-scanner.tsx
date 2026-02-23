@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, CheckCircle2, X, AlertTriangle, Loader2, Sparkles } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -15,6 +15,7 @@ interface AnalysisResult {
 }
 
 export default function ATSScanner() {
+    const [maxUploadSizeMB, setMaxUploadSizeMB] = useState<number | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const [jobDescription, setJobDescription] = useState('');
     const [isDragging, setIsDragging] = useState(false);
@@ -23,6 +24,17 @@ export default function ATSScanner() {
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { isLimited } = useSectionUsage('resume');
+
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/public/settings`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (typeof data.maxUploadSizeMB === 'number') {
+                    setMaxUploadSizeMB(data.maxUploadSizeMB);
+                }
+            })
+            .catch(() => null);
+    }, []);
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -126,7 +138,9 @@ export default function ATSScanner() {
                             </div>
                             <div>
                                 <p className="text-lg font-bold text-slate-900">Click or Drag & Drop PDF here</p>
-                                <p className="text-sm text-slate-500 mt-1 font-medium">Supports PDF up to 5MB</p>
+                            <p className="text-sm text-slate-500 mt-1 font-medium">
+                                Supports PDF up to {maxUploadSizeMB ?? 5}MB
+                            </p>
                             </div>
                         </motion.div>
                     ) : (

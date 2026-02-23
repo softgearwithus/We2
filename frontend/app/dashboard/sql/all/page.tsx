@@ -8,6 +8,7 @@ import { ArrowLeft, Search, ListFilter } from 'lucide-react';
 import { fetchSqlProblems, SqlProblem } from '@/app/lib/sql-problems';
 import { fetchSqlTrainingTaskForProblem } from '@/app/lib/sql-training';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function SqlAllProblemsPage() {
     const router = useRouter();
@@ -83,7 +84,10 @@ export default function SqlAllProblemsPage() {
             )}
 
             <div className="max-w-6xl mx-auto px-6 py-6">
-                <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-4">
+                <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-4 relative">
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your SQL practice." />
+                    )}
                     <div className="flex flex-col md:flex-row md:items-center gap-3">
                         <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-500 flex-1">
                             <Search size={14} />

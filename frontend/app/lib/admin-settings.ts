@@ -29,6 +29,14 @@ export const fetchPublicUpdateFlags = async (): Promise<UpdateFlag[]> => {
     return response.json();
 };
 
+export type PublicPlatformSettings = PlatformSettings;
+
+export const fetchPublicPlatformSettings = async (): Promise<PublicPlatformSettings> => {
+    const response = await fetch(`${API_BASE_URL}/admin/public/settings`);
+    if (!response.ok) throw new Error('Failed to fetch public platform settings');
+    return response.json();
+};
+
 export type PlatformSettings = {
     maintenanceMode: boolean;
     allowRegistrations: boolean;

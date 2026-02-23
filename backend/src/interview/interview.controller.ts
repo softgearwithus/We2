@@ -1,9 +1,10 @@
-import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseInterceptors, UploadedFile, UseGuards, Request } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InterviewService } from './interview.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
+import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
 
 @Controller('interview')
 export class InterviewController {
@@ -20,17 +21,9 @@ export class InterviewController {
   }
 
   @Post('analyze-audio')
-  @UseInterceptors(FileInterceptor('audio'))
+  @UseInterceptors(FileInterceptor('audio'), UploadLimitInterceptor)
   async analyzeAudio(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5MB
-          // new FileTypeValidator({ fileType: 'audio/*' }), // Broad audio check
-        ],
-      }),
-    )
-    file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
   ) {
     const type = body.type;

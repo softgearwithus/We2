@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 const SUBJECTS = [
     { key: 'english', title: 'English', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
@@ -84,12 +85,16 @@ export default function SubjectTestsPage() {
                     </div>
                 </motion.header>
 
-                <motion.div
-                    variants={container}
-                    initial="hidden"
-                    animate="show"
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-                >
+                <div className="relative">
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your subject test series." />
+                    )}
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
                     {SUBJECTS.map((subject, idx) => (
                         <motion.div variants={item} key={idx}>
                             <Link
@@ -122,7 +127,8 @@ export default function SubjectTestsPage() {
                             </Link>
                         </motion.div>
                     ))}
-                </motion.div>
+                    </motion.div>
+                </div>
             </div>
         </div>
     );

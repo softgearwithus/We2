@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { InterviewsService } from '@/app/services/InterviewsService';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface InterviewLandingProps {
     initialMode?: Mode;
@@ -124,10 +125,24 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     }
 
     if (mode === 'instructions') {
+        if (videoUsage.isLimited) {
+            return (
+                <div className="relative min-h-screen">
+                    <UsageUpgradeGate message="Upgrade to continue your video interview sessions." />
+                </div>
+            );
+        }
         return <PreInterviewInstructions onStart={startVideoSession} onBack={() => setMode('landing')} />;
     }
 
     if (mode === 'video_session') {
+        if (videoUsage.isLimited) {
+            return (
+                <div className="relative min-h-screen">
+                    <UsageUpgradeGate message="Upgrade to continue your video interview sessions." />
+                </div>
+            );
+        }
         return (
             <InterviewSession
                 onEnd={handleVideoComplete}

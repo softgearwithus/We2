@@ -112,7 +112,7 @@ export default function PreparationPage() {
                                 Placement Preparation <span className="text-brand-orange">.</span>
                             </h1>
                             <p className="text-lg text-slate-500 mt-3 max-w-2xl">
-                                A structured, milestone-based path mapped to your dashboard. Track progress, unlock phases, and ship outcomes each week.
+                                Use the roadmap as your core path, and follow the platform guide and schedule below to cover every section with intent.
                             </p>
 
                             <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -162,21 +162,69 @@ export default function PreparationPage() {
                     </div>
                 </header>
 
-                {/* Milestones */}
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {[
-                        { title: 'Daily Focus', desc: '2-hour sprint with DSA + SQL drills.', icon: Brain, color: 'bg-indigo-50 text-indigo-600' },
-                        { title: 'Weekly Outcome', desc: 'Ship one project or lab submission.', icon: Crosshair, color: 'bg-emerald-50 text-emerald-600' },
-                        { title: 'Mock Cycle', desc: '1 interview + analysis loop.', icon: Zap, color: 'bg-orange-50 text-brand-orange' },
-                    ].map((item) => (
-                        <div key={item.title} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
-                                <item.icon size={18} />
+                {/* Platform Guide + Optimized Schedule */}
+                <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-sm">
+                        <div className="flex items-center gap-3 text-slate-900">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                <Brain size={18} />
                             </div>
-                            <h3 className="mt-4 text-sm font-bold text-slate-900">{item.title}</h3>
-                            <p className="text-xs text-slate-500 mt-1">{item.desc}</p>
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">How to use this platform</p>
+                                <h2 className="text-xl font-extrabold text-slate-900">Placement preparation guide</h2>
+                            </div>
                         </div>
-                    ))}
+
+                        <ul className="mt-6 space-y-4 text-sm text-slate-600">
+                            {[
+                                'The test series section will help you get a good score in the MCAT and MCQ sections.',
+                                'The DSA training will help you in Automata Pro.',
+                                'The SQL section will help you in learning SQL and doing SQL 50 from lead code.',
+                                'The project lab sections will help you in adding projects in your resume which are in cohesion with new technologies.',
+                                'The mock interview section will help you clear interviews.',
+                                'The audio drill will help you enhance your English.',
+                                'Git mastery will help you in learning git commands.',
+                                'The market radar will give you new insights about the job market.',
+                                'The mentor section will help you get one-to-one consultation from a mentor and you can also become a mentor by applying for it.',
+                            ].map((item) => (
+                                <li key={item} className="flex gap-3">
+                                    <span className="mt-2 h-2 w-2 rounded-full bg-brand-orange" />
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="bg-white border border-slate-100 rounded-3xl p-6 lg:p-8 shadow-sm">
+                        <div className="flex items-center gap-3 text-slate-900">
+                            <div className="w-10 h-10 rounded-xl bg-orange-50 text-brand-orange flex items-center justify-center">
+                                <Crosshair size={18} />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Optimized schedule</p>
+                                <h2 className="text-xl font-extrabold text-slate-900">Plan your week</h2>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 space-y-4 text-sm text-slate-600">
+                            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Mon - Fri</p>
+                                <p className="mt-2">
+                                    60m Test Series (MCAT/MCQ) + 60m DSA Training (Automata Pro) + 45m SQL (SQL 50 from lead code) + 60m Project Lab + 15m Audio Drill + 15m Git Mastery + 10m Market Radar.
+                                </p>
+                            </div>
+                            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Saturday</p>
+                                <p className="mt-2">
+                                    1 Mock Interview + review (90m) + Project Lab polish (60m) + Market Radar deep dive (30m) + Mentor session or mentor application (30m).
+                                </p>
+                            </div>
+                            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Sunday</p>
+                                <p className="mt-2">Reset and plan; optional 10-15m Audio Drill.</p>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 {/* Timeline */}

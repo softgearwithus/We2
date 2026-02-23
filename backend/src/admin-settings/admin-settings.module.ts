@@ -7,11 +7,12 @@ import { PlatformSettings } from './entities/platform-settings.entity';
 import { UsersModule } from '../users/users.module';
 import { PlatformGuard } from './guards/platform.guard';
 import { LastActiveInterceptor } from './interceptors/last-active.interceptor';
+import { UploadLimitInterceptor } from './interceptors/upload-limit.interceptor';
 
 @Module({
     imports: [TypeOrmModule.forFeature([AdminUpdateFlag, PlatformSettings]), UsersModule],
     controllers: [AdminSettingsController],
-    providers: [AdminSettingsService, PlatformGuard, LastActiveInterceptor],
+    providers: [AdminSettingsService, PlatformGuard, LastActiveInterceptor, UploadLimitInterceptor],
     exports: [AdminSettingsService],
 })
 export class AdminSettingsModule {}

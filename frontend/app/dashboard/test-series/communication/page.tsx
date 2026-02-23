@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, PenTool, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface WriteXQuestion {
     id: string;
@@ -120,6 +121,9 @@ export default function CommunicationTestsPage() {
                     transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 24 }}
                     className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-100 shadow-sm relative overflow-hidden"
                 >
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your WriteX tests." />
+                    )}
                     <div className="flex items-center gap-4 mb-8">
                         <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center">
                             <PenTool size={20} strokeWidth={2.5} />

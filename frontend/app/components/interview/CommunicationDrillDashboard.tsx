@@ -19,6 +19,7 @@ import {
     Tooltip
 } from 'recharts';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface CommunicationDrillDashboardProps {
     onBack?: () => void;
@@ -317,12 +318,9 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                         </div>
                         <div className="space-y-4">
                             {isLimited ? (
-                                <>
-                                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">Free plan limit reached</h2>
-                                    <p className="text-slate-500 text-base leading-relaxed">
-                                        Upgrade to continue your audio drill sessions.
-                                    </p>
-                                </>
+                                <div className="relative min-h-[260px]">
+                                    <UsageUpgradeGate message="Upgrade to continue your audio drill sessions." />
+                                </div>
                             ) : (
                                 <>
                                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">Designing Drill...</h2>

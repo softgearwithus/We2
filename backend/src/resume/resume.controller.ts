@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SaveResumeDto } from './dto/save-resume.dto';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
+import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
 
 @ApiTags('resume')
 @Controller('resume')
@@ -33,7 +34,7 @@ export class ResumeController {
     }
 
     @Post('analyze')
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
     @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
     async analyzeResume(
         @UploadedFile() file: any,

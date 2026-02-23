@@ -1,4 +1,7 @@
-export const FREE_PLAN_SECTION_LIMIT_SECONDS = 10 * 60;
+const parsedLimit = Number(process.env.FREE_PLAN_SECTION_LIMIT_SECONDS);
+export const FREE_PLAN_SECTION_LIMIT_SECONDS = Number.isFinite(parsedLimit) && parsedLimit > 0
+    ? parsedLimit
+    : 5;
 
 export const USAGE_SECTION_KEYS = {
     DSA: 'dsa',

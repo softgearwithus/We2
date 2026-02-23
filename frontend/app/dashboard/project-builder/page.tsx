@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Code, Database, Globe, Layers, ArrowRight, Check, Sparkles } from 'lucide-react';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function ProjectBuilderWizard() {
     const [step, setStep] = useState(1);
@@ -83,6 +84,9 @@ export default function ProjectBuilderWizard() {
 
                 {/* Main Content */}
                 <div className="flex-1 p-8 md:p-12 relative">
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your Project Builder." />
+                    )}
                     <AnimatePresence mode="wait">
                         {step === 1 && (
                             <motion.div

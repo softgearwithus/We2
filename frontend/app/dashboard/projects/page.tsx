@@ -10,6 +10,7 @@ import SkillRoadmap from '@/app/components/dashboard/projects/SkillRoadmap';
 import ProjectDetailView from '@/app/components/dashboard/projects/ProjectDetailView';
 import { fetchProjectLabDomains, fetchProjectLabProgress, fetchProjectLabs } from '@/app/lib/project-labs';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function DevGenesisPage() {
     const [stage, setStage] = useState<'domain' | 'projects'>('domain');
@@ -167,12 +168,9 @@ export default function DevGenesisPage() {
                         {selectedProject ? (
                             <div className="relative">
                                 {isLimited && (
-                                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/85 backdrop-blur-sm rounded-2xl border border-rose-200">
-                                        <div className="text-center max-w-md px-6">
-                                            <h3 className="text-xl font-bold text-slate-900 mb-2">Free plan limit reached</h3>
-                                            <p className="text-sm text-slate-500">Upgrade to continue your Project Labs work.</p>
-                                        </div>
-                                    </div>
+                                    <UsageUpgradeGate
+                                        message="Upgrade to continue your Project Labs work."
+                                    />
                                 )}
                                 <ProjectDetailView key="project" project={selectedProject} onBack={() => setSelectedProject(null)} />
                             </div>

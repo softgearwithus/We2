@@ -6,6 +6,7 @@ import { submitProjectLab } from '@/app/lib/project-labs';
 import { ChevronLeft, Code2, Clock, Github, ExternalLink, CheckCircle2, BookOpen, AlertCircle, Database, Layout, Server, Wrench, Layers, ListChecks, FileText, Figma, Video, Briefcase } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface ProjectDetailViewProps {
     project: ProjectType;
@@ -82,8 +83,11 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="w-full h-full flex flex-col"
+            className="w-full h-full flex flex-col relative"
         >
+            {isLimited && (
+                <UsageUpgradeGate message="Upgrade to continue your Project Labs work." />
+            )}
             {/* Header breadcrumb style */}
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-4 text-sm font-medium w-fit border border-transparent hover:border-slate-200 px-3 py-1.5 rounded-lg active:bg-slate-50">
                 <ChevronLeft size={16} /> Back to Roadmap

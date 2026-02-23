@@ -30,6 +30,7 @@ import { Roles } from '../auth/decorators/auth.decorators';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UserRole } from '../users/user.entity';
+import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
 
 @ApiTags('interviews')
 @ApiBearerAuth('JWT-auth')
@@ -138,7 +139,7 @@ export class InterviewsController {
         return this.interviewsService.analyzeAudioDrill(req.user.id, body.audio, body.context);
     }
     @Post('communication/submit')
-    @UseInterceptors(AnyFilesInterceptor())
+    @UseInterceptors(AnyFilesInterceptor(), UploadLimitInterceptor)
     @ApiOperation({ summary: 'Submit communication drill audio' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async submitCommunicationDrill(

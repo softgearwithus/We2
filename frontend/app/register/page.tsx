@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +10,14 @@ export default function RegisterPage() {
     const router = useRouter();
     const [isNavigating, setIsNavigating] = useState(false);
     const [selection, setSelection] = useState<'student' | 'partner' | null>(null);
+    const [registrationsAllowed, setRegistrationsAllowed] = useState(true);
+
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/public/settings`)
+            .then((res) => res.json())
+            .then((data) => setRegistrationsAllowed(Boolean(data.allowRegistrations)))
+            .catch(() => null);
+    }, []);
 
     const handleNavigation = async (path: string, type: 'student' | 'partner') => {
         if (isNavigating) return;
@@ -109,17 +117,23 @@ export default function RegisterPage() {
                             <p className="text-slate-500">Choose your role to continue.</p>
                         </div>
 
+                        {!registrationsAllowed && (
+                            <div className="mb-6 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700 text-center">
+                                Registrations are currently closed. Please check back soon.
+                            </div>
+                        )}
+
                         <div className="space-y-4">
                             {/* Student Option */}
                             <motion.div
-                                onClick={() => handleNavigation('/register/student', 'student')}
+                                onClick={() => registrationsAllowed && handleNavigation('/register/student', 'student')}
                                 whileHover={!isNavigating ? { scale: 1.02 } : {}}
                                 whileTap={!isNavigating ? { scale: 0.98 } : {}}
                                 animate={isNavigating && selection !== 'student' ? { opacity: 0.5, scale: 0.95 } : {}}
                                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-hidden ${selection === 'student'
                                     ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-105'
                                     : 'border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/50'
-                                    }`}
+                                    } ${registrationsAllowed ? '' : 'opacity-60 cursor-not-allowed'}`}
                             >
                                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform ${selection === 'student' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600 group-hover:scale-110'
                                     }`}>
@@ -146,14 +160,14 @@ export default function RegisterPage() {
 
                             {/* Partner Option */}
                             <motion.div
-                                onClick={() => handleNavigation('/contact', 'partner')}
+                                onClick={() => registrationsAllowed && handleNavigation('/contact', 'partner')}
                                 whileHover={!isNavigating ? { scale: 1.02 } : {}}
                                 whileTap={!isNavigating ? { scale: 0.98 } : {}}
                                 animate={isNavigating && selection !== 'partner' ? { opacity: 0.5, scale: 0.95 } : {}}
                                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-hidden ${selection === 'partner'
                                     ? 'border-brand-orange bg-orange-50 shadow-lg scale-105'
                                     : 'border-slate-100 hover:border-brand-orange hover:bg-orange-50/50'
-                                    }`}
+                                    } ${registrationsAllowed ? '' : 'opacity-60 cursor-not-allowed'}`}
                             >
                                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform ${selection === 'partner' ? 'bg-brand-orange text-white' : 'bg-orange-100 text-brand-orange group-hover:scale-110'
                                     }`}>

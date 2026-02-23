@@ -1,10 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Terminal, Github, Twitter, Linkedin } from 'lucide-react';
+import { fetchPublicPlatformSettings } from '@/app/lib/admin-settings';
 
 export default function Footer() {
+    const [supportEmail, setSupportEmail] = useState('emblehelpcare@gmail.com');
+
+    useEffect(() => {
+        fetchPublicPlatformSettings()
+            .then((data) => {
+                if (data.supportEmail) {
+                    setSupportEmail(data.supportEmail);
+                }
+            })
+            .catch(() => null);
+    }, []);
+
     return (
         <footer className="relative z-10 py-16 bg-white text-brand-black border-t border-gray-100">
             <div className="max-w-7xl mx-auto px-6">
@@ -72,8 +85,8 @@ export default function Footer() {
                         <h6 className="text-brand-black font-bold mb-6 text-sm uppercase tracking-wider">Contact Us</h6>
                         <ul className="space-y-4 text-sm text-gray-500">
                             <li>
-                                <a href="mailto:emblehelpcare@gmail.com" className="hover:text-brand-orange transition-colors">
-                                    emblehelpcare@gmail.com
+                                <a href={`mailto:${supportEmail}`} className="hover:text-brand-orange transition-colors">
+                                    {supportEmail}
                                 </a>
                             </li>
                             <li>

@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { ArrowLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface McqQuestion {
     id: string;
@@ -91,7 +92,10 @@ export default function CompanyMcqsPage() {
                 {loading ? (
                     <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold">Loading questions...</div>
                 ) : (
-                    <div className="space-y-8">
+                    <div className="space-y-8 relative">
+                        {isLimited && (
+                            <UsageUpgradeGate message="Upgrade to continue your company test series." />
+                        )}
                         {items.map((mcq, index) => {
                             const picked = selected[mcq.id];
                             return (

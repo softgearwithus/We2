@@ -8,6 +8,7 @@ import { ArrowLeft, Search, ListFilter } from 'lucide-react';
 import { fetchProblems, Problem } from '@/app/lib/problems';
 import { fetchTrainingTaskForProblem } from '@/app/lib/dsa-training';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function DsaAllProblemsPage() {
     const router = useRouter();
@@ -83,7 +84,10 @@ export default function DsaAllProblemsPage() {
             )}
 
             <div className="max-w-6xl mx-auto px-6 py-6">
-                <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-4">
+                <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col gap-4 relative">
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your DSA practice." />
+                    )}
                     <div className="flex flex-col md:flex-row md:items-center gap-3">
                         <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-500 flex-1">
                             <Search size={14} />

@@ -116,6 +116,8 @@ export class AdminSettingsService {
         return {
             maintenanceMode: settings.maintenanceMode,
             allowRegistrations: settings.allowRegistrations,
+            supportEmail: settings.supportEmail,
+            maxUploadSizeMB: settings.maxUploadSizeMB,
         };
     }
 

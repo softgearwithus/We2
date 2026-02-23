@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Building2, Sparkles, TrendingUp, ChevronRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 const COLOR_OPTIONS = [
     { color: 'text-orange-600', bg: 'bg-orange-50', hoverBg: 'group-hover:bg-orange-600', hoverBorder: 'hover:border-orange-100' },
@@ -81,12 +82,16 @@ export default function CompanyTestsPage() {
                     </div>
                 </motion.header>
 
-                <motion.div
-                    variants={container}
-                    initial="hidden"
-                    animate="show"
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-                >
+                <div className="relative">
+                    {isLimited && (
+                        <UsageUpgradeGate message="Upgrade to continue your company test series." />
+                    )}
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
                     {companies.map((company, idx) => {
                         const palette = COLOR_OPTIONS[idx % COLOR_OPTIONS.length];
                         return (
@@ -120,7 +125,8 @@ export default function CompanyTestsPage() {
                             </motion.div>
                         );
                     })}
-                </motion.div>
+                    </motion.div>
+                </div>
             </div>
         </div>
     );
