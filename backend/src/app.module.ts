@@ -112,6 +112,24 @@ import { Client } from 'pg';
           await adminClient.end();
         }
 
+        if (dbConfig.autoCreateExtension) {
+          const extensionName =
+            dbConfig.uuidExtension === 'uuid-ossp' ? '"uuid-ossp"' : 'pgcrypto';
+          const extensionClient = new Client({
+            host: dbConfig.host,
+            port: dbConfig.port,
+            user: dbConfig.username,
+            password: dbConfig.password,
+            database: dbConfig.database,
+            ssl: dbConfig.ssl ? { rejectUnauthorized: false } : undefined,
+          });
+          await extensionClient.connect();
+          await extensionClient.query(
+            `CREATE EXTENSION IF NOT EXISTS ${extensionName}`,
+          );
+          await extensionClient.end();
+        }
+
         return {
           type: 'postgres',
           host: dbConfig.host,

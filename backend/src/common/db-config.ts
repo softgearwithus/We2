@@ -10,6 +10,7 @@ export type DbConfig = {
   ssl?: { rejectUnauthorized: boolean };
   uuidExtension?: 'pgcrypto' | 'uuid-ossp';
   autoCreate?: boolean;
+  autoCreateExtension?: boolean;
 };
 
 export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
@@ -31,6 +32,7 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
     sslMode === 'verify-ca' ||
     sslMode === 'verify-full';
   const autoCreate = read('DB_AUTO_CREATE') === 'true';
+  const autoCreateExtension = read('DB_AUTO_CREATE_EXTENSION') === 'true';
   const uuidExtensionRaw = read('DB_UUID_EXTENSION') || 'pgcrypto';
   const uuidExtension =
     uuidExtensionRaw === 'uuid-ossp' ? 'uuid-ossp' : 'pgcrypto';
@@ -46,5 +48,6 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
     ssl,
     uuidExtension,
     autoCreate,
+    autoCreateExtension,
   };
 };
