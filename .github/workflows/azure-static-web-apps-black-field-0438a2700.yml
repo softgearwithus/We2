@@ -32,6 +32,10 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: ".next" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+        env:
+          NEXT_PUBLIC_API_URL: https://emble11-dyb9f4b3aucxg2h9.centralindia-01.azurewebsites.net
+          NEXT_PUBLIC_VAPI_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_VAPI_PUBLIC_KEY }}
+          NEXT_PUBLIC_VAPI_ASSISTANT_ID: ${{ secrets.NEXT_PUBLIC_VAPI_ASSISTANT_ID }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
