@@ -9,6 +9,7 @@ import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 export class InterviewService {
   private genAI: GoogleGenerativeAI;
   private model: GenerativeModel;
+  private modelName: string;
 
   constructor(
     @InjectRepository(Interview)
@@ -23,12 +24,16 @@ export class InterviewService {
       console.warn("GEMINI_API_KEY is not set. AI features will not work.");
     }
     this.genAI = new GoogleGenerativeAI(apiKey || 'mock-key');
-    this.model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const requestedModel = process.env.GEMINI_MODEL;
+    this.modelName = requestedModel && requestedModel !== 'gemini-pro'
+      ? requestedModel
+      : 'gemini-2.5-flash';
+    this.model = this.genAI.getGenerativeModel({ model: this.modelName });
   }
 
   async analyzeAudio(audioBuffer: Buffer, mimeType: string, type: 'reading' | 'repeat' | 'extempore' | 'answer' = 'answer', referenceText?: string): Promise<string> {
     try {
-      const model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = this.genAI.getGenerativeModel({ model: this.modelName });
 
       let prompt = "Please analyze this audio response to an interview question. Provide constructive feedback on clarity, tone, and the content of the answer. Keep it concise (under 200 words).";
 

@@ -30,11 +30,23 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      - name: Prepare deployment package (backend)
+        working-directory: backend
+        run: |
+          npm prune --omit=dev
+          rm -rf .deploy
+          mkdir -p .deploy
+          cp -R dist .deploy/
+          cp package.json package-lock.json .deploy/
+          cp -R node_modules .deploy/
+          if [ -f ../dataset.json ]; then cp ../dataset.json .deploy/; fi
+          if [ -f ../sql_dataset.json ]; then cp ../sql_dataset.json .deploy/; fi
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: backend-app
-          path: backend
+          path: backend/.deploy
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,7 +60,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend-app
-          path: backend
+          path: backend-deploy
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -63,5 +75,6 @@ jobs:
         with:
           app-name: 'Emble11'
           slot-name: 'Production'
-          package: backend
+          package: backend-deploy
+          startup-command: 'npm run start:prod'
           
