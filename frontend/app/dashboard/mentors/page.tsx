@@ -247,7 +247,7 @@ export default function MentorsDiscoveryPage() {
                                 <div className="shrink-0 flex flex-col items-center">
                                     <div className="relative">
                                         <div className="w-24 h-24 rounded-full border-4 border-emerald-600 overflow-hidden shadow-sm">
-                                            <img src={mentor.avatarUrl} alt={mentor.name} className="w-full h-full object-cover" />
+                                            <img src={mentor.avatarUrl ?? undefined} alt={mentor.name} className="w-full h-full object-cover" />
                                         </div>
                                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border-2 border-white uppercase tracking-wider shadow-sm">
                                             Mentor
