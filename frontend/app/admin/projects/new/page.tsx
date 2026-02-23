@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, Info, Settings, Code, LayoutDashboard, Send, Trash2, BookOpen, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PROJECT_DOMAINS } from '@/app/lib/ProjectData';
-import { createProjectLab } from '@/app/lib/project-labs';
+import { createProjectLab, type ProjectLabComplexity } from '@/app/lib/project-labs';
 import { useRouter } from 'next/navigation';
 
 export default function NewProjectForm() {
@@ -137,7 +137,7 @@ export default function NewProjectForm() {
             domainId: formData.targetDomain,
             title: formData.title,
             description: formData.description,
-            complexity: formData.complexity,
+            complexity: formData.complexity as ProjectLabComplexity,
             estimatedTime: formData.estimatedTime,
             skills: formData.skills,
             tags: formData.tags,
