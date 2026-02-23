@@ -367,7 +367,7 @@ export default function MentorsDiscoveryPage() {
                             {activeModal === 'connect' && selectedMentor && (
                                 <div className="p-8">
                                     <div className="flex flex-col items-center text-center mb-6">
-                                        <img src={selectedMentor.avatarUrl} alt="" className="w-20 h-20 rounded-full border-4 border-emerald-50 shadow-md mb-4" />
+                                        <img src={selectedMentor.avatarUrl ?? undefined} alt="" className="w-20 h-20 rounded-full border-4 border-emerald-50 shadow-md mb-4" />
                                         <h3 className="text-xl font-extrabold text-slate-900">Book 1:1 with {selectedMentor.name.split(' ')[0]}</h3>
                                         <p className="text-sm text-slate-500 mt-1">₹ {selectedMentor.pricePerMinute} / Min • Voice & Video</p>
                                     </div>
