@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { College } from '../colleges/entities/college.entity';
 import { CollegeStaff } from '../colleges/entities/college-staff.entity';
 import { AdminActivityLog } from './entities/admin-activity-log.entity';
-import { User } from '../users/user.entity';
+import { User, UserRole } from '../users/user.entity';
 import { Submission } from '../dsa/entities/submission.entity';
 import { SqlSubmission } from '../sql/entities/sql-submission.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
@@ -57,18 +57,18 @@ export class AdminService {
         const since = new Date(now - windowMs);
         const visitors = await this.usersRepo
             .createQueryBuilder('user')
-            .where('user.role = :role', { role: 'student' })
+            .where('user.role = :role', { role: UserRole.STUDENT })
             .andWhere('user.createdAt >= :since', { since })
             .getCount();
         const subscribers = await this.usersRepo
             .createQueryBuilder('user')
-            .where('user.role = :role', { role: 'student' })
+            .where('user.role = :role', { role: UserRole.STUDENT })
             .andWhere('user.subscriptionStatus = :status', { status: 'active' })
             .andWhere('user.subscriptionPlan <> :plan', { plan: 'free' })
             .getCount();
         const activeNow = await this.usersRepo
             .createQueryBuilder('user')
-            .where('user.role = :role', { role: 'student' })
+            .where('user.role = :role', { role: UserRole.STUDENT })
             .andWhere('user.lastActiveAt >= :threshold', {
                 threshold: new Date(Date.now() - 15 * 60 * 1000),
             })
@@ -127,7 +127,7 @@ export class AdminService {
 
     async getStudents() {
         const students = await this.usersRepo.find({
-            where: { role: 'student' },
+            where: { role: UserRole.STUDENT },
             order: { createdAt: 'DESC' },
         });
         const colleges = await this.collegesRepo.find();
@@ -156,7 +156,7 @@ export class AdminService {
     }
 
     async disableStudent(id: string) {
-        const student = await this.usersRepo.findOne({ where: { id, role: 'student' } });
+        const student = await this.usersRepo.findOne({ where: { id, role: UserRole.STUDENT } });
         if (!student) {
             return { success: false };
         }
@@ -166,7 +166,7 @@ export class AdminService {
     }
 
     async deleteStudent(id: string) {
-        const student = await this.usersRepo.findOne({ where: { id, role: 'student' } });
+        const student = await this.usersRepo.findOne({ where: { id, role: UserRole.STUDENT } });
         if (!student) {
             return { success: false };
         }

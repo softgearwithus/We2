@@ -159,7 +159,9 @@ export default function AdminMentorsPage() {
                     fetchAdminMentorPayouts(token),
                     fetchAdminMentorSessions(token),
                 ]);
-                const mentorMap = new Map((mentorData || []).map((m: any) => [m.id, m]));
+                const mentorMap = new Map<string, { name?: string | null; userId?: string | null }>(
+                    (mentorData || []).map((m: any) => [m.id, m])
+                );
                 const mentorUserIds = (mentorData || []).map((m: any) => m.userId).filter(Boolean);
                 const studentUserIds = (sessionData || []).map((s: any) => s.studentId).filter(Boolean);
                 const userIds = Array.from(new Set([...mentorUserIds, ...studentUserIds]));
@@ -202,10 +204,16 @@ export default function AdminMentorsPage() {
                     offerings: a.offerings,
                     linkedin: a.linkedin,
                 })));
+                const resolveMentorName = (mentorId: string) => {
+                    const mentor = mentorMap.get(mentorId);
+                    if (mentor?.name) return mentor.name;
+                    const user = mentor?.userId ? userMap[mentor.userId] : undefined;
+                    return user?.email || 'Mentor';
+                };
                 setPayouts((payoutData || []).map((p: any) => ({
                     id: p.id,
                     mentorId: p.mentorId,
-                    mentorName: mentorMap.get(p.mentorId)?.name || 'Mentor',
+                    mentorName: resolveMentorName(p.mentorId),
                     grossAmount: p.amountInr,
                     deductions: 0,
                     amount: p.amountInr,
@@ -217,7 +225,7 @@ export default function AdminMentorsPage() {
                     studentName: s.studentName || userMap[s.studentId]?.email?.split('@')[0] || 'Student',
                     amount: s.priceInr,
                     source: s.topic,
-                    mentorName: mentorMap.get(s.mentorId)?.name || 'Mentor',
+                    mentorName: resolveMentorName(s.mentorId),
                     status: 'Pending',
                     requestedAt: s.createdAt,
                 })));
@@ -226,14 +234,14 @@ export default function AdminMentorsPage() {
                     studentName: s.studentName || userMap[s.studentId]?.email?.split('@')[0] || 'Student',
                     amount: s.priceInr,
                     source: s.topic,
-                    mentorName: mentorMap.get(s.mentorId)?.name || 'Mentor',
+                    mentorName: resolveMentorName(s.mentorId),
                     status: 'Refunded',
                     date: s.updatedAt || s.createdAt,
                     upiRef: 'N/A',
                 })));
                 setAnalytics((sessionData || []).map((s: any) => ({
                     id: s.id,
-                    name: mentorMap.get(s.mentorId)?.name || 'Mentor',
+                    name: resolveMentorName(s.mentorId),
                     totalGross: s.priceInr,
                     platformCut: Math.round(s.priceInr * 0.2),
                     declineCut: s.status === 'declined' ? Math.round(s.priceInr * 0.02) : 0,
