@@ -49,9 +49,9 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
             const { createCollegeStaff, fetchCollegeStaff } = await import('@/app/lib/colleges');
             const roleMap: Record<string, string> = {
                 'College Admin': 'college_admin',
-                'HOD': 'mentor',
+                'HOD': 'college_admin',
                 'Mentor': 'mentor',
-                'Viewer': 'mentor',
+                'Viewer': 'college_admin',
             };
             await createCollegeStaff(token, college.id, {
                 name: formData.name,
@@ -251,9 +251,9 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
                                     <div>
                                         <div className="flex items-center gap-3">
                                             <p className="font-black text-slate-900 text-lg leading-none tracking-tight">{s.name}</p>
-                                            <span className="text-[9px] font-black uppercase bg-blue-600 text-white px-2 py-1 rounded-lg">
-                                                {s.roleLabel || s.role}
-                                            </span>
+                                <span className="text-[9px] font-black uppercase bg-blue-600 text-white px-2 py-1 rounded-lg">
+                                    {s.roleLabel || s.role}
+                                </span>
                                         </div>
                                         <div className="flex items-center gap-3 mt-1.5 font-bold">
                                             <p className="text-xs text-slate-400">{s.email}</p>
@@ -272,8 +272,8 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
                                     <div className="text-right hidden sm:block">
                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">Credentials Preview</p>
                                         <div className="flex flex-col gap-1 items-end">
-                                            <p className="text-[10px] font-mono font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md leading-none">ID: {s.id}</p>
-                                            <p className="text-[10px] font-mono font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md leading-none">PW: {s.password}</p>
+                                            <p className="text-[10px] font-mono font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md leading-none">ID: {s.credentialId || s.id}</p>
+                                            <p className="text-[10px] font-mono font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md leading-none">PW: {s.tempPassword || s.password || 'N/A'}</p>
                                         </div>
                                     </div>
                                     <button

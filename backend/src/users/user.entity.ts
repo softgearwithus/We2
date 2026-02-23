@@ -41,6 +41,9 @@ export class User {
     @Column({ type: 'varchar', length: 20, nullable: true })
     year: string | null;
 
+    @Column({ type: 'varchar', length: 120, unique: true, nullable: true })
+    credentialId?: string | null;
+
     @Column({
         type: 'varchar',
         default: 'free', // free, placement_plus, industry_plus, we2_max

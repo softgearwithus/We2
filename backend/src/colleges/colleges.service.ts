@@ -11,6 +11,7 @@ import { UpdateCollegeDto } from './dto/update-college.dto';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { CreateCohortDto } from './dto/create-cohort.dto';
 import { User, UserRole } from '../users/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CollegesService {
@@ -109,7 +110,7 @@ export class CollegesService {
     private generatePassword() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
         let password = '';
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 10; i++) {
             password += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         return password;
@@ -119,6 +120,7 @@ export class CollegesService {
         const college = await this.findOne(collegeId);
         const role = payload.role as UserRole;
         const tempPassword = this.generatePassword();
+        const hashedPassword = await bcrypt.hash(tempPassword, 12);
         const staff = this.staffRepo.create({
             collegeId,
             name: payload.name,
@@ -138,8 +140,24 @@ export class CollegesService {
             existingUser.department = payload.department || null;
             existingUser.year = payload.year || null;
             existingUser.role = role;
+            existingUser.credentialId = saved.credentialId;
             await this.userRepo.save(existingUser);
             saved.userId = existingUser.id;
+            await this.staffRepo.save(saved);
+        } else {
+            const createdUser = await this.userRepo.save(this.userRepo.create({
+                email: saved.email,
+                password: hashedPassword,
+                role,
+                collegeId,
+                department: payload.department || null,
+                year: payload.year || null,
+                credentialId: saved.credentialId,
+                subscriptionPlan: 'free',
+                subscriptionStatus: 'inactive',
+                isActive: true,
+            }));
+            saved.userId = createdUser.id;
             await this.staffRepo.save(saved);
         }
         await this.adminLogRepo.save(this.adminLogRepo.create({
@@ -194,6 +212,37 @@ export class CollegesService {
         });
         const saved = await this.cohortRepo.save(cohort);
 
+        await Promise.all(credentials.map(async (credential) => {
+            const email = `${credential.uid.toLowerCase()}@student.emble.in`;
+            const hashedPassword = await bcrypt.hash(credential.password, 12);
+            const existingUser = await this.userRepo.findOne({ where: [{ credentialId: credential.uid }, { email }] });
+            if (existingUser) {
+                existingUser.collegeId = collegeId;
+                existingUser.department = payload.department;
+                existingUser.year = payload.year;
+                existingUser.role = UserRole.STUDENT;
+                existingUser.credentialId = credential.uid;
+                if (existingUser.email !== email) {
+                    existingUser.email = email;
+                }
+                await this.userRepo.save(existingUser);
+                return;
+            }
+
+            await this.userRepo.save(this.userRepo.create({
+                email,
+                password: hashedPassword,
+                role: UserRole.STUDENT,
+                collegeId,
+                department: payload.department,
+                year: payload.year,
+                credentialId: credential.uid,
+                subscriptionPlan: 'free',
+                subscriptionStatus: 'inactive',
+                isActive: true,
+            }));
+        }));
+
         college.studentCount = (college.studentCount || 0) + payload.count;
         await this.collegesRepo.save(college);
 
@@ -213,6 +262,20 @@ export class CollegesService {
         const cohort = await this.cohortRepo.findOne({ where: { id: cohortId, collegeId } });
         if (!cohort) throw new NotFoundException('Cohort not found');
         return cohort;
+    }
+
+    async deleteCohort(collegeId: string, cohortId: string) {
+        const cohort = await this.cohortRepo.findOne({ where: { id: cohortId, collegeId } });
+        if (!cohort) throw new NotFoundException('Cohort not found');
+        await this.cohortRepo.remove(cohort);
+        await this.adminLogRepo.save(this.adminLogRepo.create({
+            actorId: null,
+            actorName: 'System',
+            action: 'Student Cohort Deleted',
+            target: cohort.code,
+            severity: 'warning',
+        }));
+        return { success: true };
     }
 
     async getInstituteDashboard(collegeId: string) {

@@ -151,4 +151,18 @@ export class CollegesController {
         res.send(csvContent);
     }
 
+    @Delete(':id/cohorts/:cohortId')
+    @Roles(UserRole.SUPER_ADMIN, UserRole.COLLEGE_ADMIN)
+    @ApiParam({ name: 'id', description: 'College UUID' })
+    @ApiParam({ name: 'cohortId', description: 'Cohort UUID' })
+    @ApiOperation({ summary: 'Delete student cohort' })
+    async deleteCohort(
+        @Request() req: any,
+        @Param('id') id: string,
+        @Param('cohortId') cohortId: string,
+    ) {
+        this.enforceCollegeAccess(req, id);
+        return this.collegesService.deleteCohort(id, cohortId);
+    }
+
 }

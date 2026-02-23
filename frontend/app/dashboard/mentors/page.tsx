@@ -83,6 +83,11 @@ export default function MentorsDiscoveryPage() {
             return;
         }
 
+        if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+            alert('Payment is unavailable right now. Please try again later.');
+            return;
+        }
+
         const token = localStorage.getItem('accessToken') || '';
         const order = await createMentorPaymentOrder(token, {
             mentorId: selectedMentor!.id,
@@ -90,7 +95,7 @@ export default function MentorsDiscoveryPage() {
         });
 
         const options = {
-            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_YourTestKeyHere',
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: order.amountInr * 100,
             currency: 'INR',
             name: 'EMBLE',

@@ -7,7 +7,6 @@ import Stepper from '@/app/components/admin/CollegeWizard/Stepper';
 import Step1Info from '@/app/components/admin/CollegeWizard/Step1Info';
 import Step2Years from '@/app/components/admin/CollegeWizard/Step2Years';
 import Step3Departments from '@/app/components/admin/CollegeWizard/Step3Departments';
-import Step4Credentials from '@/app/components/admin/CollegeWizard/Step4Credentials';
 
 import { useRouter } from 'next/navigation';
 

@@ -144,15 +144,55 @@ export class MentorsService {
     }
 
     async listAllMentors() {
-        return this.mentorRepo.find({ order: { updatedAt: 'DESC' } });
+        const mentors = await this.mentorRepo.find({ order: { updatedAt: 'DESC' } });
+        if (mentors.length === 0) return [];
+        const userIds = mentors.map((m) => m.userId).filter(Boolean);
+        const users = await this.usersService.findByIds(userIds);
+        const userMap = new Map(users.map((u) => [u.id, u]));
+        return mentors.map((mentor) => {
+            const user = userMap.get(mentor.userId);
+            return {
+                ...mentor,
+                userEmail: user?.email || null,
+            };
+        });
     }
 
     async listAllSessions() {
-        return this.sessionRepo.find({ order: { createdAt: 'DESC' } });
+        const sessions = await this.sessionRepo.find({ order: { createdAt: 'DESC' } });
+        if (sessions.length === 0) return [];
+        const mentorIds = Array.from(new Set(sessions.map((s) => s.mentorId)));
+        const studentIds = Array.from(new Set(sessions.map((s) => s.studentId)));
+        const mentors = mentorIds.length ? await this.mentorRepo.findBy({ id: mentorIds as any }) : [];
+        const users = studentIds.length ? await this.usersService.findByIds(studentIds) : [];
+        const mentorMap = new Map(mentors.map((m) => [m.id, m]));
+        const userMap = new Map(users.map((u) => [u.id, u]));
+        return sessions.map((session) => {
+            const mentor = mentorMap.get(session.mentorId);
+            const user = userMap.get(session.studentId);
+            return {
+                ...session,
+                mentorName: mentor?.name || null,
+                mentorUserId: mentor?.userId || null,
+                studentName: user?.email?.split('@')[0] || null,
+            };
+        });
     }
 
     async listAllPayouts() {
-        return this.payoutRepo.find({ order: { createdAt: 'DESC' } });
+        const payouts = await this.payoutRepo.find({ order: { createdAt: 'DESC' } });
+        if (payouts.length === 0) return [];
+        const mentorIds = Array.from(new Set(payouts.map((p) => p.mentorId)));
+        const mentors = mentorIds.length ? await this.mentorRepo.findBy({ id: mentorIds as any }) : [];
+        const mentorMap = new Map(mentors.map((m) => [m.id, m]));
+        return payouts.map((payout) => {
+            const mentor = mentorMap.get(payout.mentorId);
+            return {
+                ...payout,
+                mentorName: mentor?.name || null,
+                mentorUserId: mentor?.userId || null,
+            };
+        });
     }
 
     async listStudentSessions(studentId: string) {

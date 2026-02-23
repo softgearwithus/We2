@@ -59,9 +59,8 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
             if (response.ok) {
                 const result = await response.json();
-                // Optional: Check if the returned user role matches the intended portal role
                 const allowedRoles = role === 'college'
-                    ? [roleMap[role], 'mentor']
+                    ? [roleMap[role], 'mentor', 'student']
                     : [roleMap[role]];
                 if (!allowedRoles.includes(result.user.role) && role !== 'admin') {
                     alert(`Access Denied: This portal is for ${role}s only.`);

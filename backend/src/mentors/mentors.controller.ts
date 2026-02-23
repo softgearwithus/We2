@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Re
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/auth.decorators';
+import { Public, Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
 import { MentorsService } from './mentors.service';
 import { CreateMentorApplicationDto } from './dto/create-mentor-application.dto';
@@ -24,7 +24,7 @@ export class MentorsController {
     }
 
     @Post('mentor-applications')
-    @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.COLLEGE_ADMIN, UserRole.COMPANY_ADMIN, UserRole.SUPER_ADMIN)
+    @Public()
     @ApiOperation({ summary: 'Submit mentor application' })
     async createApplication(@Body() payload: CreateMentorApplicationDto) {
         return this.mentorsService.createApplication(payload);

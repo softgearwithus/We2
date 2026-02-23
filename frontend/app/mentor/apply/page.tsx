@@ -32,20 +32,24 @@ export default function MentorApplicationPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await submitMentorApplication({
-            name: formData.name,
-            email: formData.email,
-            phone: `${formData.countryCode}${formData.phone}`,
-            headline: formData.headline,
-            bio: formData.bio,
-            feePerMinuteInr: Number(formData.feeINR.replace(/[^0-9]/g, '')) || 0,
-            expertise: formData.expertise,
-            offerings: formData.offerings,
-            linkedin: formData.linkedin,
-            totalExperience: `${formData.totalExpYears} Years ${formData.totalExpMonths} Months`,
-        });
-        setIsSubmitted(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+            await submitMentorApplication({
+                name: formData.name,
+                email: formData.email,
+                phone: `${formData.countryCode}${formData.phone}`,
+                headline: formData.headline,
+                bio: formData.bio,
+                feePerMinuteInr: Number(formData.feeINR.replace(/[^0-9]/g, '')) || 0,
+                expertise: formData.expertise,
+                offerings: formData.offerings,
+                linkedin: formData.linkedin,
+                totalExperience: `${formData.totalExpYears} Years ${formData.totalExpMonths} Months`,
+            });
+            setIsSubmitted(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (error) {
+            alert('Failed to submit mentor application. Please try again.');
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

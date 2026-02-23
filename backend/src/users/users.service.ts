@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -94,6 +94,32 @@ export class UsersService {
         });
     }
 
+    async findByCredentialId(credentialId: string): Promise<User | null> {
+        const normalizedId = credentialId.trim();
+        return this.usersRepository.findOne({
+            where: { credentialId: normalizedId },
+            select: [
+                'id',
+                'email',
+                'password',
+                'role',
+                'isActive',
+                'isTwoFactorEnabled',
+                'subscriptionPlan',
+                'subscriptionStatus',
+                'subscriptionEndDate',
+                'firstName',
+                'lastName',
+                'timezone',
+                'avatarUrl',
+                'credentialId',
+                'collegeId',
+                'department',
+                'year',
+            ],
+        });
+    }
+
     async findById(id: string): Promise<User> {
         const user = await this.usersRepository.findOne({
             where: { id },
@@ -102,6 +128,11 @@ export class UsersService {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
         return user;
+    }
+
+    async findByIds(ids: string[]): Promise<User[]> {
+        if (!ids.length) return [];
+        return this.usersRepository.findBy({ id: In(ids) });
     }
 
     async findAll(): Promise<User[]> {

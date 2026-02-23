@@ -211,7 +211,10 @@ export default function CollegesPage() {
                                                         <Settings2 size={14} className="text-slate-400" />
                                                         Overview
                                                     </button>
-                                                    <button className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => setSelectedCollege(college)}
+                                                        className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                                                    >
                                                         <Download size={14} className="text-slate-400" />
                                                         Export CSV
                                                     </button>

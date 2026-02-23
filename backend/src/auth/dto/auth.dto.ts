@@ -26,9 +26,9 @@ export class RegisterDto {
 
     @ApiProperty({
         example: 'student@example.com',
-        description: 'User email address',
+        description: 'User email address or UID',
     })
-    @IsEmail()
+    @IsString()
     @IsNotEmpty()
     @MaxLength(255)
     email: string;

@@ -36,7 +36,8 @@ export class AuthService {
     async login(loginDto: LoginDto) {
         const { email, password, role } = loginDto;
 
-        const user = await this.usersService.findByEmail(email);
+        const user = await this.usersService.findByEmail(email)
+            || await this.usersService.findByCredentialId(email);
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
@@ -65,6 +66,10 @@ export class AuthService {
             user: {
                 id: user.id,
                 email: user.email,
+                credentialId: (user as any).credentialId || null,
+                collegeId: (user as any).collegeId || null,
+                department: (user as any).department || null,
+                year: (user as any).year || null,
                 role: user.role,
                 subscriptionPlan: user.subscriptionPlan,
                 subscriptionStatus: user.subscriptionStatus,

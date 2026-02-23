@@ -71,16 +71,24 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
         }
     };
 
-    const handleRemoveCohort = (id: string) => {
-        const updatedCohorts = studentCohorts.filter(c => c.id !== id);
-        setStudentCohorts(updatedCohorts);
-
-        const updatedCollege = {
-            ...college,
-            studentCohorts: updatedCohorts,
-            students: updatedCohorts.reduce((acc, curr) => acc + curr.count, 0)
-        };
-        onUpdate(updatedCollege);
+    const handleRemoveCohort = async (id: string) => {
+        try {
+            const token = localStorage.getItem('accessToken') || '';
+            const { deleteCollegeCohort, fetchCollegeCohorts } = await import('@/app/lib/colleges');
+            await deleteCollegeCohort(token, college.id, id);
+            const cohorts = await fetchCollegeCohorts(token, college.id);
+            const normalized = cohorts.map((c: any) => ({
+                id: c.id,
+                year: c.year,
+                dept: c.department,
+                count: c.count,
+                credentials: c.credentials || [],
+            }));
+            setStudentCohorts(normalized);
+            onUpdate({ ...college, students: normalized.reduce((acc: number, curr: any) => acc + curr.count, 0) });
+        } catch (error) {
+            // ignore
+        }
     };
 
     const handleUpdateStaff = (updatedStaff: any[]) => {

@@ -107,3 +107,12 @@ export const exportCollegeCohort = async (token: string, collegeId: string, coho
     if (!response.ok) throw new Error('Failed to export cohort');
     return response;
 };
+
+export const deleteCollegeCohort = async (token: string, collegeId: string, cohortId: string) => {
+    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/cohorts/${cohortId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete cohort');
+    return response.json();
+};

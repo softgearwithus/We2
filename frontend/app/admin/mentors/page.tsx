@@ -159,22 +159,10 @@ export default function AdminMentorsPage() {
                     fetchAdminMentorPayouts(token),
                     fetchAdminMentorSessions(token),
                 ]);
-                const mentorMap = new Map<string, { name?: string | null; userId?: string | null }>(
+                const mentorMap = new Map<string, { name?: string | null; userId?: string | null; userEmail?: string | null }>(
                     (mentorData || []).map((m: any) => [m.id, m])
                 );
-                const mentorUserIds = (mentorData || []).map((m: any) => m.userId).filter(Boolean);
-                const studentUserIds = (sessionData || []).map((s: any) => s.studentId).filter(Boolean);
-                const userIds = Array.from(new Set([...mentorUserIds, ...studentUserIds]));
-                const userResponses = await Promise.all(
-                    userIds.map((id) => fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/${id}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }).then((res) => (res.ok ? res.json() : null)))
-                );
-                const userMap = userResponses.filter(Boolean).reduce((acc: Record<string, any>, user: any) => {
-                    acc[user.id] = user;
-                    return acc;
-                }, {});
-                setUsersById(userMap);
+                setUsersById({});
                 setMentors((mentorData || []).map((m: any) => ({
                     id: m.id,
                     name: m.name,
@@ -207,8 +195,8 @@ export default function AdminMentorsPage() {
                 const resolveMentorName = (mentorId: string) => {
                     const mentor = mentorMap.get(mentorId);
                     if (mentor?.name) return mentor.name;
-                    const user = mentor?.userId ? userMap[mentor.userId] : undefined;
-                    return user?.email || 'Mentor';
+                    if (mentor?.userEmail) return mentor.userEmail;
+                    return 'Mentor';
                 };
                 setPayouts((payoutData || []).map((p: any) => ({
                     id: p.id,
@@ -222,7 +210,7 @@ export default function AdminMentorsPage() {
                 })));
                 setRefunds((sessionData || []).filter((s: any) => s.status === 'declined').map((s: any) => ({
                     id: s.id,
-                    studentName: s.studentName || userMap[s.studentId]?.email?.split('@')[0] || 'Student',
+                    studentName: s.studentName || 'Student',
                     amount: s.priceInr,
                     source: s.topic,
                     mentorName: resolveMentorName(s.mentorId),
@@ -231,7 +219,7 @@ export default function AdminMentorsPage() {
                 })));
                 setRefundHistory((sessionData || []).filter((s: any) => s.status === 'completed').map((s: any) => ({
                     id: s.id,
-                    studentName: s.studentName || userMap[s.studentId]?.email?.split('@')[0] || 'Student',
+                    studentName: s.studentName || 'Student',
                     amount: s.priceInr,
                     source: s.topic,
                     mentorName: resolveMentorName(s.mentorId),
@@ -791,7 +779,7 @@ export default function AdminMentorsPage() {
                                         sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).map((session: any) => (
                                             <tr key={session.id} className="hover:bg-slate-50/50 transition-colors">
                                                 <td className="px-6 py-4 text-sm text-slate-600">{session.updatedAt || session.createdAt}</td>
-                                                <td className="px-6 py-4 font-bold text-slate-900">{session.studentName || usersById[session.studentId]?.email?.split('@')[0] || 'Student'}</td>
+                                                <td className="px-6 py-4 font-bold text-slate-900">{session.studentName || 'Student'}</td>
                                                     <td className="px-6 py-4 text-sm text-slate-600">{session.topic}</td>
                                                     <td className="px-6 py-4">
                                                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${session.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : session.status === 'declined' ? 'bg-red-100 text-red-700' : session.status === 'accepted' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
