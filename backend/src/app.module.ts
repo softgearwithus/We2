@@ -138,6 +138,7 @@ import { Client } from 'pg';
           password: dbConfig.password,
           database: dbConfig.database,
           ssl: dbConfig.ssl,
+          uuidExtension: dbConfig.uuidExtension,
           entities: [
             User,
             Simulation,
