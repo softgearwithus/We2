@@ -67,7 +67,7 @@ export default function LeetCodeProfile() {
                         acc[lang] = (acc[lang] || 0) + 1;
                         return acc;
                     }, {});
-                    setSkills(Object.entries(languageCounts).map(([name, count]) => ({ name, count })));
+                    setSkills(Object.entries(languageCounts).map(([name, count]) => ({ name, count: count as number })));
                 }
 
                 if (projectProgressRes.ok) {
