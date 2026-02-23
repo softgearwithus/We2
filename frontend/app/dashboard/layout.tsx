@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -309,10 +309,20 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     );
 }
 
+function DashboardLayoutFallback() {
+    return (
+        <div className="flex h-screen items-center justify-center bg-slate-50">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+    );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <DashboardModeProvider>
-            <DashboardContent>{children}</DashboardContent>
+            <Suspense fallback={<DashboardLayoutFallback />}>
+                <DashboardContent>{children}</DashboardContent>
+            </Suspense>
             <CompleteProfileModal />
         </DashboardModeProvider>
     );
