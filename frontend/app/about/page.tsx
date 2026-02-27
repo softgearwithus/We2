@@ -161,12 +161,12 @@ export default function MissionPage() {
                             <div className="w-14 h-14 rounded-2xl bg-white text-emerald-600 flex items-center justify-center border border-emerald-100 mb-8 shadow-sm group-hover:scale-110 transition-transform">
                                 <BookOpen size={28} />
                             </div>
-                            <h3 className="text-3xl font-bold text-brand-black mb-4">Prep<span className="text-emerald-500 font-extrabold">0</span></h3>
+                            <h3 className="text-3xl font-bold text-brand-black mb-4">EMBLE <span className="text-emerald-500 font-extrabold">Preparation</span></h3>
                             <p className="text-gray-600 mb-8 leading-relaxed">
-                                Designed for end-to-end foundation building. We focus on the complete technical stack: **DSA, System Design, DBMS, OS**, and automated resume optimization. Placement Mode ensures you are technically invincible.
+                                Designed for end-to-end foundation building. We focus on solving the rejection problem with AI Mock Interviews, 200+ Company-Picked questions, DSA/SQL challenges, and AI Resume Auditing to ensure you are technically invincible.
                             </p>
                             <Link href="/pricing" className="inline-flex items-center gap-2 text-emerald-700 font-bold hover:gap-3 transition-all">
-                                Explore Placement Mode <ArrowRight size={18} />
+                                Explore Preparation Mode <ArrowRight size={18} />
                             </Link>
                         </motion.div>
 
@@ -178,9 +178,9 @@ export default function MissionPage() {
                             <div className="w-14 h-14 rounded-2xl bg-gray-900 text-brand-orange flex items-center justify-center border border-gray-800 mb-8 shadow-sm group-hover:scale-110 transition-transform">
                                 <Briefcase size={28} />
                             </div>
-                            <h3 className="text-3xl font-bold text-white mb-4">EMBLE <span className="text-brand-orange font-extrabold">Nexus</span></h3>
+                            <h3 className="text-3xl font-bold text-white mb-4">EMBLE <span className="text-brand-orange font-extrabold">Simulation</span></h3>
                             <p className="text-gray-400 mb-8 leading-relaxed">
-                                Designed for real-world mastery. Join virtual tech teams, work on JIRA tickets, submit PRs, and ship production-grade code. Job Simulation gives you the experience of a 6-month internship in 21 days.
+                                Designed for real-world mastery. Solve the "no experience" problem by joining virtual tech teams, working on JIRA tickets, participating in GitHub residency, and making production-grade deployments.
                             </p>
                             <Link href="/pricing" className="inline-flex items-center gap-2 text-brand-orange font-bold hover:gap-3 transition-all">
                                 Explore Job Simulation <ArrowRight size={18} />

@@ -33,7 +33,7 @@ const item: Variants = {
 
 export default function CompanyTestsPage() {
     const [companies, setCompanies] = useState<{ key: string; label: string; count: number }[]>([]);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_company');
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
@@ -92,39 +92,39 @@ export default function CompanyTestsPage() {
                         animate="show"
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
                     >
-                    {companies.map((company, idx) => {
-                        const palette = COLOR_OPTIONS[idx % COLOR_OPTIONS.length];
-                        return (
-                            <motion.div variants={item} key={idx}>
-                                <Link
-                                    href={`/dashboard/test-series/company/${company.key}`}
-                                    className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : `hover:shadow-xl ${palette.hoverBorder}`}`}
-                                >
-                                    <div className={`absolute top-0 right-0 w-32 h-32 ${palette.bg} rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 transition-colors`} />
+                        {companies.map((company, idx) => {
+                            const palette = COLOR_OPTIONS[idx % COLOR_OPTIONS.length];
+                            return (
+                                <motion.div variants={item} key={idx}>
+                                    <Link
+                                        href={`/dashboard/test-series/company/${company.key}`}
+                                        className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : `hover:shadow-xl ${palette.hoverBorder}`}`}
+                                    >
+                                        <div className={`absolute top-0 right-0 w-32 h-32 ${palette.bg} rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 transition-colors`} />
 
-                                    <div className={`w-14 h-14 ${palette.bg} ${palette.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 ${palette.hoverBg} group-hover:text-white transition-all duration-300`}>
-                                        <Building2 size={24} strokeWidth={2.5} />
-                                    </div>
-                                    <h3 className={`text-xl font-black text-slate-900 mb-3 tracking-tight ${palette.color.replace('text-', 'group-hover:text-')} transition-colors`}>{company.label}</h3>
-
-                                    <div className="flex items-center gap-2 mb-10">
-                                        <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest">{company.count} Questions</div>
-                                        <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                        <div className="text-[10px] font-bold text-orange-500 uppercase tracking-widest flex items-center gap-1">
-                                            <TrendingUp size={10} /> Active
+                                        <div className={`w-14 h-14 ${palette.bg} ${palette.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 ${palette.hoverBg} group-hover:text-white transition-all duration-300`}>
+                                            <Building2 size={24} strokeWidth={2.5} />
                                         </div>
-                                    </div>
+                                        <h3 className={`text-xl font-black text-slate-900 mb-3 tracking-tight ${palette.color.replace('text-', 'group-hover:text-')} transition-colors`}>{company.label}</h3>
 
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <span className="text-slate-900 font-bold text-sm">Start Mocks</span>
-                                        <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
-                                            <ChevronRight size={18} />
+                                        <div className="flex items-center gap-2 mb-10">
+                                            <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest">{company.count} Questions</div>
+                                            <div className="w-1 h-1 rounded-full bg-slate-200" />
+                                            <div className="text-[10px] font-bold text-orange-500 uppercase tracking-widest flex items-center gap-1">
+                                                <TrendingUp size={10} /> Active
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        );
-                    })}
+
+                                        <div className="flex items-center justify-between mt-auto">
+                                            <span className="text-slate-900 font-bold text-sm">Start Mocks</span>
+                                            <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+                                                <ChevronRight size={18} />
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                     </motion.div>
                 </div>
             </div>

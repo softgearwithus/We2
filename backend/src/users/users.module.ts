@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
@@ -10,6 +10,7 @@ import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submi
 import { Resume } from '../resume/entities/resume.entity';
 import { MentorSession } from '../mentors/entities/mentor-session.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
+import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserGamification } from '../gamification/entities/user-gamification.ent
       MentorSession,
       UserGamification,
     ]),
+    forwardRef(() => AdminSettingsModule),
   ],
   providers: [UsersService],
   controllers: [UsersController],

@@ -43,6 +43,10 @@ export default function MentorConsolePage() {
     // Load mentor console data
     useEffect(() => {
         const loadMentorConsole = async () => {
+            if (!user || user.role !== 'mentor') {
+                setLoading(false);
+                return;
+            }
             try {
                 const token = localStorage.getItem('accessToken') || '';
                 const [reqData, sessionData, payoutData] = await Promise.all([
@@ -65,7 +69,7 @@ export default function MentorConsolePage() {
             }
         };
         loadMentorConsole();
-    }, []);
+    }, [user]);
 
     const handleAcceptClick = (id: string) => {
         setSelectedRequestId(id);
@@ -124,6 +128,21 @@ export default function MentorConsolePage() {
             <div className="max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
                 <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Mentor console unavailable</h2>
                 <p className="text-slate-500">Please check back later.</p>
+            </div>
+        );
+    }
+
+    if (user?.role !== 'mentor') {
+        return (
+            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+                <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
+                    <Users size={40} className="text-emerald-700" />
+                </div>
+                <h2 className="text-3xl font-extrabold text-slate-900 mb-4">You are not a registered Mentor</h2>
+                <p className="text-slate-500 max-w-lg mb-8">This portal is exclusively for verified Mentors to manage their 1:1 sessions, action requests, and track payouts.</p>
+                <a href="/mentor/apply" className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md shadow-emerald-600/20 transition-all font-sans">
+                    Apply to Become a Mentor
+                </a>
             </div>
         );
     }
@@ -238,44 +257,44 @@ export default function MentorConsolePage() {
                                         const studentName = req.studentName || 'Student';
                                         const remainingHours = getRemainingHours(req.requestedAt || req.createdAt);
                                         return (
-                                        <div key={req.id} className="p-6 transition-colors hover:bg-slate-50">
-                                            <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
-                                                <div className="flex items-start gap-4">
-                                                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
-                                                    <div>
-                                                        <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
-                                                        <p className="text-sm text-slate-700 font-medium mt-1">{req.topic}</p>
-                                                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
-                                                            <span className="flex items-center gap-1"><Clock size={14} /> {req.durationMinutes} Mins</span>
-                                                            <span className="flex items-center gap-1"><Calendar size={14} /> {formatSessionDate(req)}</span>
+                                            <div key={req.id} className="p-6 transition-colors hover:bg-slate-50">
+                                                <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
+                                                    <div className="flex items-start gap-4">
+                                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
+                                                        <div>
+                                                            <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
+                                                            <p className="text-sm text-slate-700 font-medium mt-1">{req.topic}</p>
+                                                            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                                                                <span className="flex items-center gap-1"><Clock size={14} /> {req.durationMinutes} Mins</span>
+                                                                <span className="flex items-center gap-1"><Calendar size={14} /> {formatSessionDate(req)}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div className="flex flex-col items-end gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-                                                    <div className="text-right">
-                                                        <div className="text-lg font-extrabold text-slate-900">₹ {req.priceInr}</div>
-                                                        <div className="flex items-center gap-1 text-[11px] font-bold text-orange-600 mt-1 bg-orange-50 px-2 py-0.5 rounded-md">
-                                                            <AlertCircle size={12} />
-                                                            {remainingHours === null ? 'Expiry pending' : `Expires in ${remainingHours}h (Auto-Refund)`}
+                                                    <div className="flex flex-col items-end gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+                                                        <div className="text-right">
+                                                            <div className="text-lg font-extrabold text-slate-900">₹ {req.priceInr}</div>
+                                                            <div className="flex items-center gap-1 text-[11px] font-bold text-orange-600 mt-1 bg-orange-50 px-2 py-0.5 rounded-md">
+                                                                <AlertCircle size={12} />
+                                                                {remainingHours === null ? 'Expiry pending' : `Expires in ${remainingHours}h (Auto-Refund)`}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                            <div className="flex gap-2 w-full sm:w-auto mt-2">
-                                                <button
-                                                    onClick={() => handleReject(req.id)}
-                                                    className="flex-1 sm:flex-none px-4 py-2 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-1"
-                                                >
-                                                            <X size={16} /> Decline
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleAcceptClick(req.id)}
-                                                            className="flex-1 sm:flex-none px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-600/20 flex items-center justify-center gap-1"
-                                                        >
-                                                            <Check size={16} /> Accept
-                                                        </button>
+                                                        <div className="flex gap-2 w-full sm:w-auto mt-2">
+                                                            <button
+                                                                onClick={() => handleReject(req.id)}
+                                                                className="flex-1 sm:flex-none px-4 py-2 border border-red-200 text-red-600 rounded-xl text-sm font-bold hover:bg-red-50 transition-colors flex items-center justify-center gap-1"
+                                                            >
+                                                                <X size={16} /> Decline
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleAcceptClick(req.id)}
+                                                                className="flex-1 sm:flex-none px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-600/20 flex items-center justify-center gap-1"
+                                                            >
+                                                                <Check size={16} /> Accept
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         );
                                     })}
                                 </div>
@@ -304,42 +323,42 @@ export default function MentorConsolePage() {
                                     {upcomingSessions.map(session => {
                                         const studentName = session.studentName || 'Student';
                                         return (
-                                        <div key={session.id} className="p-6">
-                                            <div className="flex items-center gap-4 mb-4">
-                                                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
-                                                <div>
-                                                    <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
-                                                    <p className="text-xs text-slate-500">{formatSessionDate(session)}</p>
+                                            <div key={session.id} className="p-6">
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
+                                                    <div>
+                                                        <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
+                                                        <p className="text-xs text-slate-500">{formatSessionDate(session)}</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
-                                                <p className="text-sm font-medium text-slate-800 mb-2">{session.topic}</p>
-                                                <p className="text-xs text-slate-500 flex items-center gap-1"><Clock size={12} /> {session.durationMinutes} Minutes</p>
-                                            </div>
+                                                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
+                                                    <p className="text-sm font-medium text-slate-800 mb-2">{session.topic}</p>
+                                                    <p className="text-xs text-slate-500 flex items-center gap-1"><Clock size={12} /> {session.durationMinutes} Minutes</p>
+                                                </div>
 
-                                            {session.meetingLink ? (
-                                                <div className="flex bg-blue-50/50 border border-blue-100 rounded-xl p-3 items-center justify-between mb-4">
-                                                    <div className="text-xs text-blue-800 font-medium truncate max-w-[200px]">{session.meetingLink}</div>
-                                                    <button
-                                                        onClick={() => navigator.clipboard.writeText(session.meetingLink || '')}
-                                                        className="text-xs font-bold text-blue-600 hover:text-blue-700 shrink-0"
-                                                    >
-                                                        Copy Link
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex bg-amber-50 border border-amber-100 rounded-xl p-3 items-center justify-between mb-4">
-                                                    <div className="text-xs text-amber-700 font-medium">Meeting link pending</div>
-                                                </div>
-                                            )}
+                                                {session.meetingLink ? (
+                                                    <div className="flex bg-blue-50/50 border border-blue-100 rounded-xl p-3 items-center justify-between mb-4">
+                                                        <div className="text-xs text-blue-800 font-medium truncate max-w-[200px]">{session.meetingLink}</div>
+                                                        <button
+                                                            onClick={() => navigator.clipboard.writeText(session.meetingLink || '')}
+                                                            className="text-xs font-bold text-blue-600 hover:text-blue-700 shrink-0"
+                                                        >
+                                                            Copy Link
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex bg-amber-50 border border-amber-100 rounded-xl p-3 items-center justify-between mb-4">
+                                                        <div className="text-xs text-amber-700 font-medium">Meeting link pending</div>
+                                                    </div>
+                                                )}
 
-                                            <button
-                                                onClick={() => session.meetingLink && window.open(session.meetingLink, '_blank')}
-                                                className={`w-full py-2.5 rounded-xl text-sm font-bold shadow-md transition-colors ${session.meetingLink ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}`}
-                                            >
-                                                {session.meetingLink ? 'Join Meeting Room' : 'Link Pending'}
-                                            </button>
-                                        </div>
+                                                <button
+                                                    onClick={() => session.meetingLink && window.open(session.meetingLink, '_blank')}
+                                                    className={`w-full py-2.5 rounded-xl text-sm font-bold shadow-md transition-colors ${session.meetingLink ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}`}
+                                                >
+                                                    {session.meetingLink ? 'Join Meeting Room' : 'Link Pending'}
+                                                </button>
+                                            </div>
                                         );
                                     })}
                                 </div>
@@ -362,23 +381,23 @@ export default function MentorConsolePage() {
                                 <div className="p-8 text-center text-slate-500">No history found.</div>
                             ) : (
                                 <div className="divide-y divide-slate-100">
-                                {history.map(item => (
-                                    <div key={item.id} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                                        <div>
-                                            <h3 className="text-sm font-bold text-slate-900">Session {item.topic}</h3>
-                                            <p className="text-xs text-slate-500 mt-1">{formatSessionDate(item)}</p>
+                                    {history.map(item => (
+                                        <div key={item.id} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                            <div>
+                                                <h3 className="text-sm font-bold text-slate-900">Session {item.topic}</h3>
+                                                <p className="text-xs text-slate-500 mt-1">{formatSessionDate(item)}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="text-sm font-bold text-slate-900 mb-1">₹ {item.priceInr}</div>
+                                                <span className={`text-[11px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${item.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                                                    item.status === 'declined' ? 'bg-red-100 text-red-700' :
+                                                        'bg-orange-100 text-orange-700'
+                                                    }`}>
+                                                    {item.status}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <div className="text-sm font-bold text-slate-900 mb-1">₹ {item.priceInr}</div>
-                                            <span className={`text-[11px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${item.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                                                item.status === 'declined' ? 'bg-red-100 text-red-700' :
-                                                    'bg-orange-100 text-orange-700'
-                                                }`}>
-                                                {item.status}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -402,20 +421,20 @@ export default function MentorConsolePage() {
                                     {payouts.map(payment => (
                                         <div key={payment.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
                                             <div>
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="text-lg font-extrabold text-slate-900">₹ {payment.amountInr}</h3>
-                                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
-                                                Paid
-                                            </span>
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <h3 className="text-lg font-extrabold text-slate-900">₹ {payment.amountInr}</h3>
+                                                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                                                        Paid
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-slate-600 font-medium font-mono">Ref: {payment.referenceId || 'N/A'}</p>
+                                                <p className="text-xs text-slate-500 mt-1">Initiated on {payment.paidAt || payment.createdAt}</p>
+                                            </div>
+                                            <div className="text-xs text-slate-500 font-medium">
+                                                Contact admin if there is any discrepancy.
+                                            </div>
                                         </div>
-                                        <p className="text-sm text-slate-600 font-medium font-mono">Ref: {payment.referenceId || 'N/A'}</p>
-                                        <p className="text-xs text-slate-500 mt-1">Initiated on {payment.paidAt || payment.createdAt}</p>
-                                    </div>
-                                    <div className="text-xs text-slate-500 font-medium">
-                                        Contact admin if there is any discrepancy.
-                                    </div>
-                                </div>
-                            ))}
+                                    ))}
                                 </div>
                             )}
                         </div>

@@ -12,6 +12,7 @@ import {
     HelpCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
 import { useParams } from 'next/navigation';
 import Navbar from '@/app/components/layout/Navbar';
 import Footer from '@/app/components/layout/Footer';
@@ -93,42 +94,29 @@ export default function DocArticlePage() {
                                     </div>
                                 </div>
 
-                                {/* Article Content (Custom Markdown-like rendering) */}
-                                <div className="prose prose-lg max-w-none">
-                                    <div className="syntax-content space-y-8">
-                                        {article.content.split('\n\n').map((block, idx) => {
-                                            if (block.startsWith('# ')) {
-                                                return null; // Skip main title as we show it above
-                                            }
-                                            if (block.startsWith('## ')) {
-                                                return <h2 key={idx} className="text-3xl font-black text-brand-black mt-12 mb-6">{block.replace('## ', '')}</h2>;
-                                            }
-                                            if (block.startsWith('- ')) {
-                                                return (
-                                                    <ul key={idx} className="space-y-4">
-                                                        {block.split('\n').map((li, lidx) => (
-                                                            <li key={lidx} className="flex items-start gap-3">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-brand-orange mt-2.5 shrink-0" />
-                                                                <span className="text-gray-600 font-medium leading-relaxed">
-                                                                    {li.replace('- ', '').split('**').map((part, pidx) =>
-                                                                        pidx % 2 === 1 ? <strong key={pidx} className="text-brand-black font-black">{part}</strong> : part
-                                                                    )}
-                                                                </span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                );
-                                            }
-                                            // Regular paragraph
-                                            return (
-                                                <p key={idx} className="text-lg text-gray-600 leading-relaxed font-medium">
-                                                    {block.split('**').map((part, pidx) =>
-                                                        pidx % 2 === 1 ? <strong key={pidx} className="text-brand-black font-black">{part}</strong> : part
-                                                    )}
-                                                </p>
-                                            );
-                                        })}
-                                    </div>
+                                {/* Article Content (ReactMarkdown) */}
+                                <div className="max-w-none space-y-6">
+                                    <ReactMarkdown
+                                        components={{
+                                            h1: ({ node, ...props }) => <h1 className="text-4xl md:text-5xl font-black text-brand-black mt-16 mb-8 leading-tight tracking-tight" {...props} />,
+                                            h2: ({ node, ...props }) => <h2 className="text-3xl font-extrabold text-brand-black mt-12 mb-6 tracking-tight flex items-center gap-3"><span className="w-1.5 h-6 bg-brand-orange rounded-full"></span>{props.children}</h2>,
+                                            h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-brand-black mt-8 mb-4 tracking-tight" {...props} />,
+                                            p: ({ node, ...props }) => <p className="text-lg text-gray-600 leading-relaxed font-medium mb-6" {...props} />,
+                                            ul: ({ node, ...props }) => <ul className="space-y-4 my-6 ml-2" {...props} />,
+                                            ol: ({ node, ...props }) => <ol className="list-decimal list-outside space-y-4 my-6 ml-6 text-gray-600 font-medium" {...props} />,
+                                            li: ({ node, ...props }) => (
+                                                <li className="flex items-start gap-4">
+                                                    <div className="w-2 h-2 rounded-full bg-brand-orange mt-2.5 shrink-0 shadow-[0_0_8px_rgba(255,87,34,0.4)]" />
+                                                    <span className="text-gray-600 font-medium leading-relaxed flex-1">{props.children}</span>
+                                                </li>
+                                            ),
+                                            strong: ({ node, ...props }) => <strong className="text-brand-black font-extrabold bg-brand-orange/5 px-1 rounded" {...props} />,
+                                            a: ({ node, ...props }) => <a className="font-bold text-brand-orange hover:text-brand-orange-hover hover:underline transition-all inline-flex items-center gap-1" {...props} />,
+                                            blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-brand-orange/30 pl-6 py-2 my-8 italic text-gray-500 bg-gray-50/50 rounded-r-2xl" {...props} />
+                                        }}
+                                    >
+                                        {article.content.replace(/^# .*\n/, '') /* Remove the first H1 since it's already rendered globally above */}
+                                    </ReactMarkdown>
                                 </div>
                             </motion.div>
                         </div>

@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, Search, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, Search, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function AdminLayout({
     children,
@@ -15,6 +15,7 @@ export default function AdminLayout({
     const pathname = usePathname();
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const { user, isLoading } = useAuth();
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
@@ -32,9 +33,30 @@ export default function AdminLayout({
         { icon: BookOpen, label: 'Test Series', href: '/admin/test-series', roles: ['super_admin'] },
         { icon: Radar, label: 'Market Radar', href: '/admin/market-radar', roles: ['super_admin'] },
         { icon: Bell, label: 'Updates', href: '/admin/updates', roles: ['super_admin'] },
+        { icon: CreditCard, label: 'Subscriptions', href: '/admin/subscription-management', roles: ['super_admin'] },
         { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['all'] },
         { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['all'] },
+        { icon: Briefcase, label: 'Careers', href: '/admin/careers', roles: ['super_admin'] },
     ];
+
+    useEffect(() => {
+        if (!isLoading) {
+            if (!user) {
+                router.replace('/login');
+            } else if (!['super_admin', 'college_admin', 'company_admin'].includes(user.role)) {
+                // Instantly eject students/mentors attempting to traverse admin URLs
+                router.replace('/dashboard');
+            }
+        }
+    }, [user, isLoading, router]);
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center text-slate-400 bg-slate-100 font-bold uppercase tracking-widest text-sm">Authenticating Admin Session...</div>;
+    }
+
+    if (!user || !['super_admin', 'college_admin', 'company_admin'].includes(user.role)) {
+        return null; // Block render pipeline immediately
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 flex font-sans">
@@ -78,8 +100,8 @@ export default function AdminLayout({
                                 <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Admin" alt="Admin" />
                             </div>
                             <div className="overflow-hidden">
-                                <p className="text-sm font-bold truncate">Super Admin</p>
-                                <p className="text-xs text-slate-500 truncate">admin@platform.com</p>
+                                <p className="text-sm font-bold truncate">{user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Super Admin'}</p>
+                                <p className="text-xs text-slate-500 truncate">{user?.email || 'admin@platform.com'}</p>
                             </div>
                         </div>
                         <button

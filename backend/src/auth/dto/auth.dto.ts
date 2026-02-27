@@ -74,6 +74,7 @@ export class RegisterDto {
     timezone?: string;
 }
 
+
 export class LoginDto {
     @ApiProperty({
         example: 'student@example.com',
@@ -100,4 +101,12 @@ export class LoginDto {
     @IsOptional()
     @IsIn(['student', 'college_admin', 'company_admin', 'super_admin'])
     role?: string;
+
+    @ApiProperty({
+        example: true,
+        description: 'Remember me flag to extend session duration',
+        required: false,
+    })
+    @IsOptional()
+    rememberMe?: boolean;
 }

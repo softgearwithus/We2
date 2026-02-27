@@ -31,7 +31,7 @@ export default function CommunicationTestsPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [result, setResult] = useState<WriteXResult | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_communication');
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');

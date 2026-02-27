@@ -79,6 +79,14 @@ import { PreparationModule } from './preparation/preparation.module';
 import { PreparationProgress } from './preparation/entities/preparation-progress.entity';
 import { resolveDbConfig } from './common/db-config';
 import { Client } from 'pg';
+import { CareersModule } from './careers/careers.module';
+import { Career } from './careers/entities/career.entity';
+import { PlacementsModule } from './placements/placements.module';
+import { Placement } from './placements/entities/placement.entity';
+import { ApplicationsModule } from './applications/applications.module';
+import { Application } from './applications/entities/application.entity';
+import { CompanyLeadsModule } from './company-leads/company-leads.module';
+import { CompanyLead } from './company-leads/entities/company-lead.entity';
 
 @Module({
   imports: [
@@ -184,6 +192,10 @@ import { Client } from 'pg';
             MentorApplication,
             MentorSession,
             MentorPayout,
+            Career,
+            Placement,
+            Application,
+            CompanyLead,
           ],
           synchronize: true,
           logging: false,
@@ -203,8 +215,8 @@ import { Client } from 'pg';
     AchievementsModule,
     InterviewsModule,
     CertificationsModule,
-     ProjectsModule,
-     ProjectLabsModule,
+    ProjectsModule,
+    ProjectLabsModule,
     DsaModule,
     SqlModule,
     InterviewModule,
@@ -213,8 +225,8 @@ import { Client } from 'pg';
     GamificationModule,
     AnalyticsModule,
     CollegesModule,
-     AdminModule,
-     AdminSettingsModule,
+    AdminModule,
+    AdminSettingsModule,
     InstituteModule,
     MarketRadarModule,
     MentorsModule,
@@ -223,6 +235,10 @@ import { Client } from 'pg';
     WriteXModule,
     UsageModule,
     PreparationModule,
+    CareersModule,
+    PlacementsModule,
+    ApplicationsModule,
+    CompanyLeadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

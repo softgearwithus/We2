@@ -29,7 +29,7 @@ export default function CompanyMcqsPage() {
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState<Record<string, number>>({});
 
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_company');
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
 
     const hasNext = page * limit < total;
 
@@ -117,13 +117,12 @@ export default function CompanyMcqsPage() {
                                                             key={optIndex}
                                                             onClick={() => handleSelect(mcq.id, optIndex)}
                                                             disabled={isLimited}
-                                                            className={`w-full text-left px-4 py-3 rounded-2xl border transition-all font-medium ${
-                                                                showCorrect && isCorrect
+                                                            className={`w-full text-left px-4 py-3 rounded-2xl border transition-all font-medium ${showCorrect && isCorrect
                                                                     ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
                                                                     : isWrong
                                                                         ? 'border-rose-400 bg-rose-50 text-rose-700'
                                                                         : `border-slate-200 bg-white text-slate-700 ${isLimited ? 'opacity-60 cursor-not-allowed' : 'hover:border-orange-200 hover:bg-orange-50/40'}`
-                                                            }`}
+                                                                }`}
                                                         >
                                                             <div className="flex items-center justify-between">
                                                                 <span>{opt}</span>

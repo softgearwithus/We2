@@ -10,28 +10,29 @@ export interface DocArticle {
 export const docsData: Record<string, DocArticle> = {
     "platform-overview": {
         title: "Platform Overview",
-        description: "Welcome to EMBLE. Understand our dual-pathway ecosystem: Placement Mode and Job Simulation.",
+        description: "Welcome to Emble. Understand India's First Integrated AI Placement Ecosystem Hub.",
         category: "Getting Started",
         lastUpdated: "Feb 2024",
         content: `
-# Welcome to EMBLE
+# Welcome to Emble
 
-EMBLE is the world's first hybrid career platform designed for modern software engineering. Our ecosystem is built on two core pillars:
+Emble is more than just a course - it's an end-to-end career ecosystem. We combine industry-exact training with deep-tech AI simulations (Voice and Video) to ensure you don't just learn, but master the industrial logic required by top engineering teams.
 
-## 1. Placement Mode (Placement Readiness)
-Placement Mode is designed for students who are in the middle of their placement cycles. It focuses on:
-- **DSA Mastery**: 450+ curated problems from FAANG interviews.
-- **System Design**: Both HLD and LLD fundamentals for modern engineering.
-- **CS Fundamentals**: Deep dives into OS, DBMS, and Computer Networks.
-- **AI Mentorship**: Use our AI mentors to clarify doubts instantly.
+## Phase 1: Recruitment Readiness
+This phase bridges the logic gap that video lectures miss, ensuring you're ready for every screening:
+- **200+ DSA Questions**: Hand-picked problem set covering all patterns asked in MNCs.
+- **Top 50 SQL Questions**: Master complex database queries and schema designs.
+- **AI Interview Simulation**: Practice with voice and video interviews that provide real-time feedback.
+- **Resume & Skills Audit**: Get your profile scanned by AI for ATS optimization.
 
-## 2. Job Simulation (Industrial Simulation)
-Job Simulation is where learning turns into professional experience. Instead of tutorials, you join a **Simulation Sprint**:
-- **21-Day Cycles**: Work in a team of 5-8 people on a real production-grade project.
-- **Professional Workflows**: Use JIRA for tasks, Slack for comms, and GitHub for PR reviews.
-- **Agile Methodology**: Participate in standups, grooming sessions, and retrospectives.
+## Phase 2: Industrial Mastery
+Stop being just another "fresher". Build industrial proof-of-work across:
+- **GitHub Mastery**: Professional collaboration, branching, PR reviews.
+- **Professional Deployment**: Rendering, hosting, and production-ready deployments.
+- **Industrial Standards**: Clean code, modular architecture, and documentation.
+- **Production Systems**: Navigation of microservices and DevOps.
 
-[Explore Placement Mode](/prep0) | [Explore Job Simulation](/we2hub)
+[Explore Pricing](/pricing) | [Discover Phase 1](/dashboard/preparation)
         `,
         relatedLinks: [
             { label: "Account Setup", href: "/docs/account-setup" },
@@ -39,87 +40,87 @@ Job Simulation is where learning turns into professional experience. Instead of 
         ]
     },
     "dsa-roadmap-2024": {
-        title: "DSA Roadmap 2024",
-        description: "The definitive 20-week guide to mastering Data Structures and Algorithms.",
+        title: "DSA & Interview Roadmap",
+        description: "The definitive guide to bridging the logic gap with MNC-focused questions and AI simulations.",
         category: "Placement Mode: DSA & Interviews",
         lastUpdated: "Feb 2024",
         content: `
-# DSA Roadmap 2024
+# DSA & Interview Strategy
 
-Mastering DSA isn't about memorizing 1000 problems. It's about recognizing patterns. Here is our 20-week structured path:
+We don't focus on 1000s of generic questions. We focus on the "Logic Gap". 
 
-## Phase 1: Foundations (Week 1-4)
-- **Arrays & Hashing**: Two Sum, Top K Frequent, Valid Sudoku.
-- **Two Pointers**: Valid Palindrome, 3Sum, Container with most water.
-- **Sliding Window**: Best time to buy/sell stock, Longest repeating character replacement.
+## 1. 200+ Company-Picked DSA Challenges
+We have curated a hand-picked problem set covering the most crucial patterns asked in top product-based company interviews (Google, Amazon, Microsoft, etc.). 
+- **Focus Areas**: Trees, Graphs, Dynamic Programming, Two Pointers, Sliding Window.
+- **Methodology**: Learn the underlying industrial logic, rather than memorizing individual solutions.
 
-## Phase 2: Core Structures (Week 5-10)
-- **Trees**: Balanced Binary Tree, LCA of BST, Level Order Traversal.
-- **Heaps**: Kth Largest element, Median from data stream.
-- **Linked Lists**: Reverse Linked List, Merge Two Sorted Lists.
+## 2. Top 50 SQL Scenarios
+Master the database layer with 50 complex SQL queries and schema design tasks that actually show up in high-paying placement rounds.
 
-## Phase 3: Advanced Patterns (Week 11-20)
-- **Dynamic Programming**: Climbing Stairs, House Robber, Coin Change.
-- **Graphs**: Number of Islands, Max Area of Island, Pacific Atlantic Water Flow.
-- **Greedy Algorithms**: Maximum Subarray, Jump Game.
+## 3. AI Interview Simulation (Audiotail)
+It's a two-stage process:
+- First, **Audiotail** masters your voice presence and verbal logic.
+- Then, our **Video AI** analyzes your body language, technical accuracy, and confidence.
+- It's like having a senior engineer from a top tech firm coaching you 24/7.
 
 [Go to Problem Dashboard](/dashboard/problems)
         `,
         relatedLinks: [
             { label: "Resume Lab", href: "/docs/resume-lab-instructions" },
-            { label: "Mock Interviews", href: "/docs/mock-interview-prep" }
+            { label: "Sprint Methodology", href: "/docs/sprint-methodology" }
         ]
     },
     "sprint-methodology": {
-        title: "Sprint Methodology",
-        description: "How we simulate elite engineering cycles inside Job Simulation.",
+        title: "Industrial Simulation Sprints",
+        description: "How we simulate elite engineering cycles and industrial excellence.",
         category: "Job Simulation: Simulations",
         lastUpdated: "Feb 2024",
         content: `
-# Sprint Methodology (21-Day Cycle)
+# Industrial Simulation
 
-At Job Simulation, we replicate the workflow of companies like Uber and Google. Here is how your 21-day simulation will look:
+Learn like a student, build like a professional. At Emble, you participate in industrial sprint simulations modeled after global remote engineering standards.
 
-## Week 1: Onboarding & Architecture
-- **Day 1**: System Walkthrough & Tech Stack Setup (Docker, K8s).
-- **Day 3**: Sprint Planning. Estimation of Story Points for your tasks.
-- **Day 5**: Feature Design Documents (FDD) submission.
+## The Four Pillars of Industrial Excellence
 
-## Week 2: Build & Collaborate
-- **Day 8-12**: Active Coding. PRs must be raised with at least 2 peer reviews.
-- **Day 14**: Mid-Sprint Retrospective. Adjusting velocity.
+1. **GitHub Mastery**
+   Master professional collaboration. Learn branching, PR reviews, and industrial git standards. Your commits will be reviewed asynchronously, just like in a global remote engineering team.
 
-## Week 3: Ship & Present
-- **Day 18**: Feature Freeze. Focus on E2E testing and bug fixing.
-- **Day 21**: Final Demo. Presentation to "Stakeholders" (Industry Mentors).
+2. **Professional Deployment**
+   Move beyond localhost. Master rendering, hosting, and production-ready deployments to AWS and Kubernetes clusters.
 
-[Join the next Simulation](/simulation/enroll)
+3. **Industrial Standards**
+   Write code that survives. Learn clean code, modular architecture, and strict documentation logic.
+
+4. **Production Systems**
+   Understand real-world scale. Navigate microservices and production-grade DevOps using Docker and CI/CD pipelines.
+
+[Join Job Simulation](/dashboard/projects)
         `,
         relatedLinks: [
-            { label: "JIRA Guide", href: "/docs/agile-jira-guide" },
-            { label: "Git Workflows", href: "/docs/git-github-workflows" }
+            { label: "Curriculum FAQ", href: "/curriculum#faq" },
+            { label: "Tech Stack & Docker", href: "/docs/docker-containers" }
         ]
     },
     "account-setup": {
         title: "Account Setup",
-        description: "Your first steps to becoming a EMBLE builder.",
+        description: "Your first steps to entering the Emble Ecosystem Hub.",
         category: "Getting Started",
         lastUpdated: "Feb 2024",
         content: `
-# Account Setup
+# Journey Initiation
 
-Getting your account ready is the first step towards your career transformation. Follow these steps:
+Getting your account ready is the first step towards your career transformation. Follow these simple steps:
 
-## 1. Registration
-Sign up using your college email or a professional Gmail account. We recommend using the same email you use for GitHub to sync your professional identity.
+## 1. Path Selection
+Choose your path—**Standard** or **Pro**. Both pathways give you access to incredible placement resources, but the Pro tier unlocks personalized premium AI mentor simulations.
 
-## 2. Preference Selection
-Choose your primary goal:
-- **Placement Readiness**: Focus on Placement Mode features.
-- **Industry Experience**: Join Job Simulation simulations.
+## 2. Profile & Baseline Audit
+Once you're in, the AI adaptive engine audits your current skills. 
+- Ensure your resume is uploaded for the **ATS Optimization Engine**.
+- Set your target companies (e.g. Google, Amazon, FlipKart).
 
-## 3. Profile Completion
-Upload 2-3 projects you've worked on. Our AI will analyze these to provide personalized mentors and curriculum recommendations.
+## 3. Personalized Roadmap
+The engine creates a personalized roadmap through **Placement Mode** and **Industrial Simulation**. You will receive daily sprint tasks and a Readiness Score tracker to monitor your improvement.
 
 [Join Now](/register) | [Login to Dashboard](/login)
         `,
@@ -130,22 +131,28 @@ Upload 2-3 projects you've worked on. Our AI will analyze these to provide perso
     },
     "student-dashboard-guide": {
         title: "Student Dashboard Guide",
-        description: "Navigating your personalized mission control.",
+        description: "Navigating your personalized mission control (Amber Dashboard).",
         category: "Getting Started",
         lastUpdated: "Feb 2024",
         content: `
-# Student Dashboard Guide
+# The Amber Dashboard
 
-Your dashboard is where you track your transformation. It is divided into three main sections:
+Your dashboard is where you track your transformation. It features a stunning glassmorphism UI designed to highlight actionable data immediately.
 
-## 1. Performance Heatmap
-Track your consistency across DSA problems and simulation sprint tasks. Green streaks represent days of high contribution.
+## 1. Readiness Panel & Streak Tracking
+At the top of your dashboard, you will see a **Live Countdown** to placement season (e.g., *78 Days remaining*). Your **Streak Tracker** counts consecutive days of high-quality industrial contribution. The **Readiness Score** aggregates your overall standing.
 
-## 2. Mission Roadmap
-This is your dynamic curriculum. As you solve problems or complete tasks, new "Levels" unlock.
+## 2. Radar Skill Chart
+Our detailed hex-radar chart visually measures your proficiency across six crucial domains:
+- **DSA**
+- **Fundamentals**
+- **Aptitude**
+- **Communication**
+- **Interview Confidence**
+- **Company Specific Prep**
 
-## 3. AI Mentor Hub
-Connect with specialized AI mentors for **System Design**, **DSA**, or **Behavioral** preparation.
+## 3. Quick Access Grid
+Instantly dive into the next phase of your custom roadmap, whether that's an Audiotail simulation or a new Database system design chapter.
 
 [Go to Dashboard](/dashboard)
         `,
@@ -155,54 +162,56 @@ Connect with specialized AI mentors for **System Design**, **DSA**, or **Behavio
         ]
     },
     "resume-lab-instructions": {
-        title: "Resume Lab Instructions",
-        description: "Use our AI-powered Resume Lab to beat the ATS 100%.",
+        title: "Behavioral & Resume Prep",
+        description: "Use our AI tools to breeze through HR rounds and resume screening.",
         category: "Placement Mode: DSA & Interviews",
         lastUpdated: "Feb 2024",
         content: `
-# Resume Lab Instructions
+# Holistic Preparation
 
-The Resume Lab is part of **Placement Mode: Placement Readiness**. It helps you build a resume that hiring managers love.
+Technical skills alone won't secure the 50LPA+ package. Emble's Phase 1 ecosystem includes deep behavioral and HR preparation tools.
 
-## 1. Upload & Scan
-Upload your current resume (PDF). Our AI will score it across:
-- **Quantifiability**: Are you using data to back your claims?
-- **Keywords**: Does your tech stack match the role?
-- **Format**: Is it ATS-friendly?
+## 1. AI Resume & Skills Audit
+Get your profile scanned by our AI to ensure it passes through top company filters effortlessly.
+- **ATS Optimization**: We analyze semantic keyword density to match top MNC job descriptions.
+- **Action Verbs**: Suggestions to convert passive project descriptions into active, impact-driven statements.
 
-## 2. AI Enhancements
-Our AI will suggest "Bullet Point Improvements". It helps you swap "I coded a website" with "Built a high-fidelity Next.js platform reducing bounce rate by 40%".
+## 2. Behavioral & HR AI Prep
+Receive AI feedback on tone, body language, and communication clarity.
+- **Salary Negotiation Strategies**: Learn how to leverage multiple offers.
+- **Leadership Principles**: Practice STAR methodology answers specifically tailored to companies like Amazon and Microsoft.
 
-## 3. Export
-Export your high-fidelity, polished resume in professional LaTeX-based formatting.
-
-[Go to Resume Lab](/resumes)
+[Go to Resume Builder](/dashboard/interviews)
         `,
         relatedLinks: [
-            { label: "Mock Interviews", href: "/docs/mock-interview-prep" },
+            { label: "Mock Interviews", href: "/dashboard/interviews" },
             { label: "DSA Roadmap", href: "/docs/dsa-roadmap-2024" }
         ]
     },
     "agile-jira-guide": {
-        title: "Agile & JIRA Guide",
-        description: "Master industry project management workflows.",
+        title: "Unified Tech Stack & Projects",
+        description: "Master the exact tools used by modern elite engineering teams.",
         category: "Job Simulation: Simulations",
         lastUpdated: "Feb 2024",
         content: `
-# Agile & JIRA Guide
+# The Unified Infrastructure Stack
 
-In a **Job Simulation Simulation**, you don't just "do projects". You follow Agile.
+At Emble, we don't teach outdated frameworks. Our Job Simulation projects are built on the **Unified Tech Stack** to guarantee industry relevance.
 
-## 1. The Backlog
-Every feature is broken down into **User Stories**. You'll pick tasks from the "To Do" column and move them to "In Progress".
+## 1. Frontend & Backend
+- **React & Next.js**: Build highly interactive, SEO-optimized user interfaces.
+- **Node & NestJS**: Architect scalable backend APIs using strict TypeScript typing.
 
-## 2. Story Points
-We use Fibonacci sequences (1, 2, 3, 5) to estimate effort. You'll learn how to "Punt" tasks if they are too large for a sprint.
+## 2. Database & Architecture
+- **PostgreSQL**: Master relational algebra, indexing, and complex joins.
+- **System Design**: Both High-Level Design (HLD) and Low-Level Design (LLD) principles are enforced in code reviews.
 
-## 3. Burn-down Charts
-Track your team's velocity. Our dashboard provides a real-time burn-down chart during your 21-day simulation.
+## 3. DevOps & Scale
+- **Docker**: Containerize every application ensuring environment parity.
+- **AWS**: Deploy to professional cloud infrastructure.
+- **GitHub CI/CD**: Automate testing and deployment pipelines.
 
-[View Active Simulation](/simulations)
+[View Tech Curriculum](/curriculum)
         `,
         relatedLinks: [
             { label: "Sprint Methodology", href: "/docs/sprint-methodology" },
@@ -210,28 +219,26 @@ Track your team's velocity. Our dashboard provides a real-time burn-down chart d
         ]
     },
     "docker-containers": {
-        title: "Docker & Containers",
-        description: "Mastering containerization for modern deployments.",
+        title: "Earning as a Mentor",
+        description: "Turn your skills into income by joining the Emble Mentor Network.",
         category: "Infrastructure & Tools",
         lastUpdated: "Feb 2024",
         content: `
-# Docker & Containers
+# The Emble Expert Network
 
-Modern apps run in containers. At EMBLE, all simulations require you to containerize your features.
+Are you an elite coder? Emble gives you the platform to monetize your expertise and guide the next generation of engineers.
 
-## 1. Dockerfile Basics
-Learn to write optimized Dockerfiles:
-- **Multi-stage builds** to reduce image size.
-- **Layer caching** for faster CI/CD.
+## Qualifications
+Got a great GATE score or a Candidate Master rating on Codeforces? We are looking for candidates who possess exceptional problem-solving abilities and clear communication.
 
-## 2. Docker Compose
-Manage multi-service simulations (Backend, Frontend, DB) with a single command.
+## How it Works
+1. **Apply Now**: Submit your profile with proof of work (LinkedIn, Codeforces handles).
+2. **Onboarding**: Complete our brief mentor training module.
+3. **Earn Well**: Set your schedule, take 1:1 sessions, conduct mock interviews, and earn competitive hourly rates.
 
-## 3. Deployment
-Deploy your containers to our staging environment using Kubernetes (K8s) clusters.
+Join the ecosystem not just as a learner, but as a leader.
 
-[Practice with Cloud Lab](/simulation/lab)
+[Apply to Mentorship](/mentor/apply)
         `
     }
 };
-

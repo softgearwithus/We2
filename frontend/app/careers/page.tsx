@@ -28,44 +28,7 @@ const values = [
     { title: "Iterate Fast", desc: "The tech world moves at light speed. We move faster. Ship today, refine tomorrow.", icon: Zap, color: "blue" }
 ];
 
-const jobs = [
-    {
-        id: 1,
-        title: "Senior Full Stack Engineer",
-        dept: "Engineering",
-        type: "Remote",
-        location: "Global",
-        salary: "Competitive",
-        desc: "Build the next generation of our industrial simulation engine using Next.js, Node.js, and Kubernetes."
-    },
-    {
-        id: 2,
-        title: "AI Curriculum Lead",
-        dept: "Education",
-        type: "Full-Time",
-        location: "Bengaluru / Remote",
-        salary: "Lead",
-        desc: "Design the world's best AI-driven career path for software engineers."
-    },
-    {
-        id: 3,
-        title: "Product Designer (UI/UX)",
-        dept: "Design",
-        type: "Remote",
-        location: "Global",
-        salary: "Premium",
-        desc: "Craft premium, high-fidelity interfaces that make learning feel like a pro-sports experience."
-    },
-    {
-        id: 4,
-        title: "Community Growth Manager",
-        dept: "Marketing",
-        type: "Contract",
-        location: "Mumbai",
-        salary: "Performance",
-        desc: "Own our presence across Discord, LinkedIn, and X to build the largest dev community."
-    }
-];
+// Careers are now fetched dynamically from the API.
 
 const perks = [
     { title: "Remote-First", icon: Home },
@@ -80,8 +43,38 @@ export default function CareersPage() {
     const [mounted, setMounted] = useState(false);
     const [selectedDept, setSelectedDept] = useState('All');
 
+    const [jobs, setJobs] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         setMounted(true);
+        const fetchCareers = async () => {
+            try {
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+                const res = await fetch(`${API_URL}/careers?activeOnly=true`);
+                if (res.ok) {
+                    const data = await res.json();
+                    // Map API careers to match UI expectations
+                    const mappedJobs = data.map((career: any) => ({
+                        id: career.id,
+                        title: career.title,
+                        dept: career.type, // Mapping 'type' (e.g., Full-time) to UI's dept tag for now 
+                        type: career.type,
+                        location: career.location,
+                        salary: career.experience || "Competitive", // Using experience as a placeholder for salary badge
+                        desc: career.description,
+                        createdAt: career.createdAt
+                    }));
+                    setJobs(mappedJobs);
+                }
+            } catch (error) {
+                console.error("Failed to load careers", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCareers();
     }, []);
 
     if (!mounted) return null;
@@ -202,37 +195,50 @@ export default function CareersPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4">
-                        <AnimatePresence mode="popLayout">
-                            {filteredJobs.map((job) => (
-                                <motion.div
-                                    key={job.id}
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    className="group bg-white p-8 rounded-3xl border border-gray-100 hover:border-brand-orange/30 hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-8"
-                                >
-                                    <div className="max-w-xl">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="px-2 py-0.5 rounded-md bg-orange-50 text-brand-orange text-[10px] font-black uppercase tracking-widest">{job.dept}</span>
-                                            <span className="text-gray-300 text-xs">•</span>
-                                            <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">{job.type}</span>
+                    {isLoading ? (
+                        <div className="flex justify-center py-12">
+                            <div className="w-8 h-8 rounded-full border-2 border-brand-orange border-t-transparent animate-spin" />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-4">
+                            <AnimatePresence mode="popLayout">
+                                {filteredJobs.map((job) => (
+                                    <motion.div
+                                        key={job.id}
+                                        layout
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        className="group bg-white p-8 rounded-3xl border border-gray-100 hover:border-brand-orange/30 hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-8"
+                                    >
+                                        <div className="max-w-xl">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className="px-2 py-0.5 rounded-md bg-orange-50 text-brand-orange text-[10px] font-black uppercase tracking-widest">{job.dept}</span>
+                                                <span className="text-gray-300 text-xs">•</span>
+                                                <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">{job.type}</span>
+                                            </div>
+                                            <h3 className="text-2xl font-bold text-brand-black mb-4 group-hover:text-brand-orange transition-colors">{job.title}</h3>
+                                            <p className="text-gray-500 text-sm line-clamp-2">{job.desc}</p>
                                         </div>
-                                        <h3 className="text-2xl font-bold text-brand-black mb-4 group-hover:text-brand-orange transition-colors">{job.title}</h3>
-                                        <p className="text-gray-500 text-sm">{job.desc}</p>
-                                    </div>
-                                    <div className="flex flex-col md:items-end gap-1">
-                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{job.location}</span>
-                                        <span className="text-lg font-black text-brand-black">{job.salary}</span>
-                                        <button className="mt-4 px-6 py-2.5 rounded-xl bg-gray-100 text-brand-black font-bold text-sm hover:bg-brand-black hover:text-white transition-all flex items-center gap-2">
-                                            Apply Now <ArrowRight size={16} />
-                                        </button>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </div>
+                                        <div className="flex flex-col md:items-end gap-1">
+                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{job.location}</span>
+                                            <span className="text-sm font-medium text-brand-black">{job.salary}</span>
+                                            <button className="mt-4 px-6 py-2.5 rounded-xl bg-gray-100 text-brand-black font-bold text-sm hover:bg-brand-black hover:text-white transition-all flex items-center gap-2">
+                                                Apply Now <ArrowRight size={16} />
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                            {filteredJobs.length === 0 && (
+                                <div className="text-center py-20 px-6 border border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
+                                    <Briefcase size={32} className="mx-auto text-gray-300 mb-4" />
+                                    <h3 className="text-lg font-bold text-brand-black mb-2">No open positions found</h3>
+                                    <p className="text-gray-500 text-sm">We don't have any openings that match your criteria right now. Check back later!</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </section>
 

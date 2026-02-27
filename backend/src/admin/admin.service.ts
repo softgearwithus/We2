@@ -9,6 +9,8 @@ import { Submission } from '../dsa/entities/submission.entity';
 import { SqlSubmission } from '../sql/entities/sql-submission.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
 import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submission.entity';
+import { Placement } from '../placements/entities/placement.entity';
+import { Application } from '../applications/entities/application.entity';
 
 @Injectable()
 export class AdminService {
@@ -29,7 +31,11 @@ export class AdminService {
         private interviewSessionsRepo: Repository<InterviewSession>,
         @InjectRepository(ProjectLabSubmission)
         private projectLabSubmissionsRepo: Repository<ProjectLabSubmission>,
-    ) {}
+        @InjectRepository(Placement)
+        private placementsRepo: Repository<Placement>,
+        @InjectRepository(Application)
+        private applicationsRepo: Repository<Application>,
+    ) { }
 
     async getOverview() {
         const totalColleges = await this.collegesRepo.count();
@@ -41,10 +47,16 @@ export class AdminService {
         const recentSignups = await this.staffRepo.find({ order: { createdAt: 'DESC' }, take: 5 });
 
         const activePartners = await this.collegesRepo.count({ where: { status: 'Active' } });
+
+        const totalDrives = await this.placementsRepo.count();
+        const totalApplications = await this.applicationsRepo.count();
+
         return {
             totalColleges,
             totalStudents: Number(totalStudents?.total || 0),
             partners: activePartners,
+            totalDrives,
+            totalApplications,
             uptime: `${Math.floor(process.uptime() / 3600)}h`,
             recentLogs,
             recentSignups,

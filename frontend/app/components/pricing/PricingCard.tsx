@@ -59,6 +59,46 @@ export default function PricingCard({
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
+    let computedCtaText = isUpgradeLocked ? 'Upgrades Paused' : ctaText;
+    let computedIsLocked = isUpgradeLocked;
+
+    if (user && user.subscriptionPlan && user.subscriptionPlan !== 'free' && user.subscriptionEndDate && planId && !isUpgradeLocked) {
+        const remainingMs = new Date(user.subscriptionEndDate).getTime() - Date.now();
+        const remainingDays = remainingMs / (1000 * 60 * 60 * 24);
+
+        let planDurationDays = 0;
+        if (planId.includes('1m')) planDurationDays = 30;
+        else if (planId.includes('3m')) planDurationDays = 90;
+        else if (planId.includes('6m')) planDurationDays = 180;
+        else if (planId.includes('12m')) planDurationDays = 365;
+
+        // Infer their current plan tier based on remaining days plus a small renewal grace window (5 days)
+        let activeDurationTierDays = 0;
+        if (remainingDays > 185) activeDurationTierDays = 365;
+        else if (remainingDays > 95) activeDurationTierDays = 180;
+        else if (remainingDays > 35) activeDurationTierDays = 90;
+        else if (remainingDays > 5) activeDurationTierDays = 30;
+
+        const isUserPro = user.subscriptionPlan === 'we2_max' || user.subscriptionPlan.includes('pro');
+        const isCardPro = planId.includes('pro');
+        const isUserStandard = user.subscriptionPlan === 'placement_plus' || user.subscriptionPlan.includes('standard');
+        const isCardStandard = planId.includes('standard');
+
+        if (isUserPro && isCardStandard) {
+            computedIsLocked = true;
+            computedCtaText = 'Higher Tier Active';
+        } else if ((isUserPro && isCardPro) || (isUserStandard && isCardStandard)) {
+            if (planDurationDays <= activeDurationTierDays) {
+                computedIsLocked = true;
+                computedCtaText = planDurationDays === activeDurationTierDays ? 'Current Plan Active' : 'Downgrade Unavailable';
+            } else if (activeDurationTierDays > 0) {
+                computedCtaText = 'Upgrade Duration';
+            }
+        } else if (isUserStandard && isCardPro) {
+            computedCtaText = 'Upgrade to Pro';
+        }
+    }
+
     const loadRazorpayScript = () => {
         return new Promise((resolve) => {
             if (typeof window !== 'undefined' && window.Razorpay) {
@@ -74,7 +114,7 @@ export default function PricingCard({
     };
 
     const handleUpgrade = async () => {
-        if (isUpgradeLocked) {
+        if (computedIsLocked) {
             return;
         }
         if (!planId) {
@@ -200,13 +240,15 @@ export default function PricingCard({
                     </div>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col mt-4">
                     {originalPrice && (
-                        <span className="text-slate-400 font-bold line-through text-xl decoration-slate-300 decoration-2">{originalPrice}</span>
+                        <span className="text-slate-400 font-bold line-through text-lg decoration-slate-300 decoration-2 -mb-1">{originalPrice}</span>
                     )}
-                    <div className="flex items-baseline gap-1">
+                    <div className="flex items-baseline gap-1 mt-1">
                         <span className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">{price}</span>
-                        <span className="text-slate-500 font-bold">/{period}</span>
+                        <span className={cn("font-bold", period === 'month' || period === 'year' ? "text-slate-500" : "text-slate-600 tracking-tight")}>
+                            /{period}
+                        </span>
                     </div>
                     {savings && (
                         <div className="flex items-center gap-2 mt-2">
@@ -241,7 +283,7 @@ export default function PricingCard({
 
             <button
                 onClick={handleUpgrade}
-                disabled={isLoading || isUpgradeLocked}
+                disabled={isLoading || computedIsLocked}
                 className={cn(
                     "w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2",
                     isPremium
@@ -250,10 +292,10 @@ export default function PricingCard({
                             ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 hover:-translate-y-0.5"
                             : "bg-white text-slate-700 border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50"),
                     isLoading && "opacity-70 cursor-wait",
-                    isUpgradeLocked && "opacity-60 cursor-not-allowed"
+                    computedIsLocked && "opacity-60 cursor-not-allowed"
                 )}
             >
-                {isLoading ? <Loader2 className="animate-spin" size={16} /> : (isUpgradeLocked ? 'Upgrades Paused' : ctaText)}
+                {isLoading ? <Loader2 className="animate-spin" size={16} /> : computedCtaText}
             </button>
         </motion.div>
     );

@@ -16,6 +16,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
     const { login } = useAuth();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
     const onSubmit = async (data: any) => {
@@ -33,25 +34,27 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    ...data,
-                    ...(role === 'college' ? {} : { role: roleMap[role] }),
+                    email: data.email,
+                    password: data.password,
+                    role: roleMap[role],
+                    rememberMe: rememberMe,
                 }),
             });
 
             // Mock bypass if backend is unavailable or credentials fail
             if (!response.ok) {
-                if (role === 'admin' && data.email === 'admin@prep0.com' && data.password === 'admin') {
-                    login('MOCK_TOKEN_ADMIN', { email: 'admin@prep0.com', role: 'super_admin', name: 'Super Admin' } as any);
+                if (role === 'admin' && data.email === 'admin@emble.in' && data.password === 'admin') {
+                    login('MOCK_TOKEN_ADMIN', { email: 'admin@emble.in', role: 'super_admin', name: 'Super Admin' } as any, rememberMe);
                     router.push(redirectPath);
                     return;
                 }
-                if (role === 'college' && data.email === 'college@prep0.com' && data.password === 'college') {
-                    login('MOCK_TOKEN_COLLEGE', { email: 'college@prep0.com', role: 'college_admin', name: 'Mock College' } as any);
+                if (role === 'college' && data.email === 'college@emble.in' && data.password === 'college') {
+                    login('MOCK_TOKEN_COLLEGE', { email: 'college@emble.in', role: 'college_admin', name: 'Mock College' } as any, rememberMe);
                     router.push(redirectPath);
                     return;
                 }
-                if (role === 'industry' && data.email === 'company@prep0.com' && data.password === 'company') {
-                    login('MOCK_TOKEN_INDUSTRY', { email: 'company@prep0.com', role: 'company_admin', name: 'Mock Company' } as any);
+                if (role === 'industry' && data.email === 'company@emble.in' && data.password === 'company') {
+                    login('MOCK_TOKEN_INDUSTRY', { email: 'company@emble.in', role: 'company_admin', name: 'Mock Company' } as any, rememberMe);
                     router.push(redirectPath);
                     return;
                 }
@@ -68,7 +71,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                     return;
                 }
 
-                login(result.accessToken, result.user);
+                login(result.accessToken, result.user, rememberMe);
                 router.push(redirectPath);
             } else {
                 alert('Login failed. Please check your credentials.');
@@ -123,7 +126,12 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
                 <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className={`w-4 h-4 rounded border-slate-300 focus:ring-primary ${role === 'admin' ? 'text-green-600' : 'text-primary'}`} />
+                        <input
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className={`w-4 h-4 rounded border-slate-300 focus:ring-primary ${role === 'admin' ? 'text-green-600' : 'text-primary'}`}
+                        />
                         <span className="text-sm text-slate-600">Remember me</span>
                     </label>
                     <Link href="#" className={`text-sm font-medium hover:underline ${role === 'admin' ? 'text-green-600' : 'text-primary'}`}>

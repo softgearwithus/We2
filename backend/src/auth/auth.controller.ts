@@ -1,8 +1,11 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Body, Controller, Post, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
-import { Public } from './decorators/auth.decorators';
+import { Public, Roles } from './decorators/auth.decorators';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { UserRole } from '../users/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -54,5 +57,14 @@ export class AuthController {
     @ApiResponse({ status: 429, description: 'Too many requests' })
     async login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.SUPER_ADMIN)
+    @Post('impersonate/:id')
+    @ApiOperation({ summary: 'Super Admin ONLY: Impersonate a user account securely.' })
+    async impersonate(@Param('id') id: string) {
+        return this.authService.impersonate(id);
     }
 }

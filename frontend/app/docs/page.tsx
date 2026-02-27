@@ -28,6 +28,7 @@ const categories = [
         desc: "Everything you need to know to begin your journey at EMBLE.",
         icon: PlayCircle,
         color: "blue",
+        exploreUrl: "/how-it-works",
         links: [
             { label: "Platform Overview", slug: "platform-overview" },
             { label: "Account Setup", slug: "account-setup" },
@@ -39,10 +40,11 @@ const categories = [
         desc: "Master the technical interview roadmap and resume building.",
         icon: Code2,
         color: "orange",
+        exploreUrl: "/dashboard/preparation",
         links: [
             { label: "DSA Roadmap 2024", slug: "dsa-roadmap-2024" },
             { label: "Resume Lab Instructions", slug: "resume-lab-instructions" },
-            { label: "Mock Interview Prep", slug: "mock-interview-prep" }
+            { label: "Mock Interview Prep", href: "/dashboard/interviews" }
         ]
     },
     {
@@ -50,10 +52,11 @@ const categories = [
         desc: "Deep dive into our 21-day industrial simulator workflows.",
         icon: Terminal,
         color: "emerald",
+        exploreUrl: "/dashboard/projects",
         links: [
             { label: "Sprint Methodology", slug: "sprint-methodology" },
             { label: "Agile & JIRA Guide", slug: "agile-jira-guide" },
-            { label: "Git & GitHub Workflows", slug: "git-github-workflows" }
+            { label: "Git & GitHub Workflows", href: "/dashboard/github" }
         ]
     },
     {
@@ -61,10 +64,11 @@ const categories = [
         desc: "Technical guides for the tools used in our simulation squads.",
         icon: Cpu,
         color: "purple",
+        exploreUrl: "/dashboard/projects",
         links: [
             { label: "Docker & Containers", slug: "docker-containers" },
-            { label: "CI/CD Pipelines", slug: "cicd-pipelines" },
-            { label: "System Observability", slug: "system-observability" }
+            { label: "CI/CD Pipelines", href: "/dashboard/projects" },
+            { label: "System Observability", href: "/dashboard/projects" }
         ]
     },
     {
@@ -72,10 +76,11 @@ const categories = [
         desc: "Manage your plans, invoices, and enterprise upgrades.",
         icon: ShieldCheck,
         color: "rose",
+        exploreUrl: "/pricing",
         links: [
-            { label: "Pricing FAQ", slug: "pricing-faq" },
-            { label: "Refund Policy", slug: "refund-policy" },
-            { label: "Plan Comparisons", slug: "plan-comparisons" }
+            { label: "Pricing FAQ", href: "/pricing" },
+            { label: "Refund Policy", href: "/refund" },
+            { label: "Plan Comparisons", href: "/pricing" }
         ]
     },
     {
@@ -83,10 +88,11 @@ const categories = [
         desc: "Connect with thousands of students and mentors globally.",
         icon: Users,
         color: "indigo",
+        exploreUrl: "/about",
         links: [
-            { label: "Discord Rules", slug: "discord-rules" },
-            { label: "Mentorship Guide", slug: "mentorship-guide" },
-            { label: "Ambassador Program", slug: "ambassador-program" }
+            { label: "Discord Rules", href: "/contact" },
+            { label: "Mentorship Guide", href: "/dashboard/mentors" },
+            { label: "Ambassador Program", href: "/careers" }
         ]
     }
 ];
@@ -107,6 +113,36 @@ export default function DocsPage() {
     }, []);
 
     if (!mounted) return null;
+
+    // Filter categories based on search query
+    const filteredCategories = categories.map(cat => {
+        if (!searchQuery) return cat;
+
+        const query = searchQuery.toLowerCase();
+        const matchesCat = cat.title.toLowerCase().includes(query) || cat.desc.toLowerCase().includes(query);
+
+        const matchingLinks = cat.links.filter(link =>
+            link.label.toLowerCase().includes(query) ||
+            (link.slug && link.slug.toLowerCase().includes(query)) ||
+            (link.href && link.href.toLowerCase().includes(query))
+        );
+
+        if (matchesCat || matchingLinks.length > 0) {
+            return {
+                ...cat,
+                links: matchingLinks.length > 0 ? matchingLinks : cat.links
+            };
+        }
+        return null;
+    }).filter(Boolean) as typeof categories;
+
+    // Mapping popular articles to real slugs
+    const popularArticlesMapped = [
+        { title: "Sprint Methodology", views: "12k+", slug: "sprint-methodology" },
+        { title: "Resume Lab Instructions", views: "8.5k+", slug: "resume-lab-instructions" },
+        { title: "DSA Roadmap 2024", views: "6.2k+", slug: "dsa-roadmap-2024" },
+        { title: "Pricing FAQ", views: "4.1k+", slug: "pricing-faq" }
+    ];
 
     return (
         <main className="min-h-screen bg-white selection:bg-brand-orange selection:text-white">
@@ -163,8 +199,14 @@ export default function DocsPage() {
 
                     <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-gray-400 uppercase tracking-widest pt-4">
                         <span>Trending:</span>
-                        {['JIRA Integration', 'Resume Scoring', 'HLD Basics', 'SQL Mastery'].map(tag => (
-                            <button key={tag} className="hover:text-brand-orange transition-colors underline decoration-gray-800 underline-offset-4">{tag}</button>
+                        {['JIRA', 'Resume', 'Docker', 'Interview'].map(tag => (
+                            <button
+                                key={tag}
+                                onClick={() => setSearchQuery(tag)}
+                                className="hover:text-brand-orange transition-colors underline decoration-gray-800 underline-offset-4"
+                            >
+                                {tag}
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -173,45 +215,52 @@ export default function DocsPage() {
             {/* Category Grid */}
             <section className="py-24 bg-white relative">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {categories.map((cat, idx) => (
-                            <motion.div
-                                key={cat.title}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: idx * 0.1 }}
-                                className="group p-8 rounded-[40px] bg-gray-50/50 border border-gray-100 hover:border-brand-orange/20 hover:bg-white hover:shadow-2xl hover:shadow-brand-orange/5 transition-all duration-300"
-                            >
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform ${cat.color === 'blue' ? 'bg-blue-100 text-blue-600' :
-                                    cat.color === 'orange' ? 'bg-orange-100 text-brand-orange' :
-                                        cat.color === 'emerald' ? 'bg-emerald-100 text-emerald-600' :
-                                            cat.color === 'purple' ? 'bg-purple-100 text-purple-600' :
-                                                cat.color === 'rose' ? 'bg-rose-100 text-rose-600' :
-                                                    'bg-indigo-100 text-indigo-600'
-                                    }`}>
-                                    <cat.icon size={28} />
-                                </div>
-                                <h3 className="text-2xl font-black text-brand-black mb-4">{cat.title}</h3>
-                                <p className="text-gray-500 text-sm mb-8 leading-relaxed font-medium">{cat.desc}</p>
+                    {filteredCategories.length === 0 ? (
+                        <div className="text-center py-20">
+                            <h3 className="text-2xl font-bold text-brand-black mb-2">No guides found</h3>
+                            <p className="text-gray-500">Try adjusting your search query, or ask our community on Discord.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredCategories.map((cat, idx) => (
+                                <motion.div
+                                    key={cat.title}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="group p-8 rounded-[40px] bg-gray-50/50 border border-gray-100 hover:border-brand-orange/20 hover:bg-white hover:shadow-2xl hover:shadow-brand-orange/5 transition-all duration-300 flex flex-col"
+                                >
+                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform flex-shrink-0 ${cat.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                                        cat.color === 'orange' ? 'bg-orange-100 text-brand-orange' :
+                                            cat.color === 'emerald' ? 'bg-emerald-100 text-emerald-600' :
+                                                cat.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                                                    cat.color === 'rose' ? 'bg-rose-100 text-rose-600' :
+                                                        'bg-indigo-100 text-indigo-600'
+                                        }`}>
+                                        <cat.icon size={28} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-brand-black mb-4">{cat.title}</h3>
+                                    <p className="text-gray-500 text-sm mb-8 leading-relaxed font-medium">{cat.desc}</p>
 
-                                <ul className="space-y-3 mb-8">
-                                    {cat.links.map(link => (
-                                        <li key={link.slug}>
-                                            <Link href={`/docs/${link.slug}`} className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-brand-orange transition-colors group/link">
-                                                <ChevronRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
-                                                {link.label}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
+                                    <ul className="space-y-3 mb-8 flex-1">
+                                        {cat.links.map((link, i) => (
+                                            <li key={i}>
+                                                <Link href={link.href ? link.href : `/docs/${link.slug}`} className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-brand-orange transition-colors group/link">
+                                                    <ChevronRight size={14} className="group-hover/link:translate-x-1 transition-transform flex-shrink-0" />
+                                                    <span className="truncate">{link.label}</span>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
 
-                                <button className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-brand-orange hover:gap-3 transition-all mt-auto">
-                                    Explore More <ArrowRight size={14} />
-                                </button>
-                            </motion.div>
-                        ))}
-                    </div>
+                                    <Link href={cat.exploreUrl} className="flex flex-wrap items-center gap-2 text-xs font-black uppercase tracking-widest text-brand-orange hover:gap-3 transition-all mt-auto pt-4 group/explore">
+                                        Explore More <ArrowRight size={14} className="group-hover/explore:translate-x-1 transition-transform" />
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -229,25 +278,26 @@ export default function DocsPage() {
                             </Link>
                         </div>
                         <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                            {popularArticles.map((article, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className="p-6 rounded-3xl bg-white border border-gray-100 flex items-center justify-between group hover:border-brand-orange/30 transition-all cursor-pointer shadow-sm"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-orange-50 group-hover:text-brand-orange flex items-center justify-center transition-colors">
-                                            <Files size={18} />
+                            {popularArticlesMapped.map((article, idx) => (
+                                <Link href={`/docs/${article.slug}`} key={idx}>
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className="p-6 h-full rounded-3xl bg-white border border-gray-100 flex items-center justify-between group hover:border-brand-orange/30 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-orange-50 group-hover:text-brand-orange flex items-center justify-center transition-colors shrink-0">
+                                                <Files size={18} />
+                                            </div>
+                                            <h5 className="font-bold text-brand-black text-sm pr-4 line-clamp-2">{article.title}</h5>
                                         </div>
-                                        <h5 className="font-bold text-brand-black text-sm max-w-[150px]">{article.title}</h5>
-                                    </div>
-                                    <div className="text-[10px] font-black uppercase text-gray-300 group-hover:text-emerald-500 transition-colors">
-                                        {article.views} reads
-                                    </div>
-                                </motion.div>
+                                        <div className="text-[10px] font-black uppercase text-gray-300 group-hover:text-emerald-500 transition-colors shrink-0">
+                                            {article.views} reads
+                                        </div>
+                                    </motion.div>
+                                </Link>
                             ))}
                         </div>
                     </div>

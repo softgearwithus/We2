@@ -115,6 +115,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Join as a Mentor', href: '/mentor/apply', icon: 'person_add' }
             ]
         },
+        { icon: 'work', label: 'Placement Drives', href: '/dashboard/placement-drives', hasUpdate: updateIndicators['/dashboard/placement-drives'] },
     ];
 
     const simulationMenu: MenuItem[] = [
@@ -253,18 +254,18 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                                                 : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                                                 }`}
                                         >
-                                        <span className={`material-symbols-outlined ${isItemActive ? 'text-inherit' : 'text-slate-400 group-hover:text-slate-600'}`}>
-                                            {item.icon}
-                                        </span>
-                                        <span
-                                            className={`font-medium whitespace-nowrap transition-opacity duration-200 flex-1 ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
-                                                }`}
-                                        >
-                                            {item.label}
-                                        </span>
-                                        {item.hasUpdate && (
-                                            <span className={`w-2 h-2 rounded-full bg-rose-500 animate-pulse ${sidebarOpen ? 'ml-auto' : 'absolute top-3 right-3'}`}></span>
-                                        )}
+                                            <span className={`material-symbols-outlined ${isItemActive ? 'text-inherit' : 'text-slate-400 group-hover:text-slate-600'}`}>
+                                                {item.icon}
+                                            </span>
+                                            <span
+                                                className={`font-medium whitespace-nowrap transition-opacity duration-200 flex-1 ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
+                                                    }`}
+                                            >
+                                                {item.label}
+                                            </span>
+                                            {item.hasUpdate && (
+                                                <span className={`w-2 h-2 rounded-full bg-rose-500 animate-pulse ${sidebarOpen ? 'ml-auto' : 'absolute top-3 right-3'}`}></span>
+                                            )}
                                         </Link>
                                     )}
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -74,7 +74,7 @@ export class UsersService {
 
     async findByEmail(email: string): Promise<User | null> {
         const normalizedEmail = email.toLowerCase().trim();
-        return this.usersRepository.findOne({
+        const user = await this.usersRepository.findOne({
             where: { email: normalizedEmail },
             select: [
                 'id',
@@ -92,6 +92,33 @@ export class UsersService {
                 'avatarUrl',
             ],
         });
+
+        if (!user) return null;
+
+        // --- Exact Millisecond Expiration & Unpausing Logic ---
+        if (
+            user.subscriptionStatus === 'active' &&
+            user.subscriptionEndDate &&
+            user.subscriptionEndDate.getTime() <= Date.now()
+        ) {
+            if (user.pausedSubscriptionPlan && user.pausedSubscriptionRemainingDays > 0) {
+                // Resume the paused plan
+                user.subscriptionPlan = user.pausedSubscriptionPlan;
+                user.subscriptionEndDate = new Date(Date.now() + (user.pausedSubscriptionRemainingDays * 24 * 60 * 60 * 1000));
+
+                // Clear the paused state
+                user.pausedSubscriptionPlan = null;
+                user.pausedSubscriptionRemainingDays = 0;
+            } else {
+                // Downgrade to free
+                user.subscriptionPlan = 'free';
+                user.subscriptionStatus = 'expired';
+            }
+            // Save the automated transition to the DB immediately
+            await this.usersRepository.save(user);
+        }
+
+        return user;
     }
 
     async findByCredentialId(credentialId: string): Promise<User | null> {
@@ -127,6 +154,30 @@ export class UsersService {
         if (!user) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
+
+        // --- Exact Millisecond Expiration & Unpausing Logic ---
+        if (
+            user.subscriptionStatus === 'active' &&
+            user.subscriptionEndDate &&
+            user.subscriptionEndDate.getTime() <= Date.now()
+        ) {
+            if (user.pausedSubscriptionPlan && user.pausedSubscriptionRemainingDays > 0) {
+                // Resume the paused plan
+                user.subscriptionPlan = user.pausedSubscriptionPlan;
+                user.subscriptionEndDate = new Date(Date.now() + (user.pausedSubscriptionRemainingDays * 24 * 60 * 60 * 1000));
+
+                // Clear the paused state
+                user.pausedSubscriptionPlan = null;
+                user.pausedSubscriptionRemainingDays = 0;
+            } else {
+                // Downgrade to free
+                user.subscriptionPlan = 'free';
+                user.subscriptionStatus = 'expired';
+            }
+            // Save the automated transition to the DB immediately
+            await this.usersRepository.save(user);
+        }
+
         return user;
     }
 
@@ -135,7 +186,10 @@ export class UsersService {
         return this.usersRepository.findBy({ id: In(ids) });
     }
 
-    async findAll(): Promise<User[]> {
+    async findAll(role?: string): Promise<User[]> {
+        if (role) {
+            return this.usersRepository.find({ where: { role: role as any } });
+        }
         return this.usersRepository.find();
     }
 
@@ -337,7 +391,64 @@ export class UsersService {
         };
     }
 
-    async upgradeSubscription(id: string, plan: string): Promise<User> {
-        throw new ForbiddenException('Upgrades are temporarily disabled');
+    async upgradeSubscription(id: string, plan: string, paymentId?: string): Promise<User> {
+        const user = await this.findById(id);
+
+        let targetPlan = 'free';
+        let durationDays = 0;
+
+        // Map frontend plan IDs to backend enum values and durations
+        if (plan.includes('standard')) {
+            targetPlan = 'placement_plus';
+        } else if (plan.includes('pro')) {
+            targetPlan = 'we2_max';
+        }
+
+        if (plan.includes('_12m')) durationDays = 365;
+        else if (plan.includes('_1m')) durationDays = 30;
+        else if (plan.includes('_3m')) durationDays = 90;
+        else if (plan.includes('_6m')) durationDays = 180;
+
+        if (targetPlan === 'free' || durationDays === 0) {
+            throw new BadRequestException('Invalid subscription plan selected.');
+        }
+
+        const now = new Date();
+        const currentMs = now.getTime();
+
+        let newEndDateMs = currentMs + (durationDays * 24 * 60 * 60 * 1000);
+
+        // Check if user has an active, non-expired plan
+        if (
+            user.subscriptionStatus === 'active' &&
+            user.subscriptionPlan !== 'free' &&
+            user.subscriptionEndDate &&
+            user.subscriptionEndDate.getTime() > currentMs
+        ) {
+            if (user.subscriptionPlan === targetPlan) {
+                // Extending the same plan: just add time to the existing end date
+                newEndDateMs = user.subscriptionEndDate.getTime() + (durationDays * 24 * 60 * 60 * 1000);
+            } else {
+                // Switching to a different plan: pause the current active plan
+                const remainingMs = user.subscriptionEndDate.getTime() - currentMs;
+                const remainingDays = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
+
+                // If they already have a paused plan, we should decide what to do. 
+                // For now, we overwrite the paused plan with the Active plan being paused.
+                user.pausedSubscriptionPlan = user.subscriptionPlan;
+                user.pausedSubscriptionRemainingDays = remainingDays;
+
+                // End date is calculated from NOW since it's a new tier
+            }
+        }
+
+        user.subscriptionPlan = targetPlan;
+        user.subscriptionStatus = 'active';
+        user.subscriptionEndDate = new Date(newEndDateMs);
+        user.usageLastReset = now;
+
+        // Optionally store the paymentId in a transactions table or notes if needed.
+
+        return this.usersRepository.save(user);
     }
 }

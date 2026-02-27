@@ -48,17 +48,52 @@ const supportChannels = [
 export default function ContactPage() {
     const [mounted, setMounted] = useState(false);
     const [status, setStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+    const [subject, setSubject] = useState('General Inquiry');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        companyName: '',
+        message: '',
+        phone: ''
+    });
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('sending');
-        // Simulated API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setStatus('success');
+
+        try {
+            if (subject === 'Company Partnership') {
+                // Route directly to the B2B CRM Lead Gen endpoint
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/company-leads`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        companyName: formData.companyName || formData.name, // Fallback if missing
+                        phone: formData.phone || undefined
+                    })
+                });
+                if (!res.ok) throw new Error('Failed to send company lead');
+            } else {
+                // Simulated general contact API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+            setStatus('success');
+            setFormData({ name: '', email: '', companyName: '', message: '', phone: '' });
+        } catch (error) {
+            console.error('Submission error:', error);
+            setStatus('idle');
+            alert('Failed to send message. Please try again.');
+        }
     };
 
     if (!mounted) return null;
@@ -194,6 +229,9 @@ export default function ContactPage() {
                                                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Your Name</label>
                                                 <input
                                                     required
+                                                    name="name"
+                                                    value={formData.name}
+                                                    onChange={handleChange}
                                                     type="text"
                                                     className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium"
                                                     placeholder="e.g. Ayush Gupta"
@@ -203,6 +241,9 @@ export default function ContactPage() {
                                                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
                                                 <input
                                                     required
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
                                                     type="email"
                                                     className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium"
                                                     placeholder="ayush@example.com"
@@ -212,23 +253,63 @@ export default function ContactPage() {
 
                                         <div className="space-y-2">
                                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Subject / Category</label>
-                                            <select className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium appearance-none">
-                                                <option>General Inquiry</option>
-                                                <option>Placement Mode Dashboard Help</option>
-                                                <option>Job Simulation Simulation Access</option>
-                                                <option>Billing & Payments</option>
-                                                <option>Technical Support</option>
-                                                <option>Partnerships</option>
+                                            <select
+                                                name="subject"
+                                                value={subject}
+                                                onChange={(e) => setSubject(e.target.value)}
+                                                className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium appearance-none"
+                                            >
+                                                <option value="General Inquiry">General Inquiry</option>
+                                                <option value="Placement Mode Dashboard Help">Placement Mode Dashboard Help</option>
+                                                <option value="Billing & Payments">Billing & Payments</option>
+                                                <option value="Technical Support">Technical Support</option>
+                                                <option value="College Partnership">College Partnership</option>
+                                                <option value="Company Partnership">Company Partnership</option>
                                             </select>
                                         </div>
+
+                                        {subject === 'Company Partnership' && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                                            >
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Company Name</label>
+                                                    <input
+                                                        required={subject === 'Company Partnership'}
+                                                        name="companyName"
+                                                        value={formData.companyName}
+                                                        onChange={handleChange}
+                                                        type="text"
+                                                        className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-emerald-100 focus:border-emerald-500 focus:bg-white outline-none transition-all text-brand-black font-medium"
+                                                        placeholder="e.g. Acme Corp"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number (Optional)</label>
+                                                    <input
+                                                        name="phone"
+                                                        value={formData.phone}
+                                                        onChange={handleChange}
+                                                        type="text"
+                                                        className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium"
+                                                        placeholder="+91 90000 00000"
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        )}
 
                                         <div className="space-y-2">
                                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Your Message</label>
                                             <textarea
                                                 required
+                                                name="message"
+                                                value={formData.message}
+                                                onChange={handleChange}
                                                 rows={4}
                                                 className="w-full p-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium resize-none"
-                                                placeholder="How can we help you?"
+                                                placeholder={subject === 'Company Partnership' ? "Tell us about your hiring needs and scale..." : "How can we help you?"}
                                             />
                                         </div>
 

@@ -23,7 +23,7 @@ const sections = [
     {
         id: "usage",
         title: "2. How We Use Data",
-        content: "Your data is used to personalize your curriculum, track your progress in Job Simulation simulations, provide AI-assisted insights in Placement Mode, and improve our platform's overall efficiency. We do not sell your personal data to third parties."
+        content: "Your data is used to personalize your curriculum, track your progress in simulated environments, provide AI-assisted insights in EMBLE Pro, and improve our platform's overall efficiency. We do not sell your personal data to third parties."
     },
     {
         id: "sharing",

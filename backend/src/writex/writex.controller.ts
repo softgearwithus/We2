@@ -21,7 +21,7 @@ export class WriteXController {
     @Get('question')
     @ApiOperation({ summary: 'Get active WriteX question' })
     @ApiResponse({ status: 200, description: 'Active question' })
-    @RequireSectionUsage(USAGE_SECTION_KEYS.TEST_SERIES_COMMUNICATION)
+    @RequireSectionUsage(USAGE_SECTION_KEYS.TEST_SERIES)
     async getQuestion() {
         return this.writexService.getActiveQuestion();
     }
@@ -31,7 +31,7 @@ export class WriteXController {
     @Post('submit')
     @ApiOperation({ summary: 'Submit WriteX answer for evaluation' })
     @ApiResponse({ status: 200, description: 'Evaluation result' })
-    @RequireSectionUsage(USAGE_SECTION_KEYS.TEST_SERIES_COMMUNICATION)
+    @RequireSectionUsage(USAGE_SECTION_KEYS.TEST_SERIES)
     async submit(@Body() dto: SubmitWriteXDto) {
         return this.writexService.evaluateAnswer(dto.questionId, dto.answer);
     }

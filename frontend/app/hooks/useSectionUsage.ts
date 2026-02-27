@@ -56,6 +56,9 @@ export function useSectionUsage(sectionKey: string, options?: { enabled?: boolea
                 if (prev === null) return prev;
                 if (prev <= 0) {
                     clearDisplayTimer();
+                    clearHeartbeat();
+                    setStatus('limited');
+                    setState(s => s ? { ...s, remainingSeconds: 0, isLimited: true } : null);
                     return 0;
                 }
                 return prev - 1;

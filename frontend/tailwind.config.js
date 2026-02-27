@@ -17,7 +17,7 @@ const config = {
                     'orange-hover': '#F4511E',
                     gray: '#F5F5F7',
                 },
-                // Prep0 Ultra Theme
+                // EMBLE Ultra Theme
                 prep: {
                     dark: '#050A18',        // Deep Tech Blue Background
                     card: '#0A1124',        // Glass Card Background

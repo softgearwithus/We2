@@ -24,7 +24,7 @@ const item: Variants = {
 };
 
 export default function TestSeriesPage() {
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series_subject');
+    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 overflow-x-hidden pb-20 relative">
             {/* Minimalist Background pattern */}
@@ -69,71 +69,71 @@ export default function TestSeriesPage() {
                         animate="show"
                         className="grid grid-cols-1 md:grid-cols-3 gap-6"
                     >
-                    {/* Subject Wise Card */}
-                    <motion.div variants={item}>
-                        <Link href="/dashboard/test-series/subject" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}>
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-100 transition-colors" />
+                        {/* Subject Wise Card */}
+                        <motion.div variants={item}>
+                            <Link href="/dashboard/test-series/subject" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-100 transition-colors" />
 
-                            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                                <BookOpen size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Subject <br /> Practice.</h3>
-                            <p className="text-slate-500 text-sm font-medium mb-12">
-                                Structured MCQs for English, Aptitude, Reasoning & CS.
-                            </p>
-
-                            <div className="flex items-center justify-between mt-auto">
-                                <span className="text-indigo-600 font-bold text-sm">Start Practice</span>
-                                <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                                    <ChevronRight size={18} />
+                                <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                    <BookOpen size={24} strokeWidth={2.5} />
                                 </div>
-                            </div>
-                        </Link>
-                    </motion.div>
+                                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Subject <br /> Practice.</h3>
+                                <p className="text-slate-500 text-sm font-medium mb-12">
+                                    Structured MCQs for English, Aptitude, Reasoning & CS.
+                                </p>
 
-                    {/* Company Wise Card */}
-                    <motion.div variants={item}>
-                        <Link href="/dashboard/test-series/company" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-orange-100'}`}>
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-orange-100 transition-colors" />
-
-                            <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
-                                <Building2 size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Company <br /> Patterns.</h3>
-                            <p className="text-slate-500 text-sm font-medium mb-12">
-                                Exact pattern mocks for top tech giants and startups.
-                            </p>
-
-                            <div className="flex items-center justify-between mt-auto">
-                                <span className="text-orange-600 font-bold text-sm">Start Mocks</span>
-                                <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
-                                    <ChevronRight size={18} />
+                                <div className="flex items-center justify-between mt-auto">
+                                    <span className="text-indigo-600 font-bold text-sm">Start Practice</span>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                        <ChevronRight size={18} />
+                                    </div>
                                 </div>
-                            </div>
-                        </Link>
-                    </motion.div>
+                            </Link>
+                        </motion.div>
 
-                    {/* WriteX Analysis Card */}
-                    <motion.div variants={item}>
-                        <Link href="/dashboard/test-series/communication" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-emerald-100'}`}>
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-100 transition-colors" />
+                        {/* Company Wise Card */}
+                        <motion.div variants={item}>
+                            <Link href="/dashboard/test-series/company" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-orange-100'}`}>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-orange-100 transition-colors" />
 
-                            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-                                <Mic size={24} strokeWidth={2.5} />
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">WriteX <br /> Analysis.</h3>
-                            <p className="text-slate-500 text-sm font-medium mb-12">
-                                High-speed AI grading for your long-form responses.
-                            </p>
-
-                            <div className="flex items-center justify-between mt-auto">
-                                <span className="text-emerald-600 font-bold text-sm">Evaluate Now</span>
-                                <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
-                                    <ChevronRight size={18} />
+                                <div className="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                                    <Building2 size={24} strokeWidth={2.5} />
                                 </div>
-                            </div>
-                        </Link>
-                    </motion.div>
+                                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Company <br /> Patterns.</h3>
+                                <p className="text-slate-500 text-sm font-medium mb-12">
+                                    Exact pattern mocks for top tech giants and startups.
+                                </p>
+
+                                <div className="flex items-center justify-between mt-auto">
+                                    <span className="text-orange-600 font-bold text-sm">Start Mocks</span>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </div>
+                            </Link>
+                        </motion.div>
+
+                        {/* WriteX Analysis Card */}
+                        <motion.div variants={item}>
+                            <Link href="/dashboard/test-series/communication" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-emerald-100'}`}>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-100 transition-colors" />
+
+                                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                                    <Mic size={24} strokeWidth={2.5} />
+                                </div>
+                                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">WriteX <br /> Analysis.</h3>
+                                <p className="text-slate-500 text-sm font-medium mb-12">
+                                    High-speed AI grading for your long-form responses.
+                                </p>
+
+                                <div className="flex items-center justify-between mt-auto">
+                                    <span className="text-emerald-600 font-bold text-sm">Evaluate Now</span>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </div>
+                            </Link>
+                        </motion.div>
                     </motion.div>
                 </div>
             </div>

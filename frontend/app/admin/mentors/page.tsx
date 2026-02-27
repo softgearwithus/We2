@@ -46,22 +46,6 @@ export default function AdminMentorsPage() {
         alert(`Mentor account has been ${newStatus.toLowerCase()}. They will not be visible to users.`);
     };
 
-    if (loading) {
-        return (
-            <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-center">
-                <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Mentor admin unavailable</h2>
-                <p className="text-slate-500">Please check back later.</p>
-            </div>
-        );
-    }
 
     const deleteMentor = (id: string) => {
         if (window.confirm("Are you sure you want to permanently delete this mentor? This action cannot be undone.")) {
@@ -153,12 +137,12 @@ export default function AdminMentorsPage() {
         const loadAdminMentors = async () => {
             try {
                 const token = localStorage.getItem('accessToken') || '';
-                const [mentorData, applicationData, payoutData, sessionData] = await Promise.all([
-                    fetchAdminMentors(token),
-                    fetchAdminMentorApplications(token),
-                    fetchAdminMentorPayouts(token),
-                    fetchAdminMentorSessions(token),
-                ]);
+                let mentorData = [], applicationData = [], payoutData = [], sessionData = [];
+                try { mentorData = await fetchAdminMentors(token) || []; } catch (e) { console.error("Mentors Error", e); }
+                try { applicationData = await fetchAdminMentorApplications(token) || []; } catch (e) { console.error("Apps Error", e); }
+                try { payoutData = await fetchAdminMentorPayouts(token) || []; } catch (e) { console.error("Payouts Error", e); }
+                try { sessionData = await fetchAdminMentorSessions(token) || []; } catch (e) { console.error("Sessions Error", e); }
+
                 const mentorMap = new Map<string, { name?: string | null; userId?: string | null; userEmail?: string | null }>(
                     (mentorData || []).map((m: any) => [m.id, m])
                 );
@@ -238,13 +222,32 @@ export default function AdminMentorsPage() {
                 })));
                 setSessions(sessionData || []);
             } catch (err: any) {
-                setError('Mentor admin data unavailable.');
+                console.error("DEBUG MENTOR FETCH:", err);
+                setError(err.message || 'Mentor admin data unavailable.');
             } finally {
                 setLoading(false);
             }
         };
         loadAdminMentors();
     }, []);
+
+    if (loading) {
+        return (
+            <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-center">
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Mentor admin unavailable</h2>
+                <p className="text-slate-500">Please check back later.</p>
+                {error && <p className="mt-4 p-4 bg-red-50 text-red-600 rounded font-mono text-xs max-w-lg overflow-auto text-left shadow-inner">{error}</p>}
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -271,13 +274,13 @@ export default function AdminMentorsPage() {
 
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                                <p className="text-sm font-medium text-slate-500">Sessions This Month</p>
+                        <p className="text-sm font-medium text-slate-500">Sessions This Month</p>
                         <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
                             <Video size={16} />
                         </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                                <h3 className="text-2xl font-extrabold text-slate-900">{sessions.length}</h3>
+                        <h3 className="text-2xl font-extrabold text-slate-900">{sessions.length}</h3>
                         <span className="text-xs font-medium text-emerald-600 flex items-center"><ArrowUpRight size={12} /> +24%</span>
                     </div>
                 </div>
@@ -681,7 +684,7 @@ export default function AdminMentorsPage() {
                 {activeTab === 'analytics' && (
                     <div className="p-0">
                         {/* Summary Metrics */}
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-50/50 border-b border-slate-100">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-50/50 border-b border-slate-100">
                             <div className="bg-white p-4 rounded-xl border border-slate-200">
                                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Platform Gross</p>
                                 <p className="text-xl font-extrabold text-slate-900">₹ {analytics.reduce((acc, curr) => acc + curr.totalGross, 0).toLocaleString()}</p>
@@ -740,13 +743,13 @@ export default function AdminMentorsPage() {
                         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4">
                             <div className="relative flex-1 max-w-md">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                            <input
-                                type="text"
-                                placeholder="Search by Mentor ID (UUID)..."
-                                value={sessionSearchId}
-                                onChange={(e) => setSessionSearchId(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                            />
+                                <input
+                                    type="text"
+                                    placeholder="Search by Mentor ID (UUID)..."
+                                    value={sessionSearchId}
+                                    onChange={(e) => setSessionSearchId(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                                />
                             </div>
                         </div>
 
@@ -769,17 +772,17 @@ export default function AdminMentorsPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
-                                    {sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).length === 0 ? (
-                                        <tr>
-                                            <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
-                                                No sessions found for Mentor ID "{sessionSearchId}".
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).map((session: any) => (
-                                            <tr key={session.id} className="hover:bg-slate-50/50 transition-colors">
-                                                <td className="px-6 py-4 text-sm text-slate-600">{session.updatedAt || session.createdAt}</td>
-                                                <td className="px-6 py-4 font-bold text-slate-900">{session.studentName || 'Student'}</td>
+                                        {sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).length === 0 ? (
+                                            <tr>
+                                                <td colSpan={7} className="px-6 py-8 text-center text-slate-500">
+                                                    No sessions found for Mentor ID "{sessionSearchId}".
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            sessions.filter((s: any) => s.mentorId.toLowerCase() === sessionSearchId.toLowerCase().trim()).map((session: any) => (
+                                                <tr key={session.id} className="hover:bg-slate-50/50 transition-colors">
+                                                    <td className="px-6 py-4 text-sm text-slate-600">{session.updatedAt || session.createdAt}</td>
+                                                    <td className="px-6 py-4 font-bold text-slate-900">{session.studentName || 'Student'}</td>
                                                     <td className="px-6 py-4 text-sm text-slate-600">{session.topic}</td>
                                                     <td className="px-6 py-4">
                                                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${session.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : session.status === 'declined' ? 'bg-red-100 text-red-700' : session.status === 'accepted' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
@@ -787,21 +790,21 @@ export default function AdminMentorsPage() {
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right font-mono text-slate-600">₹{session.priceInr}</td>
-                                                <td className="px-6 py-4 text-right font-mono text-orange-600">
-                                                    -₹{Math.round(session.priceInr * 0.22)}
-                                                </td>
-                                                <td className="px-6 py-4 text-right font-mono font-black tracking-tight text-purple-600">
-                                                    ₹{Math.round(session.priceInr * 0.78)}
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            )}
+                                                    <td className="px-6 py-4 text-right font-mono text-orange-600">
+                                                        -₹{Math.round(session.priceInr * 0.22)}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right font-mono font-black tracking-tight text-purple-600">
+                                                        ₹{Math.round(session.priceInr * 0.78)}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Refund Modal */}
@@ -918,16 +921,16 @@ export default function AdminMentorsPage() {
                             </div>
 
                             <div className="space-y-6">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                            <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Session Fee (15m)</p>
-                                            <p className="text-lg font-extrabold text-slate-900">₹{viewingProfile.feePerMinuteInr ? viewingProfile.feePerMinuteInr * 15 : 0}</p>
-                                        </div>
-                                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                            <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Sessions Taught</p>
-                                            <p className="text-lg font-extrabold text-slate-900">{viewingProfile.sessions ?? 0}</p>
-                                        </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Session Fee (15m)</p>
+                                        <p className="text-lg font-extrabold text-slate-900">₹{viewingProfile.feePerMinuteInr ? viewingProfile.feePerMinuteInr * 15 : 0}</p>
                                     </div>
+                                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Total Sessions Taught</p>
+                                        <p className="text-lg font-extrabold text-slate-900">{viewingProfile.sessions ?? 0}</p>
+                                    </div>
+                                </div>
 
                                 <div>
                                     <h4 className="text-sm font-bold text-slate-900 mb-2 border-b border-slate-100 pb-2">Professional Headline</h4>

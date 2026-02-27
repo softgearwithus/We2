@@ -59,6 +59,12 @@ export class User {
     @Column({ type: 'timestamp', nullable: true })
     subscriptionEndDate: Date;
 
+    @Column({ type: 'varchar', nullable: true })
+    pausedSubscriptionPlan?: string | null;
+
+    @Column({ type: 'int', default: 0 })
+    pausedSubscriptionRemainingDays: number;
+
     @Column({ default: true })
     isActive: boolean;
 

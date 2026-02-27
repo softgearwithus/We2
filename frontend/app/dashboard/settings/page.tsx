@@ -2,14 +2,34 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Key, Mail, Bell, Trash2, Smartphone, MonitorSmartphone, Monitor, ChevronRight, LogOut, AlertTriangle, Save } from 'lucide-react';
+import { Shield, Key, Mail, Bell, Trash2, Smartphone, MonitorSmartphone, Monitor, ChevronRight, LogOut, AlertTriangle, Save, CreditCard, Calendar, Star, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/app/context/AuthContext';
 
-type Tab = 'account' | 'security' | 'notifications';
+type Tab = 'account' | 'subscription' | 'security' | 'notifications';
 
 export default function SettingsPage() {
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<Tab>('account');
     const [isSaving, setIsSaving] = useState(false);
+
+    // Date formatter
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    };
+
+    // Plan display formatter
+    const getDisplayPlan = (plan?: string) => {
+        if (!plan || plan === 'free') return 'Free';
+        if (plan === 'placement_plus' || plan.includes('standard')) return 'EMBLE Standard';
+        if (plan === 'we2_max' || plan.includes('pro')) return 'EMBLE Pro';
+        return plan;
+    };
 
     // Password State
     const [passwordData, setPasswordData] = useState({
@@ -50,6 +70,7 @@ export default function SettingsPage() {
 
     const tabs = [
         { id: 'account', label: 'Account', icon: <Mail size={18} /> },
+        { id: 'subscription', label: 'Subscription', icon: <CreditCard size={18} /> },
         { id: 'security', label: 'Security', icon: <Shield size={18} /> },
         { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
     ];
@@ -67,8 +88,8 @@ export default function SettingsPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as Tab)}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab.id
-                                        ? 'bg-indigo-50 text-indigo-700'
-                                        : 'text-slate-500 hover:bg-slate-100'
+                                    ? 'bg-indigo-50 text-indigo-700'
+                                    : 'text-slate-500 hover:bg-slate-100'
                                     }`}
                             >
                                 <span className={activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'}>{tab.icon}</span>
@@ -101,7 +122,7 @@ export default function SettingsPage() {
                                     <div className="p-6">
                                         <div className="flex items-center justify-between">
                                             <div>
-                                                <p className="font-bold text-slate-900">alex@example.com</p>
+                                                <p className="font-bold text-slate-900">{user?.email}</p>
                                                 <p className="text-xs text-emerald-600 font-bold mt-1 flex items-center gap-1">
                                                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Verified
                                                 </p>
@@ -130,6 +151,84 @@ export default function SettingsPage() {
                                         </button>
                                     </div>
                                 </section>
+                            </motion.div>
+                        )}
+
+                        {/* SUBSCRIPTION TAB */}
+                        {activeTab === 'subscription' && (
+                            <motion.div
+                                key="subscription"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                className="space-y-6"
+                            >
+                                <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                                        <div>
+                                            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                                <Star className="text-amber-500 fill-amber-500" size={20} /> Current Plan
+                                            </h2>
+                                            <p className="text-sm text-slate-500 mt-1">Review your active subscription details and billing cycle.</p>
+                                        </div>
+                                        <Link href="/pricing" className="text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                                            <Sparkles size={16} /> Upgrade Plan
+                                        </Link>
+                                    </div>
+                                    <div className="p-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                                            {/* Plan Details */}
+                                            <div className="p-5 rounded-xl border border-indigo-100 bg-indigo-50/50 flex flex-col gap-1">
+                                                <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1.5 focus:outline-none mb-1">
+                                                    <CreditCard size={14} /> Active Plan
+                                                </span>
+                                                <span className="text-2xl font-black text-slate-900">
+                                                    {getDisplayPlan(user?.subscriptionPlan)}
+                                                </span>
+                                                <span className={`text-xs font-bold px-2 py-0.5 mt-1 rounded-md w-fit ${user?.subscriptionStatus === 'active' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'}`}>
+                                                    {(user?.subscriptionStatus || 'Free').toUpperCase()}
+                                                </span>
+                                            </div>
+
+                                            {/* Started */}
+                                            <div className="p-5 rounded-xl border border-slate-100 bg-slate-50 flex flex-col justify-center">
+                                                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 focus:outline-none mb-1">
+                                                    <Calendar size={14} /> Valid From
+                                                </span>
+                                                <span className="text-lg font-bold text-slate-800">
+                                                    {formatDate(user?.usageLastReset || user?.createdAt)}
+                                                </span>
+                                            </div>
+
+                                            {/* Ends */}
+                                            <div className="p-5 rounded-xl border border-slate-100 bg-slate-50 flex flex-col justify-center">
+                                                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 focus:outline-none mb-1">
+                                                    <Calendar size={14} /> Valid Until
+                                                </span>
+                                                <span className="text-lg font-bold text-slate-800">
+                                                    {user?.subscriptionEndDate ? formatDate(user.subscriptionEndDate) : 'Lifetime Access'}
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                    <div className="p-6 border-b border-slate-100">
+                                        <h2 className="text-lg font-bold text-slate-900">Billing History</h2>
+                                        <p className="text-sm text-slate-500 mt-1">Recent payments and invoices.</p>
+                                    </div>
+                                    <div className="p-8 flex flex-col items-center justify-center text-center">
+                                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-3">
+                                            <CreditCard size={24} className="text-slate-300" />
+                                        </div>
+                                        <p className="text-sm font-bold text-slate-400">No past invoices available.</p>
+                                    </div>
+                                </section>
+
                             </motion.div>
                         )}
 
@@ -299,6 +398,6 @@ export default function SettingsPage() {
                 </div>
 
             </div>
-        </div>
+        </div >
     );
 }

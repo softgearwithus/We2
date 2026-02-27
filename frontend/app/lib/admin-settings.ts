@@ -42,6 +42,13 @@ export type PlatformSettings = {
     allowRegistrations: boolean;
     supportEmail: string;
     maxUploadSizeMB: number;
+    upgradesEnabled?: boolean;
+    subscriptionPrices?: {
+        standard: Record<string, number>;
+        pro: Record<string, number>;
+    };
+    freeTierLimitMinutes?: number;
+    freeTierRefreshHours?: number;
 };
 
 export const fetchPlatformSettings = async (token: string): Promise<PlatformSettings> => {

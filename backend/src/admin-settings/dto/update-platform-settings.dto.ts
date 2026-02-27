@@ -21,4 +21,23 @@ export class UpdatePlatformSettingsDto {
     @IsOptional()
     @IsInt()
     maxUploadSizeMB?: number;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsBoolean()
+    upgradesEnabled?: boolean;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    subscriptionPrices?: Record<string, any>;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsInt()
+    freeTierLimitMinutes?: number;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsInt()
+    freeTierRefreshHours?: number;
 }

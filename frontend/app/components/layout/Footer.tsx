@@ -51,7 +51,6 @@ export default function Footer() {
                             title: 'Company',
                             links: [
                                 { label: 'Our Mission', href: '/about' },
-                                { label: 'Success Stories', href: '/stories' },
                                 { label: 'Careers', href: '/careers' },
                                 { label: 'Contact', href: '/contact' }
                             ]
@@ -62,6 +61,7 @@ export default function Footer() {
                                 { label: 'Documentation', href: '/docs' },
                                 { label: 'Terms of Service', href: '/terms' },
                                 { label: 'Privacy Policy', href: '/privacy' },
+                                { label: 'Refund Policy', href: '/refund' },
                                 { label: 'System Status', href: '/status' }
                             ]
                         }

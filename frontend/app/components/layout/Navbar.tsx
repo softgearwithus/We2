@@ -9,6 +9,13 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useDashboardMode } from '@/app/context/DashboardModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const getDisplayPlan = (plan?: string) => {
+    if (!plan || plan === 'free') return 'Free';
+    if (plan === 'placement_plus' || plan.includes('standard')) return 'EMBLE Standard';
+    if (plan === 'we2_max' || plan.includes('pro')) return 'EMBLE Pro';
+    return plan;
+};
+
 export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
@@ -162,7 +169,7 @@ export default function Navbar() {
                                         <div className="px-4 py-3 border-b border-gray-50">
                                             <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Signed in as</p>
                                             <p className="text-sm font-bold text-brand-black truncate">{user.email}</p>
-                                            <p className="text-xs text-brand-orange mt-1 font-medium capitalize">{user.subscriptionPlan || 'Free'} Plan</p>
+                                            <p className="text-xs text-brand-orange mt-1 font-medium capitalize">{getDisplayPlan(user.subscriptionPlan)} Plan</p>
                                         </div>
 
                                         <Link href="/dashboard/profile" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>

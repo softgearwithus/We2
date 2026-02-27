@@ -9,13 +9,17 @@ import {
     Param,
     HttpCode,
     HttpStatus,
+    ForbiddenException,
+    Query,
 } from '@nestjs/common';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, Matches } from 'class-validator';
 import {
     ApiTags,
     ApiOperation,
     ApiResponse,
     ApiBearerAuth,
     ApiBody,
+    ApiProperty,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -23,13 +27,32 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminSettingsService } from '../admin-settings/admin-settings.service';
+
+export class UpgradeSubscriptionDto {
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(30)
+    @Matches(/^(standard|pro)_(1m|3m|6m|12m)$/, { message: 'Invalid plan identifier' })
+    @ApiProperty({ example: 'standard_1m', description: 'The identifier for the subscription plan' })
+    plan: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(100)
+    @ApiProperty({ example: 'pay_xxxxxxxxxxxxxx', required: false, description: 'Optional ID linking to the payment processor transaction' })
+    paymentId?: string;
+}
 
 @ApiTags('users')
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly adminSettingsService: AdminSettingsService,
+    ) { }
 
     @Get('profile')
     @ApiOperation({ summary: 'Get current user profile' })
@@ -74,9 +97,15 @@ export class UsersController {
     @ApiOperation({ summary: 'Upgrade user subscription plan' })
     @ApiBody({ schema: { type: 'object', properties: { plan: { type: 'string', example: 'placement_plus' } } } })
     @ApiResponse({ status: 200, description: 'Subscription upgraded successfully' })
+    @ApiResponse({ status: 400, description: 'Validation failed (string too long, empty, or missing)' })
     @ApiResponse({ status: 403, description: 'Upgrades are temporarily disabled' })
-    async upgradeSubscription(@Request() req: any, @Body('plan') plan: string) {
-        return this.usersService.upgradeSubscription(req.user.id, plan);
+    async upgradeSubscription(@Request() req: any, @Body() upgradeDto: UpgradeSubscriptionDto) {
+        const { plan, paymentId } = upgradeDto;
+        const settings = await this.adminSettingsService.getPlatformSettings();
+        if (!settings.upgradesEnabled) {
+            throw new ForbiddenException('Upgrades are temporarily disabled');
+        }
+        return this.usersService.upgradeSubscription(req.user.id, plan, paymentId);
     }
 
     @Get(':id')
@@ -94,7 +123,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Get all users (Admin only)' })
     @ApiResponse({ status: 200, description: 'Users list retrieved successfully' })
     @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-    async getAllUsers() {
-        return this.usersService.findAll();
+    async getAllUsers(@Query('role') role?: string) {
+        return this.usersService.findAll(role);
     }
 }

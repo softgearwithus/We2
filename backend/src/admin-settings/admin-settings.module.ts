@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminSettingsController } from './admin-settings.controller';
 import { AdminSettingsService } from './admin-settings.service';
@@ -10,9 +10,9 @@ import { LastActiveInterceptor } from './interceptors/last-active.interceptor';
 import { UploadLimitInterceptor } from './interceptors/upload-limit.interceptor';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([AdminUpdateFlag, PlatformSettings]), UsersModule],
+    imports: [TypeOrmModule.forFeature([AdminUpdateFlag, PlatformSettings]), forwardRef(() => UsersModule)],
     controllers: [AdminSettingsController],
     providers: [AdminSettingsService, PlatformGuard, LastActiveInterceptor, UploadLimitInterceptor],
     exports: [AdminSettingsService],
 })
-export class AdminSettingsModule {}
+export class AdminSettingsModule { }

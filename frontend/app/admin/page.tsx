@@ -16,6 +16,8 @@ export default function AdminDashboard() {
         totalColleges: 0,
         totalStudents: 0,
         partners: 48,
+        totalDrives: 0,
+        totalApplications: 0,
         uptime: '99.9%',
     });
 
@@ -31,6 +33,8 @@ export default function AdminDashboard() {
                     totalColleges: data.totalColleges || 0,
                     totalStudents: data.totalStudents || 0,
                     partners: data.partners || 0,
+                    totalDrives: data.totalDrives || 0,
+                    totalApplications: data.totalApplications || 0,
                     uptime: data.uptime || '99.9%',
                 });
                 setRecentLogs(data.recentLogs || []);
@@ -42,10 +46,10 @@ export default function AdminDashboard() {
     }, []);
 
     const dashboardStats = [
-        { label: 'Total Institutions', value: stats.totalColleges.toString(), icon: Building2, color: 'text-blue-600' },
         { label: 'Registered Students', value: stats.totalStudents.toLocaleString(), icon: Users, color: 'text-indigo-600' },
-        { label: 'Partner Brands', value: stats.partners.toString(), icon: TrendingUp, color: 'text-emerald-600' },
-        { label: 'Platform Reliability', value: stats.uptime, icon: Server, color: 'text-slate-600' },
+        { label: 'Partner Brands', value: stats.partners.toString(), icon: Building2, color: 'text-emerald-600' },
+        { label: 'Employer Campaigns', value: stats.totalDrives.toString(), icon: Activity, color: 'text-orange-600' },
+        { label: 'Total Applications', value: stats.totalApplications.toString(), icon: TrendingUp, color: 'text-blue-600' },
     ];
 
     return (
@@ -80,9 +84,9 @@ export default function AdminDashboard() {
                             </div>
                             <div>
                                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-3">{stat.label}</p>
-                                 <div className="flex items-baseline gap-3">
-                                     <h3 className="text-4xl font-black text-slate-900 tracking-tight">{stat.value}</h3>
-                                 </div>
+                                <div className="flex items-baseline gap-3">
+                                    <h3 className="text-4xl font-black text-slate-900 tracking-tight">{stat.value}</h3>
+                                </div>
                             </div>
                         </div>
                     </div>

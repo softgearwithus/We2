@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { MentorProfile } from './entities/mentor-profile.entity';
 import { MentorApplication } from './entities/mentor-application.entity';
 import { MentorSession } from './entities/mentor-session.entity';
@@ -23,7 +23,7 @@ export class MentorsService {
         @InjectRepository(MentorPayout)
         private payoutRepo: Repository<MentorPayout>,
         private usersService: UsersService,
-    ) {}
+    ) { }
 
     async listMentors() {
         return this.mentorRepo.find({ where: { isActive: true }, order: { updatedAt: 'DESC' } });
@@ -163,7 +163,7 @@ export class MentorsService {
         if (sessions.length === 0) return [];
         const mentorIds = Array.from(new Set(sessions.map((s) => s.mentorId)));
         const studentIds = Array.from(new Set(sessions.map((s) => s.studentId)));
-        const mentors = mentorIds.length ? await this.mentorRepo.findBy({ id: mentorIds as any }) : [];
+        const mentors = mentorIds.length ? await this.mentorRepo.findBy({ id: In(mentorIds) }) : [];
         const users = studentIds.length ? await this.usersService.findByIds(studentIds) : [];
         const mentorMap = new Map(mentors.map((m) => [m.id, m]));
         const userMap = new Map(users.map((u) => [u.id, u]));
@@ -183,7 +183,7 @@ export class MentorsService {
         const payouts = await this.payoutRepo.find({ order: { createdAt: 'DESC' } });
         if (payouts.length === 0) return [];
         const mentorIds = Array.from(new Set(payouts.map((p) => p.mentorId)));
-        const mentors = mentorIds.length ? await this.mentorRepo.findBy({ id: mentorIds as any }) : [];
+        const mentors = mentorIds.length ? await this.mentorRepo.findBy({ id: In(mentorIds) }) : [];
         const mentorMap = new Map(mentors.map((m) => [m.id, m]));
         return payouts.map((payout) => {
             const mentor = mentorMap.get(payout.mentorId);

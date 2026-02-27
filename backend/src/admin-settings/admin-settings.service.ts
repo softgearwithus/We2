@@ -59,6 +59,10 @@ export class AdminSettingsService {
                 allowRegistrations: true,
                 supportEmail: '',
                 maxUploadSizeMB: 10,
+                upgradesEnabled: false,
+                subscriptionPrices: {},
+                freeTierLimitMinutes: 10,
+                freeTierRefreshHours: 12,
             });
             settings = await this.platformRepo.save(settings);
         }
@@ -118,6 +122,10 @@ export class AdminSettingsService {
             allowRegistrations: settings.allowRegistrations,
             supportEmail: settings.supportEmail,
             maxUploadSizeMB: settings.maxUploadSizeMB,
+            upgradesEnabled: settings.upgradesEnabled,
+            subscriptionPrices: settings.subscriptionPrices,
+            freeTierLimitMinutes: settings.freeTierLimitMinutes,
+            freeTierRefreshHours: settings.freeTierRefreshHours,
         };
     }
 

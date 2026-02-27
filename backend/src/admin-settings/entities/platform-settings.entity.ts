@@ -17,6 +17,18 @@ export class PlatformSettings {
     @Column({ type: 'int', default: 10 })
     maxUploadSizeMB: number;
 
+    @Column({ type: 'boolean', default: false })
+    upgradesEnabled: boolean;
+
+    @Column({ type: 'jsonb', nullable: true })
+    subscriptionPrices: Record<string, any>;
+
+    @Column({ type: 'int', default: 10 })
+    freeTierLimitMinutes: number;
+
+    @Column({ type: 'int', default: 12 })
+    freeTierRefreshHours: number;
+
     @UpdateDateColumn()
     updatedAt: Date;
 

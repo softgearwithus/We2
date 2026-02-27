@@ -31,8 +31,8 @@ export class McqsController {
         const request = context.switchToHttp().getRequest();
         const category = request?.query?.category;
         return category === 'company'
-            ? USAGE_SECTION_KEYS.TEST_SERIES_COMPANY
-            : USAGE_SECTION_KEYS.TEST_SERIES_SUBJECT;
+            ? USAGE_SECTION_KEYS.TEST_SERIES
+            : USAGE_SECTION_KEYS.TEST_SERIES;
     })
     async groups(@Query('category') category: McqCategory) {
         return this.mcqsService.groups(category);
@@ -47,8 +47,8 @@ export class McqsController {
         const request = context.switchToHttp().getRequest();
         const category = request?.query?.category;
         return category === 'company'
-            ? USAGE_SECTION_KEYS.TEST_SERIES_COMPANY
-            : USAGE_SECTION_KEYS.TEST_SERIES_SUBJECT;
+            ? USAGE_SECTION_KEYS.TEST_SERIES
+            : USAGE_SECTION_KEYS.TEST_SERIES;
     })
     async list(@Query() query: ListMcqQueryDto) {
         return this.mcqsService.list(query);

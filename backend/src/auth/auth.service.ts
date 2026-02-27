@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
@@ -58,6 +58,46 @@ export class AuthService {
         if (role && user.role !== role) {
             throw new UnauthorizedException('Invalid credentials');
         }
+        const payload = { sub: user.id, email: user.email, role: user.role };
+
+        let accessToken: string;
+        if (loginDto.rememberMe) {
+            accessToken = await this.jwtService.signAsync(payload, { expiresIn: '7d' });
+        } else {
+            accessToken = await this.jwtService.signAsync(payload);
+        }
+
+        return {
+            accessToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                credentialId: (user as any).credentialId || null,
+                collegeId: (user as any).collegeId || null,
+                department: (user as any).department || null,
+                year: (user as any).year || null,
+                role: user.role,
+                subscriptionPlan: user.subscriptionPlan,
+                subscriptionStatus: user.subscriptionStatus,
+                subscriptionEndDate: user.subscriptionEndDate,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            },
+        };
+    }
+
+    async impersonate(userId: string) {
+        const user = await this.usersService.findById(userId);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        if (user.role === 'super_admin') {
+            throw new ForbiddenException('Cannot impersonate Super Admin');
+        }
+        if (user.isActive === false) {
+            throw new UnauthorizedException('Account disabled');
+        }
+
         const payload = { sub: user.id, email: user.email, role: user.role };
         const accessToken = await this.jwtService.signAsync(payload);
 

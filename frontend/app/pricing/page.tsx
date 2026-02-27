@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ShieldCheck, HelpCircle, Code2, Building, School, ArrowRight, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/app/lib/utils';
-
 import PricingCard from '@/app/components/pricing/PricingCard';
 import LeadForm from '@/app/components/pricing/LeadForm';
 import DotBackground from '@/app/components/ui/DotBackground';
 import Navbar from '@/app/components/layout/Navbar';
 import Footer from '@/app/components/layout/Footer';
+import { fetchPublicPlatformSettings } from '@/app/lib/admin-settings';
 
 const TABS = [
     { id: 'students', label: 'For Students', icon: Code2 },
@@ -18,11 +18,32 @@ const TABS = [
     { id: 'companies', label: 'For Companies', icon: Building },
 ];
 
-const STANDARD_PLAN = {
+type DurationType = '1m' | '3m' | '6m' | '12m';
+
+const DURATION_OPTIONS = [
+    { id: '1m', label: '1 Month' },
+    { id: '3m', label: '3 Months' },
+    { id: '6m', label: '6 Months' },
+    { id: '12m', label: '12 Months' }
+];
+
+type PlanFeature = { text: string; included: boolean };
+type PlanPricing = { price: string; period: string; id: string; savings?: string };
+
+type PlanType = {
+    title: string;
+    internalName: string;
+    description: string;
+    features: PlanFeature[];
+    ctaText: string;
+    variant: 'default' | 'premium' | 'popular';
+    badgeText?: string;
+    pricing: Record<DurationType, PlanPricing>;
+};
+
+const STANDARD_PLAN: PlanType = {
     title: 'EMBLE Standard',
     internalName: 'placement_plus',
-    price: '₹449',
-    period: 'month',
     description: 'Perfect for maintaining skills & light practice.',
     features: [
         { text: 'Full-Stack Web Projects', included: true },
@@ -35,15 +56,17 @@ const STANDARD_PLAN = {
     ],
     ctaText: 'Get Standard Access',
     variant: 'default' as const,
-    planId: 'standard_tier',
-    savings: 'Effective: ₹11/day'
+    pricing: {
+        '1m': { price: '₹449', period: 'month', id: 'standard_1m', savings: 'Effective: ₹15/day' },
+        '3m': { price: '₹1,199', period: '3 months', id: 'standard_3m', savings: 'Effective: ₹13/day' },
+        '6m': { price: '₹2,199', period: '6 months', id: 'standard_6m', savings: 'Effective: ₹12/day' },
+        '12m': { price: '₹3,999', period: 'year', id: 'standard_12m', savings: 'Effective: ₹11/day' },
+    }
 };
 
 const PRO_PLAN = {
     title: 'EMBLE Pro',
     internalName: 'we2_max',
-    price: '₹799',
-    period: 'month',
     description: 'For serious job seekers who need intense practice.',
     features: [
         { text: 'Everything in Standard', included: true },
@@ -55,12 +78,16 @@ const PRO_PLAN = {
     ],
     ctaText: 'Get Pro Access',
     variant: 'premium' as const,
-    savings: 'Effective: ₹20/day',
     badgeText: 'Best Value',
-    planId: 'pro_tier',
+    pricing: {
+        '1m': { price: '₹799', period: 'month', id: 'pro_1m', savings: 'Effective: ₹26/day' },
+        '3m': { price: '₹2,199', period: '3 months', id: 'pro_3m', savings: 'Effective: ₹24/day' },
+        '6m': { price: '₹3,999', period: '6 months', id: 'pro_6m', savings: 'Effective: ₹22/day' },
+        '12m': { price: '₹7,470', period: 'year', id: 'pro_12m', savings: 'Effective: ₹20/day' },
+    }
 };
 
-const PLANS = [STANDARD_PLAN, PRO_PLAN];
+const PLANS: PlanType[] = [STANDARD_PLAN, PRO_PLAN];
 
 const ALL_FEATURES = [
     { category: 'Foundation', name: 'Company-Specific DSA & SQL', std: true, pro: true },
@@ -76,9 +103,49 @@ const ALL_FEATURES = [
 
 export default function PricingPage() {
     const [activeTab, setActiveTab] = useState('students');
-    const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+    const [duration, setDuration] = useState<DurationType>('3m');
     const [showComparison, setShowComparison] = useState(false);
-    const upgradesLocked = true;
+    const [upgradesLocked, setUpgradesLocked] = useState(true); // Default to locked
+    const [dynamicPlans, setDynamicPlans] = useState<PlanType[]>(PLANS);
+
+    React.useEffect(() => {
+        const loadSettings = async () => {
+            try {
+                const settings = await fetchPublicPlatformSettings();
+                setUpgradesLocked(!settings.upgradesEnabled);
+
+                if (settings.subscriptionPrices) {
+                    const clonedPlans = JSON.parse(JSON.stringify(PLANS)) as PlanType[];
+
+                    const stdPlan = clonedPlans.find(p => p.internalName === 'placement_plus');
+                    const proPlan = clonedPlans.find(p => p.internalName === 'we2_max');
+
+                    if (stdPlan && settings.subscriptionPrices.standard) {
+                        Object.keys(settings.subscriptionPrices.standard).forEach((key) => {
+                            const val = settings.subscriptionPrices?.standard[key];
+                            if (stdPlan.pricing[key as DurationType] && val !== undefined) {
+                                stdPlan.pricing[key as DurationType].price = `₹${val.toLocaleString()}`;
+                            }
+                        });
+                    }
+
+                    if (proPlan && settings.subscriptionPrices.pro) {
+                        Object.keys(settings.subscriptionPrices.pro).forEach((key) => {
+                            const val = settings.subscriptionPrices?.pro[key];
+                            if (proPlan.pricing[key as DurationType] && val !== undefined) {
+                                proPlan.pricing[key as DurationType].price = `₹${val.toLocaleString()}`;
+                            }
+                        });
+                    }
+
+                    setDynamicPlans(clonedPlans);
+                }
+            } catch (err) {
+                console.error("Failed to fetch public pricing settings", err);
+            }
+        };
+        loadSettings();
+    }, []);
 
     return (
         <div className="min-h-screen bg-white font-sans text-brand-black relative selection:bg-brand-orange-hover selection:text-white">
@@ -135,38 +202,28 @@ export default function PricingPage() {
                         >
                             {activeTab === 'students' && (
                                 <div className="space-y-6">
-                                    {/* Billing Toggle */}
-                                    <div className="flex justify-center items-center gap-4 mb-4">
-                                        <span className={cn("text-sm font-bold", billingCycle === 'monthly' ? "text-brand-black" : "text-gray-400")}>Monthly</span>
-                                        <button
-                                            onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'yearly' : 'monthly')}
-                                            className="w-14 h-8 bg-gray-200 rounded-full relative transition-colors focus:outline-none hover:bg-gray-300"
-                                        >
-                                            <div className={cn(
-                                                "w-6 h-6 bg-white rounded-full absolute top-1 transition-all shadow-md",
-                                                billingCycle === 'monthly' ? "left-1" : "left-7 bg-brand-orange"
-                                            )}></div>
-                                        </button>
-                                        <span className={cn("text-sm font-bold flex items-center gap-2", billingCycle === 'yearly' ? "text-brand-black" : "text-gray-400")}>
-                                            Yearly
-                                            <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">Save 26%</span>
-                                        </span>
-                                    </div>
-
-                                    <div className="text-center mt-2 mb-4">
-                                        <div className="h-8 flex items-center justify-center">
-                                            <AnimatePresence>
-                                                {billingCycle === 'monthly' && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: -10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        exit={{ opacity: 0, scale: 0.95 }}
-                                                        className="text-sm font-bold text-brand-orange bg-orange-50 px-4 py-1.5 rounded-full inline-block border border-orange-100 shadow-sm"
-                                                    >
-                                                        💡 Subscribe annually and save up to 26%!
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                    {/* Duration Selector */}
+                                    <div className="flex justify-center mb-8">
+                                        <div className="bg-gray-50 p-1.5 rounded-[20px] inline-flex items-center gap-1 border border-gray-200">
+                                            {DURATION_OPTIONS.map((opt) => (
+                                                <button
+                                                    key={opt.id}
+                                                    onClick={() => setDuration(opt.id as DurationType)}
+                                                    className={cn(
+                                                        "px-5 py-2.5 rounded-2xl font-bold text-sm transition-all duration-300 relative",
+                                                        duration === opt.id
+                                                            ? "bg-white text-brand-orange shadow-md ring-1 ring-gray-200"
+                                                            : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                                                    )}
+                                                >
+                                                    {opt.label}
+                                                    {opt.id === '3m' && (
+                                                        <span className="absolute -top-3 -right-2 bg-gradient-to-r from-red-500 to-orange-500 text-white text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider shadow-sm rotate-3">
+                                                            Popular
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
 
@@ -179,19 +236,33 @@ export default function PricingPage() {
 
                                     {/* Pricing Cards */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch pt-2 max-w-5xl mx-auto">
-                                        {PLANS.map((plan, idx) => {
-                                            const basePrice = parseInt(plan.price.replace('₹', ''));
-                                            const originalYearly = basePrice * 12;
-                                            const discountedYearly = basePrice === 449 ? 3999 : 7470;
+                                        {dynamicPlans.map((plan, idx) => {
+                                            const activePricing = plan.pricing[duration];
+
+                                            // Provide pseudo-original prices purely for cross-card anchoring psychology if desired
+                                            let displayOriginalPrice = undefined;
+                                            if (duration === '3m' && plan.title.includes('Standard')) displayOriginalPrice = '₹1,347';
+                                            if (duration === '6m' && plan.title.includes('Standard')) displayOriginalPrice = '₹2,694';
+                                            if (duration === '12m' && plan.title.includes('Standard')) displayOriginalPrice = '₹5,388';
+
+                                            if (duration === '3m' && plan.title.includes('Pro')) displayOriginalPrice = '₹2,397';
+                                            if (duration === '6m' && plan.title.includes('Pro')) displayOriginalPrice = '₹4,794';
+                                            if (duration === '12m' && plan.title.includes('Pro')) displayOriginalPrice = '₹9,588';
 
                                             return (
                                                 <PricingCard
                                                     key={plan.title}
-                                                    {...plan}
-                                                    originalPrice={billingCycle === 'yearly' ? `₹${originalYearly}` : undefined}
-                                                    price={billingCycle === 'yearly' ? `₹${discountedYearly}` : plan.price}
-                                                    period={billingCycle === 'yearly' ? 'year' : 'month'}
-                                                    savings={billingCycle === 'yearly' ? plan.savings : undefined}
+                                                    title={plan.title}
+                                                    description={plan.description}
+                                                    features={plan.features}
+                                                    variant={plan.variant}
+                                                    badgeText={plan.badgeText}
+                                                    ctaText={plan.ctaText}
+                                                    price={activePricing.price}
+                                                    period={activePricing.period}
+                                                    originalPrice={displayOriginalPrice}
+                                                    savings={activePricing.savings}
+                                                    planId={activePricing.id}
                                                     delay={idx}
                                                     onCtaClick={() => console.log('Clicked', plan.title)}
                                                     isUpgradeLocked={upgradesLocked}
@@ -261,17 +332,17 @@ export default function PricingPage() {
 
                                     {/* Trust Badges */}
                                     <div className="mt-20 pt-10 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6 text-gray-500 text-sm font-medium">
-                                        <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
+                                        <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all">
                                             <ShieldCheck size={18} className="text-emerald-500" />
                                             <span>Secure SSL Payment</span>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
-                                            <CheckCircle2 size={18} className="text-emerald-500" />
-                                            <span>14-Day Money Back Guarantee</span>
+                                        <div className="flex items-center gap-3 bg-white border border-brand-orange/20 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all">
+                                            <Building size={18} className="text-brand-orange animate-pulse" />
+                                            <span className="text-brand-black font-bold">Priority Placement Connect</span>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm">
-                                            <HelpCircle size={18} className="text-emerald-500" />
-                                            <span>24/7 Priority Support</span>
+                                        <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all">
+                                            <HelpCircle size={18} className="text-indigo-500" />
+                                            <span>Cancel Anytime Control</span>
                                         </div>
                                     </div>
                                 </div>

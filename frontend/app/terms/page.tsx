@@ -16,7 +16,7 @@ const sections = [
     {
         id: "acceptance",
         title: "1. Acceptance of Terms",
-        content: "By accessing or using the EMBLE platform (including Placement Mode and Job Simulation), you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use our services."
+        content: "By accessing or using the EMBLE platform (including EMBLE Standard and EMBLE Pro features), you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use our services."
     },
     {
         id: "eligibility",
@@ -31,7 +31,7 @@ const sections = [
     {
         id: "subscriptions",
         title: "4. Subscriptions & Payments",
-        content: "Payments for Placement Mode, Job Simulation, or EMBLE Max are non-refundable unless otherwise specified in our Refund Policy. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period."
+        content: "Payments for EMBLE Standard and EMBLE Pro are strictly non-refundable under any circumstances. However, users are always welcome to upgrade to a higher-tier plan at any time. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period."
     },
     {
         id: "conduct",
@@ -173,7 +173,7 @@ export default function TermsPage() {
                                                 <AlertCircle className="text-rose-500 shrink-0" size={20} />
                                                 <div>
                                                     <h4 className="font-bold text-brand-black text-sm mb-1 text-uppercase tracking-wide">Refund Policy</h4>
-                                                    <p className="text-xs text-gray-400">Standard 7-day money back.</p>
+                                                    <p className="text-xs text-gray-400">Strictly no refunds. Plan upgrades only.</p>
                                                 </div>
                                             </div>
                                         </div>
