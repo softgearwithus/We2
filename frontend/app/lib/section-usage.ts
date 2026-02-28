@@ -24,6 +24,8 @@ type UsageRecord = {
     signature: string;
 };
 
+type UsageRecordPayload = Omit<UsageRecord, 'signature'>;
+
 const SETTINGS_STORAGE_KEY = 'emble.freeTier.settings';
 const SECRET_STORAGE_KEY = 'emble.freeTier.secret';
 const USAGE_STORAGE_PREFIX = 'emble.freeTier.usage.v2';
@@ -78,7 +80,7 @@ const getSecret = () => {
 };
 
 const buildSignature = (
-    record: Omit<UsageRecord, 'signature'>,
+    record: UsageRecordPayload,
     sectionKey: string,
     userId?: string | null,
     signatureVersion = SIGNATURE_VERSION,
@@ -115,7 +117,7 @@ const getActiveSection = (userId?: string | null) => {
     );
 };
 
-const buildState = (record: UsageRecord): SectionUsageState => {
+const buildState = (record: UsageRecordPayload): SectionUsageState => {
     const limitSeconds = record.limitSeconds;
     const usedSeconds = Math.max(0, record.usedSeconds);
     const remainingSeconds = Number.isFinite(limitSeconds)
@@ -130,7 +132,7 @@ const buildState = (record: UsageRecord): SectionUsageState => {
     };
 };
 
-const persistRecord = (sectionKey: string, record: Omit<UsageRecord, 'signature'>, userId?: string | null) => {
+const persistRecord = (sectionKey: string, record: UsageRecordPayload, userId?: string | null) => {
     if (typeof window === 'undefined') return;
     const storage = window.localStorage;
     const withSignature: UsageRecord = {
@@ -328,7 +330,7 @@ const shouldTick = (sectionKey: string, userId?: string | null) => {
 
 const tickRecord = (
     sectionKey: string,
-    record: Omit<UsageRecord, 'signature'>,
+    record: UsageRecordPayload,
     settings: FreeTierSettings,
     userId?: string | null,
 ) => {
