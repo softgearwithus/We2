@@ -17,6 +17,11 @@ export class ListMcqQueryDto {
     @IsString()
     groupKey: string;
 
+    @ApiPropertyOptional({ description: 'Topic key for company MCQs' })
+    @IsOptional()
+    @IsString()
+    topicKey?: string;
+
     @ApiPropertyOptional({ default: 1 })
     @IsOptional()
     @IsInt()

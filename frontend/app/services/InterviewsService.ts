@@ -26,7 +26,7 @@ export interface InterviewSession {
 }
 
 export class InterviewsService {
-    private apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    private apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
     private mapStatus(status?: string): 'completed' | 'analyzing' | 'error' {
         if (status === 'completed') return 'completed';
@@ -68,7 +68,8 @@ export class InterviewsService {
 
     async getSessions(): Promise<InterviewSession[]> {
         if (typeof window === 'undefined') return [];
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
 
         try {
             const response = await fetch(`${this.apiBaseUrl}/interviews/me`, {
@@ -97,7 +98,8 @@ export class InterviewsService {
     }
 
     async getSessionById(id: string): Promise<InterviewSession | undefined> {
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
 
         try {
             const response = await fetch(`${this.apiBaseUrl}/interviews/${id}`, {

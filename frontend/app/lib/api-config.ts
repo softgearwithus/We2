@@ -1,5 +1,23 @@
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!process.env.NEXT_PUBLIC_API_URL) {
+    throw new Error('NEXT_PUBLIC_API_URL is required.');
+}
+
+if (process.env.NODE_ENV === 'production' && API_BASE_URL.includes('localhost')) {
+    throw new Error('NEXT_PUBLIC_API_URL must not point to localhost in production.');
+}
+
+if (process.env.NODE_ENV !== 'production') {
+    const isLocalhost =
+        API_BASE_URL.startsWith('http://localhost') ||
+        API_BASE_URL.startsWith('http://127.0.0.1');
+    const isDockerBackend = API_BASE_URL.startsWith('http://backend');
+    if (!isLocalhost && !isDockerBackend) {
+        throw new Error('NEXT_PUBLIC_API_URL must point to localhost or backend in development.');
+    }
+}
 
 export const API_ENDPOINTS = {
     // Auth

@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
+import { useTestSeriesUsage } from '../layout';
 
 const SUBJECTS = [
     { key: 'english', title: 'English', icon: BookOpen, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
@@ -32,16 +31,19 @@ const item: Variants = {
 
 export default function SubjectTestsPage() {
     const [counts, setCounts] = useState<Record<string, number>>({});
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
+    const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/mcqs/groups?category=subject`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.ok ? res.json() : [])
-            .then((data) => {
+        const loadCounts = async () => {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token) return;
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/mcqs/groups?category=subject`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
                 if (Array.isArray(data)) {
                     const map: Record<string, number> = {};
                     data.forEach((row) => {
@@ -49,8 +51,11 @@ export default function SubjectTestsPage() {
                     });
                     setCounts(map);
                 }
-            })
-            .catch(() => undefined);
+            } catch {
+                return;
+            }
+        };
+        loadCounts();
     }, []);
 
     return (
@@ -86,9 +91,6 @@ export default function SubjectTestsPage() {
                 </motion.header>
 
                 <div className="relative">
-                    {isLimited && (
-                        <UsageUpgradeGate message="Upgrade to continue your subject test series." />
-                    )}
                     <motion.div
                         variants={container}
                         initial="hidden"

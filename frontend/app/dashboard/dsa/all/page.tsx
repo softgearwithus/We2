@@ -49,7 +49,8 @@ export default function DsaAllProblemsPage() {
     }, [problems, query, difficulty]);
 
     const handleSelect = async (problem: Problem) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken() || '';
         try {
             await fetchTrainingTaskForProblem(token, problem.uuid);
             router.push('/dashboard/dsa');

@@ -12,7 +12,8 @@ export default function PlacementRoadmap() {
 
     useEffect(() => {
         const loadProgress = async () => {
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             if (!token) return;
             try {
                 const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {

@@ -26,8 +26,8 @@ export class PlatformSettings {
     @Column({ type: 'int', default: 10 })
     freeTierLimitMinutes: number;
 
-    @Column({ type: 'int', default: 12 })
-    freeTierRefreshHours: number;
+    @Column({ type: 'timestamp', nullable: true })
+    freeTierResetAt: Date | null;
 
     @UpdateDateColumn()
     updatedAt: Date;

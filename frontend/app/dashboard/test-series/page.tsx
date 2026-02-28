@@ -4,8 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Building2, ChevronRight, Mic, Sparkles } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
+import { useTestSeriesUsage } from './layout';
 
 const container: Variants = {
     hidden: { opacity: 0 },
@@ -24,7 +23,7 @@ const item: Variants = {
 };
 
 export default function TestSeriesPage() {
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
+    const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 overflow-x-hidden pb-20 relative">
             {/* Minimalist Background pattern */}
@@ -60,9 +59,6 @@ export default function TestSeriesPage() {
                 </motion.header>
 
                 <div className="relative">
-                    {isLimited && (
-                        <UsageUpgradeGate message="Upgrade to continue your test series." />
-                    )}
                     <motion.div
                         variants={container}
                         initial="hidden"

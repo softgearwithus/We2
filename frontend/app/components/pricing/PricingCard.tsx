@@ -124,7 +124,8 @@ export default function PricingCard({
 
         setIsLoading(true);
         try {
-            const token = localStorage.getItem('accessToken');
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
             if (!token) {
                 // Redirect to register with plan param if not authenticated
                 window.location.href = `/register/student?plan=${planId}`;
@@ -149,7 +150,7 @@ export default function PricingCard({
                 // Note: In a production app, order_id must be generated on the backend and passed here.
                 handler: async function (response: any) {
                     try {
-                        const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/upgrade`, {
+                        const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsEnum, IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 import { McqCategory } from '../entities/mcq-question.entity';
 
 export class CreateMcqQuestionDto {
@@ -11,6 +11,11 @@ export class CreateMcqQuestionDto {
     @IsString()
     @IsNotEmpty()
     group: string;
+
+    @ApiProperty({ example: 'arrays', description: 'Topic name for company MCQs', required: false })
+    @IsOptional()
+    @IsString()
+    topic?: string;
 
     @ApiProperty({ example: 'Which sentence is grammatically correct?' })
     @IsString()

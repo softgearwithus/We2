@@ -16,6 +16,19 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment
+
+- Development uses `frontend/.env.development` and calls the local backend.
+- If you have `frontend/.env.local`, it will override development values.
+- Production uses Azure Static Web Apps environment variables.
+
+### Dockerized Dev Backend (Backend + Postgres)
+
+```bash
+# From project root
+docker-compose up -d --build
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.

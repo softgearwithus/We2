@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { Search, Filter, MoreVertical, CheckCircle2, XCircle, Clock, IndianRupee, Video, Users, GraduationCap, AlertCircle, ArrowUpRight } from 'lucide-react';
 import { approveMentorApplication, createAdminMentorPayout, fetchAdminMentorApplications, fetchAdminMentorPayouts, fetchAdminMentorSessions, fetchAdminMentors, rejectMentorApplication, toggleMentorStatus as updateMentorStatus } from '@/app/lib/mentors';
 
@@ -39,7 +40,7 @@ export default function AdminMentorsPage() {
 
     const toggleMentorStatus = async (id: string, currentStatus: string) => {
         const newStatus = currentStatus === 'Active' ? 'Disabled' : 'Active';
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         await updateMentorStatus(token, id, newStatus === 'Active');
         setMentors(mentors.map(m => m.id === id ? { ...m, status: newStatus } : m));
         setActiveDropdown(null);
@@ -55,7 +56,7 @@ export default function AdminMentorsPage() {
     };
 
     const handleApproveApp = async (app: any) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         const mentor = await approveMentorApplication(token, app.id);
         setApplications(apps => apps.filter(a => a.id !== app.id));
         setMentors([{
@@ -72,7 +73,7 @@ export default function AdminMentorsPage() {
     };
 
     const handleRejectApp = async (id: string) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         await rejectMentorApplication(token, id);
         setApplications(apps => apps.filter(a => a.id !== id));
         alert('Application Rejected.');
@@ -83,7 +84,7 @@ export default function AdminMentorsPage() {
             alert('Please enter a valid UPI Reference number.');
             return;
         }
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         const payout = payouts.find((p) => p.id === processingPayoutModal);
         if (payout) {
             await createAdminMentorPayout(token, { mentorId: payout.mentorId, amountInr: payout.amount, referenceId: upiRefInput });
@@ -136,7 +137,7 @@ export default function AdminMentorsPage() {
     useEffect(() => {
         const loadAdminMentors = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 let mentorData = [], applicationData = [], payoutData = [], sessionData = [];
                 try { mentorData = await fetchAdminMentors(token) || []; } catch (e) { console.error("Mentors Error", e); }
                 try { applicationData = await fetchAdminMentorApplications(token) || []; } catch (e) { console.error("Apps Error", e); }

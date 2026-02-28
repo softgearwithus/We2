@@ -32,7 +32,7 @@ export const fetchPublicUpdateFlags = async (): Promise<UpdateFlag[]> => {
 export type PublicPlatformSettings = PlatformSettings;
 
 export const fetchPublicPlatformSettings = async (): Promise<PublicPlatformSettings> => {
-    const response = await fetch(`${API_BASE_URL}/admin/public/settings`);
+    const response = await fetch(`${API_BASE_URL}/admin/public/settings`, { cache: 'no-store' });
     if (!response.ok) throw new Error('Failed to fetch public platform settings');
     return response.json();
 };
@@ -48,7 +48,7 @@ export type PlatformSettings = {
         pro: Record<string, number>;
     };
     freeTierLimitMinutes?: number;
-    freeTierRefreshHours?: number;
+    freeTierResetAt?: string | null;
 };
 
 export const fetchPlatformSettings = async (token: string): Promise<PlatformSettings> => {
@@ -69,6 +69,17 @@ export const updatePlatformSettings = async (token: string, payload: PlatformSet
         body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error('Failed to update platform settings');
+    return response.json();
+};
+
+export const refreshFreeTier = async (token: string) => {
+    const response = await fetch(`${API_BASE_URL}/admin/settings/platform/free-tier-refresh`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    if (!response.ok) throw new Error('Failed to refresh free tier');
     return response.json();
 };
 

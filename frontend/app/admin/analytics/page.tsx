@@ -10,6 +10,7 @@ import {
     Loader2
 } from 'lucide-react';
 import { AnalyticsData, fetchAdminAnalytics } from '@/app/lib/admin';
+import { getStoredToken } from '@/app/lib/auth-storage';
 
 export default function AnalyticsPage() {
     const [stats, setStats] = useState({
@@ -26,7 +27,7 @@ export default function AnalyticsPage() {
         const loadAnalytics = async () => {
             setIsLoading(true);
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 const data = await fetchAdminAnalytics(token, timeRange);
                 setStats({
                     visitors: data.visitors,

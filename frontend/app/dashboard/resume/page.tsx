@@ -26,11 +26,12 @@ export default function ResumeBuilderPage() {
     });
 
     const loadResume = async () => {
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
         if (!token) return;
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/resume/me`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/me`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -49,12 +50,13 @@ export default function ResumeBuilderPage() {
     };
 
     const saveResume = async () => {
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
         if (!token) return;
         setIsSaving(true);
         setSaveMessage(null);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/resume/me`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/me`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

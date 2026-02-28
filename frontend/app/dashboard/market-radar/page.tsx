@@ -18,7 +18,8 @@ export default function MarketRadarPage() {
     useEffect(() => {
         const loadMarketRadar = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken() || '';
                 const result = await fetchMarketRadar(token);
                 setData(result.payload);
                 setPublishedAt(result.publishedAt || null);

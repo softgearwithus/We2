@@ -3,13 +3,16 @@ import { Interview } from './interview/entities/interview.entity';
 import { User } from './users/user.entity';
 import { resolveDbConfig } from './common/db-config';
 
-require('dotenv').config();
+const isDevEnv = process.env.NODE_ENV !== 'production';
+require('dotenv').config({
+    path: isDevEnv ? '.env.development' : undefined,
+});
 
 const AppDataSource = new DataSource({
     type: 'postgres',
     ...resolveDbConfig(),
     entities: [Interview, User],
-    synchronize: true, // This mimics dev behavior
+    synchronize: process.env.NODE_ENV !== 'production', // Mimic dev behavior
 });
 
 async function debug() {

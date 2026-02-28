@@ -21,7 +21,7 @@ export interface CreateCareerData {
 
 export interface UpdateCareerData extends Partial<CreateCareerData> { }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchCareersAdmin(token: string): Promise<Career[]> {
     const res = await fetch(`${API_URL}/careers`, {

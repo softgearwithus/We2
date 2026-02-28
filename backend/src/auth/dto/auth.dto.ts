@@ -34,6 +34,15 @@ export class RegisterDto {
     email: string;
 
     @ApiProperty({
+        example: '123456',
+        description: 'One-time password for student signup',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    otp?: string;
+
+    @ApiProperty({
         example: 'SecurePass123!',
         description: 'User password (minimum 8 characters)',
         minLength: 8,
@@ -72,6 +81,37 @@ export class RegisterDto {
     @IsOptional()
     @IsString()
     timezone?: string;
+}
+
+export class RequestOtpDto {
+    @ApiProperty({
+        example: 'student@example.com',
+        description: 'Email address for OTP delivery',
+    })
+    @IsEmail()
+    @IsNotEmpty()
+    @MaxLength(255)
+    email: string;
+}
+
+export class VerifyOtpDto {
+    @ApiProperty({
+        example: 'student@example.com',
+        description: 'Email address for OTP verification',
+    })
+    @IsEmail()
+    @IsNotEmpty()
+    @MaxLength(255)
+    email: string;
+
+    @ApiProperty({
+        example: '123456',
+        description: 'One-time password sent to email',
+    })
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(12)
+    otp: string;
 }
 
 

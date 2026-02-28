@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
@@ -81,7 +82,7 @@ export default function EditProjectLabPage() {
         readme: typeof initialData.readme;
         details: typeof initialData.details;
     }) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) {
             throw new Error('Missing admin token.');
         }

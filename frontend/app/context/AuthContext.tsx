@@ -1,6 +1,7 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { clearAuthSession, getStoredToken, getTokenIssuedAt, getTokenPersistent, resolveAuthScope, storeAuthSession } from '../lib/auth-storage';
 
 interface User {
     id: string;
@@ -28,11 +29,12 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
-    login: (token: string, userData: User, rememberMe?: boolean) => void;
+    login: (token: string, userData: User, rememberMe?: boolean, scopeOverride?: 'user' | 'admin') => void;
     logout: () => void;
     updateUser: (userData: User) => void;
     isLoading: boolean;
     token: string | null;
+    scope: 'user' | 'admin';
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,27 +44,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
+    const pathname = usePathname();
+    const scope = resolveAuthScope(pathname);
 
     useEffect(() => {
-        // Check for existing token on mount
-        const token = localStorage.getItem('accessToken');
-        const issuedAt = localStorage.getItem('accessTokenSetAt');
-        const isPersistent = localStorage.getItem('accessTokenPersistent') === 'true';
+        const storedToken = getStoredToken(scope);
+        const issuedAt = getTokenIssuedAt(scope);
+        const isPersistent = getTokenPersistent(scope);
         if (issuedAt) {
             // 7 days if "Remember Me" vs 1 day (or session) default
             const maxAgeMs = isPersistent ? 1000 * 60 * 60 * 24 * 7 : 1000 * 60 * 60 * 24;
             if (Date.now() - parseInt(issuedAt, 10) > maxAgeMs) {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('accessTokenSetAt');
-                localStorage.removeItem('accessTokenPersistent');
+                clearAuthSession(scope);
             }
         }
-        if (token) {
-            setToken(token);
+        if (storedToken) {
+            setToken(storedToken);
             // Validate token or fetch user profile
-            fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/profile`, {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${storedToken}`
                 }
             })
                 .then(res => {
@@ -72,11 +73,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 .then(userData => {
                     setUser(userData);
                     if (userData?.id) {
-                        localStorage.setItem('userId', userData.id);
+                        storeAuthSession(scope, storedToken, userData.id, isPersistent);
                     }
                 })
                 .catch(() => {
-                    localStorage.removeItem('accessToken');
+                    clearAuthSession(scope);
                     setUser(null);
                     setToken(null);
                 })
@@ -86,39 +87,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
             setIsLoading(false);
         }
-    }, []);
+    }, [scope]);
 
-    const login = (newToken: string, userData: User, rememberMe = false) => {
-        localStorage.setItem('accessToken', newToken);
-        localStorage.setItem('accessTokenSetAt', String(Date.now()));
-        if (rememberMe) {
-            localStorage.setItem('accessTokenPersistent', 'true');
-        } else {
-            localStorage.removeItem('accessTokenPersistent');
-        }
-        localStorage.setItem('userId', userData.id);
+    const login = (newToken: string, userData: User, rememberMe = false, scopeOverride?: 'user' | 'admin') => {
+        const targetScope = scopeOverride || scope;
+        storeAuthSession(targetScope, newToken, userData.id, rememberMe);
         setUser(userData);
         setToken(newToken);
     };
 
     const logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('accessTokenSetAt');
-        localStorage.removeItem('accessTokenPersistent');
-        localStorage.removeItem('userId');
+        clearAuthSession(scope);
         setUser(null);
         setToken(null);
         router.push('/login');
     };
 
-    const contextValue = React.useMemo(() => ({
+    const contextValue = useMemo(() => ({
         user,
         login,
         logout,
         updateUser: setUser,
         isLoading,
-        token
-    }), [user, isLoading, token]);
+        token,
+        scope
+    }), [user, isLoading, token, scope]);
 
     return (
         <AuthContext.Provider value={contextValue}>

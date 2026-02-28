@@ -19,8 +19,9 @@ export default function ATSBoardPage() {
     useEffect(() => {
         const fetchATSData = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/applications/drive/${params.id}`, {
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken();
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/drive/${params.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error('API Error');
@@ -40,8 +41,9 @@ export default function ATSBoardPage() {
     const moveApplicant = async (appId: string, newStatus: string) => {
         setUpdatingParams(appId);
         try {
-            const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/applications/${appId}/status`, {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/${appId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

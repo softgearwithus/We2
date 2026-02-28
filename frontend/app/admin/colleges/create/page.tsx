@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, Save, Send } from 'lucide-react';
 import Stepper from '@/app/components/admin/CollegeWizard/Stepper';
@@ -60,7 +61,7 @@ export default function CreateCollegePage() {
             return;
         }
         try {
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { createCollege } = await import('@/app/lib/colleges');
             await createCollege(token, {
                 name: formData.info.name,

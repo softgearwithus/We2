@@ -3,23 +3,21 @@ import * as dotenv from 'dotenv';
 import { User, UserRole } from './users/user.entity';
 import { resolveDbConfig } from './common/db-config';
 
-dotenv.config();
+const isDevEnv = process.env.NODE_ENV !== 'production';
+dotenv.config({
+    path: isDevEnv ? '.env.development' : undefined,
+});
 
 const emailArg = process.argv[2];
 if (!emailArg) {
     throw new Error('Usage: npm run admin:promote -- <email>');
 }
 
-const dbType = process.env.DB_TYPE || 'postgres';
-if (dbType !== 'postgres') {
-    throw new Error('SQLite is not supported. Set DB_TYPE=postgres.');
-}
-
 const AppDataSource = new DataSource({
     type: 'postgres',
     ...resolveDbConfig(),
     entities: [User],
-    synchronize: true,
+    synchronize: process.env.NODE_ENV !== 'production',
 });
 
 async function promote() {

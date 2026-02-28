@@ -17,6 +17,7 @@ import {
     User
 } from 'lucide-react';
 import { Student, StudentsData, fetchAdminStudents } from '@/app/lib/admin';
+import { getStoredToken } from '@/app/lib/auth-storage';
 
 export default function AdminStudentsPage() {
     const [data, setData] = useState<StudentsData | null>(null);
@@ -36,7 +37,7 @@ export default function AdminStudentsPage() {
         const loadData = async () => {
             setIsLoading(true);
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 const result = await fetchAdminStudents(token);
                 setData(result);
                 setStudents(result.students);
@@ -74,17 +75,17 @@ export default function AdminStudentsPage() {
     const handleConfirmAction = async () => {
         if (!selectedStudent || confirmationText.toLowerCase() !== actionType) return;
 
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) return;
         try {
             if (actionType === 'delete') {
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/students/${selectedStudent.id}`, {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/students/${selectedStudent.id}`, {
                     method: 'DELETE',
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
             } else {
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/students/${selectedStudent.id}/disable`, {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/students/${selectedStudent.id}/disable`, {
                     method: 'PATCH',
                     headers: { Authorization: `Bearer ${token}` },
                 });

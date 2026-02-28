@@ -32,7 +32,8 @@ export function InstituteSidebar() {
     useEffect(() => {
         const loadCollege = async () => {
             if (!user?.collegeId) return;
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             try {
                 const data = await fetchCollegeById(token, user.collegeId);
                 setCollegeName(data?.name || 'Institute');

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { Save, User, Shield, Key, Globe, AlertCircle, CheckCircle2, Loader2, Database } from 'lucide-react';
 import {
     fetchPlatformSettings,
@@ -63,14 +64,14 @@ export default function AdminSettingsPage() {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 if (!token) {
                     throw new Error('Missing admin token.');
                 }
 
                 const [platformData, profileRes] = await Promise.all([
                     fetchPlatformSettings(token),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/profile`, {
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                 ]);
@@ -112,7 +113,7 @@ export default function AdminSettingsPage() {
 
     // --- Save Handlers ---
     const handleSaveProfile = async () => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) throw new Error('Missing admin token.');
         await updateAdminProfile(token, {
             fullName: profile.fullName,
@@ -126,7 +127,7 @@ export default function AdminSettingsPage() {
         if (passwords.new && passwords.new !== passwords.confirm) {
             throw new Error("New passwords do not match.");
         }
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) throw new Error('Missing admin token.');
         await updateAdminSecurity(token, {
             currentPassword: passwords.current || undefined,
@@ -136,7 +137,7 @@ export default function AdminSettingsPage() {
     };
 
     const handleSavePlatform = async () => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) throw new Error('Missing admin token.');
         const payload = {
             ...platform,

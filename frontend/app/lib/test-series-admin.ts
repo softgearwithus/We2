@@ -5,6 +5,8 @@ export type McqAdminItem = {
     category: 'subject' | 'company';
     groupKey: string;
     groupLabel: string;
+    topicKey?: string | null;
+    topicLabel?: string | null;
     question: string;
     options: string[];
     correctOptionIndex: number;
@@ -35,6 +37,7 @@ export type WriteXQuestion = {
 export type CreateMcqPayload = {
     category: 'subject' | 'company';
     group: string;
+    topic?: string;
     question: string;
     options: string[];
     correctOptionIndex: number;
@@ -132,6 +135,14 @@ export const fetchMcqGroups = async (token: string, category: 'subject' | 'compa
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch MCQ groups');
+    return response.json() as Promise<McqGroup[]>;
+};
+
+export const fetchMcqTopics = async (token: string, companyKey: string) => {
+    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=company&groupBy=topic&groupKey=${encodeURIComponent(companyKey)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch MCQ topics');
     return response.json() as Promise<McqGroup[]>;
 };
 

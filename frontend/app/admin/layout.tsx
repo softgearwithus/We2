@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, Search, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 
 export default function AdminLayout({
@@ -15,15 +15,13 @@ export default function AdminLayout({
     const pathname = usePathname();
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const { user, isLoading } = useAuth();
+    const { user, isLoading, logout } = useAuth();
 
     const handleLogout = () => {
-        localStorage.removeItem('accessToken');
-        router.push('/login');
+        logout();
     };
 
     const menuItems = [
-        { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['all'] },
         { icon: Users, label: 'Students', href: '/admin/students', roles: ['all'] },
         { icon: GraduationCap, label: 'Mentors', href: '/admin/mentors', roles: ['super_admin'] },
         { icon: Building2, label: 'Colleges', href: '/admin/colleges', roles: ['super_admin'] },
@@ -117,31 +115,6 @@ export default function AdminLayout({
 
             {/* Main Content */}
             <main className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-                {/* Topbar */}
-                <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 px-8 flex items-center justify-between shadow-sm">
-                    <div className="flex items-center gap-4 flex-1 max-w-xl">
-                        <div className="relative w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search students, colleges, or reports..."
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none text-sm transition-all bg-slate-50 focus:bg-white"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <button className="relative p-2 hover:bg-slate-50 rounded-full transition-colors">
-                            <Bell size={20} className="text-slate-600" />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                        </button>
-                        <div className="h-8 w-px bg-slate-200"></div>
-                        <button className="text-sm font-bold text-slate-600 hover:text-blue-600">Documentation</button>
-                        <button className="text-sm font-bold text-slate-600 hover:text-blue-600">Support</button>
-                    </div>
-                </header>
-
-                {/* Page Content */}
                 <div className="p-8">
                     {children}
                 </div>

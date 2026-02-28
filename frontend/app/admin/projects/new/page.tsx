@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Info, Settings, Code, LayoutDashboard, Send, Trash2, BookOpen, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -182,7 +183,7 @@ export default function NewProjectForm({
             setSubmitError(null);
         }
 
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token && !onSubmit) {
             setSubmitError('Missing admin token.');
             setIsSubmitting(false);

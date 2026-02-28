@@ -30,7 +30,8 @@ export default function LeetCodeProfile() {
 
     useEffect(() => {
         const loadStats = async () => {
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             try {
                 let dsaSolved = 0;
                 let dsaTotal = 0;

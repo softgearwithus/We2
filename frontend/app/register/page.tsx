@@ -13,7 +13,7 @@ export default function RegisterPage() {
     const [registrationsAllowed, setRegistrationsAllowed] = useState(true);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/public/settings`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
             .then((res) => res.json())
             .then((data) => setRegistrationsAllowed(Boolean(data.allowRegistrations)))
             .catch(() => null);

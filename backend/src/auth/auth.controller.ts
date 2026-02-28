@@ -1,7 +1,8 @@
 import { Body, Controller, Post, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, RequestOtpDto, VerifyOtpDto } from './dto/auth.dto';
+import { EmailOtpService } from './services/email-otp.service';
 import { Public, Roles } from './decorators/auth.decorators';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
@@ -10,7 +11,24 @@ import { UserRole } from '../users/user.entity';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) { }
+    constructor(
+        private authService: AuthService,
+        private emailOtpService: EmailOtpService,
+    ) { }
+
+    @Public()
+    @Post('register/request-otp')
+    @ApiOperation({ summary: 'Request OTP for student signup' })
+    async requestOtp(@Body() dto: RequestOtpDto) {
+        return this.emailOtpService.requestOtp(dto.email);
+    }
+
+    @Public()
+    @Post('register/verify-otp')
+    @ApiOperation({ summary: 'Verify OTP for student signup' })
+    async verifyOtp(@Body() dto: VerifyOtpDto) {
+        return this.emailOtpService.verifyOtp(dto.email, dto.otp);
+    }
 
     @Public()
     @Post('register')

@@ -33,7 +33,8 @@ export default function MentorsDiscoveryPage() {
     useEffect(() => {
         const loadMentors = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken() || '';
                 const data = await fetchMentors(token);
                 setMentors(data || []);
                 const sessionData = await fetchStudentMentorSessions(token);
@@ -88,7 +89,8 @@ export default function MentorsDiscoveryPage() {
             return;
         }
 
-        const token = localStorage.getItem('accessToken') || '';
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken() || '';
         const order = await createMentorPaymentOrder(token, {
             mentorId: selectedMentor!.id,
             durationMinutes: selectedDuration,

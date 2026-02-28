@@ -8,8 +8,8 @@ export default function AdminTrainingHub() {
         <div className="max-w-6xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/60 pb-6">
                 <div>
-                    <Link href="/admin" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium mb-4 transition-colors">
-                        <ArrowLeft size={18} /> Back to Dashboard
+                    <Link href="/admin/students" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium mb-4 transition-colors">
+                        <ArrowLeft size={18} /> Back to Admin
                     </Link>
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Training Control Center</h1>
                     <p className="text-slate-500 mt-1 font-medium">Monitor the DSA and SQL problem banks powering training mode.</p>

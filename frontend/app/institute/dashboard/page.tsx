@@ -41,7 +41,8 @@ export default function InstituteDashboard() {
     useEffect(() => {
         const loadDashboard = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken() || '';
                 const { fetchInstituteDashboard, fetchInstituteReports } = await import('@/app/lib/institute');
                 const data = await fetchInstituteDashboard(token);
                 setStats({

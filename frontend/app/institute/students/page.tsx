@@ -47,7 +47,8 @@ export default function StudentAnalyticsPage() {
     useEffect(() => {
         const loadStudents = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken() || '';
                 const { fetchInstituteStudents } = await import('@/app/lib/institute');
                 const data = await fetchInstituteStudents(token, {
                     year: filters.year || undefined,
@@ -77,7 +78,8 @@ export default function StudentAnalyticsPage() {
     useEffect(() => {
         const loadFilterOptions = async () => {
             if (!user?.collegeId) return;
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             try {
                 const college = await fetchCollegeById(token, user.collegeId);
                 const years = (college?.years || []).map((y: string) => Number(y)).filter((y: number) => !Number.isNaN(y));

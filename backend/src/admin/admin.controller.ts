@@ -13,13 +13,6 @@ import { AdminService } from './admin.service';
 export class AdminController {
     constructor(private readonly adminService: AdminService) {}
 
-    @Get('overview')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Admin dashboard overview' })
-    async getOverview() {
-        return this.adminService.getOverview();
-    }
-
     @Get('analytics')
     @Roles(UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Admin analytics summary' })

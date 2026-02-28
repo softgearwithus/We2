@@ -34,8 +34,12 @@ export class McqsController {
             ? USAGE_SECTION_KEYS.TEST_SERIES
             : USAGE_SECTION_KEYS.TEST_SERIES;
     })
-    async groups(@Query('category') category: McqCategory) {
-        return this.mcqsService.groups(category);
+    async groups(
+        @Query('category') category: McqCategory,
+        @Query('groupBy') groupBy?: 'group' | 'topic',
+        @Query('groupKey') groupKey?: string,
+    ) {
+        return this.mcqsService.groups(category, groupBy || 'group', groupKey);
     }
 
     @ApiBearerAuth('JWT-auth')

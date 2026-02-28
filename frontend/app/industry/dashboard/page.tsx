@@ -17,8 +17,9 @@ export default function IndustryDashboard() {
         const fetchDashboardData = async () => {
             try {
                 // Fetch the company's drives
-                const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-                const drivesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/placements/my-drives`, {
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken();
+                const drivesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!drivesRes.ok) throw new Error('API Error');

@@ -20,7 +20,7 @@ export default function PartnerApplyPage() {
     const onSubmit = async (data: LeadFormData) => {
         setIsSubmitting(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/company-leads`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

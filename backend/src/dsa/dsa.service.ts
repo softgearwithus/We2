@@ -315,18 +315,60 @@ export class DsaService {
         // Update problem statistics
         const problem = await this.getProblemById(dto.problemId);
         problem.submissions += 1;
-        if (dto.status === SubmissionStatus.ACCEPTED) {
+        const submissionStatus = dto.status || SubmissionStatus.PENDING;
+        if (submissionStatus === SubmissionStatus.ACCEPTED) {
             problem.accepted += 1;
         }
         await this.problemsRepository.save(problem);
+
+        if (submissionStatus === SubmissionStatus.QUEUED || submissionStatus === SubmissionStatus.RUNNING) {
+            throw new InternalServerErrorException('Queued execution is disabled.');
+        }
 
         const submission = this.submissionsRepository.create({
             ...dto,
             userId,
             source: dto.source || SubmissionSource.PRACTICE,
+            status: submissionStatus,
+            passedTests: dto.passedTests ?? 0,
+            totalTests: dto.totalTests ?? 0,
         });
 
         return this.submissionsRepository.save(submission);
+    }
+
+    async getSubmission(submissionId: string) {
+        const submission = await this.submissionsRepository.findOne({
+            where: { id: submissionId },
+            relations: ['problem'],
+        });
+
+        if (!submission) {
+            throw new NotFoundException('Submission not found');
+        }
+
+        return {
+            id: submission.id,
+            problemId: submission.problemId,
+            problemTitle: submission.problem.title,
+            language: submission.language,
+            status: submission.status,
+            passedTests: submission.passedTests,
+            totalTests: submission.totalTests,
+            runtime: submission.runtimeMs,
+            memory: submission.memoryKb,
+            score: submission.score,
+            errorMessage: submission.error,
+            failedTestCase: submission.failedTestInput
+                ? {
+                    input: submission.failedTestInput,
+                    expected: submission.failedTestExpected,
+                    actual: submission.failedTestActual,
+                }
+                : null,
+            submittedAt: submission.submittedAt,
+            completedAt: submission.completedAt,
+        };
     }
 
     async getUserSubmissions(userId: string): Promise<Submission[]> {

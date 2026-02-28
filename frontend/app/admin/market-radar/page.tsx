@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { Save, Plus, Trash2, Activity, Globe, TrendingUp, Code2, Lightbulb, Sparkles } from 'lucide-react';
 import { MARKET_DATA, JobTrend, TopLanguage, MarketInsight, ProfileEnhancement, MarketRadarPayload } from '@/app/lib/market-data';
 import { fetchAdminMarketRadar, publishMarketRadar } from '@/app/lib/market-radar';
@@ -21,7 +22,7 @@ export default function AdminMarketRadar() {
     useEffect(() => {
         const loadMarketRadar = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 const data = await fetchAdminMarketRadar(token);
                 setFormData(data.payload as MarketRadarPayload);
             } catch (err: any) {
@@ -71,7 +72,7 @@ export default function AdminMarketRadar() {
         try {
             setIsSaving(true);
             setError(null);
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             await publishMarketRadar(token, formData);
         } catch (err: any) {
             setError('Failed to publish market radar data.');

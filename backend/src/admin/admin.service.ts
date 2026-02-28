@@ -37,32 +37,6 @@ export class AdminService {
         private applicationsRepo: Repository<Application>,
     ) { }
 
-    async getOverview() {
-        const totalColleges = await this.collegesRepo.count();
-        const totalStudents = await this.collegesRepo
-            .createQueryBuilder('college')
-            .select('COALESCE(SUM(college.studentCount), 0)', 'total')
-            .getRawOne();
-        const recentLogs = await this.logRepo.find({ order: { createdAt: 'DESC' }, take: 5 });
-        const recentSignups = await this.staffRepo.find({ order: { createdAt: 'DESC' }, take: 5 });
-
-        const activePartners = await this.collegesRepo.count({ where: { status: 'Active' } });
-
-        const totalDrives = await this.placementsRepo.count();
-        const totalApplications = await this.applicationsRepo.count();
-
-        return {
-            totalColleges,
-            totalStudents: Number(totalStudents?.total || 0),
-            partners: activePartners,
-            totalDrives,
-            totalApplications,
-            uptime: `${Math.floor(process.uptime() / 3600)}h`,
-            recentLogs,
-            recentSignups,
-        };
-    }
-
     async getAnalytics(range?: string) {
         const now = Date.now();
         const windowMs = range === '24h' ? 24 * 60 * 60 * 1000 : range === '30d' ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;

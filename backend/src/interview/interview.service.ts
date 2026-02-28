@@ -155,7 +155,7 @@ export class InterviewService {
   async scheduleAnalysisReport(callId: string) {
     console.log(`Scheduling analysis fetch for call: ${callId} in 5 minutes...`);
 
-    // In a real prod environment, use a task queue like BullMQ.
+        // In a real prod environment, use a task queue.
     // For this simulation, we'll use a reliable delayed execution.
     setTimeout(async () => {
       try {

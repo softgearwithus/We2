@@ -14,6 +14,11 @@ export class AdminMcqQueryDto {
     @IsString()
     groupKey?: string;
 
+    @ApiPropertyOptional({ description: 'Topic key for company MCQs' })
+    @IsOptional()
+    @IsString()
+    topicKey?: string;
+
     @ApiPropertyOptional({ description: 'Search question or group label' })
     @IsOptional()
     @IsString()

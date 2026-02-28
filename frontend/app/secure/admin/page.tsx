@@ -19,7 +19,7 @@ export default function SecureAdminLoginPage() {
                 </div>
             }
         >
-            <LoginForm role="admin" redirectPath="/admin" />
+            <LoginForm role="admin" redirectPath="/admin/students" />
         </AuthLayout>
     );
 }

@@ -115,7 +115,7 @@ export default function VideoQASection({ onComplete }: VideoQASectionProps) {
         formData.append('referenceText', currentQuestion);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interview/analyze-audio`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/analyze-audio`, {
                 method: 'POST',
                 body: formData,
             });

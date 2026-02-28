@@ -8,13 +8,12 @@ import { Submission } from './entities/submission.entity';
 import { DsaUserState } from './entities/dsa-user-state.entity';
 import { DsaTrainingSession } from './entities/dsa-training-session.entity';
 import { DsaProblemInsight } from './entities/dsa-problem-insight.entity';
-import { SubmissionQueueService } from '../queue/submission-queue.service';
 import { LeetCodeService } from './services/leetcode.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([DsaProblem, Submission, DsaUserState, DsaTrainingSession, DsaProblemInsight])],
     controllers: [DsaController, DsaTrainingController],
-    providers: [DsaService, SubmissionQueueService, LeetCodeService],
-    exports: [DsaService, SubmissionQueueService],
+    providers: [DsaService, LeetCodeService],
+    exports: [DsaService],
 })
 export class DsaModule { }

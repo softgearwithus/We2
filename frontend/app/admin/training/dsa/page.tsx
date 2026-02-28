@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import Link from 'next/link';
 import { ArrowLeft, Code2, Loader2, Search, Upload } from 'lucide-react';
 import { DsaAdminProblem, fetchAdminDsaProblems } from '@/app/lib/training-admin';
@@ -39,7 +40,7 @@ export default function AdminDsaTrainingList() {
         page: 1,
     });
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') || '' : '';
+    const token = typeof window !== 'undefined' ? (getStoredToken('admin') || '') : '';
 
     const handleImport = async (file: File | null) => {
         if (!file) return;
@@ -48,7 +49,7 @@ export default function AdminDsaTrainingList() {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/dsa-training/admin/import`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dsa-training/admin/import`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,

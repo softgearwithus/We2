@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CreditCard, Save, AlertCircle } from 'lucide-react';
-import { fetchPlatformSettings, updatePlatformSettings } from '../../lib/admin-settings';
+import { CreditCard, Save, AlertCircle, RefreshCcw } from 'lucide-react';
+import { getStoredToken } from '@/app/lib/auth-storage';
+import { fetchPlatformSettings, refreshFreeTier, updatePlatformSettings } from '../../lib/admin-settings';
 
 export default function SubscriptionManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isRefreshingFreeTier, setIsRefreshingFreeTier] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
     const [freeTierLimitMinutes, setFreeTierLimitMinutes] = useState<number>(10);
-    const [freeTierRefreshHours, setFreeTierRefreshHours] = useState<number>(12);
     const [upgradesEnabled, setUpgradesEnabled] = useState(false);
     const [prices, setPrices] = useState({
         standard: {
@@ -35,11 +36,10 @@ export default function SubscriptionManagementPage() {
     const fetchSettings = async () => {
         try {
             setIsLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const data = await fetchPlatformSettings(token);
             setUpgradesEnabled(data.upgradesEnabled || false);
             setFreeTierLimitMinutes(data.freeTierLimitMinutes ?? 10);
-            setFreeTierRefreshHours(data.freeTierRefreshHours ?? 12);
             if (data.subscriptionPrices) {
                 // Merge with default structure to prevent undefined errors
                 setPrices(prev => ({
@@ -59,12 +59,11 @@ export default function SubscriptionManagementPage() {
             setIsSaving(true);
             setError(null);
             setSuccessMsg(null);
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             await updatePlatformSettings(token, {
                 upgradesEnabled,
                 subscriptionPrices: prices,
                 freeTierLimitMinutes,
-                freeTierRefreshHours
             } as any);
             setSuccessMsg('Settings saved successfully.');
             setTimeout(() => setSuccessMsg(null), 3000);
@@ -72,6 +71,25 @@ export default function SubscriptionManagementPage() {
             setError(err.message || 'Failed to save settings');
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleRefreshFreeTier = async () => {
+        try {
+            setIsRefreshingFreeTier(true);
+            setError(null);
+            setSuccessMsg(null);
+            const token = getStoredToken('admin') || '';
+            await updatePlatformSettings(token, {
+                freeTierLimitMinutes,
+            } as any);
+            await refreshFreeTier(token);
+            setSuccessMsg('Saved & refreshed free tier.');
+            setTimeout(() => setSuccessMsg(null), 3000);
+        } catch (err: any) {
+            setError(err.message || 'Failed to refresh free tier');
+        } finally {
+            setIsRefreshingFreeTier(false);
         }
     };
 
@@ -217,10 +235,10 @@ export default function SubscriptionManagementPage() {
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="p-6 border-b border-slate-100">
                         <h2 className="text-lg font-bold text-slate-900">Free Tier Constraints</h2>
-                        <p className="text-sm text-slate-500 mt-1">Configure feature access duration and refresh timers globally for all free users.</p>
+                        <p className="text-sm text-slate-500 mt-1">Configure feature access duration globally for all free users.</p>
                     </div>
 
-                    <div className="p-6 grid md:grid-cols-2 gap-8">
+                    <div className="p-6">
                         {/* Session Limit */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 mb-2">
@@ -235,22 +253,18 @@ export default function SubscriptionManagementPage() {
                                 onChange={(e) => setFreeTierLimitMinutes(parseInt(e.target.value) || 0)}
                                 className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                             />
-                        </div>
-
-                        {/* Refresh Hours */}
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="h-4 w-1 bg-brand-orange rounded-full" />
-                                <h3 className="font-bold text-slate-800">Refresh Cycle (Hours)</h3>
-                            </div>
-                            <p className="text-xs text-slate-500 mb-4">Wait duration before the session timer resets back to full capacity.</p>
-                            <input
-                                type="number"
-                                min="1"
-                                value={freeTierRefreshHours}
-                                onChange={(e) => setFreeTierRefreshHours(parseInt(e.target.value) || 0)}
-                                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                            />
+                            <button
+                                onClick={handleRefreshFreeTier}
+                                disabled={isRefreshingFreeTier}
+                                className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-orange text-white font-semibold hover:bg-orange-600 disabled:opacity-50"
+                            >
+                                {isRefreshingFreeTier ? (
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                ) : (
+                                    <RefreshCcw size={16} />
+                                )}
+                                Refresh Free Tier
+                            </button>
                         </div>
                     </div>
                 </div>

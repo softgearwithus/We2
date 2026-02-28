@@ -15,22 +15,25 @@ export class CreateSubmissionDto {
     @IsString()
     code: string;
 
-    @ApiProperty({ enum: SubmissionStatus, example: SubmissionStatus.ACCEPTED })
+    @ApiProperty({ enum: SubmissionStatus, example: SubmissionStatus.ACCEPTED, required: false })
+    @IsOptional()
     @IsEnum(SubmissionStatus)
-    status: SubmissionStatus;
+    status?: SubmissionStatus;
 
     @ApiProperty({ enum: SubmissionSource, example: SubmissionSource.PRACTICE, required: false })
     @IsOptional()
     @IsEnum(SubmissionSource)
     source?: SubmissionSource;
 
-    @ApiProperty({ example: 3 })
+    @ApiProperty({ example: 3, required: false })
+    @IsOptional()
     @IsInt()
-    passedTests: number;
+    passedTests?: number;
 
-    @ApiProperty({ example: 5 })
+    @ApiProperty({ example: 5, required: false })
+    @IsOptional()
     @IsInt()
-    totalTests: number;
+    totalTests?: number;
 
     @ApiProperty({ example: 85, required: false })
     @IsOptional()

@@ -43,7 +43,8 @@ export default function PlacementPage() {
     useEffect(() => {
         const loadPlacements = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken() || '';
                 const { fetchInstitutePlacements, fetchInstituteStudents } = await import('@/app/lib/institute');
                 const data = await fetchInstitutePlacements(token);
                 setMetrics({

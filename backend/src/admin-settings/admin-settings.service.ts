@@ -62,7 +62,7 @@ export class AdminSettingsService {
                 upgradesEnabled: false,
                 subscriptionPrices: {},
                 freeTierLimitMinutes: 10,
-                freeTierRefreshHours: 12,
+                freeTierResetAt: null,
             });
             settings = await this.platformRepo.save(settings);
         }
@@ -125,8 +125,14 @@ export class AdminSettingsService {
             upgradesEnabled: settings.upgradesEnabled,
             subscriptionPrices: settings.subscriptionPrices,
             freeTierLimitMinutes: settings.freeTierLimitMinutes,
-            freeTierRefreshHours: settings.freeTierRefreshHours,
+            freeTierResetAt: settings.freeTierResetAt,
         };
+    }
+
+    async refreshFreeTierResetAt() {
+        const settings = await this.getPlatformSettings();
+        settings.freeTierResetAt = new Date();
+        return this.platformRepo.save(settings);
     }
 
     async ensureMaintenanceAllowed(path: string, role?: UserRole) {

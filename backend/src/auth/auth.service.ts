@@ -2,16 +2,21 @@ import { Injectable, UnauthorizedException, NotFoundException, ForbiddenExceptio
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { EmailOtpService } from './services/email-otp.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
+        private emailOtpService: EmailOtpService,
     ) { }
 
     async register(registerDto: RegisterDto) {
         const { email, password, role, subscriptionPlan, firstName, lastName, timezone } = registerDto;
+        if ((role || 'student') === 'student') {
+            await this.emailOtpService.assertVerified(email);
+        }
         const user = await this.usersService.create(
             email,
             password,

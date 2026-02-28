@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { motion } from 'framer-motion';
 import { Plus, Search, Filter, Briefcase, MapPin, Clock, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -22,7 +23,7 @@ export default function AdminCareers() {
     }, []);
 
     const loadCareers = () => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) {
             setLoadError('Missing admin token.');
             return;
@@ -33,7 +34,7 @@ export default function AdminCareers() {
     };
 
     const handleDelete = async (id: string) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) {
             setLoadError('Missing admin token.');
             return;
@@ -52,7 +53,7 @@ export default function AdminCareers() {
     };
 
     const handleSaveCareer = async (data: any) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         if (!token) {
             setLoadError('Missing admin token.');
             return;

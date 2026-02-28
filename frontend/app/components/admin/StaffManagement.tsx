@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { UserPlus, Shield, X, Mail, User, Search, ChevronLeft, Download } from 'lucide-react';
 
 interface StaffMember {
@@ -45,7 +46,7 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
         if (isFormIncomplete) return;
         try {
             setLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { createCollegeStaff, fetchCollegeStaff } = await import('@/app/lib/colleges');
             const roleMap: Record<string, string> = {
                 'College Admin': 'college_admin',
@@ -76,7 +77,7 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
     };
 
     const removeStaff = async (id: string) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         const { deleteCollegeStaff, fetchCollegeStaff } = await import('@/app/lib/colleges');
         await deleteCollegeStaff(token, college.id, id);
         const updated = await fetchCollegeStaff(token, college.id);
@@ -116,7 +117,7 @@ export default function StaffManagement({ college, staff, onUpdateStaff }: Staff
     useEffect(() => {
         const loadStaff = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 const { fetchCollegeStaff } = await import('@/app/lib/colleges');
                 const updated = await fetchCollegeStaff(token, college.id);
                 onUpdateStaff(updated);

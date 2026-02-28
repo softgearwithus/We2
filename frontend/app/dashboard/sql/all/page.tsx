@@ -49,7 +49,8 @@ export default function SqlAllProblemsPage() {
     }, [problems, query, difficulty]);
 
     const handleSelect = async (problem: SqlProblem) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken() || '';
         try {
             await fetchSqlTrainingTaskForProblem(token, problem.uuid);
             router.push('/dashboard/sql');

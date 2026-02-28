@@ -10,6 +10,7 @@ import {
     updateWriteXQuestion,
     WriteXQuestion,
 } from '@/app/lib/test-series-admin';
+import { getStoredToken } from '@/app/lib/auth-storage';
 
 export default function AdminWriteXManager() {
     const [questions, setQuestions] = useState<WriteXQuestion[]>([]);
@@ -20,7 +21,7 @@ export default function AdminWriteXManager() {
     const [editId, setEditId] = useState<string | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') || '' : '';
+    const token = typeof window !== 'undefined' ? (getStoredToken('admin') || '') : '';
 
     const loadQuestions = async () => {
         setIsLoading(true);

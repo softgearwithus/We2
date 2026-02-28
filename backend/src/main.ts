@@ -4,13 +4,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { PlatformGuard } from './admin-settings/guards/platform.guard';
 import { LastActiveInterceptor } from './admin-settings/interceptors/last-active.interceptor';
-import { UsageGuard } from './usage/guards/usage.guard';
 
 import compression from 'compression';
 import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const environment = process.env.NODE_ENV || 'development';
+  const dbHost = process.env.PGHOST || process.env.DB_HOST || 'unknown';
+  console.log(`[config] env=${environment} dbHost=${dbHost}`);
   const httpAdapter = app.getHttpAdapter();
   const instance = httpAdapter.getInstance();
   if (instance?.disable) {
@@ -37,11 +39,10 @@ async function bootstrap() {
   );
 
   app.useGlobalGuards(app.get(PlatformGuard));
-  app.useGlobalGuards(app.get(UsageGuard));
   app.useGlobalInterceptors(app.get(LastActiveInterceptor));
 
   // Enable CORS
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment = environment === 'development';
   const defaultOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
   const envOrigins = (process.env.FRONTEND_URL || '')
     .split(',')
@@ -88,7 +89,7 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || 3001;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
 }

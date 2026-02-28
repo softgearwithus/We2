@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
+import { useTestSeriesUsage } from '../../layout';
 
 interface McqQuestion {
     id: string;
@@ -35,26 +34,32 @@ export default function SubjectMcqsPage() {
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState<Record<string, number>>({});
 
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
+    const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
 
     const hasNext = page * limit < total;
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token || !subject) return;
+        const loadQuestions = async () => {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token || !subject) return;
 
-        setLoading(true);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/mcqs?category=subject&groupKey=${subject}&page=${page}&limit=${limit}&order=latest`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.ok ? res.json() : null)
-            .then((data) => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/mcqs?category=subject&groupKey=${subject}&page=${page}&limit=${limit}&order=latest`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
                 if (data?.items) {
                     setItems(data.items);
                     setTotal(data.total || 0);
                 }
-            })
-            .finally(() => setLoading(false));
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadQuestions();
     }, [subject, page, limit]);
 
     const progressLabel = useMemo(() => {
@@ -97,9 +102,6 @@ export default function SubjectMcqsPage() {
                     <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold">Loading questions...</div>
                 ) : (
                     <div className="space-y-8 relative">
-                        {isLimited && (
-                            <UsageUpgradeGate message="Upgrade to continue your subject test series." />
-                        )}
                         {items.map((mcq, index) => {
                             const picked = selected[mcq.id];
                             return (

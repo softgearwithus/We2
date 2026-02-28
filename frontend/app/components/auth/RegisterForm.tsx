@@ -19,14 +19,23 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
     const searchParams = useSearchParams();
     const plan = searchParams.get('plan');
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpVerified, setOtpVerified] = useState(false);
+    const [otp, setOtp] = useState('');
+    const [otpStatus, setOtpStatus] = useState<string | null>(null);
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const watchedEmail = watch('email');
 
     const onSubmit = async (data: any) => {
+        if (role === 'student' && !otpVerified) {
+            setOtpStatus('Please verify your email with OTP.');
+            return;
+        }
         setIsLoading(true);
         try {
             const payload = { ...data, role: roleValue, subscriptionPlan: plan };
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/register`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -39,7 +48,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                 // For now, redirect to login with pre-filled email? 
                 // Better UX: Auto-login. Let's assume we need to call login endpoint.
 
-                const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/login`, {
+                const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: data.email, password: data.password }),
@@ -47,7 +56,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
                 if (loginResponse.ok) {
                     const loginData = await loginResponse.json();
-                    login(loginData.accessToken, loginData.user);
+                    login(loginData.accessToken, loginData.user, false, 'user');
                     // Redirect to dashboard (or specific onboarding)
                     router.push(redirectPath);
                 } else {
@@ -60,6 +69,64 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
         } catch (error) {
             console.error('Registration error:', error);
             alert('An error occurred during registration');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSendOtp = async () => {
+        const email = String(watchedEmail || '').trim();
+        if (!email) {
+            setOtpStatus('Enter your email first.');
+            return;
+        }
+        setIsLoading(true);
+        setOtpStatus(null);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/request-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Failed to send OTP');
+            }
+            setOtpSent(true);
+            setOtpStatus('OTP sent. Check your email.');
+        } catch (error: any) {
+            setOtpStatus(error?.message || 'Failed to send OTP');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        const email = String(watchedEmail || '').trim();
+        if (!email) {
+            setOtpStatus('Enter your email first.');
+            return;
+        }
+        if (!otp) {
+            setOtpStatus('Enter the OTP code.');
+            return;
+        }
+        setIsLoading(true);
+        setOtpStatus(null);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/verify-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Invalid OTP');
+            }
+            setOtpVerified(true);
+            setOtpStatus('Email verified. You can create your account now.');
+        } catch (error: any) {
+            setOtpStatus(error?.message || 'Invalid OTP');
         } finally {
             setIsLoading(false);
         }
@@ -112,6 +179,42 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                     {errors.email && <span className="text-red-500 text-xs mt-1">Email is required</span>}
                 </div>
 
+                {role === 'student' && (
+                    <div className="space-y-3">
+                        <div className="flex flex-col gap-2">
+                            <button
+                                type="button"
+                                onClick={handleSendOtp}
+                                disabled={isLoading}
+                                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                            >
+                                {otpSent ? 'Resend OTP' : 'Send OTP'}
+                            </button>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">OTP</label>
+                            <input
+                                type="text"
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value)}
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                placeholder="Enter the 6-digit code"
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleVerifyOtp}
+                            disabled={isLoading || !otpSent}
+                            className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                            Verify OTP
+                        </button>
+                        {otpStatus && (
+                            <p className="text-xs text-slate-500">{otpStatus}</p>
+                        )}
+                    </div>
+                )}
+
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
                     <input
@@ -125,7 +228,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
                 <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || (role === 'student' && !otpVerified)}
                     className={`w-full text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${getButtonColor()}`}
                 >
                     {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Create Account'}

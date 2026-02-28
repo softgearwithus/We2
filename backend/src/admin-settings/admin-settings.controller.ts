@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Put, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Put, UseGuards, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -63,6 +63,15 @@ export class AdminSettingsController {
     @ApiOperation({ summary: 'Update platform settings (Admin)' })
     async updatePlatformSettings(@Body() dto: UpdatePlatformSettingsDto) {
         return this.adminSettingsService.updatePlatformSettings(dto);
+    }
+
+    @Post('settings/platform/free-tier-refresh')
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Refresh free tier limits for all users (Admin)' })
+    async refreshFreeTier() {
+        return this.adminSettingsService.refreshFreeTierResetAt();
     }
 
     @Patch('settings/profile')

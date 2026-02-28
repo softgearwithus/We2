@@ -17,10 +17,28 @@ docker-compose up -d
 ### 3. Run Backend
 ```bash
 cd backend
-npm run start:dev
+npm run dev
 ```
 
-Backend runs on `http://localhost:3000`
+Backend runs on `http://localhost:3001`
+
+### Dockerized Dev Backend (Backend + Postgres)
+If you want the backend and database to run inside Docker:
+
+```bash
+# From project root
+docker-compose up -d --build
+```
+
+## Redis
+
+Redis is not used in the current codebase and is intentionally removed from dev/prod configs.
+
+## Environment
+
+- Development uses `backend/.env.development` and local Docker Postgres.
+- Production uses Azure App Service environment variables (no .env file).
+- Postgres-only is enforced. Set `DATABASE_URL` or `PG*` variables.
 
 ## Authentication Endpoints
 

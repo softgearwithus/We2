@@ -87,20 +87,27 @@ import { ApplicationsModule } from './applications/applications.module';
 import { Application } from './applications/entities/application.entity';
 import { CompanyLeadsModule } from './company-leads/company-leads.module';
 import { CompanyLead } from './company-leads/entities/company-lead.entity';
+import { EmailOtp } from './auth/entities/email-otp.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath:
+        (process.env.NODE_ENV || 'development') === 'development'
+          ? '.env.development'
+          : undefined,
+      ignoreEnvFile: (process.env.NODE_ENV || 'development') !== 'development',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const dbType = configService.get<string>('DB_TYPE') || 'postgres';
-        if (dbType !== 'postgres') {
-          throw new Error('SQLite is not supported. Set DB_TYPE=postgres.');
-        }
-
         const dbConfig = resolveDbConfig(configService);
-        if (dbConfig.autoCreate) {
+        const isProduction = configService.get<string>('NODE_ENV') === 'production';
+        const shouldAutoCreate = !isProduction && dbConfig.autoCreate;
+        const shouldAutoCreateExtension =
+          !isProduction && dbConfig.autoCreateExtension;
+        if (shouldAutoCreate) {
           const adminClient = new Client({
             host: dbConfig.host,
             port: dbConfig.port,
@@ -120,7 +127,7 @@ import { CompanyLead } from './company-leads/entities/company-lead.entity';
           await adminClient.end();
         }
 
-        if (dbConfig.autoCreateExtension) {
+        if (shouldAutoCreateExtension) {
           const extensionName =
             dbConfig.uuidExtension === 'uuid-ossp' ? '"uuid-ossp"' : 'pgcrypto';
           const extensionClient = new Client({
@@ -196,10 +203,12 @@ import { CompanyLead } from './company-leads/entities/company-lead.entity';
             Placement,
             Application,
             CompanyLead,
+            EmailOtp,
           ],
-          synchronize: true,
-          logging: false,
+          synchronize: !isProduction,
+          logging: !isProduction,
           autoLoadEntities: false,
+          migrations: [__dirname + '/migrations/*{.ts,.js}'],
           name: 'default',
         };
       },

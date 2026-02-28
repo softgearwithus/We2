@@ -11,8 +11,9 @@ export default function ActiveDrivesPage() {
     useEffect(() => {
         const fetchDrives = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/placements/my-drives`, {
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken();
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {

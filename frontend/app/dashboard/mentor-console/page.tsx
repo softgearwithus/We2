@@ -48,7 +48,8 @@ export default function MentorConsolePage() {
                 return;
             }
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken() || '';
                 const [reqData, sessionData, payoutData] = await Promise.all([
                     fetchMentorRequests(token),
                     fetchMentorSessions(token),
@@ -81,7 +82,8 @@ export default function MentorConsolePage() {
             alert("Please provide a valid meeting link.");
             return;
         }
-        const token = localStorage.getItem('accessToken') || '';
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken() || '';
         const updatedSession = await acceptMentorRequest(token, selectedRequestId, meetingLink);
         setRequests(requests.filter(r => r.id !== selectedRequestId));
         setUpcomingSessions((prev) => [updatedSession, ...prev]);
@@ -93,7 +95,8 @@ export default function MentorConsolePage() {
     };
 
     const handleReject = async (id: string) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken() || '';
         const updatedSession = await declineMentorRequest(token, id);
         setRequests(requests.filter(r => r.id !== id));
         setHistory((prev) => [updatedSession, ...prev]);

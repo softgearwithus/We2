@@ -113,11 +113,18 @@ export default function DevGenesisPage() {
     }, [selectedDomain]);
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
-        fetchProjectLabProgress(token)
-            .then((progress) => setCompletedProjectIds(progress.completedProjectIds || []))
-            .catch(() => null);
+        const loadProgress = async () => {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token) return;
+            try {
+                const progress = await fetchProjectLabProgress(token);
+                setCompletedProjectIds(progress.completedProjectIds || []);
+            } catch {
+                return;
+            }
+        };
+        loadProgress();
     }, []);
 
     // Back navigation

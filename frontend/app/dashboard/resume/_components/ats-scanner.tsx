@@ -26,7 +26,7 @@ export default function ATSScanner() {
     const { isLimited } = useSectionUsage('resume');
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/admin/public/settings`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
             .then((res) => res.json())
             .then((data) => {
                 if (typeof data.maxUploadSizeMB === 'number') {
@@ -76,7 +76,7 @@ export default function ATSScanner() {
         }
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/resume/analyze`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/analyze`, {
                 method: 'POST',
                 body: formData,
             });

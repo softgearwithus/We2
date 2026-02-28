@@ -65,8 +65,9 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
         if (videoUsage.isLimited) return;
         setIsLoading(true);
         try {
-            const token = localStorage.getItem('accessToken') || '';
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews`, {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

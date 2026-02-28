@@ -27,7 +27,8 @@ export default function PreparationPage() {
 
     useEffect(() => {
         const loadProgress = async () => {
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             if (!token) {
                 setIsProgressLoaded(true);
                 return;

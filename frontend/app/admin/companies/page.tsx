@@ -36,7 +36,7 @@ export default function CompaniesPage() {
     const fetchCompanies = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users?role=company_admin`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users?role=company_admin`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -53,7 +53,7 @@ export default function CompaniesPage() {
     const fetchLeads = async () => {
         setIsLeadsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/company-leads`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -70,7 +70,7 @@ export default function CompaniesPage() {
     const fetchCampaigns = async () => {
         setIsCampaignsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/placements`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -107,7 +107,7 @@ export default function CompaniesPage() {
     const handleRejectLead = async (leadId: string) => {
         if (!confirm('Are you sure you want to reject this request?')) return;
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/company-leads/${leadId}/status`, {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads/${leadId}/status`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,14 +124,14 @@ export default function CompaniesPage() {
     const handleImpersonate = async (companyId: string) => {
         if (!confirm('You are about to securely hijack this account session. Continue?')) return;
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/impersonate/${companyId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/impersonate/${companyId}`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
                 const data = await res.json();
-                localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('userData', JSON.stringify(data.user));
+                const { storeAuthSession } = await import('@/app/lib/auth-storage');
+                storeAuthSession('user', data.accessToken, data.user?.id, false);
                 window.location.href = '/industry/dashboard';
             } else {
                 const errData = await res.json();
@@ -151,7 +151,7 @@ export default function CompaniesPage() {
 
         setIsActionLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/placements/${id}/verify`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements/${id}/verify`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ export default function CompaniesPage() {
                 role: 'company_admin'
             };
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/register`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ export default function CompaniesPage() {
             if (res.ok) {
                 // 2. If provisioned from a Lead, update the Lead status to 'provisioned'
                 if (activeLeadId) {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/company-leads/${activeLeadId}/status`, {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads/${activeLeadId}/status`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

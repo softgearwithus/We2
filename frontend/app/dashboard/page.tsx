@@ -32,9 +32,10 @@ export default function DashboardPage() {
         if (!authLoading && user) {
             // Only fetch placement stats if in prep mode, or fetch both if needed.
             const fetchStats = async () => {
-                const token = localStorage.getItem('accessToken');
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken();
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/dashboard-stats`, {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/dashboard-stats`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }

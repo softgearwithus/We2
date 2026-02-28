@@ -30,7 +30,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 admin: 'super_admin',
             };
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/login`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -44,17 +44,17 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             // Mock bypass if backend is unavailable or credentials fail
             if (!response.ok) {
                 if (role === 'admin' && data.email === 'admin@emble.in' && data.password === 'admin') {
-                    login('MOCK_TOKEN_ADMIN', { email: 'admin@emble.in', role: 'super_admin', name: 'Super Admin' } as any, rememberMe);
+                    login('MOCK_TOKEN_ADMIN', { email: 'admin@emble.in', role: 'super_admin', name: 'Super Admin' } as any, rememberMe, 'admin');
                     router.push(redirectPath);
                     return;
                 }
                 if (role === 'college' && data.email === 'college@emble.in' && data.password === 'college') {
-                    login('MOCK_TOKEN_COLLEGE', { email: 'college@emble.in', role: 'college_admin', name: 'Mock College' } as any, rememberMe);
+                    login('MOCK_TOKEN_COLLEGE', { email: 'college@emble.in', role: 'college_admin', name: 'Mock College' } as any, rememberMe, 'user');
                     router.push(redirectPath);
                     return;
                 }
                 if (role === 'industry' && data.email === 'company@emble.in' && data.password === 'company') {
-                    login('MOCK_TOKEN_INDUSTRY', { email: 'company@emble.in', role: 'company_admin', name: 'Mock Company' } as any, rememberMe);
+                    login('MOCK_TOKEN_INDUSTRY', { email: 'company@emble.in', role: 'company_admin', name: 'Mock Company' } as any, rememberMe, 'user');
                     router.push(redirectPath);
                     return;
                 }
@@ -71,7 +71,8 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                     return;
                 }
 
-                login(result.accessToken, result.user, rememberMe);
+                const scope = role === 'admin' ? 'admin' : 'user';
+                login(result.accessToken, result.user, rememberMe, scope);
                 router.push(redirectPath);
             } else {
                 alert('Login failed. Please check your credentials.');

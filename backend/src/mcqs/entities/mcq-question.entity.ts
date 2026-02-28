@@ -6,7 +6,7 @@ export enum McqCategory {
 }
 
 @Entity()
-@Index(['category', 'groupKey', 'createdAt'])
+@Index(['category', 'groupKey', 'topicKey', 'createdAt'])
 export class McqQuestion {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -19,6 +19,12 @@ export class McqQuestion {
 
     @Column({ type: 'varchar', length: 160 })
     groupLabel: string;
+
+    @Column({ type: 'varchar', length: 120, nullable: true })
+    topicKey: string | null;
+
+    @Column({ type: 'varchar', length: 160, nullable: true })
+    topicLabel: string | null;
 
     @Column({ type: 'text' })
     question: string;

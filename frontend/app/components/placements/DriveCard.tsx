@@ -70,9 +70,10 @@ export default function DriveCard({ drive }: DriveCardProps) {
             <button
                 onClick={async () => {
                     try {
-                        const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+                        const { getActiveToken } = await import('@/app/lib/auth-storage');
+                        const token = getActiveToken();
                         if (token) {
-                            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/applications`, {
+                            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',

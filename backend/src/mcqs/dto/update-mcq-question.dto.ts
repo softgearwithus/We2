@@ -13,6 +13,11 @@ export class UpdateMcqQuestionDto {
     @IsString()
     group?: string;
 
+    @ApiProperty({ example: 'arrays', description: 'Topic name for company MCQs', required: false })
+    @IsOptional()
+    @IsString()
+    topic?: string;
+
     @ApiProperty({ example: 'Which sentence is grammatically correct?', required: false })
     @IsOptional()
     @IsString()

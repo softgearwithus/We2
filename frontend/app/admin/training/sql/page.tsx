@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import Link from 'next/link';
 import { ArrowLeft, Database, Loader2, Search, Upload } from 'lucide-react';
 import { SqlAdminProblem, fetchAdminSqlProblems } from '@/app/lib/training-admin';
@@ -25,7 +26,7 @@ export default function AdminSqlTrainingList() {
         page: 1,
     });
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') || '' : '';
+    const token = typeof window !== 'undefined' ? (getStoredToken('admin') || '') : '';
 
     const handleImport = async (file: File | null) => {
         if (!file) return;
@@ -34,7 +35,7 @@ export default function AdminSqlTrainingList() {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/sql-training/admin/import`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sql-training/admin/import`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,

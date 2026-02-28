@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { UserSectionUsage } from './entities/user-section-usage.entity';
 import { FREE_PLAN_SECTION_LIMIT_SECONDS, UsageSectionKey } from './usage.constants';
 import { UsersService } from '../users/users.service';
-import { AdminSettingsService } from '../admin-settings/admin-settings.service';
 
 type UsageState = {
     remainingSeconds: number;
@@ -20,18 +19,15 @@ export class UsageService {
         @InjectRepository(UserSectionUsage)
         private usageRepo: Repository<UserSectionUsage>,
         private usersService: UsersService,
-        private adminSettingsService: AdminSettingsService,
     ) { }
 
-    private async getLimitSecondsForPlan(plan: string | null | undefined) {
+    private getLimitSecondsForPlan(plan: string | null | undefined) {
         // Handle duration-based tags (pro_1m, standard_3m, etc.) and original names
         if (plan && (plan.startsWith('standard_') || plan.startsWith('pro_') || plan === 'placement_plus' || plan === 'industry_plus' || plan === 'we2_max')) {
             return Infinity;
         }
 
-        const settings = await this.adminSettingsService.getPlatformSettings();
-        const limitMinutes = settings.freeTierLimitMinutes ?? 10;
-        return limitMinutes * 60;
+        return FREE_PLAN_SECTION_LIMIT_SECONDS;
     }
 
     private async ensureRecord(userId: string, sectionKey: UsageSectionKey) {
@@ -68,20 +64,6 @@ export class UsageService {
             record.isActive = false;
             return this.usageRepo.save(record);
         }
-
-        const settings = await this.adminSettingsService.getPlatformSettings();
-        // Ensure refreshHours is at least 0.01 to prevent instantaneous reset loops if admin sets it to 0
-        const refreshHours = Math.max(0.01, settings.freeTierRefreshHours ?? 12);
-        const refreshMs = refreshHours * 60 * 60 * 1000;
-        const msSinceReset = now.getTime() - record.lastResetAt.getTime();
-
-        if (msSinceReset >= refreshMs) {
-            record.usedSeconds = 0;
-            record.lastResetAt = now;
-            record.lastHeartbeatAt = null;
-            record.isActive = false;
-            return this.usageRepo.save(record);
-        }
         return record;
     }
 
@@ -103,7 +85,7 @@ export class UsageService {
         const user = await this.usersService.findById(userId);
         const record = await this.ensureRecord(userId, sectionKey);
         const resetRecord = await this.resetIfNeeded(record);
-        const limitSeconds = await this.getLimitSecondsForPlan(user.subscriptionPlan);
+        const limitSeconds = this.getLimitSecondsForPlan(user.subscriptionPlan);
         return this.buildState(resetRecord, limitSeconds);
     }
 
@@ -111,7 +93,7 @@ export class UsageService {
         const user = await this.usersService.findById(userId);
         const record = await this.ensureRecord(userId, sectionKey);
         const resetRecord = await this.resetIfNeeded(record);
-        const limitSeconds = await this.getLimitSecondsForPlan(user.subscriptionPlan);
+        const limitSeconds = this.getLimitSecondsForPlan(user.subscriptionPlan);
         if (limitSeconds !== Infinity && resetRecord.usedSeconds >= limitSeconds) {
             throw new BadRequestException('Free plan limit reached for this section.');
         }
@@ -125,7 +107,7 @@ export class UsageService {
         const user = await this.usersService.findById(userId);
         const record = await this.ensureRecord(userId, sectionKey);
         const resetRecord = await this.resetIfNeeded(record);
-        const limitSeconds = await this.getLimitSecondsForPlan(user.subscriptionPlan);
+        const limitSeconds = this.getLimitSecondsForPlan(user.subscriptionPlan);
         if (limitSeconds === Infinity) {
             resetRecord.lastHeartbeatAt = new Date();
             resetRecord.isActive = true;
@@ -158,7 +140,7 @@ export class UsageService {
         const user = await this.usersService.findById(userId);
         const record = await this.ensureRecord(userId, sectionKey);
         const resetRecord = await this.resetIfNeeded(record);
-        const limitSeconds = await this.getLimitSecondsForPlan(user.subscriptionPlan);
+        const limitSeconds = this.getLimitSecondsForPlan(user.subscriptionPlan);
 
         if (limitSeconds !== Infinity) {
             const now = new Date();

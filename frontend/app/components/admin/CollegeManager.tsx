@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import { ChevronLeft, GraduationCap, Users, Plus, CheckCircle2, Trash2, Download } from 'lucide-react';
 import StaffManagement from '@/app/components/admin/StaffManagement';
 
@@ -48,7 +49,7 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
         if (!studentFormData.year || !studentFormData.dept || studentFormData.count <= 0) return;
         try {
             setLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { createCollegeCohort, fetchCollegeCohorts } = await import('@/app/lib/colleges');
             await createCollegeCohort(token, college.id, {
                 year: studentFormData.year,
@@ -73,7 +74,7 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
 
     const handleRemoveCohort = async (id: string) => {
         try {
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { deleteCollegeCohort, fetchCollegeCohorts } = await import('@/app/lib/colleges');
             await deleteCollegeCohort(token, college.id, id);
             const cohorts = await fetchCollegeCohorts(token, college.id);
@@ -101,7 +102,7 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
     }
 
     const downloadCohortCSV = async (cohort: StudentCohort) => {
-        const token = localStorage.getItem('accessToken') || '';
+        const token = getStoredToken('admin') || '';
         const { exportCollegeCohort } = await import('@/app/lib/colleges');
         const response = await exportCollegeCohort(token, college.id, cohort.id);
         const blob = await response.blob();
@@ -118,7 +119,7 @@ export default function CollegeManager({ college, onClose, onUpdate }: CollegeMa
     useEffect(() => {
         const loadData = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 const { fetchCollegeStaff, fetchCollegeCohorts } = await import('@/app/lib/colleges');
                 const [staffData, cohorts] = await Promise.all([
                     fetchCollegeStaff(token, college.id),

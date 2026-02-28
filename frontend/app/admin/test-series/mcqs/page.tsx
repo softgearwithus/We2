@@ -19,6 +19,7 @@ import {
     deleteMcq,
     fetchAdminMcqs,
     fetchMcqGroups,
+    fetchMcqTopics,
     importMcqsCsv,
     McqAdminItem,
     McqGroup,
@@ -26,6 +27,7 @@ import {
     updateMcq,
     bulkDeleteMcqs,
 } from '@/app/lib/test-series-admin';
+import { getStoredToken } from '@/app/lib/auth-storage';
 
 const SUBJECT_KEYS = [
     { value: 'english', label: 'English' },
@@ -37,6 +39,7 @@ const SUBJECT_KEYS = [
 const emptyForm = {
     category: 'subject' as 'subject' | 'company',
     group: '',
+    topic: '',
     question: '',
     options: ['', '', '', ''],
     correctOptionIndex: 0,
@@ -45,6 +48,7 @@ const emptyForm = {
 export default function AdminMcqManager() {
     const [items, setItems] = useState<McqAdminItem[]>([]);
     const [groups, setGroups] = useState<McqGroup[]>([]);
+    const [topics, setTopics] = useState<McqGroup[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isBulkOpen, setIsBulkOpen] = useState(false);
@@ -55,6 +59,7 @@ export default function AdminMcqManager() {
     const [filters, setFilters] = useState({
         category: 'subject',
         groupKey: '',
+        topicKey: '',
         search: '',
         page: 1,
     });
@@ -64,7 +69,7 @@ export default function AdminMcqManager() {
 
     const pageSize = 50;
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') || '' : '';
+    const token = typeof window !== 'undefined' ? (getStoredToken('admin') || '') : '';
 
     const loadData = async () => {
         setIsLoading(true);
@@ -74,6 +79,7 @@ export default function AdminMcqManager() {
                 fetchAdminMcqs(token, {
                     category: filters.category,
                     groupKey: filters.groupKey,
+                    topicKey: filters.topicKey,
                     search: filters.search,
                     page: filters.page,
                     limit: pageSize,
@@ -82,6 +88,12 @@ export default function AdminMcqManager() {
             ]);
             setItems(listRes.items);
             setGroups(groupRes);
+            if (filters.category === 'company' && filters.groupKey) {
+                const topicRes = await fetchMcqTopics(token, filters.groupKey);
+                setTopics(topicRes);
+            } else {
+                setTopics([]);
+            }
         } catch (error: any) {
             setMessage({ type: 'error', text: error.message || 'Failed to load MCQs.' });
         } finally {
@@ -92,7 +104,7 @@ export default function AdminMcqManager() {
     useEffect(() => {
         if (!token) return;
         loadData();
-    }, [filters.category, filters.groupKey, filters.search, filters.page]);
+    }, [filters.category, filters.groupKey, filters.topicKey, filters.search, filters.page]);
 
     const groupOptions = useMemo(() => {
         if (filters.category === 'subject') {
@@ -108,6 +120,7 @@ export default function AdminMcqManager() {
             await createMcq(token, {
                 category: form.category,
                 group: form.group,
+                topic: form.category === 'company' ? form.topic : undefined,
                 question: form.question,
                 options: form.options,
                 correctOptionIndex: form.correctOptionIndex,
@@ -129,6 +142,7 @@ export default function AdminMcqManager() {
             const payload: UpdateMcqPayload = {
                 category: form.category,
                 group: form.group,
+                topic: form.category === 'company' ? form.topic : undefined,
                 question: form.question,
                 options: form.options,
                 correctOptionIndex: form.correctOptionIndex,
@@ -160,7 +174,7 @@ export default function AdminMcqManager() {
     };
 
     const handleBulkDelete = async () => {
-        if (!filters.search && !filters.groupKey && !filters.category) {
+        if (!filters.search && !filters.groupKey && !filters.topicKey) {
             setMessage({ type: 'error', text: 'Add a search or filter before bulk delete.' });
             return;
         }
@@ -172,6 +186,7 @@ export default function AdminMcqManager() {
             const result = await bulkDeleteMcqs(token, {
                 category: filters.category,
                 groupKey: filters.groupKey,
+                topicKey: filters.topicKey,
                 search: filters.search,
             });
             setMessage({ type: 'success', text: `Deleted ${result.deletedCount || 0} MCQs.` });
@@ -183,17 +198,18 @@ export default function AdminMcqManager() {
         }
     };
 
-    const startEdit = (mcq: McqAdminItem) => {
-        setEditId(mcq.id);
-        setForm({
-            category: mcq.category,
-            group: mcq.groupLabel,
-            question: mcq.question,
-            options: mcq.options,
-            correctOptionIndex: mcq.correctOptionIndex,
-        });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+        const startEdit = (mcq: McqAdminItem) => {
+            setEditId(mcq.id);
+            setForm({
+                category: mcq.category,
+                group: mcq.groupLabel,
+                topic: mcq.topicLabel || '',
+                question: mcq.question,
+                options: mcq.options,
+                correctOptionIndex: mcq.correctOptionIndex,
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
     const handleCsvImport = async () => {
         setIsSaving(true);
@@ -265,6 +281,18 @@ export default function AdminMcqManager() {
                             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold"
                         />
                     </div>
+
+                    {form.category === 'company' && (
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Topic Label</label>
+                            <input
+                                value={form.topic}
+                                onChange={(e) => setForm((prev) => ({ ...prev, topic: e.target.value }))}
+                                placeholder="Arrays"
+                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold"
+                            />
+                        </div>
+                    )}
 
                     <div className="md:col-span-2 space-y-2">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Question</label>
@@ -364,7 +392,7 @@ export default function AdminMcqManager() {
                         </div>
                         <select
                             value={filters.category}
-                            onChange={(e) => setFilters((prev) => ({ ...prev, category: e.target.value, groupKey: '', page: 1 }))}
+                            onChange={(e) => setFilters((prev) => ({ ...prev, category: e.target.value, groupKey: '', topicKey: '', page: 1 }))}
                             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
                         >
                             <option value="subject">Subject</option>
@@ -372,7 +400,7 @@ export default function AdminMcqManager() {
                         </select>
                         <select
                             value={filters.groupKey}
-                            onChange={(e) => setFilters((prev) => ({ ...prev, groupKey: e.target.value, page: 1 }))}
+                            onChange={(e) => setFilters((prev) => ({ ...prev, groupKey: e.target.value, topicKey: '', page: 1 }))}
                             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
                         >
                             <option value="">All Groups</option>
@@ -382,6 +410,20 @@ export default function AdminMcqManager() {
                                 </option>
                             ))}
                         </select>
+                        {filters.category === 'company' && (
+                            <select
+                                value={filters.topicKey}
+                                onChange={(e) => setFilters((prev) => ({ ...prev, topicKey: e.target.value, page: 1 }))}
+                                className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
+                            >
+                                <option value="">All Topics</option>
+                                {topics.map((topic) => (
+                                    <option key={topic.key} value={topic.key}>
+                                        {topic.label}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
                     </div>
                     <div className="flex items-center gap-2">
                         <button
@@ -405,7 +447,11 @@ export default function AdminMcqManager() {
                             <div key={mcq.id} className="border border-slate-200 rounded-2xl p-5">
                                 <div className="flex items-center justify-between gap-4">
                                     <div>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{mcq.groupLabel}</p>
+                                        <div className="text-xs font-bold uppercase tracking-widest text-slate-400 flex flex-wrap items-center gap-2">
+                                            <span>{mcq.groupLabel}</span>
+                                            {mcq.topicLabel && <span className="text-slate-300">•</span>}
+                                            {mcq.topicLabel && <span>{mcq.topicLabel}</span>}
+                                        </div>
                                         <h3 className="text-base font-bold text-slate-900 mt-1">{mcq.question}</h3>
                                         <p className="text-xs text-slate-400 mt-2">Correct: Option {mcq.correctOptionIndex + 1}</p>
                                     </div>
@@ -442,7 +488,7 @@ export default function AdminMcqManager() {
                                 <X size={18} />
                             </button>
                         </div>
-                        <p className="text-xs text-slate-500 mb-4">Paste CSV with headers: category, group, question, options, correctOptionIndex. Use | to separate options.</p>
+                        <p className="text-xs text-slate-500 mb-4">Paste CSV with headers: category, group, topic, question, options, correctOptionIndex. Use | to separate options.</p>
                         <div className="space-y-3">
                             <input
                                 value={csvApiKey}

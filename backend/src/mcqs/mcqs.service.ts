@@ -29,11 +29,18 @@ export class McqsService {
 
         const groupLabel = dto.group.trim();
         const groupKey = this.normalizeKey(dto.group);
+        const topicLabel = dto.topic ? dto.topic.trim() : null;
+        const topicKey = dto.topic ? this.normalizeKey(dto.topic) : null;
+        if (dto.category === McqCategory.COMPANY && !topicLabel) {
+            throw new BadRequestException('Topic is required for company MCQs');
+        }
 
         const question = this.mcqRepo.create({
             category: dto.category,
             groupLabel,
             groupKey,
+            topicLabel: topicLabel || null,
+            topicKey: topicKey || null,
             question: dto.question.trim(),
             options,
             correctOptionIndex: dto.correctOptionIndex,
@@ -55,9 +62,18 @@ export class McqsService {
 
         const qb = this.mcqRepo.createQueryBuilder('mcq')
             .where('mcq.category = :category', { category: query.category })
-            .andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) })
-            .skip((page - 1) * limit)
-            .take(limit);
+            .andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
+
+        if (query.topicKey) {
+            const topicKey = this.normalizeKey(query.topicKey);
+            if (topicKey === 'general') {
+                qb.andWhere('(mcq.topicKey = :topicKey OR mcq.topicKey IS NULL)', { topicKey });
+            } else {
+                qb.andWhere('mcq.topicKey = :topicKey', { topicKey });
+            }
+        }
+
+        qb.skip((page - 1) * limit).take(limit);
 
         if (order === McqOrder.RANDOM) {
             qb.orderBy('RANDOM()');
@@ -89,6 +105,14 @@ export class McqsService {
         }
         if (query.groupKey) {
             qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
+        }
+        if (query.topicKey) {
+            const topicKey = this.normalizeKey(query.topicKey);
+            if (topicKey === 'general') {
+                qb.andWhere('(mcq.topicKey = :topicKey OR mcq.topicKey IS NULL)', { topicKey });
+            } else {
+                qb.andWhere('mcq.topicKey = :topicKey', { topicKey });
+            }
         }
         if (query.search) {
             qb.andWhere('(mcq.question ILIKE :search OR mcq.groupLabel ILIKE :search)', {
@@ -128,8 +152,18 @@ export class McqsService {
             question.groupKey = this.normalizeKey(groupValue);
         }
 
+        const topicValue = typeof dto.topic === 'string' ? dto.topic.trim() : '';
+        if (topicValue) {
+            question.topicLabel = topicValue;
+            question.topicKey = this.normalizeKey(topicValue);
+        }
+
         if (dto.category) {
             question.category = dto.category;
+        }
+
+        if (question.category === McqCategory.COMPANY && !question.topicLabel && !dto.topic) {
+            throw new BadRequestException('Topic is required for company MCQs');
         }
 
         if (typeof dto.question === 'string' && dto.question.trim()) {
@@ -192,6 +226,14 @@ export class McqsService {
         if (query.groupKey) {
             qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
         }
+        if (query.topicKey) {
+            const topicKey = this.normalizeKey(query.topicKey);
+            if (topicKey === 'general') {
+                qb.andWhere('(mcq.topicKey = :topicKey OR mcq.topicKey IS NULL)', { topicKey });
+            } else {
+                qb.andWhere('mcq.topicKey = :topicKey', { topicKey });
+            }
+        }
         if (query.search) {
             qb.andWhere('(mcq.question ILIKE :search OR mcq.groupLabel ILIKE :search)', {
                 search: `%${query.search}%`,
@@ -213,16 +255,33 @@ export class McqsService {
         return { deletedCount: ids.length };
     }
 
-    async groups(category: McqCategory) {
-        const rows = await this.mcqRepo.createQueryBuilder('mcq')
-            .select('mcq.groupKey', 'groupKey')
-            .addSelect('mcq.groupLabel', 'groupLabel')
-            .addSelect('COUNT(mcq.id)', 'count')
-            .where('mcq.category = :category', { category })
-            .groupBy('mcq.groupKey')
-            .addGroupBy('mcq.groupLabel')
-            .orderBy('mcq.groupLabel', 'ASC')
-            .getRawMany<{ groupKey: string; groupLabel: string; count: string }>();
+    async groups(category: McqCategory, groupBy: 'group' | 'topic' = 'group', groupKey?: string) {
+        const qb = this.mcqRepo.createQueryBuilder('mcq')
+            .where('mcq.category = :category', { category });
+
+        if (groupKey) {
+            qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(groupKey) });
+        }
+
+        if (groupBy === 'topic') {
+            qb.select('COALESCE(mcq.topicKey, :fallbackKey)', 'groupKey')
+                .addSelect('COALESCE(mcq.topicLabel, :fallbackLabel)', 'groupLabel')
+                .addSelect('COUNT(mcq.id)', 'count')
+                .setParameter('fallbackKey', 'general')
+                .setParameter('fallbackLabel', 'General')
+                .groupBy('mcq.topicKey')
+                .addGroupBy('mcq.topicLabel')
+                .orderBy('groupLabel', 'ASC');
+        } else {
+            qb.select('mcq.groupKey', 'groupKey')
+                .addSelect('mcq.groupLabel', 'groupLabel')
+                .addSelect('COUNT(mcq.id)', 'count')
+                .groupBy('mcq.groupKey')
+                .addGroupBy('mcq.groupLabel')
+                .orderBy('mcq.groupLabel', 'ASC');
+        }
+
+        const rows = await qb.getRawMany<{ groupKey: string; groupLabel: string; count: string }>();
 
         return rows.map((row) => ({
             key: row.groupKey,
@@ -238,6 +297,7 @@ export class McqsService {
             const dto: CreateMcqQuestionDto = {
                 category: row.category as McqCategory,
                 group: row.group,
+                topic: row.topic || undefined,
                 question: row.question,
                 options: row.options,
                 correctOptionIndex: row.correctOptionIndex,
@@ -286,6 +346,7 @@ export class McqsService {
             return {
                 category: row.category,
                 group: row.group,
+                topic: row.topic,
                 question: row.question,
                 options,
                 correctOptionIndex,

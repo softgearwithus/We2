@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, PenTool, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
+import { useTestSeriesUsage } from '../layout';
 
 interface WriteXQuestion {
     id: string;
@@ -31,26 +30,33 @@ export default function CommunicationTestsPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [result, setResult] = useState<WriteXResult | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
+    const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/writex/question`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.ok ? res.json() : null)
-            .then((data) => {
+        const loadQuestion = async () => {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token) return;
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/writex/question`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
                 if (data?.id) {
                     setQuestion(data);
                 }
-            })
-            .catch(() => undefined);
+            } catch {
+                return;
+            }
+        };
+        loadQuestion();
     }, []);
 
     const submitAnswer = async () => {
         if (!question) return;
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
         if (!token) return;
 
         setIsSubmitting(true);
@@ -58,7 +64,7 @@ export default function CommunicationTestsPage() {
         setResult(null);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/writex/submit`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/writex/submit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,15 +121,12 @@ export default function CommunicationTestsPage() {
                     </div>
                 </motion.header>
 
-                <motion.div
+                    <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 24 }}
                     className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-100 shadow-sm relative overflow-hidden"
                 >
-                    {isLimited && (
-                        <UsageUpgradeGate message="Upgrade to continue your WriteX tests." />
-                    )}
                     <div className="flex items-center gap-4 mb-8">
                         <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center">
                             <PenTool size={20} strokeWidth={2.5} />

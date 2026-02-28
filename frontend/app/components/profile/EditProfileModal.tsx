@@ -48,7 +48,8 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
         setIsSaving(true);
         setErrorMessage(null);
 
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
         if (!token) {
             setErrorMessage('You are not authenticated. Please log in again.');
             setIsSaving(false);
@@ -60,7 +61,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
         const normalizeUrl = (value: string) => (value ? `https://${value.replace(/^https?:\/\//, '')}` : '');
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/profile`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

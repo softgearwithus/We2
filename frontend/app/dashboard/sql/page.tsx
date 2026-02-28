@@ -103,7 +103,8 @@ export default function SqlTrainingPage() {
         setSubmitResult(null);
         try {
             setLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await fetchSqlTrainingTask(token);
             if ('message' in data) {
                 setTaskMessage(data.message);
@@ -163,7 +164,8 @@ export default function SqlTrainingPage() {
         if (!task?.sessionId || !problem || !canSubmit || isSubmitting) return;
         try {
             setIsSubmitting(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const result = await submitSqlTrainingTask(token, {
                 sessionId: task.sessionId,
                 code,
@@ -187,7 +189,8 @@ export default function SqlTrainingPage() {
         if (!problem) return;
         try {
             setInsightLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await fetchSqlTrainingInsight(token, problem.id);
             if (data?.content) {
                 setInsight(data.content);
@@ -211,7 +214,8 @@ export default function SqlTrainingPage() {
         if (!problem) return;
         try {
             setInsightLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await generateSqlTrainingInsight(token, problem.id);
             if (data?.content) {
                 setInsight(data.content);
@@ -231,7 +235,8 @@ export default function SqlTrainingPage() {
     const loadTrainingSubmissions = async (problemId?: string) => {
         try {
             setSubmissionsLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await fetchSqlTrainingSubmissions(token, problemId);
             setTrainingSubmissions(data || []);
         } catch (error) {

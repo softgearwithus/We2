@@ -93,7 +93,8 @@ export default function DsaTrainingPage() {
         setSubmitResult(null);
         try {
             setLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await fetchTrainingTask(token);
             if ('message' in data) {
                 setTaskMessage(data.message);
@@ -156,7 +157,8 @@ export default function DsaTrainingPage() {
         if (!task?.sessionId || !problem || !canSubmit || isSubmitting) return;
         try {
             setIsSubmitting(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const result = await submitTrainingTask(token, {
                 sessionId: task.sessionId,
                 code,
@@ -180,7 +182,8 @@ export default function DsaTrainingPage() {
         if (!problem) return;
         try {
             setInsightLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await fetchTrainingInsight(token, problem.id);
             if (data?.content) {
                 setInsight(data.content);
@@ -204,7 +207,8 @@ export default function DsaTrainingPage() {
         if (!problem) return;
         try {
             setInsightLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await generateTrainingInsight(token, problem.id);
             if (data?.content) {
                 setInsight(data.content);
@@ -224,7 +228,8 @@ export default function DsaTrainingPage() {
     const loadTrainingSubmissions = async (problemId?: string) => {
         try {
             setSubmissionsLoading(true);
-            const token = localStorage.getItem('accessToken') || '';
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
             const data = await fetchTrainingSubmissions(token, problemId);
             setTrainingSubmissions(data || []);
         } catch (error) {

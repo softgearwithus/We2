@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Building2, Sparkles, TrendingUp, ChevronRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
+import { useTestSeriesUsage } from '../layout';
 
 const COLOR_OPTIONS = [
     { color: 'text-orange-600', bg: 'bg-orange-50', hoverBg: 'group-hover:bg-orange-600', hoverBorder: 'hover:border-orange-100' },
@@ -33,21 +32,27 @@ const item: Variants = {
 
 export default function CompanyTestsPage() {
     const [companies, setCompanies] = useState<{ key: string; label: string; count: number }[]>([]);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('test_series');
+    const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/mcqs/groups?category=company`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.ok ? res.json() : [])
-            .then((data) => {
+        const loadCompanies = async () => {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token) return;
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/mcqs/groups?category=company`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
                 if (Array.isArray(data)) {
                     setCompanies(data);
                 }
-            })
-            .catch(() => undefined);
+            } catch {
+                return;
+            }
+        };
+        loadCompanies();
     }, []);
 
     return (
@@ -83,9 +88,6 @@ export default function CompanyTestsPage() {
                 </motion.header>
 
                 <div className="relative">
-                    {isLimited && (
-                        <UsageUpgradeGate message="Upgrade to continue your company test series." />
-                    )}
                     <motion.div
                         variants={container}
                         initial="hidden"

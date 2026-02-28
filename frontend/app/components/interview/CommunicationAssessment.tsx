@@ -174,8 +174,9 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
             };
             formData.append('metadata', JSON.stringify(metadata));
 
-            const token = localStorage.getItem('accessToken');
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/communication/submit`, {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/communication/submit`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -194,7 +195,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
             const durationSeconds = metadata.durationSeconds;
             if (typeof durationSeconds === 'number' && result.id) {
                 try {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/${result.id}`, {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${result.id}`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -216,8 +217,9 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
     }
 
     const fetchSessionDetails = async (sessionId: string) => {
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/${sessionId}`, {
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${sessionId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

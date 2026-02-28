@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { getStoredToken } from '@/app/lib/auth-storage';
 import Link from 'next/link';
 import { Plus, Search, Filter, MoreVertical, GraduationCap, MapPin, Users, Settings2, Trash2, ExternalLink, Download, Building2 } from 'lucide-react';
 import CollegeManager from '@/app/components/admin/CollegeManager';
@@ -13,7 +14,7 @@ export default function CollegesPage() {
 
     const loadColleges = async () => {
         try {
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { fetchColleges } = await import('@/app/lib/colleges');
             const data = await fetchColleges(token);
             const normalized = data.map((c: any) => ({
@@ -53,7 +54,7 @@ export default function CollegesPage() {
 
     const handleUpdateCollege = async (updatedCollege: any) => {
         try {
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { updateCollege } = await import('@/app/lib/colleges');
             await updateCollege(token, updatedCollege.id, {
                 name: updatedCollege.name,
@@ -73,7 +74,7 @@ export default function CollegesPage() {
     const handleDeleteCollege = async (id: string) => {
         if (!confirm('Are you sure you want to delete this institution? All data will be permanently removed.')) return;
         try {
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             const { deleteCollege } = await import('@/app/lib/colleges');
             await deleteCollege(token, id);
             await loadColleges();

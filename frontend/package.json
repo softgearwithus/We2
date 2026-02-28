@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
-    "build": "next build",
-    "start": "next start",
+    "dev": "cross-env NODE_ENV=development next dev --hostname 0.0.0.0 --port 3000",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production next start",
     "lint": "eslint --max-warnings 0",
     "check-types": "next typegen && tsc --noEmit"
   },
@@ -41,6 +41,7 @@
     "tailwind-merge": "^2.6.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@faker-js/faker": "^10.3.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",

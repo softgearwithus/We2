@@ -142,7 +142,8 @@ export default function DsaProblemPage() {
         }));
 
         // Execute Code against ALL cases
-        const token = localStorage.getItem('accessToken') || '';
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken() || '';
 
         // Ensure problem is loaded before executing
         if (!problem) {

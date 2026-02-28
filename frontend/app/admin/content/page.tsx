@@ -166,8 +166,8 @@ export default function AdminContentPage() {
             <div className="max-w-6xl mx-auto">
                 <header className="mb-8 flex items-center justify-between">
                     <div>
-                        <Link href="/admin" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-4 transition-colors">
-                            <ArrowLeft size={18} /> Back to Dashboard
+                        <Link href="/admin/students" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-4 transition-colors">
+                            <ArrowLeft size={18} /> Back to Admin
                         </Link>
                         <h1 className="text-3xl font-extrabold text-slate-900">Course Content Management</h1>
                         <p className="text-slate-500">Create comprehensive deep-dive guides for your students.</p>

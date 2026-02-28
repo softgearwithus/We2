@@ -7,6 +7,7 @@ import {
     Query,
     UseGuards,
     Request,
+    ServiceUnavailableException,
 } from '@nestjs/common';
 import {
     ApiTags,
@@ -24,14 +25,12 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles, Public } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
 import { Difficulty } from './entities/dsa-problem.entity';
-import { SubmissionQueueService } from '../queue/submission-queue.service';
 
 @ApiTags('dsa')
 @Controller('dsa')
 export class DsaController {
     constructor(
         private readonly dsaService: DsaService,
-        private readonly submissionQueueService: SubmissionQueueService,
     ) { }
 
     // ── Problem Endpoints ────────────────────────────────
@@ -80,13 +79,17 @@ export class DsaController {
     @ApiBearerAuth('JWT-auth')
     @UseGuards(JwtAuthGuard)
     @Post('submissions')
-    @ApiOperation({ summary: 'Submit a solution (Queued Execution)' })
-    @ApiResponse({ status: 201, description: 'Submission queued' })
+    @ApiOperation({ summary: 'Submit a solution' })
+    @ApiResponse({ status: 201, description: 'Submission created' })
     async createSubmission(
         @Request() req: any,
         @Body() dto: CreateSubmissionDto,
     ) {
-        return this.submissionQueueService.submitCode(req.user.id, dto);
+        if (process.env.CODE_EXECUTION_ENABLED !== 'true') {
+            throw new ServiceUnavailableException('Code execution is disabled.');
+        }
+        const submission = await this.dsaService.createSubmission(req.user.id, dto);
+        return { submissionId: submission.id, status: submission.status };
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -96,7 +99,7 @@ export class DsaController {
     @ApiParam({ name: 'id', description: 'Submission UUID' })
     @ApiResponse({ status: 200, description: 'Submission details' })
     async getSubmission(@Param('id') id: string) {
-        return this.submissionQueueService.getSubmission(id);
+        return this.dsaService.getSubmission(id);
     }
 
     @ApiBearerAuth('JWT-auth')

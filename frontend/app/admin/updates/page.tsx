@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Bell, Code2, Database, Rocket, Radar, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { fetchAdminUpdateFlags, saveAdminUpdateFlags } from '@/app/lib/admin-settings';
+import { getStoredToken } from '@/app/lib/auth-storage';
 
 interface UpdateState {
     [href: string]: boolean;
@@ -23,7 +24,7 @@ export default function AdminUpdatesPage() {
     useEffect(() => {
         const loadUpdates = async () => {
             try {
-                const token = localStorage.getItem('accessToken') || '';
+                const token = getStoredToken('admin') || '';
                 if (!token) throw new Error('Missing admin token.');
                 const data = await fetchAdminUpdateFlags(token);
                 const mapped: UpdateState = {};
@@ -50,7 +51,7 @@ export default function AdminUpdatesPage() {
         setSaveMessage(null);
 
         try {
-            const token = localStorage.getItem('accessToken') || '';
+            const token = getStoredToken('admin') || '';
             if (!token) throw new Error('Missing admin token.');
             await saveAdminUpdateFlags(token, Object.entries(updates).map(([href, enabled]) => ({ href, enabled })));
             window.dispatchEvent(new Event('admin_updates_changed'));

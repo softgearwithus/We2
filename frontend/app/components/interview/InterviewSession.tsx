@@ -124,9 +124,10 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600
         setAnalysisError(null);
         setAnalysisHint('Vapi is preparing your report. This can take a few minutes.');
 
-        const token = localStorage.getItem('accessToken');
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
         const tryFetchAnalysis = async () => {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interview/vapi/analysis`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/analysis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -158,13 +159,14 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600
                 }
 
                 const durationSeconds = durationSecondsRef.current ?? 0;
-                const token = localStorage.getItem('accessToken');
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken();
                 if (token) {
                     try {
                         if (durationSeconds === 0) {
                             durationSecondsRef.current = Math.max(0, initialSeconds - timeLeft);
                         }
-                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/interviews/${session.id}`, {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${session.id}`, {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -209,7 +211,8 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600
     const handleStart = async () => {
         if (!assistantId) return alert('System Error: Missing Assistant ID');
         try {
-            const userId = localStorage.getItem('userId');
+            const { getActiveUserId } = await import('@/app/lib/auth-storage');
+            const userId = getActiveUserId();
             const metadata = userId ? { userId } : undefined;
             await startInterview(assistantId, metadata);
             sessionStartedAtRef.current = Date.now();

@@ -72,7 +72,7 @@ export default function ContactPage() {
         try {
             if (subject === 'Company Partnership') {
                 // Route directly to the B2B CRM Lead Gen endpoint
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/company-leads`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

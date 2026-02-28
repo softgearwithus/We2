@@ -50,8 +50,7 @@ export default function CareersPage() {
         setMounted(true);
         const fetchCareers = async () => {
             try {
-                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-                const res = await fetch(`${API_URL}/careers?activeOnly=true`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/careers?activeOnly=true`);
                 if (res.ok) {
                     const data = await res.json();
                     // Map API careers to match UI expectations

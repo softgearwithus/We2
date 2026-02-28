@@ -23,7 +23,7 @@ export default function PlacementDrivesPage() {
                 else if (activeFilter === 'Remote') queryParam = '?type=Remote';
                 else if (activeFilter === 'Active Hiring') queryParam = '?status=Active Hiring';
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/placements${queryParam}`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements${queryParam}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
