@@ -1,9 +1,11 @@
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-if (!process.env.NEXT_PUBLIC_API_URL) {
+if (!apiBaseUrl) {
     throw new Error('NEXT_PUBLIC_API_URL is required.');
 }
+
+const API_BASE_URL = apiBaseUrl;
 
 if (process.env.NODE_ENV === 'production' && API_BASE_URL.includes('localhost')) {
     throw new Error('NEXT_PUBLIC_API_URL must not point to localhost in production.');
