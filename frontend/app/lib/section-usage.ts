@@ -328,7 +328,7 @@ const shouldTick = (sectionKey: string, userId?: string | null) => {
 
 const tickRecord = (
     sectionKey: string,
-    record: UsageRecord,
+    record: Omit<UsageRecord, 'signature'>,
     settings: FreeTierSettings,
     userId?: string | null,
 ) => {
