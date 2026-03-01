@@ -209,13 +209,18 @@ export default function ExamSimulatorPage() {
     };
 
     // Return Color classes based on status
-    const getStatusColors = (status: QuestionStatus) => {
+    const getStatusStyle = (status: QuestionStatus) => {
         switch (status) {
-            case 'answered': return 'bg-emerald-500 text-white border-emerald-600';
-            case 'not_answered': return 'bg-rose-500 text-white border-rose-600';
-            case 'marked_review': return 'bg-purple-500 text-white border-purple-600';
-            case 'answered_marked_review': return 'bg-indigo-600 text-white border-indigo-700 shadow-[inset_0_-4px_0_rgba(0,0,0,0.2)]';
-            default: return 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'; // not_visited
+            case 'answered':
+                return 'bg-[#21b25b] text-white border-transparent rounded-t-[40%] rounded-b-md';
+            case 'not_answered':
+                return 'bg-[#eb3a34] text-white border-transparent rounded-b-[40%] rounded-t-md';
+            case 'marked_review':
+                return 'bg-[#6223b5] text-white border-transparent rounded-full';
+            case 'answered_marked_review':
+                return 'bg-[#6223b5] text-white border-transparent rounded-full';
+            default: // not_visited
+                return 'bg-[#f1f5f9] text-slate-700 border-[#cbd5e1] rounded-md';
         }
     };
 
@@ -238,11 +243,11 @@ export default function ExamSimulatorPage() {
                         <p>2. The Question Palette displayed on the right side of screen will show the status of each question using one of the following symbols:</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-base bg-slate-50 p-6 rounded-xl border border-slate-200">
-                            <div className="flex items-center gap-3"><div className={`w-8 h-8 rounded-md border flex items-center justify-center font-bold ${getStatusColors('not_visited')}`}>1</div> <span className="text-slate-600">You have not visited the question yet.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-8 h-8 rounded-md border flex items-center justify-center font-bold ${getStatusColors('not_answered')}`}>3</div> <span className="text-slate-600">You have not answered the question.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-8 h-8 rounded-md border flex items-center justify-center font-bold ${getStatusColors('answered')}`}>5</div> <span className="text-slate-600">You have answered the question.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-8 h-8 rounded-md border flex items-center justify-center font-bold ${getStatusColors('marked_review')}`}>7</div> <span className="text-slate-600">You have NOT answered the question, but have marked it for review.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-8 h-8 rounded-md border flex items-center justify-center font-bold ${getStatusColors('answered_marked_review')}`}>9</div> <span className="text-slate-600">The question is answered and marked for review.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('not_visited')}`}>1</div> <span className="text-slate-600">You have not visited the question yet.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('not_answered')}`}>3</div> <span className="text-slate-600">You have not answered the question.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('answered')}`}>5</div> <span className="text-slate-600">You have answered the question.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('marked_review')}`}>7</div> <span className="text-slate-600">You have NOT answered the question, but have marked it for review.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold relative shadow-sm ${getStatusStyle('answered_marked_review')}`}>9<div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" /></div> <span className="text-slate-600">The question is answered and marked for review.</span></div>
                         </div>
 
                         <p className="mt-8 text-sm opacity-80 italic">By clicking "Ready to Begin", you confirm you have read the instructions and agree to the academic integrity terms.</p>
@@ -374,14 +379,14 @@ export default function ExamSimulatorPage() {
                     </div>
 
                     {/* Palette Legend */}
-                    <div className="p-4 bg-white grid grid-cols-2 gap-y-3 gap-x-2 border-b border-slate-200 shrink-0 font-medium">
-                        <div className="flex items-center gap-2"><div className={`w-6 h-6 rounded flex items-center justify-center text-white border border-slate-300 ${getStatusColors('answered')}`}>0</div> Answered</div>
-                        <div className="flex items-center gap-2"><div className={`w-6 h-6 rounded flex items-center justify-center text-white ${getStatusColors('not_answered')}`}>0</div> Not Answered</div>
-                        <div className="flex items-center gap-2"><div className={`w-6 h-6 rounded flex items-center justify-center text-slate-600 ${getStatusColors('not_visited')}`}>0</div> Not Visited</div>
-                        <div className="flex items-center gap-2"><div className={`w-6 h-6 rounded flex items-center justify-center text-white ${getStatusColors('marked_review')}`}>0</div> Marked for Review</div>
-                        <div className="col-span-2 flex items-center gap-2 mt-1">
-                            <div className={`w-6 h-6 rounded flex items-center justify-center text-white ${getStatusColors('answered_marked_review')}`}>0</div>
-                            Answered & Marked for Review (will be considered for evaluation)
+                    <div className="p-4 bg-white grid grid-cols-2 gap-y-4 gap-x-2 border-b border-slate-200 shrink-0 text-xs font-semibold text-slate-700">
+                        <div className="flex items-center gap-2.5"><div className={`w-8 h-8 flex items-center justify-center shadow-sm text-sm ${getStatusStyle('answered')}`}>0</div> <span className="flex-1">Answered</span></div>
+                        <div className="flex items-center gap-2.5"><div className={`w-8 h-8 flex items-center justify-center shadow-sm text-sm ${getStatusStyle('not_answered')}`}>0</div> <span className="flex-1">Not Answered</span></div>
+                        <div className="flex items-center gap-2.5"><div className={`w-8 h-8 flex items-center justify-center shadow-sm text-sm border ${getStatusStyle('not_visited')}`}>0</div> <span className="flex-1">Not Visited</span></div>
+                        <div className="flex items-center gap-2.5"><div className={`w-8 h-8 flex items-center justify-center shadow-sm text-sm ${getStatusStyle('marked_review')}`}>0</div> <span className="flex-1">Marked for Review</span></div>
+                        <div className="col-span-2 flex items-center gap-3 mt-1">
+                            <div className={`w-8 h-8 flex items-center justify-center shadow-sm text-sm relative ${getStatusStyle('answered_marked_review')}`}>0<div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" /></div>
+                            <span className="flex-1">Answered & Marked for Review</span>
                         </div>
                     </div>
 
@@ -390,20 +395,20 @@ export default function ExamSimulatorPage() {
                         <div className="bg-blue-600 text-white font-bold py-1.5 px-4 sticky top-0 z-10 mb-3 shadow">
                             Choose a Question
                         </div>
-                        <div className="grid grid-cols-5 gap-2 px-3 pb-8">
+                        <div className="flex flex-wrap gap-2.5 px-4 pb-8">
                             {activeSection?.questions?.map((q: any, idx: number) => {
                                 const status = statuses[activeSection.id]?.[q.id] || 'not_visited';
                                 return (
                                     <button
                                         key={q.id}
                                         onClick={() => navigateToQuestion(activeSectionIndex, idx)}
-                                        className={`relative aspect-square rounded-md border flex items-center justify-center font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5
-                                            ${getStatusColors(status)}
-                                            ${idx === activeQuestionIndex ? 'ring-2 ring-offset-1 ring-blue-500 scale-105 z-10 shadow-md' : 'opacity-90'}
+                                        className={`relative w-10 h-10 flex items-center justify-center font-bold text-sm shadow-sm transition-all border
+                                            ${getStatusStyle(status)}
+                                            ${idx === activeQuestionIndex ? 'ring-2 ring-offset-2 ring-blue-500 z-10 scale-110' : 'hover:scale-105'}
                                          `}
                                     >
                                         {idx + 1}
-                                        {status === 'answered_marked_review' && <div className="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 bg-green-400 rounded-full" />}
+                                        {status === 'answered_marked_review' && <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />}
                                     </button>
                                 );
                             })}
