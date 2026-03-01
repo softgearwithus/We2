@@ -106,9 +106,10 @@ export default function AdminStudentsPage() {
     };
 
     const getSubscriptionBadge = (sub: string) => {
+        if (sub === 'placement_plus' || sub.includes('standard')) return <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg w-fit">EMBLE Standard</span>;
         const label = sub.replace(/_/g, ' ').replace(/\w/g, (c) => c.toUpperCase());
         if (sub === 'free') return <span className="px-2.5 py-1 text-xs font-bold text-slate-500 bg-slate-100 rounded-lg">Free Tier</span>;
-        if (sub.includes('pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> {label}</span>;
+        if (sub === 'we2_max' || sub.includes('pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> {label}</span>;
         return <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg w-fit">{label}</span>;
     };
 

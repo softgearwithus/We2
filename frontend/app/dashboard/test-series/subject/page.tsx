@@ -35,24 +35,31 @@ export default function SubjectTestsPage() {
 
     useEffect(() => {
         const loadCounts = async () => {
-            const { getActiveToken } = await import('@/app/lib/auth-storage');
-            const token = getActiveToken();
-            if (!token) return;
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/mcqs/groups?category=subject`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                if (Array.isArray(data)) {
-                    const map: Record<string, number> = {};
-                    data.forEach((row) => {
-                        map[row.key] = row.count;
+            const { getStoredToken } = await import('@/app/lib/auth-storage');
+
+            const attemptFetch = async (t: string) => {
+                try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/mcqs/groups?category=subject`, {
+                        headers: { Authorization: `Bearer ${t}` },
                     });
-                    setCounts(map);
-                }
-            } catch {
-                return;
+                    if (!response.ok) return null;
+                    return await response.json();
+                } catch (e) { return null; }
+            };
+
+            const userToken = getStoredToken('user');
+            const adminToken = getStoredToken('admin');
+
+            let data = null;
+            if (userToken) data = await attemptFetch(userToken);
+            if (!data && adminToken && adminToken !== userToken) {
+                data = await attemptFetch(adminToken);
+            }
+
+            if (data && Array.isArray(data)) {
+                const map: Record<string, number> = {};
+                data.forEach((row) => { map[row.key] = row.count; });
+                setCounts(map);
             }
         };
         loadCounts();

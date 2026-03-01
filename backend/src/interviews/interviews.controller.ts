@@ -152,7 +152,6 @@ export class InterviewsController {
             const theme = metadata?.theme;
             // 1. Create session immediately (Fast)
             const session = await this.interviewsService.submitCommunicationSession(req.user.id, theme);
-
             // 2. Trigger background analysis (Async, don't await)
             this.interviewsService.performBackgroundAnalysis(session.id, files, metadata);
 
@@ -161,5 +160,24 @@ export class InterviewsController {
         } catch (error) {
             throw error;
         }
+    }
+
+    @Post('audio/deduct-credit')
+    @ApiOperation({ summary: 'Deduct an audio drill credit' })
+    async deductAudioCredit(@Request() req: any) {
+        return this.interviewsService.deductCredit(req.user.id, 'audio');
+    }
+
+    @Post('video/deduct-credit')
+    @ApiOperation({ summary: 'Deduct a video interview credit' })
+    async deductVideoCredit(@Request() req: any) {
+        return this.interviewsService.deductCredit(req.user.id, 'video');
+    }
+
+    @Post('communication/cancel')
+    @ApiOperation({ summary: 'Cancel communication drill and deduct credit' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
+    async cancelCommunicationDrill(@Body() body: { theme?: string }, @Request() req: any) {
+        return this.interviewsService.cancelCommunicationSession(req.user.id, body.theme);
     }
 }

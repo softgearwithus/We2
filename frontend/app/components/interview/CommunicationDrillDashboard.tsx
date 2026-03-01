@@ -139,6 +139,18 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
         setError(null);
 
         try {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            const deductRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/audio/deduct-credit`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!deductRes.ok) {
+                const errData = await deductRes.json().catch(() => null);
+                throw new Error(errData?.message || 'Monthly audio drill limit exhausted.');
+            }
+
             const { getGeminiService } = await import('@/app/services/GeminiService');
             const geminiService = await getGeminiService();
             const drillData = await geminiService.generateInterviewDrill("Computer Science and Software Engineering");
@@ -369,7 +381,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                         </div>
                         <h3 className="text-xl font-bold text-slate-900">Analysis in progress</h3>
                         <p className="text-sm text-slate-500">
-                            Vapi is still preparing your report. This page will refresh automatically.
+                            Emble AI is still preparing your report. This page will refresh automatically.
                         </p>
                         <div className="flex items-center gap-3">
                             <Button onClick={() => refreshSelectedSession(selectedSession.id)} className="h-10 px-4 rounded-xl">

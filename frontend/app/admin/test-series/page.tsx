@@ -44,6 +44,38 @@ export default function AdminTestSeriesHub() {
                         Manage WriteX <PenTool size={16} />
                     </div>
                 </Link>
+
+                <Link
+                    href="/admin/test-series/companies"
+                    className="group bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all"
+                >
+                    <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-black text-slate-900">Companies</h2>
+                    <p className="text-sm text-slate-500 mt-2">Manage the list of companies available for practice.</p>
+                    <div className="mt-6 inline-flex items-center gap-2 text-orange-600 font-bold text-sm">
+                        Manage Companies <ClipboardCheck size={16} />
+                    </div>
+                </Link>
+
+                <Link
+                    href="/admin/test-series/builder"
+                    className="group bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all"
+                >
+                    <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-6 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-black text-slate-900">Test Series Builder</h2>
+                    <p className="text-sm text-slate-500 mt-2">Construct modules, subjects, and link questions for company tests.</p>
+                    <div className="mt-6 inline-flex items-center gap-2 text-rose-600 font-bold text-sm">
+                        Build Curriculum <PenTool size={16} />
+                    </div>
+                </Link>
             </div>
         </div>
     );

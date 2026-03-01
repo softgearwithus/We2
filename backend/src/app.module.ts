@@ -88,6 +88,11 @@ import { Application } from './applications/entities/application.entity';
 import { CompanyLeadsModule } from './company-leads/company-leads.module';
 import { CompanyLead } from './company-leads/entities/company-lead.entity';
 import { EmailOtp } from './auth/entities/email-otp.entity';
+import { Company } from './test-series/entities/company.entity';
+import { MockTest } from './test-series/entities/mock-test.entity';
+import { MockTestSection } from './test-series/entities/mock-test-section.entity';
+import { MockTestQuestion } from './test-series/entities/mock-test-question.entity';
+import { TestSeriesModule } from './test-series/test-series.module';
 
 @Module({
   imports: [
@@ -204,6 +209,10 @@ import { EmailOtp } from './auth/entities/email-otp.entity';
             Application,
             CompanyLead,
             EmailOtp,
+            Company,
+            MockTest,
+            MockTestSection,
+            MockTestQuestion,
           ],
           synchronize: !isProduction,
           logging: !isProduction,
@@ -248,6 +257,7 @@ import { EmailOtp } from './auth/entities/email-otp.entity';
     PlacementsModule,
     ApplicationsModule,
     CompanyLeadsModule,
+    TestSeriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

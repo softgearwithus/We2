@@ -79,9 +79,9 @@ export default function PricingCard({
         else if (remainingDays > 35) activeDurationTierDays = 90;
         else if (remainingDays > 5) activeDurationTierDays = 30;
 
-        const isUserPro = user.subscriptionPlan === 'we2_max' || user.subscriptionPlan.includes('pro');
+        const isUserPro = user.subscriptionPlan === 'pro' || user.subscriptionPlan === 'we2_max' || user.subscriptionPlan?.includes('pro');
         const isCardPro = planId.includes('pro');
-        const isUserStandard = user.subscriptionPlan === 'placement_plus' || user.subscriptionPlan.includes('standard');
+        const isUserStandard = user.subscriptionPlan === 'standard' || user.subscriptionPlan === 'placement_plus' || user.subscriptionPlan?.includes('standard');
         const isCardStandard = planId.includes('standard');
 
         if (isUserPro && isCardStandard) {
@@ -141,13 +141,29 @@ export default function PricingCard({
 
             const amountInPaise = parseInt(price.replace(/[^0-9]/g, '')) * 100; // in paise
 
+            const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ plan: planId, amountInPaise })
+            });
+
+            if (!orderRes.ok) {
+                alert('Failed to initialize payment.');
+                setIsLoading(false);
+                return;
+            }
+            const orderData = await orderRes.json();
+
             const options: any = {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SI6zIPLAXQkeMw', // Using provided test key
                 amount: amountInPaise,
                 currency: 'INR',
                 name: 'EMBLE',
                 description: `Upgrade to ${title}`,
-                // Note: In a production app, order_id must be generated on the backend and passed here.
+                order_id: orderData.orderId,
                 handler: async function (response: any) {
                     try {
                         const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
@@ -156,7 +172,12 @@ export default function PricingCard({
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${token}`
                             },
-                            body: JSON.stringify({ plan: planId, paymentId: response.razorpay_payment_id })
+                            body: JSON.stringify({
+                                plan: planId,
+                                paymentId: response.razorpay_payment_id,
+                                orderId: response.razorpay_order_id,
+                                signature: response.razorpay_signature
+                            })
                         });
 
                         if (upgradeResponse.ok) {

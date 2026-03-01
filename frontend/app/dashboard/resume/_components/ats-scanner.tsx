@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, CheckCircle2, X, AlertTriangle, Loader2, Sparkles } from 'lucide-react';
 import { clsx } from 'clsx';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import { useCredits } from '@/app/hooks/useCredits';
 
 interface AnalysisResult {
     score: number;
@@ -23,7 +23,8 @@ export default function ATSScanner() {
     const [result, setResult] = useState<AnalysisResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { isLimited } = useSectionUsage('resume');
+    const { credits, isLoading: creditsLoading, refetch } = useCredits();
+    const isLimited = !creditsLoading && (credits?.resumeScans.remaining === 0);
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
@@ -76,8 +77,13 @@ export default function ATSScanner() {
         }
 
         try {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/analyze`, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
             });
 
@@ -87,6 +93,7 @@ export default function ATSScanner() {
 
             const data = await response.json();
             setResult(data);
+            refetch();
         } catch (err: any) {
             setError(err.message || 'Something went wrong.');
         } finally {
@@ -138,9 +145,19 @@ export default function ATSScanner() {
                             </div>
                             <div>
                                 <p className="text-lg font-bold text-slate-900">Click or Drag & Drop PDF here</p>
-                            <p className="text-sm text-slate-500 mt-1 font-medium">
-                                Supports PDF up to {maxUploadSizeMB ?? 5}MB
-                            </p>
+                                <p className="text-sm text-slate-500 mt-1 font-medium pb-2">
+                                    Supports PDF up to {maxUploadSizeMB ?? 5}MB
+                                </p>
+                                {creditsLoading && (
+                                    <div className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold border-slate-200 bg-slate-50 text-slate-500 mt-2">
+                                        <Loader2 size={12} className="animate-spin" /> Fetching allocations...
+                                    </div>
+                                )}
+                                {!creditsLoading && credits && (
+                                    <div className={`mt-2 mx-auto inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                        ATS Scans Left: {credits.resumeScans.remaining} / {credits.resumeScans.limit}
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                     ) : (
@@ -150,7 +167,7 @@ export default function ATSScanner() {
                             animate={{ opacity: 1, scale: 1 }}
                             className="flex items-center justify-between max-w-md mx-auto bg-white p-4 rounded-xl border border-slate-200 shadow-sm"
                         >
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 relative z-10">
                                 <div className="p-3 bg-indigo-50 rounded-lg text-indigo-600">
                                     <FileText size={20} />
                                 </div>
@@ -161,7 +178,7 @@ export default function ATSScanner() {
                             </div>
                             <button
                                 onClick={(e) => { e.stopPropagation(); setFile(null); setResult(null); }}
-                                className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-900 transition-colors"
+                                className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-900 transition-colors relative z-10"
                             >
                                 <X size={20} />
                             </button>

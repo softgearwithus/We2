@@ -64,8 +64,8 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                         <ArrowLeft size={16} /> Back to Dashboard
                     </Button>
                     <div className="flex gap-2">
-                         <Button variant="outline" size="sm" className="gap-2"> <Download size={14} /> PDF </Button>
-                         <Button variant="outline" size="sm" className="gap-2"> <Share2 size={14} /> Share </Button>
+                        <Button variant="outline" size="sm" className="gap-2"> <Download size={14} /> PDF </Button>
+                        <Button variant="outline" size="sm" className="gap-2"> <Share2 size={14} /> Share </Button>
                     </div>
                 </div>
 
@@ -132,15 +132,15 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                                 {Object.entries(data.metrics)
                                     .filter(([key, val]) => key !== 'overall' && typeof val === 'number')
                                     .map(([key, val], i) => (
-                                    <Card key={key} className="p-6 flex flex-col items-center justify-center border-slate-200 shadow-sm hover:border-indigo-200 transition-colors">
-                                        <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center font-black text-slate-900 mb-3 border border-slate-100">
-                                            {val as number}
-                                        </div>
-                                        <div className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                                        </div>
-                                    </Card>
-                                ))}
+                                        <Card key={key} className="p-6 flex flex-col items-center justify-center border-slate-200 shadow-sm hover:border-indigo-200 transition-colors">
+                                            <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center font-black text-slate-900 mb-3 border border-slate-100">
+                                                {val as number}
+                                            </div>
+                                            <div className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                                                {key.replace(/([A-Z])/g, ' $1').trim()}
+                                            </div>
+                                        </Card>
+                                    ))}
                             </div>
                         )}
                     </div>
@@ -215,9 +215,9 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                                 <Card className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm">
                                     <div className="flex items-center justify-between mb-3">
                                         <h4 className="text-sm font-bold text-slate-700">Diagnostics</h4>
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">Vapi</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">Emble AI</span>
                                     </div>
-                                    <p className="text-xs text-slate-500 mb-4">Open the raw Vapi log stream for full telemetry.</p>
+                                    <p className="text-xs text-slate-500 mb-4">Open the raw simulation log stream for full telemetry.</p>
                                     <a
                                         className="text-sm text-indigo-600 hover:text-indigo-700 underline break-all"
                                         href={data.metrics.logUrl}

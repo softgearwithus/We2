@@ -7,25 +7,19 @@ import { useAuth } from '@/app/context/AuthContext';
 
 interface SubscriptionGuardProps {
     children: React.ReactNode;
-    requiredPlan: 'placement_plus' | 'industry_plus' | 'we2_max' | 'standard_tier' | 'pro_tier';
+    requiredPlan: 'standard' | 'pro';
     featureName?: string;
 }
 
 const PLAN_HIERARCHY = {
     'free': 0,
-    'standard_tier': 1,
-    'pro_tier': 2,
-    'placement_plus': 3,
-    'industry_plus': 4,
-    'we2_max': 5
+    'standard': 1,
+    'pro': 2,
 };
 
-const PLAN_NAMES = {
-    'standard_tier': 'Standard',
-    'pro_tier': 'Pro',
-    'placement_plus': 'Placement Plus',
-    'industry_plus': 'Industry Plus',
-    'we2_max': 'EMBLE Max'
+const PLAN_NAMES: Record<string, string> = {
+    'standard': 'Standard',
+    'pro': 'Pro',
 };
 
 export default function SubscriptionGuard({ children, requiredPlan, featureName = 'Premium Feature' }: SubscriptionGuardProps) {
@@ -35,9 +29,12 @@ export default function SubscriptionGuard({ children, requiredPlan, featureName 
         return <div className="animate-pulse bg-slate-100 h-96 rounded-xl w-full"></div>;
     }
 
-    const userPlan = user?.subscriptionPlan || 'free';
+    let userPlan = user?.subscriptionPlan || 'free';
+    if (userPlan === 'placement_plus' || userPlan.includes('standard')) userPlan = 'standard';
+    if (userPlan === 'we2_max' || userPlan.includes('pro')) userPlan = 'pro';
+
     const userLevel = PLAN_HIERARCHY[userPlan as keyof typeof PLAN_HIERARCHY] || 0;
-    const requiredLevel = PLAN_HIERARCHY[requiredPlan];
+    const requiredLevel = PLAN_HIERARCHY[requiredPlan] || 0;
 
     if (userLevel >= requiredLevel) {
         return <>{children}</>;

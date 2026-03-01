@@ -122,7 +122,7 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600
         }
 
         setAnalysisError(null);
-        setAnalysisHint('Vapi is preparing your report. This can take a few minutes.');
+        setAnalysisHint('Emble AI is preparing your report. This can take a few minutes.');
 
         const { getActiveToken } = await import('@/app/lib/auth-storage');
         const token = getActiveToken();
@@ -195,9 +195,9 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600
             } catch (error) {
                 attempts += 1;
                 if (Date.now() - startTime > timeoutMs) {
-                    console.error('Timed out waiting for Vapi analysis', error);
+                    console.error('Timed out waiting for analysis', error);
                     setAnalysisError('Analysis is taking longer than expected. Check your analysis dashboard in a few minutes.');
-                    setAnalysisHint('We will keep it synced once Vapi finishes.');
+                    setAnalysisHint('We will keep it synced once Emble AI finishes.');
                     return;
                 }
                 const delay = attempts >= maxAttempts ? 3500 : 2500;
@@ -211,8 +211,22 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 600
     const handleStart = async () => {
         if (!assistantId) return alert('System Error: Missing Assistant ID');
         try {
-            const { getActiveUserId } = await import('@/app/lib/auth-storage');
+            const { getActiveUserId, getActiveToken } = await import('@/app/lib/auth-storage');
             const userId = getActiveUserId();
+            const token = getActiveToken();
+
+            // Deduct video credit upfront before starting session
+            const deductRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/video/deduct-credit`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!deductRes.ok) {
+                const errData = await deductRes.json().catch(() => null);
+                alert(errData?.message || 'Monthly video interview limit exhausted.');
+                return;
+            }
+
             const metadata = userId ? { userId } : undefined;
             await startInterview(assistantId, metadata);
             sessionStartedAtRef.current = Date.now();

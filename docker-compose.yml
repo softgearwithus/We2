@@ -15,7 +15,7 @@ services:
       PGPORT: 5432
       NEST_CLI_CONFIG: /app/nest-cli.json
       SKIP_CLEAN_DIST: true
-    command: npm run dev
+    command: ["sh", "-c", "if [ ! -x node_modules/.bin/cross-env ]; then npm ci; fi; npm run dev"]
     volumes:
       - ./backend:/app
       - ./dataset.json:/app/dataset.json:ro

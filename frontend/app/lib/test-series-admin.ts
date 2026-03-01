@@ -90,14 +90,39 @@ export const updateMcq = async (token: string, id: string, payload: UpdateMcqPay
     return response.json();
 };
 
-export const deleteMcq = async (token: string, id: string) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/${id}`, {
+export async function deleteMcq(token: string, id: string) {
+    const res = await fetch(`${API_BASE_URL}/mcqs/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
-    if (!response.ok) throw new Error('Failed to delete MCQ');
-    return response.json();
-};
+    if (!res.ok) throw new Error('Failed to delete MCQ');
+    return res.json();
+}
+
+// --- WriteX ---
+export async function fetchAdminWritex(
+    token: string,
+    params?: { search?: string; limit?: number; page?: number }
+) {
+    const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.limit) query.set('limit', params.limit.toString());
+    if (params?.page) query.set('page', params.page.toString());
+
+    const res = await fetch(`${API_BASE_URL}/write-x/admin?${query.toString()}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to fetch WriteX prompts');
+    }
+
+    return res.json();
+}
 
 export const bulkDeleteMcqs = async (
     token: string,

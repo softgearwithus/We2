@@ -169,24 +169,15 @@ export class InterviewsService {
         }
 
         const plan = user.subscriptionPlan || 'free';
-        let audioLimit = 2; // Default/Free
-        let videoLimit = 0; // Default/Free
+        let audioLimit = 1; // Free
+        let videoLimit = 0; // Free
 
-        switch (plan) {
-            case 'standard_tier':
-                audioLimit = 5;
-                videoLimit = 1;
-                break;
-            case 'pro_tier':
-                audioLimit = 15;
-                videoLimit = 3;
-                break;
-            case 'placement_plus':
-            case 'industry_plus':
-            case 'we2_max':
-                audioLimit = 50;
-                videoLimit = 10;
-                break;
+        if (plan === 'standard' || plan === 'placement_plus' || plan.includes('standard')) {
+            audioLimit = 5;
+            videoLimit = 1;
+        } else if (plan === 'pro' || plan === 'we2_max' || plan.includes('pro')) {
+            audioLimit = 15;
+            videoLimit = 3;
         }
 
         const limit = (type === 'audio') ? audioLimit : videoLimit;
@@ -204,6 +195,14 @@ export class InterviewsService {
 
         await this.usersRepo.save(user);
         return { allowed: true, limit, usage: currentUsage + 1 };
+    }
+
+    async deductCredit(userId: string, type: 'audio' | 'video') {
+        const { allowed, limit, usage } = await this.checkAndIncrementLimit(userId, type);
+        if (!allowed) {
+            throw new BadRequestException(`Monthly ${type} limit exhausted (${usage}/${limit}). Please upgrade your plan for more.`);
+        }
+        return { success: true, usage, limit };
     }
 
     async generateAudioDrill(userId: string, topic: string) {
@@ -274,6 +273,20 @@ export class InterviewsService {
             status: InterviewStatus.IN_PROGRESS,
             startedAt: new Date(),
             questions: [{ context: theme || "Communication Drill 3-Part" }]
+        });
+        return this.interviewsRepo.save(session);
+    }
+
+    async cancelCommunicationSession(userId: string, theme?: string): Promise<InterviewSession> {
+        const session = this.interviewsRepo.create({
+            userId,
+            type: InterviewType.BEHAVIORAL,
+            status: InterviewStatus.CANCELLED,
+            overallScore: 0,
+            startedAt: new Date(),
+            completedAt: new Date(),
+            questions: [{ context: theme || "Communication Drill 3-Part" }],
+            feedback: "Session was cancelled by the user before completion."
         });
         return this.interviewsRepo.save(session);
     }
@@ -476,6 +489,14 @@ export class InterviewsService {
                     session.status = InterviewStatus.COMPLETED;
                     session.completedAt = new Date();
                     session.feedback = "Drill submitted, but analysis failed. Please retry.";
+                    session.analysis = {
+                        reading: [],
+                        listening: [],
+                        extempore: null,
+                        technical: [],
+                        overallScore: null,
+                        error: true
+                    };
                     await this.interviewsRepo.save(session);
                 }
             }

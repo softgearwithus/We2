@@ -9,7 +9,7 @@ export default function SimulationPage() {
 
     return (
         <div className="p-8 h-full bg-[#1e1e1e] flex flex-col items-center justify-center text-center">
-            <SubscriptionGuard requiredPlan="industry_plus" featureName="Virtual Workstation">
+            <SubscriptionGuard requiredPlan="pro" featureName="Virtual Workstation">
                 {showOnboarding && <OnboardingModal />}
 
                 <div className="max-w-2xl">

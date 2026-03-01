@@ -26,8 +26,8 @@ export default function SettingsPage() {
     // Plan display formatter
     const getDisplayPlan = (plan?: string) => {
         if (!plan || plan === 'free') return 'Free';
-        if (plan === 'placement_plus' || plan.includes('standard')) return 'EMBLE Standard';
-        if (plan === 'we2_max' || plan.includes('pro')) return 'EMBLE Pro';
+        if (plan === 'standard' || plan === 'placement_plus' || plan.includes('standard')) return 'EMBLE Standard';
+        if (plan === 'pro' || plan === 'we2_max' || plan.includes('pro')) return 'EMBLE Pro';
         return plan;
     };
 

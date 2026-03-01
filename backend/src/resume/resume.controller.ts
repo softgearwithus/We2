@@ -33,16 +33,19 @@ export class ResumeController {
         return this.resumeService.saveResume(req.user.id, body.data);
     }
 
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard)
     @Post('analyze')
     @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
     @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
     async analyzeResume(
+        @Request() req: any,
         @UploadedFile() file: any,
         @Body('jobDescription') jobDescription?: string
     ) {
         if (!file) {
             throw new BadRequestException('File is required');
         }
-        return this.resumeService.analyzeResume(file.buffer, jobDescription);
+        return this.resumeService.analyzeResume(req.user.id, file.buffer, jobDescription);
     }
 }

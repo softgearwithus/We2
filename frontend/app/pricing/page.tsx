@@ -43,7 +43,7 @@ type PlanType = {
 
 const STANDARD_PLAN: PlanType = {
     title: 'EMBLE Standard',
-    internalName: 'placement_plus',
+    internalName: 'standard',
     description: 'Perfect for maintaining skills & light practice.',
     features: [
         { text: 'Full-Stack Web Projects', included: true },
@@ -66,7 +66,7 @@ const STANDARD_PLAN: PlanType = {
 
 const PRO_PLAN = {
     title: 'EMBLE Pro',
-    internalName: 'we2_max',
+    internalName: 'pro',
     description: 'For serious job seekers who need intense practice.',
     features: [
         { text: 'Everything in Standard', included: true },
@@ -117,8 +117,8 @@ export default function PricingPage() {
                 if (settings.subscriptionPrices) {
                     const clonedPlans = JSON.parse(JSON.stringify(PLANS)) as PlanType[];
 
-                    const stdPlan = clonedPlans.find(p => p.internalName === 'placement_plus');
-                    const proPlan = clonedPlans.find(p => p.internalName === 'we2_max');
+                    const stdPlan = clonedPlans.find(p => p.internalName === 'standard');
+                    const proPlan = clonedPlans.find(p => p.internalName === 'pro');
 
                     if (stdPlan && settings.subscriptionPrices.standard) {
                         Object.keys(settings.subscriptionPrices.standard).forEach((key) => {

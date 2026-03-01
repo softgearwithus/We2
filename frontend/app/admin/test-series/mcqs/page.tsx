@@ -84,16 +84,11 @@ export default function AdminMcqManager() {
                     page: filters.page,
                     limit: pageSize,
                 }),
-                fetchMcqGroups(token, filters.category as 'subject' | 'company'),
+                fetchMcqGroups(token, 'subject'),
             ]);
             setItems(listRes.items);
             setGroups(groupRes);
-            if (filters.category === 'company' && filters.groupKey) {
-                const topicRes = await fetchMcqTopics(token, filters.groupKey);
-                setTopics(topicRes);
-            } else {
-                setTopics([]);
-            }
+            setTopics([]);
         } catch (error: any) {
             setMessage({ type: 'error', text: error.message || 'Failed to load MCQs.' });
         } finally {
@@ -107,20 +102,17 @@ export default function AdminMcqManager() {
     }, [filters.category, filters.groupKey, filters.topicKey, filters.search, filters.page]);
 
     const groupOptions = useMemo(() => {
-        if (filters.category === 'subject') {
-            return SUBJECT_KEYS.map((item) => ({ key: item.value, label: item.label }));
-        }
-        return groups.map((group) => ({ key: group.key, label: group.label }));
-    }, [filters.category, groups]);
+        return SUBJECT_KEYS.map((item) => ({ key: item.value, label: item.label }));
+    }, []);
 
     const handleCreate = async () => {
         setIsSaving(true);
         setMessage(null);
         try {
             await createMcq(token, {
-                category: form.category,
+                category: 'subject',
                 group: form.group,
-                topic: form.category === 'company' ? form.topic : undefined,
+                topic: undefined,
                 question: form.question,
                 options: form.options,
                 correctOptionIndex: form.correctOptionIndex,
@@ -140,9 +132,9 @@ export default function AdminMcqManager() {
         setMessage(null);
         try {
             const payload: UpdateMcqPayload = {
-                category: form.category,
+                category: 'subject',
                 group: form.group,
-                topic: form.category === 'company' ? form.topic : undefined,
+                topic: undefined,
                 question: form.question,
                 options: form.options,
                 correctOptionIndex: form.correctOptionIndex,
@@ -184,7 +176,7 @@ export default function AdminMcqManager() {
         setMessage(null);
         try {
             const result = await bulkDeleteMcqs(token, {
-                category: filters.category,
+                category: filters.category as 'subject' | 'company',
                 groupKey: filters.groupKey,
                 topicKey: filters.topicKey,
                 search: filters.search,
@@ -198,18 +190,18 @@ export default function AdminMcqManager() {
         }
     };
 
-        const startEdit = (mcq: McqAdminItem) => {
-            setEditId(mcq.id);
-            setForm({
-                category: mcq.category,
-                group: mcq.groupLabel,
-                topic: mcq.topicLabel || '',
-                question: mcq.question,
-                options: mcq.options,
-                correctOptionIndex: mcq.correctOptionIndex,
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
+    const startEdit = (mcq: McqAdminItem) => {
+        setEditId(mcq.id);
+        setForm({
+            category: mcq.category as any,
+            group: mcq.groupLabel,
+            topic: mcq.topicLabel || '',
+            question: mcq.question,
+            options: mcq.options,
+            correctOptionIndex: mcq.correctOptionIndex,
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleCsvImport = async () => {
         setIsSaving(true);
@@ -264,11 +256,10 @@ export default function AdminMcqManager() {
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Category</label>
                         <select
                             value={form.category}
-                            onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value as 'subject' | 'company' }))}
-                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold"
+                            disabled
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold bg-slate-50 text-slate-500"
                         >
                             <option value="subject">Subject</option>
-                            <option value="company">Company</option>
                         </select>
                     </div>
 
@@ -277,22 +268,12 @@ export default function AdminMcqManager() {
                         <input
                             value={form.group}
                             onChange={(e) => setForm((prev) => ({ ...prev, group: e.target.value }))}
-                            placeholder={form.category === 'subject' ? 'English' : 'Google'}
+                            placeholder="English"
                             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold"
                         />
                     </div>
 
-                    {form.category === 'company' && (
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Topic Label</label>
-                            <input
-                                value={form.topic}
-                                onChange={(e) => setForm((prev) => ({ ...prev, topic: e.target.value }))}
-                                placeholder="Arrays"
-                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold"
-                            />
-                        </div>
-                    )}
+
 
                     <div className="md:col-span-2 space-y-2">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Question</label>
@@ -396,7 +377,6 @@ export default function AdminMcqManager() {
                             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
                         >
                             <option value="subject">Subject</option>
-                            <option value="company">Company</option>
                         </select>
                         <select
                             value={filters.groupKey}
@@ -410,20 +390,6 @@ export default function AdminMcqManager() {
                                 </option>
                             ))}
                         </select>
-                        {filters.category === 'company' && (
-                            <select
-                                value={filters.topicKey}
-                                onChange={(e) => setFilters((prev) => ({ ...prev, topicKey: e.target.value, page: 1 }))}
-                                className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
-                            >
-                                <option value="">All Topics</option>
-                                {topics.map((topic) => (
-                                    <option key={topic.key} value={topic.key}>
-                                        {topic.label}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
                     </div>
                     <div className="flex items-center gap-2">
                         <button
@@ -478,7 +444,6 @@ export default function AdminMcqManager() {
                     </div>
                 )}
             </div>
-
             {isBulkOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-6">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6">

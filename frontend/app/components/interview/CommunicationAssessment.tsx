@@ -55,6 +55,28 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
     const [isCameraStarting, setIsCameraStarting] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
 
+    const handleExit = async () => {
+        if (currentSection !== 'intro' && currentSection !== 'results') {
+            // Aborted mid-drill
+            try {
+                const { getActiveToken } = await import('@/app/lib/auth-storage');
+                const token = getActiveToken();
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/communication/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ theme: drillContent.theme })
+                });
+            } catch (err) {
+                console.error('Failed to cancel session', err);
+            }
+        }
+        stopGlobalStream();
+        onBack();
+    };
+
     // Initialize Camera manually
     const initCamera = async () => {
         setIsCameraStarting(true);
@@ -309,7 +331,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                     </div>
 
                     <div className="p-6 border-t border-slate-100 bg-slate-50/50 mt-auto">
-                        <Button variant="ghost" onClick={onBack} className="w-full text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors justify-start h-12 font-bold group">
+                        <Button variant="ghost" onClick={handleExit} className="w-full text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors justify-start h-12 font-bold group">
                             <ArrowRight className="mr-3 h-5 w-5 rotate-180 group-hover:-translate-x-1 transition-transform" /> Exit Drill
                         </Button>
                     </div>
@@ -330,7 +352,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                             <h2 className="text-xl font-bold text-slate-900">{typeof window !== 'undefined' ? drillContent.theme : 'Processing...'}</h2>
                         </div>
                         {currentSection !== 'results' && (
-                            <Button variant="ghost" onClick={onBack} className="text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors">
+                            <Button variant="ghost" onClick={handleExit} className="text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl px-5 transition-colors">
                                 Leave
                             </Button>
                         )}

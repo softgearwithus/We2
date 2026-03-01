@@ -10,9 +10,11 @@ import {
     HttpCode,
     HttpStatus,
     ForbiddenException,
+    BadRequestException,
     Query,
 } from '@nestjs/common';
-import { IsString, IsNotEmpty, MaxLength, IsOptional, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, Matches, IsNumber } from 'class-validator';
+import * as crypto from 'crypto';
 import {
     ApiTags,
     ApiOperation,
@@ -42,6 +44,25 @@ export class UpgradeSubscriptionDto {
     @MaxLength(100)
     @ApiProperty({ example: 'pay_xxxxxxxxxxxxxx', required: false, description: 'Optional ID linking to the payment processor transaction' })
     paymentId?: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(100)
+    orderId?: string;
+
+    @IsOptional()
+    @IsString()
+    signature?: string;
+}
+
+export class CreateUpgradeOrderDto {
+    @IsString()
+    @IsNotEmpty()
+    plan: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    amountInPaise: number;
 }
 
 @ApiTags('users')
@@ -81,6 +102,13 @@ export class UsersController {
         return this.usersService.getDashboardStats(req.user.id);
     }
 
+    @Get('me/credits')
+    @ApiOperation({ summary: 'Get user credit remaining sizes' })
+    @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
+    async getUserCredits(@Request() req: any) {
+        return this.usersService.getUserCredits(req.user.id);
+    }
+
     @Patch('profile')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Update current user profile' })
@@ -95,17 +123,35 @@ export class UsersController {
     @Post('upgrade')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Upgrade user subscription plan' })
-    @ApiBody({ schema: { type: 'object', properties: { plan: { type: 'string', example: 'placement_plus' } } } })
+    @ApiBody({ schema: { type: 'object', properties: { plan: { type: 'string', example: 'standard' } } } })
     @ApiResponse({ status: 200, description: 'Subscription upgraded successfully' })
     @ApiResponse({ status: 400, description: 'Validation failed (string too long, empty, or missing)' })
     @ApiResponse({ status: 403, description: 'Upgrades are temporarily disabled' })
     async upgradeSubscription(@Request() req: any, @Body() upgradeDto: UpgradeSubscriptionDto) {
-        const { plan, paymentId } = upgradeDto;
+        const { plan, paymentId, orderId, signature } = upgradeDto;
         const settings = await this.adminSettingsService.getPlatformSettings();
         if (!settings.upgradesEnabled) {
             throw new ForbiddenException('Upgrades are temporarily disabled');
         }
+
+        if (orderId && paymentId && signature) {
+            const secret = process.env.RAZORPAY_KEY_SECRET || 'test_secret';
+            const body = `${orderId}|${paymentId}`;
+            const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex');
+            if (expectedSignature !== signature) {
+                throw new BadRequestException('Invalid payment signature');
+            }
+        }
+
         return this.usersService.upgradeSubscription(req.user.id, plan, paymentId);
+    }
+
+    @Post('upgrade-order')
+    @HttpCode(HttpStatus.CREATED)
+    @ApiOperation({ summary: 'Create Razorpay order for plan upgrade' })
+    @ApiResponse({ status: 201, description: 'Order created successfully' })
+    async createUpgradeOrder(@Request() req: any, @Body() dto: CreateUpgradeOrderDto) {
+        return this.usersService.createUpgradeOrder(req.user.id, dto.amountInPaise);
     }
 
     @Get(':id')

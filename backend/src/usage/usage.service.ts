@@ -22,8 +22,8 @@ export class UsageService {
     ) { }
 
     private getLimitSecondsForPlan(plan: string | null | undefined) {
-        // Handle duration-based tags (pro_1m, standard_3m, etc.) and original names
-        if (plan && (plan.startsWith('standard_') || plan.startsWith('pro_') || plan === 'placement_plus' || plan === 'industry_plus' || plan === 'we2_max')) {
+        // Handle duration-based tags (standard_1m, pro_3m, etc.) and top level plan names
+        if (plan && (plan.startsWith('standard') || plan.startsWith('pro') || plan === 'placement_plus' || plan === 'we2_max' || plan.includes('standard') || plan.includes('pro'))) {
             return Infinity;
         }
 

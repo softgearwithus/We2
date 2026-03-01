@@ -327,7 +327,7 @@ export const PROJECT_DOMAINS: DomainType[] = [
         description: 'Analyze & Predict.',
         whyChoose: 'Drive decisions with data.',
         avgSalary: '₹ 8-30 LPA',
-        popularApps: ['ChatGPT', 'TensorFlow'],
+        popularApps: ['Emble AI', 'TensorFlow'],
         stacks: [
             {
                 id: 'python_ai',

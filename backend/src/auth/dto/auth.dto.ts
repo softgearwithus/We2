@@ -65,12 +65,12 @@ export class RegisterDto {
     role?: string;
 
     @ApiProperty({
-        example: 'placement_plus',
+        example: 'standard',
         description: 'Selected subscription plan',
         required: false,
     })
     @IsOptional()
-    @IsIn(['free', 'placement_plus', 'industry_plus', 'we2_max'])
+    @IsIn(['free', 'standard', 'pro'])
     subscriptionPlan?: string;
 
     @ApiProperty({

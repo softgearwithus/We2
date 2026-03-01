@@ -1,9 +1,10 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Resume } from './entities/resume.entity';
+import { User } from '../users/user.entity';
 const pdfParse = require('pdf-parse');
 
 @Injectable()
@@ -15,6 +16,8 @@ export class ResumeService {
         private configService: ConfigService,
         @InjectRepository(Resume)
         private resumeRepo: Repository<Resume>,
+        @InjectRepository(User)
+        private userRepo: Repository<User>,
     ) {
         this.initializeModel();
     }
@@ -30,8 +33,21 @@ export class ResumeService {
         this.model = this.genAI.getGenerativeModel({ model: modelName });
     }
 
-    async analyzeResume(buffer: Buffer, jobDescription?: string) {
+    async analyzeResume(userId: string, buffer: Buffer, jobDescription?: string) {
         try {
+            // Check limits
+            const user = await this.userRepo.findOne({ where: { id: userId } });
+            if (!user) throw new NotFoundException('User not found');
+
+            const plan = user.subscriptionPlan || 'free';
+            let limit = 0; // Default Free
+            if (plan === 'standard' || plan === 'placement_plus' || plan.includes('standard')) limit = 5;
+            else if (plan === 'pro' || plan === 'we2_max' || plan.includes('pro')) limit = 12;
+
+            if (user.resumeScanUsage >= limit) {
+                throw new BadRequestException(`Monthly resume ATS scan limit exhausted (${user.resumeScanUsage}/${limit}). Please upgrade your plan for more.`);
+            }
+
             // 1. Parse PDF
             const pdfData = await pdfParse(buffer);
             const text = pdfData.text;
@@ -79,7 +95,13 @@ export class ResumeService {
             const jsonString = textResponse.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 
             try {
-                return JSON.parse(jsonString);
+                const parsed = JSON.parse(jsonString);
+
+                // Increment usage on success
+                user.resumeScanUsage++;
+                await this.userRepo.save(user);
+
+                return parsed;
             } catch (e) {
                 console.error('Failed to parse Gemini response:', textResponse);
                 throw new InternalServerErrorException('Failed to parse analysis result.');
@@ -87,7 +109,7 @@ export class ResumeService {
 
         } catch (error) {
             console.error('Error analyzing resume:', error);
-            throw new InternalServerErrorException('Failed to analyze resume: ' + error.message);
+            throw new InternalServerErrorException('Failed to analyze resume: ' + (error.message || error));
         }
     }
 

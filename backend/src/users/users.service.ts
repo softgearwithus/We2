@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException, ForbiddenException, B
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import axios from 'axios';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Submission, SubmissionStatus } from '../dsa/entities/submission.entity';
@@ -391,6 +392,44 @@ export class UsersService {
         };
     }
 
+    async getUserCredits(userId: string) {
+        const user = await this.findById(userId);
+        const plan = user.subscriptionPlan || 'free';
+
+        let maxAudio = 1;
+        let maxVideo = 0;
+        let maxResume = 0;
+
+        if (plan === 'standard' || plan === 'placement_plus' || plan.includes('standard')) {
+            maxAudio = 5;
+            maxVideo = 1;
+            maxResume = 5;
+        } else if (plan === 'pro' || plan === 'we2_max' || plan.includes('pro')) {
+            maxAudio = 15;
+            maxVideo = 3;
+            maxResume = 12;
+        }
+
+        return {
+            plan,
+            audioDrills: {
+                used: user.audioDrillUsage,
+                limit: maxAudio,
+                remaining: Math.max(0, maxAudio - user.audioDrillUsage)
+            },
+            videoSimulations: {
+                used: user.videoInterviewUsage,
+                limit: maxVideo,
+                remaining: Math.max(0, maxVideo - user.videoInterviewUsage)
+            },
+            resumeScans: {
+                used: user.resumeScanUsage,
+                limit: maxResume,
+                remaining: Math.max(0, maxResume - user.resumeScanUsage)
+            }
+        };
+    }
+
     async upgradeSubscription(id: string, plan: string, paymentId?: string): Promise<User> {
         const user = await this.findById(id);
 
@@ -399,9 +438,9 @@ export class UsersService {
 
         // Map frontend plan IDs to backend enum values and durations
         if (plan.includes('standard')) {
-            targetPlan = 'placement_plus';
+            targetPlan = 'standard';
         } else if (plan.includes('pro')) {
-            targetPlan = 'we2_max';
+            targetPlan = 'pro';
         }
 
         if (plan.includes('_12m')) durationDays = 365;
@@ -450,5 +489,32 @@ export class UsersService {
         // Optionally store the paymentId in a transactions table or notes if needed.
 
         return this.usersRepository.save(user);
+    }
+
+    async createUpgradeOrder(userId: string, amountInPaise: number) {
+        const keyId = process.env.RAZORPAY_KEY_ID;
+        const keySecret = process.env.RAZORPAY_KEY_SECRET;
+        if (!keyId || !keySecret) {
+            throw new Error('Razorpay keys are not configured');
+        }
+
+        const authHeader = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
+        const response = await axios.post('https://api.razorpay.com/v1/orders',
+            {
+                amount: amountInPaise,
+                currency: 'INR',
+                receipt: `upgrade_${userId.slice(0, 8)}_${Date.now()}`,
+            },
+            {
+                headers: {
+                    Authorization: `Basic ${authHeader}`,
+                },
+            },
+        );
+        return {
+            orderId: response.data.id,
+            amount: response.data.amount,
+            currency: response.data.currency,
+        };
     }
 }

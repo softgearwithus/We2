@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { InterviewsService } from '@/app/services/InterviewsService';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
+import { useCredits } from '@/app/hooks/useCredits';
 import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface InterviewLandingProps {
@@ -26,8 +27,11 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     const [latestScore, setLatestScore] = useState<number | null>(null);
     const [latestDuration, setLatestDuration] = useState<number | null>(null);
     const interviewsService = useRef(new InterviewsService());
-    const audioUsage = useSectionUsage('interview_audio', { enabled: mode === 'landing' || mode === 'audio' || mode === 'analysis' });
-    const videoUsage = useSectionUsage('interview_video', { enabled: mode === 'landing' || mode === 'instructions' || mode === 'video_session' });
+    const { credits, isLoading: creditsLoading, refetch } = useCredits();
+
+    const isAudioLimited = !creditsLoading && (credits?.audioDrills.remaining === 0);
+    const isVideoLimited = !creditsLoading && (credits?.videoSimulations.remaining === 0);
+    const isFreePlan = credits?.plan === 'free';
 
     // Sync mode when initialMode prop changes (e.g. navigation)
     useEffect(() => {
@@ -52,17 +56,17 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     }, [mode]);
 
     const handleStartVideoFlow = () => {
-        if (videoUsage.isLimited) return;
+        if (isVideoLimited) return;
         setMode('instructions');
     };
 
     const handleStartAudioFlow = () => {
-        if (audioUsage.isLimited) return;
+        if (isAudioLimited) return;
         setMode('audio');
     };
 
     const startVideoSession = async () => {
-        if (videoUsage.isLimited) return;
+        if (isVideoLimited) return;
         setIsLoading(true);
         try {
             const { getActiveToken } = await import('@/app/lib/auth-storage');
@@ -98,6 +102,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
             duration: durationSeconds
         });
         setMode('result');
+        refetch();
     };
 
     const handleAudioComplete = (scores: SectionScore[], durationSeconds: number) => {
@@ -108,6 +113,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
             duration: durationSeconds
         });
         setMode('result');
+        refetch();
     };
 
 
@@ -126,7 +132,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     }
 
     if (mode === 'instructions') {
-        if (videoUsage.isLimited) {
+        if (isVideoLimited) {
             return (
                 <div className="relative min-h-screen">
                     <UsageUpgradeGate message="Upgrade to continue your video interview sessions." />
@@ -137,7 +143,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     }
 
     if (mode === 'video_session') {
-        if (videoUsage.isLimited) {
+        if (isVideoLimited) {
             return (
                 <div className="relative min-h-screen">
                     <UsageUpgradeGate message="Upgrade to continue your video interview sessions." />
@@ -148,7 +154,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
             <InterviewSession
                 onEnd={handleVideoComplete}
                 onCancel={() => setMode('landing')}
-                initialSeconds={videoUsage.state?.remainingSeconds || 600}
+                initialSeconds={600}
             />
         );
     }
@@ -181,21 +187,21 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                         <p className="text-lg text-slate-600 leading-relaxed max-w-xl">
                             Refine your communication and behavioral skills with our AI-powered assessment suite. Choose a module to begin.
                         </p>
-                        {audioUsage.isFreePlan && (
-                            <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${audioUsage.isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
-                                Free plan audio time left: {audioUsage.remainingLabel}
+                        {creditsLoading && (
+                            <div className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold border-slate-200 bg-slate-50 text-slate-500">
+                                <Loader2 size={12} className="animate-spin" /> Fetching allocations...
                             </div>
                         )}
                     </div>
 
                     <div className="flex gap-8 text-sm font-medium text-slate-500 bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-sm">
                         <div className="flex flex-col items-center">
-                            <span className="text-2xl font-bold text-slate-900">1.5<span className="text-violet-500">s</span></span>
+                            <span className="text-2xl font-bold text-slate-900">0.8<span className="text-violet-500">s</span></span>
                             <span className="text-[10px] uppercase tracking-wide">Avg Latency</span>
                         </div>
                         <div className="w-px h-10 bg-slate-100"></div>
                         <div className="flex flex-col items-center">
-                            <span className="text-2xl font-bold text-slate-900">98<span className="text-emerald-500">%</span></span>
+                            <span className="text-2xl font-bold text-slate-900">99.9<span className="text-emerald-500">%</span></span>
                             <span className="text-[10px] uppercase tracking-wide">Uptime</span>
                         </div>
                     </div>
@@ -224,7 +230,14 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                                 </div>
 
                                 <div>
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Audio Drill</h3>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <h3 className="text-2xl font-bold text-slate-900">Audio Drill</h3>
+                                        {!creditsLoading && credits && (
+                                            <span className={`inline-flex items-center w-fit gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${isAudioLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                                {credits.audioDrills.remaining}/{credits.audioDrills.limit} Left
+                                            </span>
+                                        )}
+                                    </div>
                                     <p className="text-sm text-slate-500 leading-relaxed">
                                         Focus on vocal delivery. Rapid-fire questions with instant AI feedback on key parameters.
                                     </p>
@@ -234,7 +247,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                             <div className="mt-6 pt-6 border-t border-slate-100">
                                 <Button
                                     onClick={handleStartAudioFlow}
-                                    disabled={audioUsage.isLimited}
+                                    disabled={isAudioLimited || creditsLoading}
                                     className="w-full bg-slate-900 hover:bg-violet-600 text-white rounded-xl py-6 text-base font-bold shadow-lg shadow-slate-200 hover:shadow-violet-200 transition-all duration-300 flex justify-between items-center px-6 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     Start Drill <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -266,7 +279,14 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                                 </div>
 
                                 <div>
-                                    <h3 className="text-2xl font-bold mb-2 text-white">Video Simulation</h3>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <h3 className="text-2xl font-bold text-white">Video Simulation</h3>
+                                        {!creditsLoading && credits && (
+                                            <span className={`inline-flex items-center w-fit gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${isVideoLimited ? 'border-rose-500/30 bg-rose-500/10 text-rose-300' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'}`}>
+                                                {credits.videoSimulations.remaining}/{credits.videoSimulations.limit} Left
+                                            </span>
+                                        )}
+                                    </div>
                                     <p className="text-sm text-slate-400 leading-relaxed">
                                         Face our AI avatar in a realistic environment.
                                         Get feedback on body language & confidence.
@@ -277,7 +297,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                             <div className="mt-6 pt-6 border-t border-slate-800">
                                 <Button
                                     onClick={handleStartVideoFlow}
-                                    disabled={videoUsage.isLimited}
+                                    disabled={isVideoLimited || creditsLoading}
                                     className="w-full bg-white text-slate-900 hover:bg-emerald-400 hover:text-emerald-950 rounded-xl py-6 text-base font-bold shadow-xl hover:shadow-emerald-500/20 transition-all duration-300 flex justify-between items-center px-6 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? <Loader2 className="animate-spin" /> : (
@@ -311,16 +331,16 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
 
                                 <div className="flex items-center gap-4 bg-black/20 rounded-xl p-2 pl-4 border border-white/10">
                                     <div className="text-right">
-                                    <div className="text-xs font-medium text-violet-200 uppercase tracking-wider">Latest</div>
-                                    <div className="font-bold font-mono text-xl">
-                                        {typeof latestScore === 'number' ? `${latestScore} / 100` : '-- / 100'}
-                                    </div>
-                                    {typeof latestDuration === 'number' && (
-                                        <div className="text-[10px] uppercase tracking-wider text-violet-200">
-                                            {Math.floor(latestDuration / 60)}m {latestDuration % 60}s
+                                        <div className="text-xs font-medium text-violet-200 uppercase tracking-wider">Latest</div>
+                                        <div className="font-bold font-mono text-xl">
+                                            {typeof latestScore === 'number' ? `${latestScore} / 100` : '-- / 100'}
                                         </div>
-                                    )}
-                                </div>
+                                        {typeof latestDuration === 'number' && (
+                                            <div className="text-[10px] uppercase tracking-wider text-violet-200">
+                                                {Math.floor(latestDuration / 60)}m {latestDuration % 60}s
+                                            </div>
+                                        )}
+                                    </div>
                                     <div className="h-10 w-10 bg-white text-violet-600 rounded-lg flex items-center justify-center transform group-hover:translate-x-1 transition-transform">
                                         <ArrowRight size={20} />
                                     </div>
@@ -330,7 +350,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                     </div>
 
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

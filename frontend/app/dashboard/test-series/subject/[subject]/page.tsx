@@ -40,8 +40,8 @@ export default function SubjectMcqsPage() {
 
     useEffect(() => {
         const loadQuestions = async () => {
-            const { getActiveToken } = await import('@/app/lib/auth-storage');
-            const token = getActiveToken();
+            const { getStoredToken } = await import('@/app/lib/auth-storage');
+            const token = getStoredToken('user') || getStoredToken('admin');
             if (!token || !subject) return;
 
             setLoading(true);
@@ -124,10 +124,10 @@ export default function SubjectMcqsPage() {
                                                             onClick={() => handleSelect(mcq.id, optIndex)}
                                                             disabled={isLimited}
                                                             className={`w-full text-left px-4 py-3 rounded-2xl border transition-all font-medium ${showCorrect && isCorrect
-                                                                    ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
-                                                                    : isWrong
-                                                                        ? 'border-rose-400 bg-rose-50 text-rose-700'
-                                                                        : `border-slate-200 bg-white text-slate-700 ${isLimited ? 'opacity-60 cursor-not-allowed' : 'hover:border-indigo-200 hover:bg-indigo-50/40'}`
+                                                                ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                                                : isWrong
+                                                                    ? 'border-rose-400 bg-rose-50 text-rose-700'
+                                                                    : `border-slate-200 bg-white text-slate-700 ${isLimited ? 'opacity-60 cursor-not-allowed' : 'hover:border-indigo-200 hover:bg-indigo-50/40'}`
                                                                 }`}
                                                         >
                                                             <div className="flex items-center justify-between">

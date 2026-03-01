@@ -46,7 +46,7 @@ export class User {
 
     @Column({
         type: 'varchar',
-        default: 'free', // free, placement_plus, industry_plus, we2_max
+        default: 'free', // free, standard, pro
     })
     subscriptionPlan: string;
 
@@ -116,6 +116,9 @@ export class User {
 
     @Column({ default: 0 })
     drillTopicsRefreshCount: number;
+
+    @Column({ default: 0 })
+    resumeScanUsage: number;
 
     @CreateDateColumn()
     createdAt: Date;
