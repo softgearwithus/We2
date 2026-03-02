@@ -2,8 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { MockTestSection } from './mock-test-section.entity';
 
 export enum MockQuestionType {
-    MCQ = 'MCQ',
+    SINGLE_CORRECT = 'SINGLE_CORRECT',
+    MULTI_CORRECT = 'MULTI_CORRECT',
     TEXT = 'TEXT',
+    CODE = 'CODE',
 }
 
 @Entity('mock_test_questions')
@@ -21,7 +23,7 @@ export class MockTestQuestion {
     @Column({
         type: 'enum',
         enum: MockQuestionType,
-        default: MockQuestionType.MCQ
+        default: MockQuestionType.SINGLE_CORRECT
     })
     questionType: MockQuestionType;
 
@@ -31,11 +33,14 @@ export class MockTestQuestion {
     @Column({ type: 'jsonb', nullable: true })
     optionsJson?: any;
 
-    @Column({ nullable: true })
-    correctAnswer?: string; // Either an index "1" for MCQ, or text for writeX
+    @Column({ type: 'text', nullable: true })
+    correctAnswer: string;
 
-    @Column({ type: 'int', nullable: true })
-    marks?: number;
+    @Column({ type: 'text', nullable: true })
+    solutionText: string;
+
+    @Column({ type: 'int', default: 1 })
+    marks: number;
 
     @Column({ type: 'int', default: 0 })
     order: number;

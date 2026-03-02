@@ -77,7 +77,16 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     const placementMenu: MenuItem[] = [
         { icon: 'dashboard', label: 'Overview', href: '/dashboard', hasUpdate: updateIndicators['/dashboard'] },
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation', hasUpdate: updateIndicators['/dashboard/preparation'] },
-        { icon: 'quiz', label: 'Test Series', href: '/dashboard/test-series', hasUpdate: updateIndicators['/dashboard/test-series'] },
+        {
+            icon: 'quiz',
+            label: 'Test Series',
+            href: '/dashboard/test-series',
+            hasUpdate: updateIndicators['/dashboard/test-series'],
+            subItems: [
+                { label: 'Explore', href: '/dashboard/test-series', icon: 'grid_view' },
+                { label: 'Mock Analysis', href: '/dashboard/test-series/mock-analysis', icon: 'analytics' }
+            ]
+        },
         { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa', hasUpdate: updateIndicators['/dashboard/dsa'] },
         { icon: 'database', label: 'SQL Training', href: '/dashboard/sql', hasUpdate: updateIndicators['/dashboard/sql'] },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },

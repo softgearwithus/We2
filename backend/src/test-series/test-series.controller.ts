@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { TestSeriesService } from './test-series.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/auth.decorators';
+import { Roles, CurrentUser } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
-import { CreateCompanyDto, UpdateCompanyDto } from './dto/test-series.dto';
+import { CreateCompanyDto, UpdateCompanyDto, BulkQuestionsDto, SubmitMockTestDto } from './dto/test-series.dto';
 
 @ApiTags('test-series')
 @ApiBearerAuth('JWT-auth')
@@ -34,6 +34,41 @@ export class TestSeriesController {
     @ApiOperation({ summary: 'Get the full test data for a mock test session' })
     getMockTestFull(@Param('id') id: string) {
         return this.testSeriesService.getMockTestFull(id);
+    }
+
+    @Get('student/results')
+    @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'List student mock test results' })
+    getStudentResults(@CurrentUser() user: any) {
+        return this.testSeriesService.getStudentResults(user.userId || user.id);
+    }
+
+    @Post('student/mock-tests/:id/submit')
+    @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Submit a mock test and evaluate results' })
+    async submitMockTest(
+        @CurrentUser() user: any,
+        @Param('id') id: string,
+        @Body() body: SubmitMockTestDto
+    ) {
+        try {
+            return await this.testSeriesService.submitTest(user.userId || user.id, id, body);
+        } catch (error: any) {
+            console.error('CRITICAL SUBMIT ERROR:', error);
+            throw new HttpException({
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                error: 'Submission crash',
+                message: error?.message || 'Unknown error',
+                stack: error?.stack
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Get('student/results/:id')
+    @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Get the detailed analysis results for a completed mock test session' })
+    getResultFull(@CurrentUser() user: any, @Param('id') id: string) {
+        return this.testSeriesService.getResultFull(id, user.userId || user.id);
     }
 
     // --- Admin Endpoints ---
@@ -110,7 +145,7 @@ export class TestSeriesController {
     @Post('admin/sections/:id/bulk-questions')
     @Roles(UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Instantly populate a section with a bulk JSON array of questions' })
-    importBulkQuestions(@Param('id') id: string, @Body() dto: { questions: any[] }) {
+    importBulkQuestions(@Param('id') id: string, @Body() dto: BulkQuestionsDto) {
         if (!dto.questions || !Array.isArray(dto.questions)) {
             throw new Error('Must provide a "questions" array in the body');
         }

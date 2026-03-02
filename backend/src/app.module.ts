@@ -92,6 +92,8 @@ import { Company } from './test-series/entities/company.entity';
 import { MockTest } from './test-series/entities/mock-test.entity';
 import { MockTestSection } from './test-series/entities/mock-test-section.entity';
 import { MockTestQuestion } from './test-series/entities/mock-test-question.entity';
+import { MockTestResult } from './test-series/entities/mock-test-result.entity';
+import { MockTestStudentResponse } from './test-series/entities/mock-test-student-response.entity';
 import { TestSeriesModule } from './test-series/test-series.module';
 
 @Module({
@@ -213,6 +215,8 @@ import { TestSeriesModule } from './test-series/test-series.module';
             MockTest,
             MockTestSection,
             MockTestQuestion,
+            MockTestResult,
+            MockTestStudentResponse,
           ],
           synchronize: !isProduction,
           logging: !isProduction,

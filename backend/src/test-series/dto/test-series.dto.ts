@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsUrl, IsNumber, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsUrl, IsNumber, IsEnum, IsArray } from 'class-validator';
 
 export class CreateCompanyDto {
     @IsString()
@@ -28,4 +28,19 @@ export class UpdateCompanyDto {
     isActive?: boolean;
 }
 
+export class BulkQuestionsDto {
+    @IsArray()
+    @IsNotEmpty()
+    questions: any[];
+}
 
+export class SubmitMockTestDto {
+    @IsString()
+    startTime: string;
+
+    @IsString()
+    endTime: string;
+
+    @IsArray()
+    responses: { questionId: string, responseValue: string, timeSpentSeconds: number }[];
+}

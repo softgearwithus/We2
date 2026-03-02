@@ -5,7 +5,12 @@ import { Company } from './entities/company.entity';
 import { MockTest } from './entities/mock-test.entity';
 import { MockTestSection } from './entities/mock-test-section.entity';
 import { MockTestQuestion, MockQuestionType } from './entities/mock-test-question.entity';
+import { MockTestResult } from './entities/mock-test-result.entity';
+import { MockTestStudentResponse } from './entities/mock-test-student-response.entity';
+import { User } from '../users/user.entity';
+import { TestEvaluationService } from './test-evaluation.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/test-series.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class TestSeriesService {
@@ -18,6 +23,13 @@ export class TestSeriesService {
         private sectionRepository: Repository<MockTestSection>,
         @InjectRepository(MockTestQuestion)
         private questionRepository: Repository<MockTestQuestion>,
+        @InjectRepository(MockTestResult)
+        private mockTestResultRepository: Repository<MockTestResult>,
+        @InjectRepository(MockTestStudentResponse)
+        private mockTestResponseRepository: Repository<MockTestStudentResponse>,
+        @InjectRepository(User)
+        private userRepository: Repository<User>,
+        private testEvaluationService: TestEvaluationService
     ) { }
 
     // --- Companies ---
@@ -94,17 +106,27 @@ export class TestSeriesService {
         const newQuestions = questionsData.map((q, index) => {
             const question = new MockTestQuestion();
             question.sectionId = sectionId;
-            question.questionType = q.type === 'TEXT' ? MockQuestionType.TEXT : MockQuestionType.MCQ;
+            if (Object.values(MockQuestionType).includes(q.type)) {
+                question.questionType = q.type as MockQuestionType;
+            } else {
+                question.questionType = MockQuestionType.SINGLE_CORRECT;
+            }
             question.questionText = q.question;
             question.optionsJson = q.options || [];
-            question.correctAnswer = q.correctAnswer !== undefined ? String(q.correctAnswer) : undefined;
+            question.correctAnswer = q.correctAnswer !== undefined ? String(q.correctAnswer) : '';
+            question.solutionText = q.solutionText || '';
             question.marks = q.marks || 1;
             question.order = q.order || index;
             return question;
         });
 
-        await this.questionRepository.save(newQuestions);
-        return { success: true, count: newQuestions.length };
+        try {
+            await this.questionRepository.save(newQuestions);
+            return { success: true, count: newQuestions.length };
+        } catch (error) {
+            console.error('+++ DB SAVE EXCEPTION +++', error);
+            throw new Error('Database insert failed');
+        }
     }
 
     // --- Student ---
@@ -151,5 +173,136 @@ export class TestSeriesService {
 
         if (!test) throw new NotFoundException('Mock test not found');
         return test;
+    }
+
+    async submitTest(userId: string, mockTestId: string, payload: {
+        startTime: Date | string,
+        endTime: Date | string,
+        responses: { questionId: string, responseValue: string, timeSpentSeconds: number }[]
+    }) {
+        const test = await this.mockTestRepository.findOne({ where: { id: mockTestId } });
+        if (!test) throw new NotFoundException('Test not found');
+
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException('User not found');
+
+        // Create the base result
+        const result = this.mockTestResultRepository.create({
+            user,
+            mockTest: { id: mockTestId } as any,
+            startTime: payload.startTime,
+            endTime: payload.endTime,
+            isEvaluated: false, // will turn true after Gemini finishes (if any CODE/TEXT)
+            totalMarks: 0,
+            marksObtained: 0
+        });
+
+        await this.mockTestResultRepository.save(result);
+
+        // Fetch all questions to evaluate MCQs instantly
+        const qIds = payload.responses.map(r => r.questionId);
+        let questions: MockTestQuestion[] = [];
+        if (qIds.length > 0) {
+            questions = await this.questionRepository.find({ where: { id: In(qIds) } });
+        }
+
+        let totalMarks = 0;
+        let marksObtained = 0;
+        let requiresAiEvaluation = false;
+
+        const studentResponses: MockTestStudentResponse[] = [];
+
+        for (const r of payload.responses) {
+            const question = questions.find(q => q.id === r.questionId);
+            if (!question) continue;
+
+            const studentResp = this.mockTestResponseRepository.create({
+                mockTestResult: result,
+                question: { id: question.id } as any,
+                responseValue: r.responseValue,
+                timeSpentSeconds: r.timeSpentSeconds,
+                marksAwarded: 0
+            });
+
+            totalMarks += question.marks;
+
+            if (question.questionType === MockQuestionType.SINGLE_CORRECT) {
+                if (question.correctAnswer && r.responseValue === question.correctAnswer) {
+                    studentResp.isCorrect = true;
+                    studentResp.marksAwarded = question.marks;
+                    marksObtained += question.marks;
+                } else {
+                    studentResp.isCorrect = false;
+                }
+            } else if (question.questionType === MockQuestionType.MULTI_CORRECT) {
+                const correctValue = question.correctAnswer || '';
+                if (!correctValue.trim()) {
+                    studentResp.isCorrect = false;
+                } else {
+                    // Check comma-separated arrays ignoring order
+                    const correctArr = correctValue.split(',').sort().join(',');
+                    const studentArr = r.responseValue ? r.responseValue.split(',').sort().join(',') : '';
+                    if (studentArr === correctArr) {
+                        studentResp.isCorrect = true;
+                        studentResp.marksAwarded = question.marks;
+                        marksObtained += question.marks;
+                    } else {
+                        studentResp.isCorrect = false;
+                    }
+                }
+            } else if (question.questionType === MockQuestionType.TEXT || question.questionType === MockQuestionType.CODE) {
+                // Must be evaluated by AI asynchronously
+                requiresAiEvaluation = true;
+                // Leave studentResp.isCorrect undefined or false (TypeORM boolean doesn't strictly allow null without schema mapping tweak; we just leave it default/null in DB).
+                studentResp.isCorrect = null; // pending
+            }
+
+            studentResponses.push(studentResp);
+        }
+
+        if (studentResponses.length > 0) {
+            await this.mockTestResponseRepository.save(studentResponses);
+        }
+
+        // Update the top level result instantly with objective scores
+        result.totalMarks = totalMarks;
+        result.marksObtained = marksObtained;
+        if (!requiresAiEvaluation) {
+            result.isEvaluated = true;
+        }
+        await this.mockTestResultRepository.save(result);
+
+        if (requiresAiEvaluation) {
+            // Trigger background execution without awaiting
+            this.testEvaluationService.evaluatePendingResponses(result.id).catch(err => {
+                console.error('Failed to trigger background AI eval:', err);
+            });
+        }
+
+        return {
+            success: true,
+            resultId: result.id,
+            requiresAiEvaluation
+        };
+    }
+
+    async getStudentResults(userId: string) {
+        return this.mockTestResultRepository.find({
+            where: { user: { id: userId } },
+            relations: ['mockTest', 'mockTest.company'],
+            order: { createdAt: 'DESC' }
+        });
+    }
+
+    async getResultFull(resultId: string, userId: string) {
+        const result = await this.mockTestResultRepository.findOne({
+            where: { id: resultId, user: { id: userId } },
+            relations: ['mockTest', 'responses', 'responses.question']
+        });
+        if (!result) throw new NotFoundException('Result not found or access denied');
+
+        // Note: For students, we might want to hide correctAnswer until a certain date, 
+        // but for immediate tests, we can just return it.
+        return result;
     }
 }
