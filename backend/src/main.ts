@@ -4,7 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { PlatformGuard } from './admin-settings/guards/platform.guard';
 import { LastActiveInterceptor } from './admin-settings/interceptors/last-active.interceptor';
-import { DataSource } from 'typeorm';
 
 import compression from 'compression';
 import helmet from 'helmet';
@@ -94,16 +93,5 @@ async function bootstrap() {
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
 
-  if (process.env.RUN_MIGRATIONS === 'true') {
-    setTimeout(async () => {
-      try {
-        const dataSource = app.get(DataSource);
-        await dataSource.runMigrations();
-        console.log('[migrations] completed');
-      } catch (error) {
-        console.error('[migrations] failed', error);
-      }
-    }, 0);
-  }
 }
 bootstrap();
