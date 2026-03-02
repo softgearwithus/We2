@@ -89,22 +89,21 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.init();
-
-  if (process.env.RUN_MIGRATIONS === 'true') {
-    try {
-      const dataSource = app.get(DataSource);
-      await dataSource.runMigrations();
-      console.log('[migrations] completed');
-    } catch (error) {
-      console.error('[migrations] failed', error);
-      throw error;
-    }
-  }
-
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
+
+  if (process.env.RUN_MIGRATIONS === 'true') {
+    setTimeout(async () => {
+      try {
+        const dataSource = app.get(DataSource);
+        await dataSource.runMigrations();
+        console.log('[migrations] completed');
+      } catch (error) {
+        console.error('[migrations] failed', error);
+      }
+    }, 0);
+  }
 }
 bootstrap();
