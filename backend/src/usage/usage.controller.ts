@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, UseGuards, Request } from '@nestjs/common
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsageService } from './usage.service';
-import { UsageSectionKey } from './usage.constants';
+import type { UsageSectionKey } from './usage.constants';
 
 @ApiTags('usage')
 @ApiBearerAuth('JWT-auth')

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsArray, IsOptional, IsEnum, IsBoolean } from 'class-validator';
-import { ProjectComplexity, ProjectLabDetails, ProjectLabReadme, ProjectLabTask } from '../entities/project-lab.entity';
+import { ProjectComplexity } from '../entities/project-lab.entity';
+import type { ProjectLabDetails, ProjectLabReadme, ProjectLabTask } from '../entities/project-lab.entity';
 
 export class UpdateProjectLabDto {
     @ApiProperty({ required: false, example: 'frontend' })
