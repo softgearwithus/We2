@@ -186,10 +186,12 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                     {/* Sidebar Actions / Upsell */}
                     <div className="space-y-6">
                         <Card className="p-6 bg-indigo-600 text-white rounded-2xl shadow-xl shadow-indigo-600/20 border-none">
-                            <h3 className="font-bold text-lg mb-2">Detailed AI Transcript</h3>
-                            <p className="text-indigo-100 text-sm mb-6">Unlock the full line-by-line analysis of your potential hiring signals.</p>
+                            <h3 className="font-bold text-lg mb-2">Mock Analysis Report</h3>
+                            <p className="text-indigo-100 text-sm mb-6">
+                                Your personalized AI report is ready below. Review strengths, gaps, and next steps.
+                            </p>
                             <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-bold border-none">
-                                Upgrade to Pro
+                                Download Summary
                             </Button>
                         </Card>
                     </div>

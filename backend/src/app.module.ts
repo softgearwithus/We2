@@ -95,6 +95,11 @@ import { MockTestQuestion } from './test-series/entities/mock-test-question.enti
 import { MockTestResult } from './test-series/entities/mock-test-result.entity';
 import { MockTestStudentResponse } from './test-series/entities/mock-test-student-response.entity';
 import { TestSeriesModule } from './test-series/test-series.module';
+import { AiInterviewerModule } from './ai-interviewer/ai-interviewer.module';
+import { ResumeDocument } from './ai-interviewer/entities/resume-document.entity';
+import { AiInterviewSession } from './ai-interviewer/entities/ai-interview-session.entity';
+import { AiInterviewReport } from './ai-interviewer/entities/ai-interview-report.entity';
+import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-interview-moderation-event.entity';
 
 @Module({
   imports: [
@@ -217,6 +222,10 @@ import { TestSeriesModule } from './test-series/test-series.module';
             MockTestQuestion,
             MockTestResult,
             MockTestStudentResponse,
+            ResumeDocument,
+            AiInterviewSession,
+            AiInterviewReport,
+            AiInterviewModerationEvent,
           ],
           synchronize: !isProduction,
           logging: !isProduction,
@@ -262,6 +271,7 @@ import { TestSeriesModule } from './test-series/test-series.module';
     ApplicationsModule,
     CompanyLeadsModule,
     TestSeriesModule,
+    AiInterviewerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -65,27 +65,16 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
         setMode('audio');
     };
 
-    const startVideoSession = async () => {
+    const startVideoSession = async (resumeId?: string) => {
         if (isVideoLimited) return;
         setIsLoading(true);
         try {
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken() || '';
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    type: 'technical',
-                    difficulty: 'intermediate',
-                    role: 'Software Engineer',
-                }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to initialize interview session');
+            if (!resumeId) {
+                throw new Error('Resume required');
             }
+            sessionStorage.setItem('emble.ai.resumeId', resumeId);
             setIsLoading(false);
             setMode('video_session');
         } catch (error) {
@@ -154,7 +143,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
             <InterviewSession
                 onEnd={handleVideoComplete}
                 onCancel={() => setMode('landing')}
-                initialSeconds={600}
+                initialSeconds={900}
             />
         );
     }

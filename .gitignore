@@ -32,6 +32,8 @@ node_modules/
 # Logs and Artifacts
 *.log
 *.txt
+!requirements.txt
+!ai-interviewer/requirements.txt
 backend/*.log
 frontend/*.txt
 npm-debug.log*
@@ -61,3 +63,6 @@ out/
 build/
 *.tsbuildinfo
 next-env.d.ts
+
+# Local scratch
+tmp/

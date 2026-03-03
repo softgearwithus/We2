@@ -2,15 +2,56 @@
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { CheckCircle2, XCircle, ArrowRight, Video, Mic as MicIcon } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, Video, UploadCloud } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 interface PreInterviewInstructionsProps {
-    onStart: () => void;
+    onStart: (resumeId: string) => void;
     onBack: () => void;
 }
 
 export default function PreInterviewInstructions({ onStart, onBack }: PreInterviewInstructionsProps) {
+    const [file, setFile] = useState<File | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleUpload = async () => {
+        if (!file) {
+            alert('Please upload your resume (PDF/DOCX).');
+            return;
+        }
+        setIsUploading(true);
+        try {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token) {
+                alert('Please login again.');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai-interviewer/resumes`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+            if (!res.ok) {
+                throw new Error('Resume upload failed');
+            }
+            const data = await res.json();
+            if (!data?.id && !data?.resume_id && !data?.resumeId) {
+                throw new Error('Resume upload failed');
+            }
+            onStart(data.id || data.resume_id || data.resumeId);
+        } catch (err) {
+            console.error(err);
+            alert('Resume upload failed. Please try again.');
+        } finally {
+            setIsUploading(false);
+        }
+    };
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-4xl mx-auto w-full p-6 space-y-8">
             <div className="text-center space-y-4">
@@ -23,9 +64,27 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
                 </motion.div>
                 <h1 className="text-3xl font-bold text-slate-900">Before We Begin</h1>
                 <p className="text-slate-500 max-w-lg mx-auto">
-                    To ensure the best possible experience and accurate feedback, please follow these guidelines.
-                    Treat this like a real interview.
+                    This is a 15-minute technical interview. Upload your resume and treat it like a real interview.
+                    Misconduct policy: Warning 1, Warning 2, third warning ends the session (non-refundable).
                 </p>
+            </div>
+
+            <div className="w-full max-w-xl">
+                <Card className="p-6 border border-slate-200 bg-white/80 shadow-sm">
+                    <div className="flex items-center gap-3 mb-4">
+                        <UploadCloud className="text-indigo-600" />
+                        <div>
+                            <div className="font-bold text-slate-900">Upload Resume</div>
+                            <div className="text-xs text-slate-500">PDF or DOCX. Used to personalize questions.</div>
+                        </div>
+                    </div>
+                    <input
+                        type="file"
+                        accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={(e) => setFile(e.target.files?.[0] || null)}
+                        className="w-full text-sm text-slate-600"
+                    />
+                </Card>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
@@ -103,10 +162,11 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
                     Back
                 </Button>
                 <Button
-                    onClick={onStart}
+                    onClick={handleUpload}
+                    disabled={isUploading}
                     className="flex-1 rounded-xl h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all transform hover:-translate-y-1"
                 >
-                    I'm Ready <ArrowRight className="ml-2 w-4 h-4" />
+                    {isUploading ? 'Uploading...' : 'I\'m Ready'} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
             </div>
         </div>
