@@ -35,9 +35,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_VAPI_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_VAPI_PUBLIC_KEY }}
-          NEXT_PUBLIC_VAPI_ASSISTANT_ID: ${{ secrets.NEXT_PUBLIC_VAPI_ASSISTANT_ID }}
-          # FastAPI WebSocket base (used by AI Interviewer UI)
-          NEXT_PUBLIC_AI_INTERVIEW_WS_URL: wss://emble-ai-interviewer.azurewebsites.net
+          # Vapi-only interview flow
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
