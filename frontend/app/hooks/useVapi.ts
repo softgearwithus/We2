@@ -30,7 +30,9 @@ export const useVapi = () => {
         });
         onVapiEvent('call-end', () => setStatus('idle'));
 
-        onVapiEvent('speech-start', () => setStatus('speaking')); // User or AI speaking? Vapi events can distinguish, usually generic speech-start
+        onVapiEvent('speech-start', (payload) => {
+            setStatus(payload?.role === 'user' ? 'listening' : 'speaking');
+        });
         onVapiEvent('speech-end', () => setStatus('active'));
 
         onVapiEvent('volume-level', (level) => setVolumeLevel(level));
@@ -59,12 +61,13 @@ export const useVapi = () => {
             if (message.type === 'conversation-update') {
                 const conversation = message.conversation;
                 if (conversation && conversation.length > 0) {
-                    // We'll trust Vapi's history but map it to our format
-                    // This cleans up any partial/duplicate states
-                    const formattedMessages = conversation.map((m: any) => ({
-                        role: m.role,
-                        text: m.content
-                    }));
+                    // Keep only user/assistant turns and ignore system prompt echoes
+                    const formattedMessages = conversation
+                        .filter((m: any) => m?.role === 'user' || m?.role === 'assistant')
+                        .map((m: any) => ({
+                            role: m.role,
+                            text: m.content
+                        }));
                     setMessages(formattedMessages);
                 }
             }

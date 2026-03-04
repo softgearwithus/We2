@@ -30,7 +30,7 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
             }
             const formData = new FormData();
             formData.append('file', file);
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai-interviewer/resumes`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/resumes`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -41,10 +41,10 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
                 throw new Error('Resume upload failed');
             }
             const data = await res.json();
-            if (!data?.id && !data?.resume_id && !data?.resumeId) {
+            if (!data?.id) {
                 throw new Error('Resume upload failed');
             }
-            onStart(data.id || data.resume_id || data.resumeId);
+            onStart(data.id);
         } catch (err) {
             console.error(err);
             alert('Resume upload failed. Please try again.');

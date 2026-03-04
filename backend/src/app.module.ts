@@ -100,6 +100,7 @@ import { ResumeDocument } from './ai-interviewer/entities/resume-document.entity
 import { AiInterviewSession } from './ai-interviewer/entities/ai-interview-session.entity';
 import { AiInterviewReport } from './ai-interviewer/entities/ai-interview-report.entity';
 import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-interview-moderation-event.entity';
+import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
 
 @Module({
   imports: [
@@ -115,7 +116,8 @@ import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-intervi
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const dbConfig = resolveDbConfig(configService);
-        const isProduction = configService.get<string>('NODE_ENV') === 'production';
+        const isProduction =
+          configService.get<string>('NODE_ENV') === 'production';
         const shouldAutoCreate = !isProduction && dbConfig.autoCreate;
         const shouldAutoCreateExtension =
           !isProduction && dbConfig.autoCreateExtension;
@@ -226,6 +228,7 @@ import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-intervi
             AiInterviewSession,
             AiInterviewReport,
             AiInterviewModerationEvent,
+            VapiResumeAsset,
           ],
           synchronize: !isProduction,
           logging: !isProduction,
@@ -276,4 +279,4 @@ import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-intervi
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
