@@ -158,7 +158,7 @@ export default function PricingCard({
             const orderData = await orderRes.json();
 
             const options: any = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SI6zIPLAXQkeMw', // Using provided test key
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Ensure it uses environment variable
                 amount: amountInPaise,
                 currency: 'INR',
                 name: 'EMBLE',
