@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -111,6 +113,10 @@ import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
           ? '.env.development'
           : undefined,
       ignoreEnvFile: (process.env.NODE_ENV || 'development') !== 'development',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -279,4 +285,4 @@ import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

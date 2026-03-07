@@ -39,6 +39,9 @@ export class MockTestQuestion {
     @Column({ type: 'text', nullable: true })
     solutionText: string;
 
+    @Column({ type: 'text', nullable: true })
+    imageUrl?: string;
+
     @Column({ type: 'int', default: 1 })
     marks: number;
 

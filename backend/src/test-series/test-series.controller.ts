@@ -1,5 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpException, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpException, HttpStatus, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { TestSeriesService } from './test-series.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -25,15 +28,17 @@ export class TestSeriesController {
     @Get('student/companies/:id/hierarchy')
     @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Get full mock tests hierarchy for a company' })
-    getCompanyHierarchy(@Param('id') id: string) {
-        return this.testSeriesService.getCompanyHierarchy(id);
+    getCompanyHierarchy(@Param('id') id: string, @CurrentUser() user: any) {
+        const isStudent = user.role !== UserRole.SUPER_ADMIN;
+        return this.testSeriesService.getCompanyHierarchy(id, isStudent);
     }
 
     @Get('student/mock-tests/:id')
     @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Get the full test data for a mock test session' })
-    getMockTestFull(@Param('id') id: string) {
-        return this.testSeriesService.getMockTestFull(id);
+    getMockTestFull(@Param('id') id: string, @CurrentUser() user: any) {
+        const isStudent = user.role !== UserRole.SUPER_ADMIN;
+        return this.testSeriesService.getMockTestFull(id, isStudent);
     }
 
     @Get('student/results')
@@ -121,6 +126,14 @@ export class TestSeriesController {
         return this.testSeriesService.deleteMockTest(id);
     }
 
+    @Patch('admin/mock-tests/:id/publish')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Publish or unpublish a mock test to students' })
+    @ApiBody({ schema: { type: 'object', properties: { isPublished: { type: 'boolean' } } } })
+    publishMockTest(@Param('id') id: string, @Body('isPublished') isPublished: boolean) {
+        return this.testSeriesService.publishMockTest(id, isPublished);
+    }
+
     @Post('admin/sections')
     @Roles(UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Create a section' })
@@ -140,6 +153,54 @@ export class TestSeriesController {
     @ApiOperation({ summary: 'Delete a section' })
     deleteSection(@Param('id') id: string) {
         return this.testSeriesService.deleteSection(id);
+    }
+
+    @Get('admin/sections/:id/questions')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Get all questions for a section' })
+    getSectionQuestions(@Param('id') id: string) {
+        return this.testSeriesService.getSectionQuestions(id);
+    }
+
+    @Delete('admin/questions/:id')
+    @Roles(UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Delete a specific question' })
+    deleteQuestion(@Param('id') id: string) {
+        return this.testSeriesService.deleteQuestion(id);
+    }
+
+    @Post('admin/upload-image')
+    @Roles(UserRole.SUPER_ADMIN)
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads/test-series',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = extname(file.originalname);
+                cb(null, `${uniqueSuffix}${ext}`);
+            }
+        }),
+        limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+    }))
+    @ApiOperation({ summary: 'Upload an image for a question' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
+    uploadImage(@UploadedFile() file: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('File is required');
+        }
+        const fileUrl = `/uploads/test-series/${file.filename}`;
+        return { url: fileUrl };
     }
 
     @Post('admin/sections/:id/bulk-questions')

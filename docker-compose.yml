@@ -5,11 +5,11 @@ services:
       dockerfile: Dockerfile.dev
     container_name: college_prep_backend
     ports:
-      - "3001:3001"
+      - "4001:4001"
     env_file:
       - ./backend/.env.development
     environment:
-      PORT: 3001
+      PORT: 4001
       DATABASE_URL: postgresql://admin:password@postgres:5432/college_prep_db?sslmode=disable
       PGHOST: postgres
       PGPORT: 5432

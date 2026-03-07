@@ -99,6 +99,20 @@ export class TestSeriesService {
         return { success: true };
     }
 
+    // --- Section Question Management ---
+    async getSectionQuestions(sectionId: string) {
+        return this.questionRepository.find({
+            where: { sectionId },
+            order: { order: 'ASC', createdAt: 'ASC' }
+        });
+    }
+
+    async deleteQuestion(questionId: string) {
+        const question = await this.questionRepository.findOne({ where: { id: questionId } });
+        if (!question) throw new NotFoundException('Question not found');
+        return this.questionRepository.remove(question);
+    }
+
     async importBulkQuestions(sectionId: string, questionsData: any[]) {
         const section = await this.sectionRepository.findOne({ where: { id: sectionId } });
         if (!section) throw new NotFoundException('Section not found');
@@ -115,6 +129,7 @@ export class TestSeriesService {
             question.optionsJson = q.options || [];
             question.correctAnswer = q.correctAnswer !== undefined ? String(q.correctAnswer) : '';
             question.solutionText = q.solutionText || '';
+            if (q.imageUrl) question.imageUrl = q.imageUrl;
             question.marks = q.marks || 1;
             question.order = q.order || index;
             return question;
@@ -130,11 +145,16 @@ export class TestSeriesService {
     }
 
     // --- Student ---
-    async getCompanyHierarchy(companyId: string) {
+    async getCompanyHierarchy(companyId: string, isStudent: boolean = false) {
         // Returns the Company -> Mock Tests -> Sections -> Questions (count) structure
         const company = await this.getCompany(companyId);
+        const whereCondition: any = { companyId };
+        if (isStudent) {
+            whereCondition.isPublished = true;
+        }
+
         const mockTests = await this.mockTestRepository.find({
-            where: { companyId },
+            where: whereCondition,
             relations: ['sections', 'sections.questions'],
             order: {
                 order: 'ASC',
@@ -159,7 +179,7 @@ export class TestSeriesService {
         };
     }
 
-    async getMockTestFull(mockTestId: string) {
+    async getMockTestFull(mockTestId: string, isStudent: boolean = false) {
         const test = await this.mockTestRepository.findOne({
             where: { id: mockTestId },
             relations: ['sections', 'sections.questions'],
@@ -172,7 +192,17 @@ export class TestSeriesService {
         });
 
         if (!test) throw new NotFoundException('Mock test not found');
+        if (isStudent && !test.isPublished) {
+            throw new NotFoundException('Mock test not available');
+        }
         return test;
+    }
+
+    async publishMockTest(testId: string, isPublished: boolean) {
+        const test = await this.mockTestRepository.findOne({ where: { id: testId } });
+        if (!test) throw new NotFoundException('Mock test not found');
+        test.isPublished = isPublished;
+        return this.mockTestRepository.save(test);
     }
 
     async submitTest(userId: string, mockTestId: string, payload: {

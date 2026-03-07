@@ -140,14 +140,20 @@ export default function MockTestAnalysisPage() {
                 {/* Responses List */}
                 <h3 className="text-xl font-bold text-slate-800 mt-8 mb-4">Detailed Question Review</h3>
                 <div className="space-y-6">
+
                     {resultData.responses?.map((resp: any, i: number) => (
                         <div key={resp.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 lg:p-8 relative">
                             <div className="flex gap-4 items-start border-b border-slate-100 pb-4 mb-4">
                                 <span className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm ${resp.isCorrect ? 'bg-emerald-100 text-emerald-700' : (resp.isCorrect === false ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-500')}`}>
                                     {i + 1}
                                 </span>
-                                <div className="flex-1">
-                                    <div className="font-semibold text-slate-800 text-lg" dangerouslySetInnerHTML={{ __html: resp.question.questionText }} />
+                                <div className="flex-1 overflow-hidden">
+                                    <div className="font-semibold text-slate-800 text-lg break-words" dangerouslySetInnerHTML={{ __html: resp.question.questionText }} />
+                                    {resp.question.imageUrl && (
+                                        <div className="mt-4 mb-4 relative inline-block">
+                                            <img src={resp.question.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-xl h-auto max-h-80 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
+                                        </div>
+                                    )}
                                     <p className="text-sm text-slate-500 font-medium mt-1 uppercase tracking-wider">{resp.question.questionType}</p>
                                 </div>
                                 <div className="shrink-0 text-right">
@@ -163,13 +169,13 @@ export default function MockTestAnalysisPage() {
                             <div className="grid md:grid-cols-2 gap-6 bg-slate-50 p-5 rounded-xl border border-slate-200 text-sm">
                                 <div>
                                     <h4 className="font-bold text-slate-700 mb-2 uppercase tracking-wide text-xs">Your Answer</h4>
-                                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-slate-800 font-mono whitespace-pre-wrap">
+                                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-slate-800 font-mono whitespace-pre-wrap break-words">
                                         {formatAnswer(resp.question, resp.responseValue) || <span className="text-slate-400 italic">Not Answered</span>}
                                     </div>
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-slate-700 mb-2 uppercase tracking-wide text-xs">Correct Answer / Reference</h4>
-                                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-emerald-700 font-mono font-medium whitespace-pre-wrap">
+                                    <div className="bg-white p-3 rounded-lg border border-slate-200 text-emerald-700 font-mono font-medium whitespace-pre-wrap break-words">
                                         {formatAnswer(resp.question, resp.question.correctAnswer) || <span className="text-slate-400 italic">No reference provided by admin</span>}
                                     </div>
                                 </div>
@@ -181,7 +187,7 @@ export default function MockTestAnalysisPage() {
                                         <BookOpen size={16} className="text-blue-600" />
                                         Gemini Evaluation
                                     </h4>
-                                    <div className="text-blue-800 leading-relaxed font-medium">
+                                    <div className="text-blue-800 leading-relaxed font-medium break-words">
                                         {resp.aiFeedback}
                                     </div>
                                 </div>
@@ -193,7 +199,7 @@ export default function MockTestAnalysisPage() {
                                         <BookOpen size={16} className="text-emerald-600" />
                                         Admin Feedback
                                     </h4>
-                                    <div className="text-emerald-800 leading-relaxed font-medium">
+                                    <div className="text-emerald-800 leading-relaxed font-medium break-words">
                                         {resp.question.solutionText}
                                     </div>
                                 </div>

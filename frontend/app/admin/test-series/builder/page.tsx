@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, Trash2, Edit3, Save, X, BookOpen, ChevronRight, ChevronDown, CheckCircle2, Plus } from 'lucide-react';
+import { ArrowLeft, Loader2, Trash2, Edit3, Save, X, BookOpen, ChevronRight, ChevronDown, CheckCircle2, Plus, UploadCloud } from 'lucide-react';
 import { getStoredToken } from '@/app/lib/auth-storage';
-import { fetchCompaniesList, fetchCompanyHierarchy, createMockTest, updateMockTest, deleteMockTest, createSection, updateSection, deleteSection, importBulkQuestions, addQuestion } from '@/app/lib/test-series-builder';
+import { fetchCompaniesList, fetchCompanyHierarchy, createMockTest, updateMockTest, deleteMockTest, togglePublishMockTest, createSection, updateSection, deleteSection, importBulkQuestions, addQuestion, fetchSectionQuestions, deleteSingleQuestion, uploadQuestionImage, API_BASE } from '@/app/lib/test-series-builder';
 
 type ViewState = 'select_company' | 'manage_hierarchy';
 
@@ -44,14 +44,20 @@ export default function AdminTestSeriesBuilder() {
         correctAnswer: string; // single index, comma-separated indices, or empty
         solutionText: string;
         marks: number;
+        imageUrl: string;
     }>({
         type: 'SINGLE_CORRECT',
         question: '',
         options: ['', ''],
         correctAnswer: '',
         solutionText: '',
-        marks: 1
+        marks: 1,
+        imageUrl: ''
     });
+
+    const [viewingQuestionsSectionId, setViewingQuestionsSectionId] = useState<string | null>(null);
+    const [sectionQuestions, setSectionQuestions] = useState<any[]>([]);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     useEffect(() => {
         if (token) loadCompanies();
@@ -124,6 +130,21 @@ export default function AdminTestSeriesBuilder() {
         }
     };
 
+    const handleTogglePublish = async (testId: string, isPublished: boolean) => {
+        setIsSaving(true);
+        try {
+            await togglePublishMockTest(token, testId, isPublished);
+            await loadHierarchy(selectedCompany.id);
+            setMessage({ type: 'success', text: isPublished ? 'Test published successfully.' : 'Test unpublished and moved to draft.' });
+        } catch (error: any) {
+            console.error('Toggle Publish Error:', error);
+            setMessage({ type: 'error', text: 'Failed to update publish state.' });
+        } finally {
+            setIsSaving(false);
+            setTimeout(() => setMessage(null), 3000);
+        }
+    };
+
     // --- Section Actions ---
     const handleCreateSection = async (testId: string) => {
         setIsSaving(true);
@@ -150,6 +171,47 @@ export default function AdminTestSeriesBuilder() {
             setMessage({ type: 'success', text: 'Section deleted.' });
         } catch (error: any) {
             setMessage({ type: 'error', text: 'Failed to delete section.' });
+        } finally {
+            setIsSaving(false);
+            setTimeout(() => setMessage(null), 3000);
+        }
+    };
+
+    // --- Questions View & Delete ---
+    const handleViewQuestions = async (sectionId: string) => {
+        if (viewingQuestionsSectionId === sectionId) {
+            setViewingQuestionsSectionId(null);
+            setSectionQuestions([]);
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const data = await fetchSectionQuestions(token, sectionId);
+            setSectionQuestions(data);
+            setViewingQuestionsSectionId(sectionId);
+        } catch (error: any) {
+            setMessage({ type: 'error', text: 'Failed to load questions.' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDeleteSingleQuestion = async (questionId: string, sectionId: string) => {
+        if (!confirm('Are you sure you want to delete this question?')) return;
+        setIsSaving(true);
+        try {
+            await deleteSingleQuestion(token, questionId);
+            // Refresh questions list for the active section
+            const updatedQuestions = await fetchSectionQuestions(token, sectionId);
+            setSectionQuestions(updatedQuestions);
+
+            // Optionally reload hierarchy to update the question count
+            await loadHierarchy(selectedCompany.id);
+
+            setMessage({ type: 'success', text: 'Question deleted successfully.' });
+        } catch (error: any) {
+            setMessage({ type: 'error', text: 'Failed to delete question.' });
         } finally {
             setIsSaving(false);
             setTimeout(() => setMessage(null), 3000);
@@ -199,7 +261,8 @@ export default function AdminTestSeriesBuilder() {
             type: questionForm.type,
             question: questionForm.question,
             marks: questionForm.marks,
-            solutionText: questionForm.solutionText
+            solutionText: questionForm.solutionText,
+            imageUrl: questionForm.imageUrl || undefined
         };
 
         if (questionForm.type === 'SINGLE_CORRECT' || questionForm.type === 'MULTI_CORRECT') {
@@ -223,13 +286,30 @@ export default function AdminTestSeriesBuilder() {
         try {
             await addQuestion(token, sectionId, payload);
             setAddingQuestionToSection(null);
-            setQuestionForm({ type: 'SINGLE_CORRECT', question: '', options: ['', ''], correctAnswer: '', solutionText: '', marks: 1 });
+            setQuestionForm({ type: 'SINGLE_CORRECT', question: '', options: ['', ''], correctAnswer: '', solutionText: '', marks: 1, imageUrl: '' });
             await loadHierarchy(selectedCompany.id);
             setMessage({ type: 'success', text: 'Question added successfully.' });
         } catch (error: any) {
             setMessage({ type: 'error', text: 'Failed to add question.' });
         } finally {
             setIsSaving(false);
+            setTimeout(() => setMessage(null), 3000);
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploadingImage(true);
+        try {
+            const data = await uploadQuestionImage(token, file);
+            setQuestionForm({ ...questionForm, imageUrl: `${API_BASE}${data.url}` });
+            setMessage({ type: 'success', text: 'Image uploaded successfully.' });
+        } catch (error: any) {
+            setMessage({ type: 'error', text: 'Failed to upload image.' });
+        } finally {
+            setIsUploadingImage(false);
             setTimeout(() => setMessage(null), 3000);
         }
     };
@@ -323,7 +403,17 @@ export default function AdminTestSeriesBuilder() {
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                                                <button onClick={() => handleDeleteTest(test.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" disabled={isSaving}>
+                                                <button
+                                                    onClick={() => handleTogglePublish(test.id, !test.isPublished)}
+                                                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${test.isPublished
+                                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300'
+                                                        : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200 hover:border-slate-300'
+                                                        }`}
+                                                    disabled={isSaving}
+                                                >
+                                                    {test.isPublished ? 'Published' : 'Draft'}
+                                                </button>
+                                                <button onClick={() => handleDeleteTest(test.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" title="Delete Test" disabled={isSaving}>
                                                     <Trash2 size={18} />
                                                 </button>
                                             </div>
@@ -334,189 +424,329 @@ export default function AdminTestSeriesBuilder() {
                                                 {(test.sections || []).length > 0 ? (
                                                     <div className="space-y-3 mb-4">
                                                         {test.sections.map((section: any) => (
-                                                            <div key={section.id} className="bg-white border text-left border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-                                                                <div>
-                                                                    <div className="flex items-center gap-3">
-                                                                        <h4 className="font-bold text-slate-800">{section.title}</h4>
-                                                                        <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold tracking-wide">
-                                                                            {section.questionCount} Qs
-                                                                        </span>
-                                                                        {section.durationMinutes > 0 && (
-                                                                            <span className="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-md text-xs font-bold tracking-wide border border-blue-100">
-                                                                                {section.durationMinutes}m Time Limit
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="flex flex-wrap items-center gap-2">
-                                                                    <button
-                                                                        onClick={() => setImportingToSection(importingToSection === section.id ? null : section.id)}
-                                                                        className="px-3 py-1.5 bg-orange-50 text-orange-600 hover:bg-orange-100 font-semibold rounded-lg text-sm border border-orange-200 transition-colors"
-                                                                    >
-                                                                        JSON Upload
-                                                                    </button>
-
-                                                                    <button
-                                                                        onClick={() => setAddingQuestionToSection(addingQuestionToSection === section.id ? null : section.id)}
-                                                                        className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold rounded-lg text-sm border border-blue-200 transition-colors"
-                                                                    >
-                                                                        Add Question
-                                                                    </button>
-
-                                                                    <button onClick={() => handleDeleteSection(section.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition" disabled={isSaving}>
-                                                                        <Trash2 size={16} />
-                                                                    </button>
-                                                                </div>
-
-                                                                {/* JSON Importer */}
-                                                                {importingToSection === section.id && (
-                                                                    <div className="w-full mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                                                                        <p className="text-sm font-semibold text-slate-700 mb-2">Paste JSON Array:</p>
-                                                                        <textarea
-                                                                            value={jsonInput}
-                                                                            onChange={(e) => setJsonInput(e.target.value)}
-                                                                            className="w-full h-40 p-3 bg-white border border-slate-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                                                                            placeholder={`[\n  {\n    "type": "mcq",\n    "question": "Sample?",\n    "options": ["A","B"],\n    "correctAnswer": "0",\n    "marks": 1\n  }\n]`}
-                                                                        />
-                                                                        <div className="flex gap-3 mt-3">
-                                                                            <button onClick={() => handleBulkImport(section.id)} disabled={isSaving} className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold text-sm hover:bg-orange-700 disabled:opacity-50">
-                                                                                {isSaving ? 'Importing...' : 'Import Questions'}
-                                                                            </button>
-                                                                            <button onClick={() => setImportingToSection(null)} className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold text-sm hover:bg-slate-300 disabled:opacity-50">
-                                                                                Cancel
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-
-                                                                {/* Single Add Question Form */}
-                                                                {addingQuestionToSection === section.id && (
-                                                                    <div className="w-full mt-4 p-4 bg-slate-50 rounded-xl border border-blue-200">
-                                                                        <div className="flex justify-between items-center mb-4">
-                                                                            <h4 className="font-bold text-slate-800 text-sm">Add New Question</h4>
-                                                                            <select
-                                                                                value={questionForm.type}
-                                                                                onChange={(e: any) => setQuestionForm({ ...questionForm, type: e.target.value, options: ['', ''], correctAnswer: '' })}
-                                                                                className="text-sm border border-slate-300 rounded-lg px-2 py-1 outline-none focus:border-blue-500"
-                                                                            >
-                                                                                <option value="SINGLE_CORRECT">Single Correct (Radio)</option>
-                                                                                <option value="MULTI_CORRECT">Multi Correct (Checkbox)</option>
-                                                                                <option value="TEXT">Text Subjective</option>
-                                                                                <option value="CODE">Coding / IDE</option>
-                                                                            </select>
-                                                                        </div>
-
-                                                                        <div className="space-y-4">
-                                                                            <div>
-                                                                                <label className="text-xs font-bold text-slate-500 block mb-1">Question Text / Statement</label>
-                                                                                <textarea
-                                                                                    value={questionForm.question}
-                                                                                    onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
-                                                                                    className="w-full h-20 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                                                                                    placeholder="Enter question content here..."
-                                                                                />
+                                                            <div key={section.id} className="bg-white border text-left border-slate-200 rounded-xl shadow-sm overflow-hidden transition-all">
+                                                                {/* Section Header Row */}
+                                                                <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white relative z-10">
+                                                                    <div className="flex-1 md:pr-4">
+                                                                        <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-3 md:mb-0">
+                                                                            <h4 className="font-bold text-slate-800 text-base">{section.title}</h4>
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-semibold tracking-wide border border-slate-200 flex items-center gap-1">
+                                                                                    <BookOpen size={12} /> {section.questionCount} Qs
+                                                                                </span>
+                                                                                {section.durationMinutes > 0 && (
+                                                                                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-semibold tracking-wide border border-slate-200">
+                                                                                        {section.durationMinutes}m Limit
+                                                                                    </span>
+                                                                                )}
                                                                             </div>
+                                                                        </div>
+                                                                    </div>
 
-                                                                            {(questionForm.type === 'SINGLE_CORRECT' || questionForm.type === 'MULTI_CORRECT') && (
-                                                                                <div>
-                                                                                    <label className="text-xs font-bold text-slate-500 block mb-2">Options & Correct Answers</label>
-                                                                                    {questionForm.options.map((opt, idx) => (
-                                                                                        <div key={idx} className="flex gap-2 mb-2 items-center">
-                                                                                            {questionForm.type === 'SINGLE_CORRECT' ? (
-                                                                                                <input
-                                                                                                    type="radio"
-                                                                                                    name={`correct_${section.id}`}
-                                                                                                    checked={questionForm.correctAnswer === String(idx)}
-                                                                                                    onChange={() => setQuestionForm({ ...questionForm, correctAnswer: String(idx) })}
-                                                                                                    className="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                                                                                                />
-                                                                                            ) : (
-                                                                                                <input
-                                                                                                    type="checkbox"
-                                                                                                    checked={questionForm.correctAnswer.split(',').includes(String(idx))}
-                                                                                                    onChange={(e) => {
-                                                                                                        let current = questionForm.correctAnswer ? questionForm.correctAnswer.split(',') : [];
-                                                                                                        if (e.target.checked) current.push(String(idx));
-                                                                                                        else current = current.filter(val => val !== String(idx));
-                                                                                                        setQuestionForm({ ...questionForm, correctAnswer: current.join(',') });
-                                                                                                    }}
-                                                                                                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
-                                                                                                />
-                                                                                            )}
-                                                                                            <input
-                                                                                                type="text"
-                                                                                                value={opt}
-                                                                                                onChange={(e) => {
-                                                                                                    const newOps = [...questionForm.options];
-                                                                                                    newOps[idx] = e.target.value;
-                                                                                                    setQuestionForm({ ...questionForm, options: newOps });
-                                                                                                }}
-                                                                                                placeholder={`Option ${idx + 1}`}
-                                                                                                className="flex-1 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-blue-500"
-                                                                                            />
-                                                                                            <button
-                                                                                                onClick={() => setQuestionForm({ ...questionForm, options: questionForm.options.filter((_, i) => i !== idx) })}
-                                                                                                className="p-2 text-slate-400 hover:text-red-500 transition"
-                                                                                            >
-                                                                                                <X size={16} />
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    ))}
-                                                                                    <button
-                                                                                        onClick={() => setQuestionForm({ ...questionForm, options: [...questionForm.options, ''] })}
-                                                                                        className="text-xs font-bold text-blue-600 hover:underline mt-1"
-                                                                                    >
-                                                                                        + Add Option
+                                                                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto mt-2 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+                                                                        <button
+                                                                            onClick={() => handleViewQuestions(section.id)}
+                                                                            className={`px-3 py-1.5 font-semibold text-sm rounded-lg border transition-all ${viewingQuestionsSectionId === section.id
+                                                                                ? 'bg-slate-800 text-white border-slate-800 shadow-md'
+                                                                                : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400 shadow-sm'
+                                                                                }`}
+                                                                        >
+                                                                            {viewingQuestionsSectionId === section.id ? 'Hide Questions' : 'View Questions'}
+                                                                        </button>
+
+                                                                        <button
+                                                                            onClick={() => setImportingToSection(importingToSection === section.id ? null : section.id)}
+                                                                            className={`px-3 py-1.5 font-semibold text-sm rounded-lg border transition-all ${importingToSection === section.id
+                                                                                ? 'bg-slate-800 text-white border-slate-800 shadow-md'
+                                                                                : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400 shadow-sm'
+                                                                                }`}
+                                                                        >
+                                                                            JSON Upload
+                                                                        </button>
+
+                                                                        <button
+                                                                            onClick={() => setAddingQuestionToSection(addingQuestionToSection === section.id ? null : section.id)}
+                                                                            className={`px-3 py-1.5 font-semibold text-sm rounded-lg border transition-all ${addingQuestionToSection === section.id
+                                                                                ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                                                                                : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300'
+                                                                                }`}
+                                                                        >
+                                                                            Add Question
+                                                                        </button>
+
+                                                                        <button onClick={() => handleDeleteSection(section.id)} className="p-2 ml-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100" title="Delete Section" disabled={isSaving}>
+                                                                            <Trash2 size={16} />
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Expanded Content Area */}
+                                                                {(importingToSection === section.id || viewingQuestionsSectionId === section.id || addingQuestionToSection === section.id) && (
+                                                                    <div className="border-t border-slate-200 bg-slate-50/80 p-4 md:p-6 shadow-inner">
+
+                                                                        {/* JSON Importer */}
+                                                                        {importingToSection === section.id && (
+                                                                            <div className="w-full mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                                                                <p className="text-sm font-semibold text-slate-700 mb-2">Paste JSON Array:</p>
+                                                                                <textarea
+                                                                                    value={jsonInput}
+                                                                                    onChange={(e) => setJsonInput(e.target.value)}
+                                                                                    className="w-full h-40 p-3 bg-white border border-slate-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                                                                                    placeholder={`[\n  {\n    "type": "mcq",\n    "question": "Sample?",\n    "options": ["A","B"],\n    "correctAnswer": "0",\n    "marks": 1\n  }\n]`}
+                                                                                />
+                                                                                <div className="flex gap-3 mt-3">
+                                                                                    <button onClick={() => handleBulkImport(section.id)} disabled={isSaving} className="px-4 py-2 bg-orange-600 text-white rounded-lg font-bold text-sm hover:bg-orange-700 disabled:opacity-50">
+                                                                                        {isSaving ? 'Importing...' : 'Import Questions'}
+                                                                                    </button>
+                                                                                    <button onClick={() => setImportingToSection(null)} className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold text-sm hover:bg-slate-300 disabled:opacity-50">
+                                                                                        Cancel
                                                                                     </button>
                                                                                 </div>
-                                                                            )}
+                                                                            </div>
+                                                                        )}
 
-                                                                            {(questionForm.type === 'TEXT' || questionForm.type === 'CODE') && (
-                                                                                <div>
-                                                                                    <label className="text-xs font-bold text-slate-500 block mb-1">Expected Answer (Optional System Checking reference)</label>
-                                                                                    <textarea
-                                                                                        value={questionForm.correctAnswer}
-                                                                                        onChange={(e) => setQuestionForm({ ...questionForm, correctAnswer: e.target.value })}
-                                                                                        className="w-full h-16 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-100"
-                                                                                        placeholder={questionForm.type === 'CODE' ? "e.g. function test() { return true; }" : "Key phrases expected..."}
-                                                                                    />
-                                                                                </div>
-                                                                            )}
+                                                                        {viewingQuestionsSectionId === section.id && (
+                                                                            <div className="w-full mt-4 p-4 bg-slate-50 shadow-inner rounded-xl border border-slate-200">
+                                                                                <h4 className="font-bold text-slate-800 text-sm mb-3">Questions in <i>{section.title}</i></h4>
+                                                                                {isLoading ? (
+                                                                                    <div className="flex justify-center py-6"><Loader2 className="animate-spin text-orange-500" size={24} /></div>
+                                                                                ) : sectionQuestions.length === 0 ? (
+                                                                                    <p className="text-sm text-slate-500 font-medium py-3">No questions found for this section.</p>
+                                                                                ) : (
+                                                                                    <div className="space-y-3">
+                                                                                        {sectionQuestions.map((q: any, idx: number) => (
+                                                                                            <div key={q.id} className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex items-start gap-4">
+                                                                                                <div className="bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded text-xs shrink-0 mt-0.5">
+                                                                                                    Q{idx + 1}
+                                                                                                </div>
+                                                                                                <div className="flex-1 w-full overflow-hidden">
+                                                                                                    <p className="text-base text-slate-800 font-semibold break-words whitespace-pre-wrap leading-relaxed">
+                                                                                                        {q.questionText || q.question || 'No question text provided'}
+                                                                                                    </p>
 
-                                                                            <div className="flex gap-4">
-                                                                                <div className="flex-1">
-                                                                                    <label className="text-xs font-bold text-slate-500 block mb-1">Detailed Solution / Feedback Explanation (Shown Post-Test)</label>
-                                                                                    <textarea
-                                                                                        value={questionForm.solutionText}
-                                                                                        onChange={(e) => setQuestionForm({ ...questionForm, solutionText: e.target.value })}
-                                                                                        className="w-full h-16 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                                                                        placeholder="Explain why the answer is correct..."
-                                                                                    />
+                                                                                                    {q.imageUrl && (
+                                                                                                        <div className="mt-3 relative inline-block">
+                                                                                                            <img src={q.imageUrl} alt="Question Graphic" className="max-w-xs md:max-w-sm h-auto max-h-48 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
+                                                                                                        </div>
+                                                                                                    )}
+
+                                                                                                    {/* Render Options if MCQ */}
+                                                                                                    {(q.questionType === 'SINGLE_CORRECT' || q.questionType === 'MULTI_CORRECT') && q.optionsJson && Array.isArray(q.optionsJson) && (
+                                                                                                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                                                                            {q.optionsJson.map((opt: string, i: number) => {
+                                                                                                                // Check if this option index is in the correctAnswer
+                                                                                                                const isCorrect = q.correctAnswer && q.correctAnswer.split(',').includes(String(i));
+                                                                                                                return (
+                                                                                                                    <div key={i} className={`p-2.5 rounded-lg border text-sm flex gap-3 items-center ${isCorrect ? 'bg-emerald-50 border-emerald-200 shadow-sm' : 'bg-slate-50 border-slate-200'}`}>
+                                                                                                                        <div className={`w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold shrink-0 ${isCorrect ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                                                                                                                            {String.fromCharCode(65 + i)}
+                                                                                                                        </div>
+                                                                                                                        <span className={`${isCorrect ? 'text-emerald-800 font-semibold' : 'text-slate-700'}`}>{opt}</span>
+                                                                                                                    </div>
+                                                                                                                );
+                                                                                                            })}
+                                                                                                        </div>
+                                                                                                    )}
+
+                                                                                                    {/* Render Text/Code Answer if any */}
+                                                                                                    {(q.questionType === 'TEXT' || q.questionType === 'CODE') && q.correctAnswer && (
+                                                                                                        <div className="mt-4 p-3 rounded-lg border border-orange-200 bg-orange-50/50">
+                                                                                                            <p className="text-xs font-bold text-orange-600 mb-1 uppercase tracking-wide">Expected Answer Criteria</p>
+                                                                                                            <p className="text-sm font-medium text-slate-700 font-mono whitespace-pre-wrap">{q.correctAnswer}</p>
+                                                                                                        </div>
+                                                                                                    )}
+
+                                                                                                    {/* Solution / Explanation */}
+                                                                                                    {q.solutionText && (
+                                                                                                        <div className="mt-3 p-3 rounded-lg bg-blue-50/50 border border-blue-100">
+                                                                                                            <p className="text-xs font-bold text-blue-600 mb-1 flex items-center gap-1"><CheckCircle2 size={12} /> Explanation / Feedback</p>
+                                                                                                            <p className="text-sm text-slate-700">{q.solutionText}</p>
+                                                                                                        </div>
+                                                                                                    )}
+
+                                                                                                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                                                                                                        <span className="font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-md text-xs border border-blue-200">{q.questionType.replace('_', ' ')}</span>
+                                                                                                        <span className="font-bold text-orange-700 bg-orange-100 px-2.5 py-1 rounded-md text-xs border border-orange-200">{q.marks} Marks</span>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <button
+                                                                                                    onClick={() => handleDeleteSingleQuestion(q.id, section.id)}
+                                                                                                    className="text-slate-400 hover:text-red-500 p-1.5 hover:bg-red-50 rounded transition"
+                                                                                                    title="Delete Question"
+                                                                                                >
+                                                                                                    <Trash2 size={16} />
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+
+                                                                        {/* Single Add Question Form */}
+                                                                        {addingQuestionToSection === section.id && (
+                                                                            <div className="w-full mt-4 p-4 bg-slate-50 rounded-xl border border-blue-200">
+                                                                                <div className="flex justify-between items-center mb-4">
+                                                                                    <h4 className="font-bold text-slate-800 text-sm">Add New Question</h4>
+                                                                                    <select
+                                                                                        value={questionForm.type}
+                                                                                        onChange={(e: any) => setQuestionForm({ ...questionForm, type: e.target.value, options: ['', ''], correctAnswer: '' })}
+                                                                                        className="text-sm border border-slate-300 rounded-lg px-2 py-1 outline-none focus:border-blue-500"
+                                                                                    >
+                                                                                        <option value="SINGLE_CORRECT">Single Correct (Radio)</option>
+                                                                                        <option value="MULTI_CORRECT">Multi Correct (Checkbox)</option>
+                                                                                        <option value="TEXT">Text Subjective</option>
+                                                                                        <option value="CODE">Coding / IDE</option>
+                                                                                    </select>
                                                                                 </div>
-                                                                                <div className="w-24">
-                                                                                    <label className="text-xs font-bold text-slate-500 block mb-1">Marks</label>
-                                                                                    <input
-                                                                                        type="number"
-                                                                                        value={questionForm.marks}
-                                                                                        onChange={(e) => setQuestionForm({ ...questionForm, marks: parseInt(e.target.value) || 1 })}
-                                                                                        className="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-blue-500"
-                                                                                    />
+
+                                                                                <div className="space-y-4">
+                                                                                    <div>
+                                                                                        <label className="text-xs font-bold text-slate-500 block mb-1">Question Text / Statement</label>
+                                                                                        <textarea
+                                                                                            value={questionForm.question}
+                                                                                            onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
+                                                                                            className="w-full h-20 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                                                                            placeholder="Enter question content here..."
+                                                                                        />
+                                                                                    </div>
+
+                                                                                    <div>
+                                                                                        <label className="text-xs font-bold text-slate-500 block mb-2">Question Image (Optional)</label>
+                                                                                        {questionForm.imageUrl ? (
+                                                                                            <div className="relative inline-block group">
+                                                                                                <img src={questionForm.imageUrl} alt="Uploaded" className="max-w-xs h-auto max-h-48 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block transition-opacity group-hover:opacity-90" />
+                                                                                                <button
+                                                                                                    onClick={() => setQuestionForm({ ...questionForm, imageUrl: '' })}
+                                                                                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 hover:scale-105 transition-all opacity-0 group-hover:opacity-100"
+                                                                                                    title="Remove Image"
+                                                                                                >
+                                                                                                    <X size={14} strokeWidth={3} />
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            <label className={`relative flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:bg-slate-50 hover:border-blue-400 transition-colors ${isUploadingImage ? 'opacity-50 pointer-events-none bg-slate-50' : 'bg-white'}`}>
+                                                                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                                                                    {isUploadingImage ? (
+                                                                                                        <>
+                                                                                                            <Loader2 size={28} className="animate-spin text-blue-500 mb-2" />
+                                                                                                            <p className="text-sm font-semibold text-slate-500">Uploading Image...</p>
+                                                                                                        </>
+                                                                                                    ) : (
+                                                                                                        <>
+                                                                                                            <div className="p-3 bg-blue-50 rounded-full mb-2">
+                                                                                                                <UploadCloud size={24} className="text-blue-500" />
+                                                                                                            </div>
+                                                                                                            <p className="text-sm font-semibold text-slate-700">Click to upload an image</p>
+                                                                                                            <p className="text-xs text-slate-500 mt-1">SVG, PNG, JPG or GIF (MAX. 5MB)</p>
+                                                                                                        </>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isUploadingImage} />
+                                                                                            </label>
+                                                                                        )}
+                                                                                    </div>
+
+                                                                                    {(questionForm.type === 'SINGLE_CORRECT' || questionForm.type === 'MULTI_CORRECT') && (
+                                                                                        <div>
+                                                                                            <label className="text-xs font-bold text-slate-500 block mb-2">Options & Correct Answers</label>
+                                                                                            {questionForm.options.map((opt, idx) => (
+                                                                                                <div key={idx} className="flex gap-2 mb-2 items-center">
+                                                                                                    {questionForm.type === 'SINGLE_CORRECT' ? (
+                                                                                                        <input
+                                                                                                            type="radio"
+                                                                                                            name={`correct_${section.id}`}
+                                                                                                            checked={questionForm.correctAnswer === String(idx)}
+                                                                                                            onChange={() => setQuestionForm({ ...questionForm, correctAnswer: String(idx) })}
+                                                                                                            className="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                                                                                        />
+                                                                                                    ) : (
+                                                                                                        <input
+                                                                                                            type="checkbox"
+                                                                                                            checked={questionForm.correctAnswer.split(',').includes(String(idx))}
+                                                                                                            onChange={(e) => {
+                                                                                                                let current = questionForm.correctAnswer ? questionForm.correctAnswer.split(',') : [];
+                                                                                                                if (e.target.checked) current.push(String(idx));
+                                                                                                                else current = current.filter(val => val !== String(idx));
+                                                                                                                setQuestionForm({ ...questionForm, correctAnswer: current.join(',') });
+                                                                                                            }}
+                                                                                                            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
+                                                                                                        />
+                                                                                                    )}
+                                                                                                    <input
+                                                                                                        type="text"
+                                                                                                        value={opt}
+                                                                                                        onChange={(e) => {
+                                                                                                            const newOps = [...questionForm.options];
+                                                                                                            newOps[idx] = e.target.value;
+                                                                                                            setQuestionForm({ ...questionForm, options: newOps });
+                                                                                                        }}
+                                                                                                        placeholder={`Option ${idx + 1}`}
+                                                                                                        className="flex-1 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+                                                                                                    />
+                                                                                                    <button
+                                                                                                        onClick={() => setQuestionForm({ ...questionForm, options: questionForm.options.filter((_, i) => i !== idx) })}
+                                                                                                        className="p-2 text-slate-400 hover:text-red-500 transition"
+                                                                                                    >
+                                                                                                        <X size={16} />
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            ))}
+                                                                                            <button
+                                                                                                onClick={() => setQuestionForm({ ...questionForm, options: [...questionForm.options, ''] })}
+                                                                                                className="text-xs font-bold text-blue-600 hover:underline mt-1"
+                                                                                            >
+                                                                                                + Add Option
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    )}
+
+                                                                                    {(questionForm.type === 'TEXT' || questionForm.type === 'CODE') && (
+                                                                                        <div>
+                                                                                            <label className="text-xs font-bold text-slate-500 block mb-1">Expected Answer (Optional System Checking reference)</label>
+                                                                                            <textarea
+                                                                                                value={questionForm.correctAnswer}
+                                                                                                onChange={(e) => setQuestionForm({ ...questionForm, correctAnswer: e.target.value })}
+                                                                                                className="w-full h-16 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-100"
+                                                                                                placeholder={questionForm.type === 'CODE' ? "e.g. function test() { return true; }" : "Key phrases expected..."}
+                                                                                            />
+                                                                                        </div>
+                                                                                    )}
+
+                                                                                    <div className="flex gap-4">
+                                                                                        <div className="flex-1">
+                                                                                            <label className="text-xs font-bold text-slate-500 block mb-1">Detailed Solution / Feedback Explanation (Shown Post-Test)</label>
+                                                                                            <textarea
+                                                                                                value={questionForm.solutionText}
+                                                                                                onChange={(e) => setQuestionForm({ ...questionForm, solutionText: e.target.value })}
+                                                                                                className="w-full h-16 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                                                                                                placeholder="Explain why the answer is correct..."
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="w-24">
+                                                                                            <label className="text-xs font-bold text-slate-500 block mb-1">Marks</label>
+                                                                                            <input
+                                                                                                type="number"
+                                                                                                value={questionForm.marks}
+                                                                                                onChange={(e) => setQuestionForm({ ...questionForm, marks: parseInt(e.target.value) || 1 })}
+                                                                                                className="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div className="flex gap-3 mt-4 pt-4 border-t border-slate-200">
+                                                                                        <button onClick={() => handleAddSingleQuestion(section.id)} disabled={isSaving} className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 disabled:opacity-50">
+                                                                                            {isSaving ? 'Saving...' : 'Save Question'}
+                                                                                        </button>
+                                                                                        <button onClick={() => setAddingQuestionToSection(null)} className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold text-sm hover:bg-slate-300 disabled:opacity-50">
+                                                                                            Cancel
+                                                                                        </button>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-
-                                                                            <div className="flex gap-3 mt-4 pt-4 border-t border-slate-200">
-                                                                                <button onClick={() => handleAddSingleQuestion(section.id)} disabled={isSaving} className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 disabled:opacity-50">
-                                                                                    {isSaving ? 'Saving...' : 'Save Question'}
-                                                                                </button>
-                                                                                <button onClick={() => setAddingQuestionToSection(null)} className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold text-sm hover:bg-slate-300 disabled:opacity-50">
-                                                                                    Cancel
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
+                                                                        )}
                                                                     </div>
                                                                 )}
-
                                                             </div>
                                                         ))}
                                                     </div>
@@ -553,14 +783,15 @@ export default function AdminTestSeriesBuilder() {
                                                     </button>
                                                 )}
                                             </div>
-                                        )}
+                                        )
+                                        }
                                     </div>
                                 ))
                             )}
                         </div>
 
                         {/* Right: Quick Create Test Form */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-6">
+                        < div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-6" >
                             <h2 className="text-xl font-bold text-slate-800 mb-4">Create Mock Test</h2>
                             <div className="space-y-4">
                                 <div>
@@ -614,6 +845,6 @@ export default function AdminTestSeriesBuilder() {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }

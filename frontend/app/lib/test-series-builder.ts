@@ -72,6 +72,16 @@ export async function updateMockTest(token: string, id: string, payload: any) {
     return res.json();
 }
 
+export async function togglePublishMockTest(token: string, id: string, isPublished: boolean) {
+    const res = await fetch(`${API_BASE}/test-series/admin/mock-tests/${id}/publish`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ isPublished })
+    });
+    if (!res.ok) throw new Error('Failed to toggle publish state');
+    return res.json();
+}
+
 export async function deleteMockTest(token: string, id: string) {
     const res = await fetch(`${API_BASE}/test-series/admin/mock-tests/${id}`, {
         method: 'DELETE',
@@ -158,5 +168,35 @@ export async function submitMockTest(token: string, id: string, payload: {
         body: JSON.stringify(payload)
     });
     if (!res.ok) throw new Error('Failed to submit test');
+    return res.json();
+}
+
+export async function fetchSectionQuestions(token: string, sectionId: string) {
+    const res = await fetch(`${API_BASE}/test-series/admin/sections/${sectionId}/questions`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to fetch section questions');
+    return res.json();
+}
+
+export async function deleteSingleQuestion(token: string, questionId: string) {
+    const res = await fetch(`${API_BASE}/test-series/admin/questions/${questionId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Failed to delete question');
+    return res.json();
+}
+
+export async function uploadQuestionImage(token: string, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch(`${API_BASE}/test-series/admin/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+    });
+    if (!res.ok) throw new Error('Failed to upload image');
     return res.json();
 }

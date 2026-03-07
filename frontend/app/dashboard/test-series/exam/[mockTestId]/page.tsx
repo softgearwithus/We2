@@ -387,10 +387,10 @@ export default function ExamSimulatorPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 text-base bg-slate-50 p-6 rounded-xl border border-slate-200">
                             <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('not_visited')}`}>1</div> <span className="text-slate-600">You have not visited the question yet.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('not_answered')}`}>3</div> <span className="text-slate-600">You have not answered the question.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('answered')}`}>5</div> <span className="text-slate-600">You have answered the question.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('marked_review')}`}>7</div> <span className="text-slate-600">You have NOT answered the question, but have marked it for review.</span></div>
-                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold relative shadow-sm ${getStatusStyle('answered_marked_review')}`}>9<div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" /></div> <span className="text-slate-600">The question is answered and marked for review.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('not_answered')}`}>2</div> <span className="text-slate-600">You have not answered the question.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('answered')}`}>3</div> <span className="text-slate-600">You have answered the question.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold shadow-sm ${getStatusStyle('marked_review')}`}>4</div> <span className="text-slate-600">You have NOT answered the question, but have marked it for review.</span></div>
+                            <div className="flex items-center gap-3"><div className={`w-10 h-10 border flex items-center justify-center font-bold relative shadow-sm ${getStatusStyle('answered_marked_review')}`}>5<div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" /></div> <span className="text-slate-600">The question is answered and marked for review.</span></div>
                         </div>
 
                         <p className="mt-8 text-sm opacity-80 italic">By clicking "Ready to Begin", you confirm you have read the instructions and agree to the academic integrity terms.</p>
@@ -498,7 +498,13 @@ export default function ExamSimulatorPage() {
 
                     {/* Question Content */}
                     <div className="flex-1 overflow-y-auto p-8 lg:p-12 text-base text-slate-800 leading-relaxed max-w-4xl">
-                        <div className="font-semibold text-lg mb-8" dangerouslySetInnerHTML={{ __html: activeQuestion?.questionText || '' }} />
+                        <div className="font-semibold text-lg mb-6 leading-relaxed text-slate-800 break-words" dangerouslySetInnerHTML={{ __html: activeQuestion?.questionText || '' }} />
+
+                        {activeQuestion?.imageUrl && (
+                            <div className="mb-8 relative inline-block">
+                                <img src={activeQuestion.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-2xl h-auto max-h-96 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
+                            </div>
+                        )}
 
                         {activeQuestion?.questionType === 'SINGLE_CORRECT' && (
                             <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
