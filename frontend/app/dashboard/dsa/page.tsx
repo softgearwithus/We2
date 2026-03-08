@@ -58,7 +58,17 @@ const platformLabel = (platform?: string | null) => {
     return 'LeetCode';
 };
 
-function PlatformPicker({ onSelect }: { onSelect: (p: DsaPlatform) => void }) {
+function PlatformPicker({
+    onSelect,
+    isFreePlan,
+    isLimited,
+    remainingLabel
+}: {
+    onSelect: (p: DsaPlatform) => void;
+    isFreePlan: boolean;
+    isLimited: boolean;
+    remainingLabel: string;
+}) {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6 py-12">
             <div className="w-full max-w-2xl">
@@ -69,6 +79,14 @@ function PlatformPicker({ onSelect }: { onSelect: (p: DsaPlatform) => void }) {
                         questions you need to review most — regardless of platform.
                     </p>
                 </div>
+
+                {isFreePlan && (
+                    <div className="flex justify-center mb-6">
+                        <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                            <Clock size={14} /> Free plan time left: {remainingLabel}
+                        </div>
+                    </div>
+                )}
 
                 <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-5 py-4 mb-8 text-xs text-indigo-800 leading-relaxed">
                     <div className="font-bold mb-1">How it works</div>
@@ -346,7 +364,14 @@ export default function DsaTrainingPage() {
 
     // Show platform picker if no platform selected
     if (platform === null) {
-        return <PlatformPicker onSelect={handleSelectPlatform} />;
+        return (
+            <PlatformPicker
+                onSelect={handleSelectPlatform}
+                isFreePlan={isFreePlan}
+                isLimited={isLimited}
+                remainingLabel={remainingLabel}
+            />
+        );
     }
 
     if (loading) {

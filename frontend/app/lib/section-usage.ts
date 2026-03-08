@@ -24,6 +24,7 @@ const fetchUsage = async (endpoint: string): Promise<SectionUsageState> => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: authHeaders(),
+        cache: 'no-store',
     });
     if (!response.ok) {
         const err = await response.json().catch(() => null);
@@ -42,11 +43,13 @@ export const fetchSectionUsage = async (sectionKey: string, userId?: string | nu
             lastResetAt: null,
         };
     }
-    const response = await fetch(`${API_BASE_URL}/usage/sections/${sectionKey}`, {
+    const ts = Date.now();
+    const response = await fetch(`${API_BASE_URL}/usage/sections/${sectionKey}?t=${ts}`, {
         method: 'GET',
         headers: {
             Authorization: authHeaders().Authorization,
         },
+        cache: 'no-store',
     });
     if (!response.ok) {
         const err = await response.json().catch(() => null);

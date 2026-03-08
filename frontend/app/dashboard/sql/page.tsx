@@ -42,7 +42,17 @@ const platformLabel = (platform?: string | null) => {
     return 'LeetCode';
 };
 
-function PlatformPicker({ onSelect }: { onSelect: (p: SqlPlatform) => void }) {
+function PlatformPicker({
+    onSelect,
+    isFreePlan,
+    isLimited,
+    remainingLabel
+}: {
+    onSelect: (p: SqlPlatform) => void;
+    isFreePlan: boolean;
+    isLimited: boolean;
+    remainingLabel: string;
+}) {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6 py-12">
             <div className="w-full max-w-2xl">
@@ -53,6 +63,14 @@ function PlatformPicker({ onSelect }: { onSelect: (p: SqlPlatform) => void }) {
                         questions you need to review most — regardless of platform.
                     </p>
                 </div>
+
+                {isFreePlan && (
+                    <div className="flex justify-center mb-6">
+                        <div className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                            <Clock size={14} /> Free plan time left: {remainingLabel}
+                        </div>
+                    </div>
+                )}
 
                 <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-5 py-4 mb-8 text-xs text-indigo-800 leading-relaxed">
                     <div className="font-bold mb-1">How it works</div>
@@ -342,7 +360,14 @@ export default function SqlTrainingPage() {
     }, [task]);
 
     if (!platform) {
-        return <PlatformPicker onSelect={handleSelectPlatform} />;
+        return (
+            <PlatformPicker
+                onSelect={handleSelectPlatform}
+                isFreePlan={isFreePlan}
+                isLimited={isLimited}
+                remainingLabel={remainingLabel}
+            />
+        );
     }
 
     if (loading) {
@@ -486,15 +511,15 @@ export default function SqlTrainingPage() {
                                                     {maximizedSection === 'editor' ? 'Restore' : 'Maximize'}
                                                 </button>
                                                 {(problem?.externalUrl || problem?.leetcodeUrl) && (
-                                                     <a
-                                                         href={problem.externalUrl || problem.leetcodeUrl}
-                                                         target="_blank"
-                                                         rel="noreferrer"
-                                                         className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
-                                                     >
-                                                         Solve on {platformLabel(problem.platform || platform)} <span className="material-symbols-outlined text-sm">open_in_new</span>
-                                                     </a>
-                                                 )}
+                                                    <a
+                                                        href={problem.externalUrl || problem.leetcodeUrl}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                                                    >
+                                                        Solve on {platformLabel(problem.platform || platform)} <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                                    </a>
+                                                )}
                                                 <select
                                                     value={language}
                                                     onChange={(e) => setLanguage(e.target.value)}
