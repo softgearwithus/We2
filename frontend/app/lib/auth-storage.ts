@@ -60,6 +60,11 @@ export const clearAuthSession = (scope: AuthScope) => {
   sessionStorage.removeItem(STORAGE_KEYS.userId(scope));
 };
 
+export const clearAllAuthSessions = () => {
+  clearAuthSession('user');
+  clearAuthSession('admin');
+};
+
 export const getStoredUserId = (scope: AuthScope) => {
   if (typeof window === 'undefined') return null;
   return (

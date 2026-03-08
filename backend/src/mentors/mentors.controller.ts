@@ -124,15 +124,18 @@ export class MentorsController {
     @Post('mentor-payments/order')
     @Roles(UserRole.STUDENT)
     @ApiOperation({ summary: 'Create Razorpay order for mentor connect' })
-    async createPaymentOrder(@Body() payload: CreateMentorPaymentOrderDto) {
-        return this.mentorsService.createPaymentOrder(payload);
+    async createPaymentOrder(@Request() req: any, @Body() payload: CreateMentorPaymentOrderDto) {
+        return this.mentorsService.createPaymentOrder(req.user.id, payload);
     }
 
     @Post('mentor-payments/verify')
     @Roles(UserRole.STUDENT)
     @ApiOperation({ summary: 'Verify Razorpay payment and create session' })
     async verifyPayment(@Request() req: any, @Body() payload: VerifyMentorPaymentDto) {
-        const secret = process.env.RAZORPAY_KEY_SECRET || 'test_secret';
+        const secret = process.env.RAZORPAY_KEY_SECRET;
+        if (!secret) {
+            throw new BadRequestException('Payment verification is not configured.');
+        }
         const body = `${payload.orderId}|${payload.paymentId}`;
         const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex');
         if (expectedSignature !== payload.signature) {

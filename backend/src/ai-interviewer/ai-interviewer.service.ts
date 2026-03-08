@@ -8,6 +8,7 @@ import { ResumeDocument } from './entities/resume-document.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
 import { ConfigService } from '@nestjs/config';
 import { CreateAiInterviewDto } from './dto/create-ai-interview.dto';
+import { InterviewsService } from '../interviews/interviews.service';
 
 @Injectable()
 export class AiInterviewerService {
@@ -23,9 +24,24 @@ export class AiInterviewerService {
         @InjectRepository(InterviewSession)
         private interviewSessionsRepo: Repository<InterviewSession>,
         private configService: ConfigService,
+        private interviewsService: InterviewsService,
     ) { }
 
     async createSession(userId: string, dto: CreateAiInterviewDto) {
+        const parentSession = await this.interviewSessionsRepo.findOne({
+            where: { id: dto.interviewSessionId, userId },
+        });
+        if (!parentSession) {
+            throw new NotFoundException('Interview session not found');
+        }
+
+        const resumeDoc = await this.resumeRepo.findOne({ where: { id: dto.resumeId, userId } });
+        if (!resumeDoc) {
+            throw new NotFoundException('Resume not found');
+        }
+
+        await this.interviewsService.deductCredit(userId, 'video');
+
         const session = this.sessionsRepo.create({
             userId,
             interviewSessionId: dto.interviewSessionId,

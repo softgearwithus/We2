@@ -13,7 +13,7 @@ import {
     BadRequestException,
     Query,
 } from '@nestjs/common';
-import { IsString, IsNotEmpty, MaxLength, IsOptional, Matches, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, Matches } from 'class-validator';
 import * as crypto from 'crypto';
 import {
     ApiTags,
@@ -58,11 +58,10 @@ export class UpgradeSubscriptionDto {
 export class CreateUpgradeOrderDto {
     @IsString()
     @IsNotEmpty()
+    @MaxLength(30)
+    @Matches(/^(standard|pro)_(1m|3m|6m|12m)$/, { message: 'Invalid plan identifier' })
+    @ApiProperty({ example: 'standard_3m', description: 'The identifier for the subscription plan' })
     plan: string;
-
-    @IsNumber()
-    @IsNotEmpty()
-    amountInPaise: number;
 }
 
 @ApiTags('users')
@@ -134,16 +133,21 @@ export class UsersController {
             throw new ForbiddenException('Upgrades are temporarily disabled');
         }
 
-        if (orderId && paymentId && signature) {
-            const secret = process.env.RAZORPAY_KEY_SECRET || 'test_secret';
-            const body = `${orderId}|${paymentId}`;
-            const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex');
-            if (expectedSignature !== signature) {
-                throw new BadRequestException('Invalid payment signature');
-            }
+        if (!orderId || !paymentId || !signature) {
+            throw new BadRequestException('Payment verification details are required.');
         }
 
-        return this.usersService.upgradeSubscription(req.user.id, plan, paymentId);
+        const secret = process.env.RAZORPAY_KEY_SECRET;
+        if (!secret) {
+            throw new ForbiddenException('Payment verification is not configured.');
+        }
+        const body = `${orderId}|${paymentId}`;
+        const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex');
+        if (expectedSignature !== signature) {
+            throw new BadRequestException('Invalid payment signature');
+        }
+
+        return this.usersService.upgradeSubscription(req.user.id, plan, paymentId, orderId);
     }
 
     @Post('upgrade-order')
@@ -151,7 +155,11 @@ export class UsersController {
     @ApiOperation({ summary: 'Create Razorpay order for plan upgrade' })
     @ApiResponse({ status: 201, description: 'Order created successfully' })
     async createUpgradeOrder(@Request() req: any, @Body() dto: CreateUpgradeOrderDto) {
-        return this.usersService.createUpgradeOrder(req.user.id, dto.amountInPaise);
+        const settings = await this.adminSettingsService.getPlatformSettings();
+        if (!settings.upgradesEnabled) {
+            throw new ForbiddenException('Upgrades are temporarily disabled');
+        }
+        return this.usersService.createUpgradeOrder(req.user.id, dto.plan);
     }
 
     @Get(':id')

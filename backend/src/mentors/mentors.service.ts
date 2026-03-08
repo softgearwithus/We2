@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { MentorProfile } from './entities/mentor-profile.entity';
 import { MentorApplication } from './entities/mentor-application.entity';
 import { MentorSession } from './entities/mentor-session.entity';
 import { MentorPayout } from './entities/mentor-payout.entity';
+import { MentorPaymentOrder } from './entities/mentor-payment-order.entity';
 import { CreateMentorApplicationDto } from './dto/create-mentor-application.dto';
 import { CreateMentorPaymentOrderDto, VerifyMentorPaymentDto } from './dto/mentor-payment.dto';
 import { UserRole } from '../users/user.entity';
@@ -22,6 +23,8 @@ export class MentorsService {
         private sessionRepo: Repository<MentorSession>,
         @InjectRepository(MentorPayout)
         private payoutRepo: Repository<MentorPayout>,
+        @InjectRepository(MentorPaymentOrder)
+        private mentorPaymentOrderRepo: Repository<MentorPaymentOrder>,
         private usersService: UsersService,
     ) { }
 
@@ -58,7 +61,7 @@ export class MentorsService {
         if (!user) {
             throw new NotFoundException('User account not found for this application email');
         }
-        await this.usersService.update(user.id, { role: UserRole.MENTOR } as any);
+        await this.usersService.setRole(user.id, UserRole.MENTOR);
 
         const profile = this.mentorRepo.create({
             userId: user.id,
@@ -97,21 +100,79 @@ export class MentorsService {
     async createSessionFromPayment(studentId: string, payload: VerifyMentorPaymentDto) {
         const mentor = await this.mentorRepo.findOne({ where: { id: payload.mentorId, isActive: true } });
         if (!mentor) throw new NotFoundException('Mentor not found');
-        const amountInr = mentor.pricePerMinute * payload.durationMinutes;
-        const session = this.sessionRepo.create({
-            studentId,
-            mentorId: mentor.id,
-            topic: payload.topic,
-            durationMinutes: payload.durationMinutes,
-            priceInr: amountInr,
-            status: 'requested',
-            paymentId: payload.paymentId,
-            paymentStatus: 'paid',
+
+        const now = Date.now();
+        const expectedAmountInPaise = mentor.pricePerMinute * payload.durationMinutes * 100;
+
+        return this.sessionRepo.manager.transaction(async (manager) => {
+            const paymentOrderRepo = manager.getRepository(MentorPaymentOrder);
+            const mentorSessionRepo = manager.getRepository(MentorSession);
+
+            const order = await paymentOrderRepo.findOne({
+                where: {
+                    providerOrderId: payload.orderId,
+                    studentId,
+                    mentorId: mentor.id,
+                },
+            });
+
+            if (!order) {
+                throw new BadRequestException('Payment order not found. Please create a new order.');
+            }
+
+            if (order.durationMinutes !== payload.durationMinutes) {
+                throw new BadRequestException('Duration mismatch for payment order.');
+            }
+
+            if (order.studentId !== studentId || order.mentorId !== mentor.id) {
+                throw new BadRequestException('Payment order does not belong to this booking request.');
+            }
+
+            if (order.amountInPaise !== expectedAmountInPaise) {
+                throw new BadRequestException('Amount mismatch for payment order.');
+            }
+
+            if (order.status === 'paid') {
+                const existingSession = await mentorSessionRepo.findOne({
+                    where: {
+                        paymentOrderId: payload.orderId,
+                        paymentId: payload.paymentId,
+                    },
+                });
+                if (existingSession) {
+                    return existingSession;
+                }
+                throw new BadRequestException('This payment order has already been used.');
+            }
+
+            if (order.expiresAt && order.expiresAt.getTime() <= now) {
+                order.status = 'expired';
+                await paymentOrderRepo.save(order);
+                throw new BadRequestException('This payment order has expired. Please create a new order.');
+            }
+
+            order.status = 'paid';
+            order.paymentId = payload.paymentId;
+            order.paidAt = new Date(now);
+            await paymentOrderRepo.save(order);
+
+            const amountInr = Math.round(order.amountInPaise / 100);
+            const session = mentorSessionRepo.create({
+                studentId,
+                mentorId: mentor.id,
+                topic: payload.topic,
+                durationMinutes: payload.durationMinutes,
+                priceInr: amountInr,
+                status: 'requested',
+                paymentId: payload.paymentId,
+                paymentOrderId: payload.orderId,
+                paymentStatus: 'paid',
+            });
+            return mentorSessionRepo.save(session);
         });
-        return this.sessionRepo.save(session);
     }
 
-    async createPaymentOrder(payload: CreateMentorPaymentOrderDto) {
+    async createPaymentOrder(studentId: string, payload: CreateMentorPaymentOrderDto) {
         const keyId = process.env.RAZORPAY_KEY_ID;
         const keySecret = process.env.RAZORPAY_KEY_SECRET;
         if (!keyId || !keySecret) {
@@ -123,10 +184,11 @@ export class MentorsService {
         const mentor = await this.mentorRepo.findOne({ where: { id: payload.mentorId, isActive: true } });
         if (!mentor) throw new NotFoundException('Mentor not found');
         const amountInr = mentor.pricePerMinute * payload.durationMinutes;
+        const amountInPaise = amountInr * 100;
         const authHeader = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
         const response = await axios.post('https://api.razorpay.com/v1/orders',
             {
-                amount: amountInr * 100,
+                amount: amountInPaise,
                 currency: 'INR',
                 receipt: `mentor_${Date.now()}`,
             },
@@ -136,10 +198,31 @@ export class MentorsService {
                 },
             },
         );
+
+        const providerOrderId: string | undefined = response?.data?.id;
+        if (!providerOrderId) {
+            throw new BadRequestException('Unable to create payment order.');
+        }
+
+        const order = this.mentorPaymentOrderRepo.create({
+            studentId,
+            mentorId: mentor.id,
+            durationMinutes: payload.durationMinutes,
+            amountInPaise,
+            currency: 'INR',
+            providerOrderId,
+            paymentId: null,
+            status: 'created',
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+            paidAt: null,
+        });
+        await this.mentorPaymentOrderRepo.save(order);
+
         return {
-            orderId: response.data.id,
+            orderId: providerOrderId,
             amountInr,
-            currency: response.data.currency,
+            amountInPaise,
+            currency: 'INR',
         };
     }
 

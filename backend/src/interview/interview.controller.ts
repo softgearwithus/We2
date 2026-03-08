@@ -18,6 +18,7 @@ import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
 import { InterviewsService } from '../interviews/interviews.service';
 import { InterviewDifficulty } from '../interviews/entities/interview-session.entity';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @Controller('interview')
 export class InterviewController {
@@ -27,21 +28,30 @@ export class InterviewController {
   ) {}
 
   @Post('start')
-  startSession(@Body('userId') userId: string) {
-    return this.interviewService.startSession(userId || 'guest'); // Allow guest for now
+  @UseGuards(JwtAuthGuard, UsageGuard)
+  @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
+  async startSession(@Request() req: any) {
+    await this.interviewsService.deductCredit(req.user.id, 'audio');
+    return this.interviewService.startSession(req.user.id);
   }
 
   @Post(':id/message')
-  sendMessage(@Param('id') id: string, @Body('message') message: string) {
-    return this.interviewService.processMessage(id, message);
+  @UseGuards(JwtAuthGuard, UsageGuard)
+  @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
+  sendMessage(@Param('id') id: string, @Body('message') message: string, @Request() req: any) {
+    return this.interviewService.processMessage(id, message, req.user.id);
   }
 
   @Post('analyze-audio')
+  @UseGuards(JwtAuthGuard, UsageGuard)
+  @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
   @UseInterceptors(FileInterceptor('audio'), UploadLimitInterceptor)
   async analyzeAudio(
+    @Request() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
   ) {
+    await this.interviewsService.deductCredit(req.user.id, 'audio');
     const type = body.type;
     const referenceText = body.referenceText;
 
@@ -56,18 +66,20 @@ export class InterviewController {
   }
 
   @Post(':id/end')
-  endSession(@Param('id') id: string) {
-    return this.interviewService.endSession(id);
+  @UseGuards(JwtAuthGuard, UsageGuard)
+  @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
+  endSession(@Param('id') id: string, @Request() req: any) {
+    return this.interviewService.endSession(id, req.user.id);
   }
 
   @Post('vapi/analysis')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UsageGuard)
   @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_VIDEO)
   async getVapiAnalysis(@Body('callId') callId: string, @Request() req: any) {
     return this.interviewService.getVapiAnalysis(callId, req.user?.id);
   }
   @Post('vapi/resumes')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UsageGuard)
   @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
   @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_VIDEO)
   async uploadVapiResume(
@@ -81,7 +93,7 @@ export class InterviewController {
   }
 
   @Post('vapi/sessions')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UsageGuard)
   @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_VIDEO)
   async createVapiSession(
     @Request() req: any,
@@ -97,7 +109,8 @@ export class InterviewController {
   }
 
   @Get('vapi/sessions/:id/report')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UsageGuard)
+  @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_VIDEO)
   async getVapiReport(@Request() req: any, @Param('id') id: string) {
     return this.interviewService.getVapiReportForSession(id, req.user?.id);
   }

@@ -9,6 +9,7 @@ import { ResumeDocument } from './entities/resume-document.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
+import { InterviewsModule } from '../interviews/interviews.module';
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
         ]),
         ConfigModule,
         AdminSettingsModule,
+        InterviewsModule,
     ],
     controllers: [AiInterviewerController],
     providers: [AiInterviewerService],

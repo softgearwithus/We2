@@ -16,6 +16,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { McqCategory } from './entities/mcq-question.entity';
 import { McqApiKeyGuard } from './guards/mcq-api-key.guard';
 import { AdminDeleteMcqQueryDto } from './dto/admin-delete-mcq-query.dto';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('mcqs')
 @Controller('mcqs')
@@ -23,7 +24,7 @@ export class McqsController {
     constructor(private readonly mcqsService: McqsService) { }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('groups')
     @ApiOperation({ summary: 'List available MCQ groups with counts' })
     @ApiResponse({ status: 200, description: 'Groups list' })
@@ -43,7 +44,7 @@ export class McqsController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get()
     @ApiOperation({ summary: 'List MCQ questions by subject (paginated)' })
     @ApiResponse({ status: 200, description: 'Paginated MCQs' })

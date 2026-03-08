@@ -70,7 +70,7 @@ export class RegisterDto {
         required: false,
     })
     @IsOptional()
-    @IsIn(['free', 'standard', 'pro'])
+    @IsString()
     subscriptionPlan?: string;
 
     @ApiProperty({

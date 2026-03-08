@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserSectionUsage } from './entities/user-section-usage.entity';
-import { FREE_PLAN_SECTION_LIMIT_SECONDS, UsageSectionKey } from './usage.constants';
+import { FREE_PLAN_SECTION_LIMIT_SECONDS, UsageSectionKey, USAGE_RESET_INTERVAL_DAYS } from './usage.constants';
 import { UsersService } from '../users/users.service';
 
 type UsageState = {
@@ -64,6 +64,17 @@ export class UsageService {
             record.isActive = false;
             return this.usageRepo.save(record);
         }
+
+        const elapsedMs = now.getTime() - new Date(record.lastResetAt).getTime();
+        const resetWindowMs = USAGE_RESET_INTERVAL_DAYS * 24 * 60 * 60 * 1000;
+        if (elapsedMs >= resetWindowMs) {
+            record.usedSeconds = 0;
+            record.lastResetAt = now;
+            record.lastHeartbeatAt = null;
+            record.isActive = false;
+            return this.usageRepo.save(record);
+        }
+
         return record;
     }
 
@@ -107,6 +118,13 @@ export class UsageService {
         const user = await this.usersService.findById(userId);
         const record = await this.ensureRecord(userId, sectionKey);
         const resetRecord = await this.resetIfNeeded(record);
+        if (!resetRecord.isActive) {
+            resetRecord.isActive = true;
+            resetRecord.lastHeartbeatAt = new Date();
+            await this.usageRepo.save(resetRecord);
+            const initialLimit = this.getLimitSecondsForPlan(user.subscriptionPlan);
+            return this.buildState(resetRecord, initialLimit);
+        }
         const limitSeconds = this.getLimitSecondsForPlan(user.subscriptionPlan);
         if (limitSeconds === Infinity) {
             resetRecord.lastHeartbeatAt = new Date();

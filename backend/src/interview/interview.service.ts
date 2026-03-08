@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Interview } from './entities/interview.entity';
@@ -92,11 +92,14 @@ export class InterviewService {
     return this.interviewRepository.save(interview);
   }
 
-  async processMessage(interviewId: string, userMessage: string) {
+  async processMessage(interviewId: string, userMessage: string, userId?: string) {
     const interview = await this.interviewRepository.findOne({
       where: { id: interviewId },
     });
     if (!interview) throw new NotFoundException('Interview not found');
+    if (userId && interview.userId !== userId) {
+      throw new ForbiddenException('Access denied to this interview session');
+    }
 
     // Add user message to history
     const currentHistory = interview.history || [];
@@ -229,11 +232,14 @@ export class InterviewService {
     }
   }
 
-  async endSession(interviewId: string) {
+  async endSession(interviewId: string, userId?: string) {
     const interview = await this.interviewRepository.findOne({
       where: { id: interviewId },
     });
     if (!interview) throw new NotFoundException('Interview not found');
+    if (userId && interview.userId !== userId) {
+      throw new ForbiddenException('Access denied to this interview session');
+    }
 
     interview.status = 'completed';
     // generating feedback could happen here

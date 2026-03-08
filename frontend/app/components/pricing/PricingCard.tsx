@@ -139,15 +139,13 @@ export default function PricingCard({
                 return;
             }
 
-            const amountInPaise = parseInt(price.replace(/[^0-9]/g, '')) * 100; // in paise
-
             const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ plan: planId, amountInPaise })
+                body: JSON.stringify({ plan: planId })
             });
 
             if (!orderRes.ok) {
@@ -157,9 +155,15 @@ export default function PricingCard({
             }
             const orderData = await orderRes.json();
 
+            if (!orderData?.orderId || typeof orderData?.amount !== 'number') {
+                alert('Invalid payment order response. Please try again.');
+                setIsLoading(false);
+                return;
+            }
+
             const options: any = {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Ensure it uses environment variable
-                amount: amountInPaise,
+                amount: orderData.amount,
                 currency: 'INR',
                 name: 'EMBLE',
                 description: `Upgrade to ${title}`,

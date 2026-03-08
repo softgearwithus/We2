@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Key, Mail, Bell, Trash2, Smartphone, MonitorSmartphone, Monitor, ChevronRight, LogOut, AlertTriangle, Save, CreditCard, Calendar, Star, Sparkles } from 'lucide-react';
+import { Shield, Key, Mail, Trash2, ChevronRight, AlertTriangle, Save, CreditCard, Calendar, Star, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
 
-type Tab = 'account' | 'subscription' | 'security' | 'notifications';
+type Tab = 'account' | 'subscription' | 'security';
 
 export default function SettingsPage() {
     const { user } = useAuth();
@@ -38,20 +38,9 @@ export default function SettingsPage() {
         confirmPassword: ''
     });
 
-    // Notification State
-    const [notifications, setNotifications] = useState({
-        testSeries: true,
-        mentorAlerts: true,
-        marketRadar: false
-    });
-
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPasswordData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleNotificationToggle = (key: keyof typeof notifications) => {
-        setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
     const handleSavePassword = async (e: React.FormEvent) => {
@@ -72,7 +61,6 @@ export default function SettingsPage() {
         { id: 'account', label: 'Account', icon: <Mail size={18} /> },
         { id: 'subscription', label: 'Subscription', icon: <CreditCard size={18} /> },
         { id: 'security', label: 'Security', icon: <Shield size={18} /> },
-        { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
     ];
 
     return (
@@ -296,101 +284,6 @@ export default function SettingsPage() {
                                     </form>
                                 </section>
 
-                                <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100">
-                                        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                            <MonitorSmartphone className="text-indigo-500" size={20} /> Browser Sessions
-                                        </h2>
-                                        <p className="text-sm text-slate-500 mt-1">Manage and log out your active sessions on other browsers and devices.</p>
-                                    </div>
-                                    <div className="p-6 space-y-4">
-                                        <div className="flex items-start gap-4 p-4 rounded-xl border border-indigo-100 bg-indigo-50/30">
-                                            <Monitor className="text-indigo-600 mt-1" size={24} />
-                                            <div className="flex-1">
-                                                <p className="font-bold text-slate-900 text-sm">Windows • Chrome</p>
-                                                <p className="text-xs text-slate-500">192.168.1.1 - This device</p>
-                                            </div>
-                                            <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded">Active</span>
-                                        </div>
-                                        <div className="flex items-start gap-4 p-4 rounded-xl border border-slate-100">
-                                            <Smartphone className="text-slate-400 mt-1" size={24} />
-                                            <div className="flex-1">
-                                                <p className="font-bold text-slate-900 text-sm">iOS • Safari</p>
-                                                <p className="text-xs text-slate-500">Last active 2 hours ago</p>
-                                            </div>
-                                            <button className="text-slate-400 hover:text-red-500 transition-colors p-2">
-                                                <LogOut size={16} />
-                                            </button>
-                                        </div>
-
-                                        <div className="pt-2">
-                                            <button className="text-sm font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 px-5 py-2.5 rounded-lg transition-all flex items-center gap-2">
-                                                <LogOut size={16} /> Log Out Other Sessions
-                                            </button>
-                                        </div>
-                                    </div>
-                                </section>
-                            </motion.div>
-                        )}
-
-                        {/* NOTIFICATIONS TAB */}
-                        {activeTab === 'notifications' && (
-                            <motion.div
-                                key="notifications"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.2 }}
-                                className="space-y-6"
-                            >
-                                <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                    <div className="p-6 border-b border-slate-100">
-                                        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                            <Bell className="text-indigo-500" size={20} /> Notification Preferences
-                                        </h2>
-                                        <p className="text-sm text-slate-500 mt-1">Choose what updates you want to receive.</p>
-                                    </div>
-                                    <div className="divide-y divide-slate-100">
-                                        <div className="p-6 flex items-center justify-between">
-                                            <div>
-                                                <p className="font-bold text-slate-900 text-sm">Test Series Reminders</p>
-                                                <p className="text-xs text-slate-500 mt-1">Get notified when a new company specific test is available.</p>
-                                            </div>
-                                            <button
-                                                onClick={() => handleNotificationToggle('testSeries')}
-                                                className={`w-11 h-6 rounded-full transition-colors relative ${notifications.testSeries ? 'bg-indigo-500' : 'bg-slate-200'}`}
-                                            >
-                                                <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${notifications.testSeries ? 'translate-x-5' : 'translate-x-0'}`} />
-                                            </button>
-                                        </div>
-
-                                        <div className="p-6 flex items-center justify-between">
-                                            <div>
-                                                <p className="font-bold text-slate-900 text-sm">Mentor Alerts</p>
-                                                <p className="text-xs text-slate-500 mt-1">Receive emails when mentors respond to your requests.</p>
-                                            </div>
-                                            <button
-                                                onClick={() => handleNotificationToggle('mentorAlerts')}
-                                                className={`w-11 h-6 rounded-full transition-colors relative ${notifications.mentorAlerts ? 'bg-indigo-500' : 'bg-slate-200'}`}
-                                            >
-                                                <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${notifications.mentorAlerts ? 'translate-x-5' : 'translate-x-0'}`} />
-                                            </button>
-                                        </div>
-
-                                        <div className="p-6 flex items-center justify-between">
-                                            <div>
-                                                <p className="font-bold text-slate-900 text-sm">Market Radar Updates</p>
-                                                <p className="text-xs text-slate-500 mt-1">Weekly digest of hiring trends and top required skills.</p>
-                                            </div>
-                                            <button
-                                                onClick={() => handleNotificationToggle('marketRadar')}
-                                                className={`w-11 h-6 rounded-full transition-colors relative ${notifications.marketRadar ? 'bg-indigo-500' : 'bg-slate-200'}`}
-                                            >
-                                                <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${notifications.marketRadar ? 'translate-x-5' : 'translate-x-0'}`} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </section>
                             </motion.div>
                         )}
 

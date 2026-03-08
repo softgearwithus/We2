@@ -38,6 +38,9 @@ export class MentorSession {
     @Column({ type: 'varchar', length: 60, nullable: true })
     paymentId: string | null;
 
+    @Column({ type: 'varchar', length: 80, nullable: true })
+    paymentOrderId: string | null;
+
     @Column({ type: 'varchar', length: 30, default: 'pending' })
     paymentStatus: 'pending' | 'paid' | 'refunded';
 

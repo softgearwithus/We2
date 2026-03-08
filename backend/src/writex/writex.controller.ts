@@ -10,6 +10,7 @@ import { UpdateWriteXQuestionDto } from './dto/update-writex-question.dto';
 import { WriteXService } from './writex.service';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('writex')
 @Controller('writex')
@@ -17,7 +18,7 @@ export class WriteXController {
     constructor(private readonly writexService: WriteXService) { }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('question')
     @ApiOperation({ summary: 'Get active WriteX question' })
     @ApiResponse({ status: 200, description: 'Active question' })
@@ -27,7 +28,7 @@ export class WriteXController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Post('submit')
     @ApiOperation({ summary: 'Submit WriteX answer for evaluation' })
     @ApiResponse({ status: 200, description: 'Evaluation result' })

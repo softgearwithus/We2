@@ -103,6 +103,8 @@ import { AiInterviewSession } from './ai-interviewer/entities/ai-interview-sessi
 import { AiInterviewReport } from './ai-interviewer/entities/ai-interview-report.entity';
 import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-interview-moderation-event.entity';
 import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
+import { PendingUpgradeOrder } from './users/entities/pending-upgrade-order.entity';
+import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.entity';
 
 @Module({
   imports: [
@@ -235,6 +237,8 @@ import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
             AiInterviewReport,
             AiInterviewModerationEvent,
             VapiResumeAsset,
+            PendingUpgradeOrder,
+            MentorPaymentOrder,
           ],
           synchronize: !isProduction,
           logging: !isProduction,

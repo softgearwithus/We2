@@ -5,10 +5,11 @@ import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { PreparationService } from './preparation.service';
 import { UpdatePreparationProgressDto } from './dto/update-preparation-progress.dto';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('preparation')
 @ApiBearerAuth('JWT-auth')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, UsageGuard)
 @Controller('preparation')
 export class PreparationController {
     constructor(private readonly preparationService: PreparationService) { }

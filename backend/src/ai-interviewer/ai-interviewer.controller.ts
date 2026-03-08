@@ -8,10 +8,11 @@ import { CreateAiInterviewDto } from './dto/create-ai-interview.dto';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('ai-interviewer')
 @ApiBearerAuth('JWT-auth')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, UsageGuard)
 @Controller('ai-interviewer')
 export class AiInterviewerController {
     constructor(

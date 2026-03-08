@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -12,6 +12,29 @@ import { ProjectLabSubmission, ProjectLabSubmissionStatus } from '../project-lab
 import { Resume } from '../resume/entities/resume.entity';
 import { MentorSession } from '../mentors/entities/mentor-session.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
+import { PlatformSettings } from '../admin-settings/entities/platform-settings.entity';
+import { PendingUpgradeOrder } from './entities/pending-upgrade-order.entity';
+import { UserRole } from './user.entity';
+
+const SUBSCRIPTION_PLAN_IDENTIFIER = /^(standard|pro)_(1m|3m|6m|12m)$/;
+
+const PLAN_DURATION_DAYS: Record<'1m' | '3m' | '6m' | '12m', number> = {
+    '1m': 30,
+    '3m': 90,
+    '6m': 180,
+    '12m': 365,
+};
+
+const DEFAULT_SUBSCRIPTION_PRICES_IN_PAISE: Record<string, number> = {
+    standard_1m: 44900,
+    standard_3m: 119900,
+    standard_6m: 219900,
+    standard_12m: 399900,
+    pro_1m: 79900,
+    pro_3m: 219900,
+    pro_6m: 399900,
+    pro_12m: 747000,
+};
 
 @Injectable()
 export class UsersService {
@@ -32,13 +55,16 @@ export class UsersService {
         private mentorSessionsRepository: Repository<MentorSession>,
         @InjectRepository(UserGamification)
         private gamificationRepository: Repository<UserGamification>,
+        @InjectRepository(PlatformSettings)
+        private platformSettingsRepository: Repository<PlatformSettings>,
+        @InjectRepository(PendingUpgradeOrder)
+        private pendingUpgradeOrdersRepository: Repository<PendingUpgradeOrder>,
     ) { }
 
     async create(
         email: string,
         password: string,
         role?: string,
-        subscriptionPlan?: string,
         firstName?: string,
         lastName?: string,
         timezone?: string,
@@ -50,21 +76,13 @@ export class UsersService {
         }
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        let initialStatus = 'inactive';
-        let endDate: Date | null = null;
-
-        if (subscriptionPlan && subscriptionPlan !== 'free') {
-            initialStatus = 'active';
-            endDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
-        }
-
         const user = this.usersRepository.create({
             email: normalizedEmail,
             password: hashedPassword,
             role: role as any || 'student',
-            subscriptionPlan: subscriptionPlan || 'free',
-            subscriptionStatus: initialStatus,
-            subscriptionEndDate: endDate as Date,
+            subscriptionPlan: 'free',
+            subscriptionStatus: 'inactive',
+            subscriptionEndDate: null as any,
             firstName: firstName?.trim() || null,
             lastName: lastName?.trim() || null,
             timezone: timezone || null,
@@ -87,6 +105,7 @@ export class UsersService {
                 'subscriptionPlan',
                 'subscriptionStatus',
                 'subscriptionEndDate',
+                'sessionVersion',
                 'firstName',
                 'lastName',
                 'timezone',
@@ -136,6 +155,7 @@ export class UsersService {
                 'subscriptionPlan',
                 'subscriptionStatus',
                 'subscriptionEndDate',
+                'sessionVersion',
                 'firstName',
                 'lastName',
                 'timezone',
@@ -213,10 +233,6 @@ export class UsersService {
             user.password = await bcrypt.hash(updateUserDto.password, 12);
         }
 
-        if ((updateUserDto as any).role) {
-            user.role = (updateUserDto as any).role as any;
-        }
-
         if ((updateUserDto as any).timezone !== undefined) {
             user.timezone = (updateUserDto as any).timezone || null;
         }
@@ -264,12 +280,67 @@ export class UsersService {
         return this.usersRepository.save(user);
     }
 
+    async setRole(id: string, role: UserRole): Promise<User> {
+        const user = await this.findById(id);
+        user.role = role;
+        return this.usersRepository.save(user);
+    }
+
     async validatePassword(
         plainPassword: string,
         hashedPassword: string,
     ): Promise<boolean> {
         return bcrypt.compare(plainPassword, hashedPassword);
     }
+
+    async rotateSessionVersion(userId: string, loginIp?: string | null, loginUserAgent?: string | null): Promise<number> {
+        const trimmedIp = loginIp ? String(loginIp).slice(0, 64) : null;
+        const trimmedUserAgent = loginUserAgent ? String(loginUserAgent).slice(0, 512) : null;
+
+        await this.usersRepository
+            .createQueryBuilder()
+            .update(User)
+            .set({
+                sessionVersion: () => '"sessionVersion" + 1',
+                lastLoginAt: () => 'CURRENT_TIMESTAMP',
+                lastLoginIp: trimmedIp,
+                lastLoginUserAgent: trimmedUserAgent,
+            })
+            .where('id = :id', { id: userId })
+            .execute();
+
+        const user = await this.usersRepository.findOne({
+            where: { id: userId },
+            select: ['id', 'sessionVersion'],
+        });
+
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        return user.sessionVersion || 0;
+    }
+
+    async revokeAllSessions(userId: string): Promise<number> {
+        await this.usersRepository
+            .createQueryBuilder()
+            .update(User)
+            .set({ sessionVersion: () => '"sessionVersion" + 1' })
+            .where('id = :id', { id: userId })
+            .execute();
+
+        const user = await this.usersRepository.findOne({
+            where: { id: userId },
+            select: ['id', 'sessionVersion'],
+        });
+
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        return user.sessionVersion || 0;
+    }
+
     async getDashboardStats(userId: string) {
         const [dsaStats, sqlStats, interviewStats, projectStats, resume, mentorSessions, gamification] = await Promise.all([
             this.dsaSubmissionsRepository.find({
@@ -392,6 +463,42 @@ export class UsersService {
         };
     }
 
+    private parseUpgradePlan(plan: string) {
+        const normalizedPlan = String(plan || '').trim().toLowerCase();
+        const match = normalizedPlan.match(SUBSCRIPTION_PLAN_IDENTIFIER);
+        if (!match) {
+            throw new BadRequestException('Invalid subscription plan selected.');
+        }
+
+        const targetPlan = match[1] as 'standard' | 'pro';
+        const durationKey = match[2] as '1m' | '3m' | '6m' | '12m';
+        const durationDays = PLAN_DURATION_DAYS[durationKey];
+
+        return {
+            normalizedPlan,
+            targetPlan,
+            durationKey,
+            durationDays,
+        };
+    }
+
+    private normalizeConfigPriceInPaise(value: unknown): number | null {
+        const rupees = typeof value === 'number' ? value : Number(value);
+        if (!Number.isFinite(rupees) || rupees <= 0) {
+            return null;
+        }
+        return Math.round(rupees * 100);
+    }
+
+    private async resolvePlanPriceInPaise(plan: string): Promise<number> {
+        const parsed = this.parseUpgradePlan(plan);
+        const fallbackPrice = DEFAULT_SUBSCRIPTION_PRICES_IN_PAISE[parsed.normalizedPlan];
+        const settings = await this.platformSettingsRepository.findOne({ where: {} });
+        const configuredValue = settings?.subscriptionPrices?.[parsed.targetPlan]?.[parsed.durationKey];
+        const configuredPrice = this.normalizeConfigPriceInPaise(configuredValue);
+        return configuredPrice || fallbackPrice;
+    }
+
     async getUserCredits(userId: string) {
         const user = await this.findById(userId);
         const plan = user.subscriptionPlan || 'free';
@@ -430,68 +537,108 @@ export class UsersService {
         };
     }
 
-    async upgradeSubscription(id: string, plan: string, paymentId?: string): Promise<User> {
-        const user = await this.findById(id);
-
-        let targetPlan = 'free';
-        let durationDays = 0;
-
-        // Map frontend plan IDs to backend enum values and durations
-        if (plan.includes('standard')) {
-            targetPlan = 'standard';
-        } else if (plan.includes('pro')) {
-            targetPlan = 'pro';
+    async upgradeSubscription(id: string, plan: string, paymentId?: string, providerOrderId?: string): Promise<User> {
+        const parsedPlan = this.parseUpgradePlan(plan);
+        if (!paymentId || !providerOrderId) {
+            throw new BadRequestException('Verified payment details are required to upgrade subscription.');
         }
 
-        if (plan.includes('_12m')) durationDays = 365;
-        else if (plan.includes('_1m')) durationDays = 30;
-        else if (plan.includes('_3m')) durationDays = 90;
-        else if (plan.includes('_6m')) durationDays = 180;
-
-        if (targetPlan === 'free' || durationDays === 0) {
-            throw new BadRequestException('Invalid subscription plan selected.');
-        }
-
+        const expectedAmountInPaise = await this.resolvePlanPriceInPaise(parsedPlan.normalizedPlan);
         const now = new Date();
         const currentMs = now.getTime();
 
-        let newEndDateMs = currentMs + (durationDays * 24 * 60 * 60 * 1000);
+        return this.usersRepository.manager.transaction(async (manager) => {
+            const userRepository = manager.getRepository(User);
+            const pendingOrdersRepository = manager.getRepository(PendingUpgradeOrder);
 
-        // Check if user has an active, non-expired plan
-        if (
-            user.subscriptionStatus === 'active' &&
-            user.subscriptionPlan !== 'free' &&
-            user.subscriptionEndDate &&
-            user.subscriptionEndDate.getTime() > currentMs
-        ) {
-            if (user.subscriptionPlan === targetPlan) {
-                // Extending the same plan: just add time to the existing end date
-                newEndDateMs = user.subscriptionEndDate.getTime() + (durationDays * 24 * 60 * 60 * 1000);
-            } else {
-                // Switching to a different plan: pause the current active plan
-                const remainingMs = user.subscriptionEndDate.getTime() - currentMs;
-                const remainingDays = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
-
-                // If they already have a paused plan, we should decide what to do. 
-                // For now, we overwrite the paused plan with the Active plan being paused.
-                user.pausedSubscriptionPlan = user.subscriptionPlan;
-                user.pausedSubscriptionRemainingDays = remainingDays;
-
-                // End date is calculated from NOW since it's a new tier
+            const user = await userRepository.findOne({ where: { id } });
+            if (!user) {
+                throw new NotFoundException(`User with ID ${id} not found`);
             }
-        }
 
-        user.subscriptionPlan = targetPlan;
-        user.subscriptionStatus = 'active';
-        user.subscriptionEndDate = new Date(newEndDateMs);
-        user.usageLastReset = now;
+            const pendingOrder = await pendingOrdersRepository.findOne({
+                where: {
+                    userId: id,
+                    providerOrderId,
+                },
+            });
 
-        // Optionally store the paymentId in a transactions table or notes if needed.
+            if (!pendingOrder) {
+                throw new BadRequestException('Pending payment order not found. Please create a new order.');
+            }
 
-        return this.usersRepository.save(user);
+            if (pendingOrder.plan !== parsedPlan.normalizedPlan) {
+                throw new BadRequestException('Plan mismatch for payment order.');
+            }
+
+            if (pendingOrder.userId !== user.id) {
+                throw new BadRequestException('Payment order does not belong to this user.');
+            }
+
+            if (pendingOrder.amountInPaise !== expectedAmountInPaise) {
+                throw new BadRequestException('Price mismatch for payment order.');
+            }
+
+            if (pendingOrder.status === 'paid') {
+                const samePayment = pendingOrder.paymentId === paymentId;
+                if (samePayment) {
+                    return user;
+                }
+                throw new BadRequestException('This order has already been used.');
+            }
+
+            if (pendingOrder.expiresAt && pendingOrder.expiresAt.getTime() <= currentMs) {
+                pendingOrder.status = 'expired';
+                await pendingOrdersRepository.save(pendingOrder);
+                throw new BadRequestException('This payment order has expired. Please create a new order.');
+            }
+
+            pendingOrder.status = 'paid';
+            pendingOrder.paymentId = paymentId;
+            pendingOrder.paidAt = now;
+            await pendingOrdersRepository.save(pendingOrder);
+
+            let newEndDateMs = currentMs + (parsedPlan.durationDays * 24 * 60 * 60 * 1000);
+
+            const currentPlanTier: 'free' | 'standard' | 'pro' =
+                user.subscriptionPlan === 'pro' ||
+                    user.subscriptionPlan === 'we2_max' ||
+                    user.subscriptionPlan.includes('pro')
+                    ? 'pro'
+                    : user.subscriptionPlan === 'standard' ||
+                        user.subscriptionPlan === 'placement_plus' ||
+                        user.subscriptionPlan.includes('standard')
+                        ? 'standard'
+                        : 'free';
+
+            if (
+                user.subscriptionStatus === 'active' &&
+                currentPlanTier !== 'free' &&
+                user.subscriptionEndDate &&
+                user.subscriptionEndDate.getTime() > currentMs
+            ) {
+                if (currentPlanTier === parsedPlan.targetPlan) {
+                    newEndDateMs = user.subscriptionEndDate.getTime() + (parsedPlan.durationDays * 24 * 60 * 60 * 1000);
+                } else {
+                    const remainingMs = user.subscriptionEndDate.getTime() - currentMs;
+                    const remainingDays = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
+                    user.pausedSubscriptionPlan = user.subscriptionPlan;
+                    user.pausedSubscriptionRemainingDays = remainingDays;
+                }
+            }
+
+            user.subscriptionPlan = parsedPlan.targetPlan;
+            user.subscriptionStatus = 'active';
+            user.subscriptionEndDate = new Date(newEndDateMs);
+            user.usageLastReset = now;
+
+            return userRepository.save(user);
+        });
     }
 
-    async createUpgradeOrder(userId: string, amountInPaise: number) {
+    async createUpgradeOrder(userId: string, plan: string) {
+        const parsedPlan = this.parseUpgradePlan(plan);
+        const amountInPaise = await this.resolvePlanPriceInPaise(parsedPlan.normalizedPlan);
         const keyId = process.env.RAZORPAY_KEY_ID;
         const keySecret = process.env.RAZORPAY_KEY_SECRET;
         if (!keyId || !keySecret) {
@@ -511,10 +658,31 @@ export class UsersService {
                 },
             },
         );
+
+        const orderId: string | undefined = response?.data?.id;
+        if (!orderId) {
+            throw new BadRequestException('Unable to create payment order.');
+        }
+
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+        const pendingOrder = this.pendingUpgradeOrdersRepository.create({
+            userId,
+            plan: parsedPlan.normalizedPlan,
+            amountInPaise,
+            currency: 'INR',
+            providerOrderId: orderId,
+            paymentId: null,
+            status: 'created',
+            expiresAt,
+            paidAt: null,
+        });
+        await this.pendingUpgradeOrdersRepository.save(pendingOrder);
+
         return {
-            orderId: response.data.id,
-            amount: response.data.amount,
-            currency: response.data.currency,
+            orderId,
+            amount: amountInPaise,
+            currency: 'INR',
+            plan: parsedPlan.normalizedPlan,
         };
     }
 }

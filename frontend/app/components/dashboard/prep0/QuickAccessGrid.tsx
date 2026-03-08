@@ -8,7 +8,7 @@ import Link from 'next/link';
 const modules = [
     {
         title: 'DSA Training',
-        desc: 'IDE & 5000+ Problems',
+        desc: 'Sharpen logic until hard problems feel familiar.',
         icon: Database,
         href: '/dashboard/dsa',
         color: 'text-blue-400',
@@ -17,7 +17,7 @@ const modules = [
     },
     {
         title: 'SQL Training',
-        desc: 'SQL50 Practice Set',
+        desc: 'Turn data into clear, confident decisions.',
         icon: Code2,
         href: '/dashboard/sql',
         color: 'text-sky-500',
@@ -26,7 +26,7 @@ const modules = [
     },
     {
         title: 'Mock Interview',
-        desc: 'AI Voice Simulation',
+        desc: 'Practice under pressure, speak with conviction.',
         icon: Video,
         href: '/dashboard/interview',
         color: 'text-purple-400',
@@ -35,14 +35,14 @@ const modules = [
     },
     {
         title: 'Resume Builder',
-        desc: 'ATS Optimization',
+        desc: 'Craft a story recruiters remember instantly.',
         icon: FileText,
         href: '/dashboard/resume',
         border: 'border-emerald-500/20'
     },
     {
         title: 'Project Labs',
-        desc: 'Real-world simulations',
+        desc: 'Build proof of skill that speaks for itself.',
         icon: Layers,
         href: '/dashboard/projects',
         color: 'text-orange-400',

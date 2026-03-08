@@ -28,6 +28,7 @@ import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedFile, UseInterceptors } from '@nestjs/common';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('dsa-training')
 @Controller('dsa-training')
@@ -35,7 +36,7 @@ export class DsaTrainingController {
     constructor(private readonly dsaService: DsaService) { }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('task')
     @ApiOperation({ summary: 'Get next SRS training task' })
     @ApiQuery({ name: 'platform', enum: DsaPlatform, required: false })
@@ -45,7 +46,7 @@ export class DsaTrainingController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('task/:problemId')
     @ApiOperation({ summary: 'Get training task for a selected problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
@@ -55,7 +56,7 @@ export class DsaTrainingController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Post('submit')
     @ApiOperation({ summary: 'Submit training solution (Gemini graded)' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
@@ -67,7 +68,7 @@ export class DsaTrainingController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('learn/:problemId')
     @ApiOperation({ summary: 'Get learning insight for problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
@@ -77,7 +78,7 @@ export class DsaTrainingController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Post('learn/:problemId')
     @ApiOperation({ summary: 'Generate learning insight for problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })
@@ -87,7 +88,7 @@ export class DsaTrainingController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('submissions')
     @ApiOperation({ summary: 'Get my training submissions' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
@@ -96,7 +97,7 @@ export class DsaTrainingController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('submissions/:problemId')
     @ApiOperation({ summary: 'Get my training submissions for a problem' })
     @ApiParam({ name: 'problemId', description: 'Problem UUID' })

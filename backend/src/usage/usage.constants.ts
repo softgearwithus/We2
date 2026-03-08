@@ -16,3 +16,5 @@ export const USAGE_SECTION_KEYS = {
 } as const;
 
 export type UsageSectionKey = typeof USAGE_SECTION_KEYS[keyof typeof USAGE_SECTION_KEYS];
+
+export const USAGE_RESET_INTERVAL_DAYS = 30;

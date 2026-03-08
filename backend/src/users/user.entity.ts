@@ -74,6 +74,18 @@ export class User {
     @Column({ nullable: true })
     twoFactorSecret?: string;
 
+    @Column({ type: 'int', default: 0 })
+    sessionVersion: number;
+
+    @Column({ type: 'timestamp', nullable: true })
+    lastLoginAt?: Date | null;
+
+    @Column({ type: 'varchar', length: 64, nullable: true })
+    lastLoginIp?: string | null;
+
+    @Column({ type: 'varchar', length: 512, nullable: true })
+    lastLoginUserAgent?: string | null;
+
     @Column({ type: 'varchar', length: 80, nullable: true })
     timezone?: string | null;
 

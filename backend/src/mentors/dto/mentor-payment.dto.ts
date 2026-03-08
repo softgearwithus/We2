@@ -8,7 +8,7 @@ export class CreateMentorPaymentOrderDto {
 
     @ApiProperty()
     @IsInt()
-    @Min(1)
+    @Min(15)
     durationMinutes: number;
 }
 

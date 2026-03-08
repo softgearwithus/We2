@@ -29,6 +29,7 @@ import { Roles, Public } from '../auth/decorators/auth.decorators';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UserRole } from '../users/user.entity';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('project-labs')
 @Controller('project-labs')
@@ -51,7 +52,7 @@ export class ProjectLabsController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('me/progress')
     @ApiOperation({ summary: 'Get my project lab progress' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.PROJECT_LABS)
@@ -60,7 +61,7 @@ export class ProjectLabsController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('me/submissions')
     @ApiOperation({ summary: 'Get my project lab submissions' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.PROJECT_LABS)
@@ -69,7 +70,7 @@ export class ProjectLabsController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Post(':id/submissions')
     @ApiOperation({ summary: 'Submit a project lab' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.PROJECT_LABS)

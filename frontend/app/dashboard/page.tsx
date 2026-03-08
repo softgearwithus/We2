@@ -75,7 +75,7 @@ export default function DashboardPage() {
                         </h1>
                         <p className="text-slate-500 mt-2 text-lg font-medium flex items-center gap-2">
                             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)] animate-pulse"></span>
-                            Placement Season Live • <span className="text-slate-900 font-bold">78 Days</span> remaining
+                            Placement season is your stage. Build daily, perform boldly.
                         </p>
                     </div>
 
@@ -105,7 +105,7 @@ export default function DashboardPage() {
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                                 <span className="w-1 h-6 bg-brand-orange rounded-full"></span>
-                                Start Learning
+                                Start Your Momentum
                             </h3>
                             <QuickAccessGrid />
                         </div>

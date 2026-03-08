@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto, RequestOtpDto, VerifyOtpDto } from './dto/auth.dto';
@@ -73,8 +73,18 @@ export class AuthController {
     })
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
     @ApiResponse({ status: 429, description: 'Too many requests' })
-    async login(@Body() loginDto: LoginDto) {
-        return this.authService.login(loginDto);
+    async login(@Body() loginDto: LoginDto, @Request() req: any) {
+        return this.authService.login(loginDto, req);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    @Post('logout')
+    @ApiOperation({ summary: 'Logout and revoke current session' })
+    @ApiResponse({ status: 200, description: 'Session revoked successfully' })
+    async logout(@Request() req: any) {
+        return this.authService.logout(req.user.id);
     }
 
     @ApiBearerAuth('JWT-auth')

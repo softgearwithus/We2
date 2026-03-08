@@ -7,6 +7,7 @@ import { SaveResumeDto } from './dto/save-resume.dto';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('resume')
 @Controller('resume')
@@ -14,7 +15,7 @@ export class ResumeController {
     constructor(private readonly resumeService: ResumeService) { }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Get('me')
     @ApiOperation({ summary: 'Get my saved resume' })
     @ApiResponse({ status: 200, description: 'Resume data retrieved' })
@@ -24,7 +25,7 @@ export class ResumeController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Post('me')
     @ApiOperation({ summary: 'Save my resume' })
     @ApiResponse({ status: 200, description: 'Resume saved' })
@@ -34,7 +35,7 @@ export class ResumeController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, UsageGuard)
     @Post('analyze')
     @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
     @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)

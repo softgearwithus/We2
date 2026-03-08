@@ -31,6 +31,7 @@ import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UserRole } from '../users/user.entity';
 import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
+import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('interviews')
 @ApiBearerAuth('JWT-auth')
@@ -120,6 +121,7 @@ export class InterviewsController {
         return this.interviewsService.update(id, req.user.id, dto);
     }
     @Post('audio/generate')
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
     @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async generateAudioDrill(@Body() body: { topic: string }, @Request() req: any) {
         return this.interviewsService.generateAudioDrill(req.user.id, body.topic);
@@ -127,6 +129,7 @@ export class InterviewsController {
 
     @Post('communication/generate')
     @ApiOperation({ summary: 'Generate 4-part communication drill' })
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
     @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async generateCommunicationDrill(@Body() body: { topic?: string }, @Request() req: any) {
         return this.interviewsService.generateCommunicationDrill(req.user.id, body.topic);
@@ -134,6 +137,7 @@ export class InterviewsController {
 
     @Post('audio/analyze')
     @ApiOperation({ summary: 'Analyze audio drill submission' })
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
     @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async analyzeAudioDrill(@Body() body: { audio: string; context: string }, @Request() req: any) {
         return this.interviewsService.analyzeAudioDrill(req.user.id, body.audio, body.context);
@@ -141,6 +145,7 @@ export class InterviewsController {
     @Post('communication/submit')
     @UseInterceptors(AnyFilesInterceptor(), UploadLimitInterceptor)
     @ApiOperation({ summary: 'Submit communication drill audio' })
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
     @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async submitCommunicationDrill(
         @UploadedFiles() files: Array<Express.Multer.File>,
@@ -164,18 +169,23 @@ export class InterviewsController {
 
     @Post('audio/deduct-credit')
     @ApiOperation({ summary: 'Deduct an audio drill credit' })
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async deductAudioCredit(@Request() req: any) {
         return this.interviewsService.deductCredit(req.user.id, 'audio');
     }
 
     @Post('video/deduct-credit')
     @ApiOperation({ summary: 'Deduct a video interview credit' })
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
+    @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_VIDEO)
     async deductVideoCredit(@Request() req: any) {
         return this.interviewsService.deductCredit(req.user.id, 'video');
     }
 
     @Post('communication/cancel')
     @ApiOperation({ summary: 'Cancel communication drill and deduct credit' })
+    @UseGuards(JwtAuthGuard, RolesGuard, UsageGuard)
     @RequireSectionUsage(USAGE_SECTION_KEYS.INTERVIEW_AUDIO)
     async cancelCommunicationDrill(@Body() body: { theme?: string }, @Request() req: any) {
         return this.interviewsService.cancelCommunicationSession(req.user.id, body.theme);

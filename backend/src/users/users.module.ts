@@ -11,6 +11,8 @@ import { Resume } from '../resume/entities/resume.entity';
 import { MentorSession } from '../mentors/entities/mentor-session.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
 import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
+import { PlatformSettings } from '../admin-settings/entities/platform-settings.entity';
+import { PendingUpgradeOrder } from './entities/pending-upgrade-order.entity';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
       Resume,
       MentorSession,
       UserGamification,
+      PlatformSettings,
+      PendingUpgradeOrder,
     ]),
     forwardRef(() => AdminSettingsModule),
   ],

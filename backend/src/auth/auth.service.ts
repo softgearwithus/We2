@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { EmailOtpService } from './services/email-otp.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
     ) { }
 
     async register(registerDto: RegisterDto) {
-        const { email, password, role, subscriptionPlan, firstName, lastName, timezone } = registerDto;
+        const { email, password, role, firstName, lastName, timezone } = registerDto;
         if ((role || 'student') === 'student') {
             await this.emailOtpService.assertVerified(email);
         }
@@ -21,7 +22,6 @@ export class AuthService {
             email,
             password,
             role,
-            subscriptionPlan,
             firstName,
             lastName,
             timezone,
@@ -38,7 +38,7 @@ export class AuthService {
         };
     }
 
-    async login(loginDto: LoginDto) {
+    async login(loginDto: LoginDto, request?: Request) {
         const { email, password, role } = loginDto;
 
         const user = await this.usersService.findByEmail(email)
@@ -63,7 +63,18 @@ export class AuthService {
         if (role && user.role !== role) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const rawUserAgent = request?.headers?.['user-agent'];
+        const userAgent = Array.isArray(rawUserAgent)
+            ? rawUserAgent.join(' ')
+            : (rawUserAgent || null);
+
+        const sessionVersion = await this.usersService.rotateSessionVersion(
+            user.id,
+            request?.ip || null,
+            userAgent,
+        );
+
+        const payload = { sub: user.id, email: user.email, role: user.role, sv: sessionVersion };
 
         let accessToken: string;
         if (loginDto.rememberMe) {
@@ -103,7 +114,8 @@ export class AuthService {
             throw new UnauthorizedException('Account disabled');
         }
 
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const sessionVersion = await this.usersService.rotateSessionVersion(user.id);
+        const payload = { sub: user.id, email: user.email, role: user.role, sv: sessionVersion };
         const accessToken = await this.jwtService.signAsync(payload);
 
         return {
@@ -123,5 +135,10 @@ export class AuthService {
                 lastName: user.lastName,
             },
         };
+    }
+
+    async logout(userId: string) {
+        await this.usersService.revokeAllSessions(userId);
+        return { success: true };
     }
 }

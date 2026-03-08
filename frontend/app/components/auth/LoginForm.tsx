@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import AuthNotice from './AuthNotice';
 
 interface LoginFormProps {
     role: 'student' | 'college' | 'industry' | 'admin';
@@ -41,19 +42,20 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 }),
             });
 
-            // Mock bypass if backend is unavailable or credentials fail
+            const isDev = process.env.NODE_ENV !== 'production';
+            // Mock bypass only in development
             if (!response.ok) {
-                if (role === 'admin' && data.email === 'admin@emble.in' && data.password === 'admin') {
+                if (isDev && role === 'admin' && data.email === 'admin@emble.in' && data.password === 'admin') {
                     login('MOCK_TOKEN_ADMIN', { email: 'admin@emble.in', role: 'super_admin', name: 'Super Admin' } as any, rememberMe, 'admin');
                     router.push(redirectPath);
                     return;
                 }
-                if (role === 'college' && data.email === 'college@emble.in' && data.password === 'college') {
+                if (isDev && role === 'college' && data.email === 'college@emble.in' && data.password === 'college') {
                     login('MOCK_TOKEN_COLLEGE', { email: 'college@emble.in', role: 'college_admin', name: 'Mock College' } as any, rememberMe, 'user');
                     router.push(redirectPath);
                     return;
                 }
-                if (role === 'industry' && data.email === 'company@emble.in' && data.password === 'company') {
+                if (isDev && role === 'industry' && data.email === 'company@emble.in' && data.password === 'company') {
                     login('MOCK_TOKEN_INDUSTRY', { email: 'company@emble.in', role: 'company_admin', name: 'Mock Company' } as any, rememberMe, 'user');
                     router.push(redirectPath);
                     return;
@@ -101,6 +103,8 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 <h2 className={`text-3xl font-bold ${role === 'admin' ? 'font-mono text-green-600' : 'text-slate-900'}`}>Sign in</h2>
                 <p className="text-slate-500 mt-2">Access your {role} dashboard</p>
             </div>
+
+            <AuthNotice />
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
