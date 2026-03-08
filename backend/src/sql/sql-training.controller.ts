@@ -21,6 +21,7 @@ import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { CreateSqlProblemDto } from './dto/create-sql-problem.dto';
 import { AdminSqlProblemQueryDto } from './dto/admin-sql-problem-query.dto';
+import { SqlPlatform } from './entities/sql-problem.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
@@ -37,9 +38,9 @@ export class SqlTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('task')
     @ApiOperation({ summary: 'Get next SQL training task' })
-    @ApiQuery({ name: 'platform', required: false, enum: ['leetcode', 'hackerrank'] })
+    @ApiQuery({ name: 'platform', required: false, enum: SqlPlatform })
     @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
-    async getTrainingTask(@Request() req: any, @Query('platform') platform?: string) {
+    async getTrainingTask(@Request() req: any, @Query('platform') platform?: SqlPlatform) {
         return this.sqlService.getNextTrainingTask(req.user.id, platform);
     }
 
