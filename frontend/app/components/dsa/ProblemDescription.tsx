@@ -1,6 +1,12 @@
 import { Problem } from '@/app/lib/problems';
 import { ThumbsUp, ThumbsDown, Star, Share2 } from 'lucide-react';
 
+const platformLabel = (platform?: string | null) => {
+    if (platform === 'hackerrank') return 'HackerRank';
+    if (platform === 'codeforces') return 'Codeforces';
+    return 'LeetCode';
+};
+
 export default function ProblemDescription({ problem }: { problem: Problem }) {
     const getDifficultyColor = (diff: string) => {
         switch (diff) {
@@ -10,6 +16,8 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
             default: return 'text-slate-500';
         }
     };
+
+    const externalUrl = problem.externalUrl || problem.leetcodeUrl;
 
     return (
         <div className="h-full flex flex-col bg-white">
@@ -28,7 +36,7 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4 mb-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${getDifficultyColor(problem.difficulty)}`}>
                         {problem.difficulty}
                     </span>
@@ -42,15 +50,28 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
                     </div>
                 </div>
 
-                {problem.leetcodeUrl && (
+                {externalUrl && (
                     <a
-                        href={problem.leetcodeUrl}
+                        href={externalUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 mb-6"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 mb-4"
                     >
-                        Solve on LeetCode <span className="material-symbols-outlined text-sm">open_in_new</span>
+                        Solve on {platformLabel(problem.platform)} <span className="material-symbols-outlined text-sm">open_in_new</span>
                     </a>
+                )}
+
+                {problem.companies && problem.companies.length > 0 && (
+                    <div className="mb-6">
+                        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-2">Asked by</div>
+                        <div className="flex flex-wrap gap-1.5">
+                            {problem.companies.map((c) => (
+                                <span key={c} className="text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                                    {c}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 )}
 
                 <div
@@ -85,3 +106,4 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
         </div>
     );
 }
+

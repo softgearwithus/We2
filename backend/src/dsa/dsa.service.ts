@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DsaProblem, Difficulty } from './entities/dsa-problem.entity';
+import { DsaProblem, Difficulty, DsaPlatform } from './entities/dsa-problem.entity';
 import { Submission, SubmissionSource, SubmissionStatus } from './entities/submission.entity';
 import { DsaUserState } from './entities/dsa-user-state.entity';
 import { DsaTrainingSession } from './entities/dsa-training-session.entity';
@@ -14,6 +14,8 @@ import { CreateDsaProblemDto } from './dto/create-dsa-problem.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { AdminDsaProblemQueryDto, ProblemOrder } from './dto/admin-dsa-problem-query.dto';
 import { LeetCodeService } from './services/leetcode.service';
+import { HackerRankService } from './services/hackerrank.service';
+import { CodeForcesService } from './services/codeforces.service';
 
 @Injectable()
 export class DsaService {
@@ -29,6 +31,8 @@ export class DsaService {
         @InjectRepository(DsaProblemInsight)
         private problemInsightsRepository: Repository<DsaProblemInsight>,
         private leetCodeService: LeetCodeService,
+        private hackerRankService: HackerRankService,
+        private codeForcesService: CodeForcesService,
         private configService: ConfigService,
     ) { }
 
@@ -45,8 +49,10 @@ export class DsaService {
         return nextReviewAt <= end;
     }
 
-    private async ensureUserStates(userId: string) {
-        const totalProblems = await this.problemsRepository.count({ where: { isActive: true } });
+    private async ensureUserStates(userId: string, platform?: DsaPlatform) {
+        const whereClause: Record<string, any> = { isActive: true };
+        if (platform) whereClause.platform = platform;
+        const totalProblems = await this.problemsRepository.count({ where: whereClause });
         if (totalProblems === 0) {
             return;
         }
@@ -56,7 +62,7 @@ export class DsaService {
             select: ['problemId'],
         });
         const existingIds = new Set(existingStates.map((state) => state.problemId));
-        const problems = await this.problemsRepository.find({ where: { isActive: true } });
+        const problems = await this.problemsRepository.find({ where: whereClause });
 
         const newStates = problems
             .filter((problem) => !existingIds.has(problem.id))
@@ -122,29 +128,82 @@ export class DsaService {
     }
 
     private async ensureProblemTemplates(problem: DsaProblem): Promise<DsaProblem> {
-        if ((!problem.languageMeta || !problem.codeTemplates) && problem.leetcodeSlug) {
-            try {
-                const editorData = await this.leetCodeService.fetchEditorData(problem.leetcodeSlug);
-                problem.languageMeta = editorData.languageMeta;
-                problem.codeTemplates = editorData.templates;
-                await this.problemsRepository.save(problem);
-            } catch (error) {
-                // ignore LeetCode fetch failures
-            }
-        }
+        const platform = problem.platform || DsaPlatform.LEETCODE;
 
-        if ((this.isEmptyContent(problem.description) || !problem.constraints?.length) && problem.leetcodeSlug) {
-            try {
-                const questionData = await this.leetCodeService.fetchQuestionContent(problem.leetcodeSlug);
-                if (this.isEmptyContent(problem.description) && questionData.content) {
-                    problem.description = questionData.content;
+        if (platform === DsaPlatform.LEETCODE) {
+            if ((!problem.languageMeta || !problem.codeTemplates) && problem.leetcodeSlug) {
+                try {
+                    const editorData = await this.leetCodeService.fetchEditorData(problem.leetcodeSlug);
+                    problem.languageMeta = editorData.languageMeta;
+                    problem.codeTemplates = editorData.templates;
+                    await this.problemsRepository.save(problem);
+                } catch (error) {
+                    // ignore LeetCode fetch failures
                 }
-                if ((!problem.constraints || problem.constraints.length === 0) && questionData.constraints.length > 0) {
-                    problem.constraints = questionData.constraints;
+            }
+
+            if ((this.isEmptyContent(problem.description) || !problem.constraints?.length) && problem.leetcodeSlug) {
+                try {
+                    const questionData = await this.leetCodeService.fetchQuestionContent(problem.leetcodeSlug);
+                    if (this.isEmptyContent(problem.description) && questionData.content) {
+                        problem.description = questionData.content;
+                    }
+                    if ((!problem.constraints || problem.constraints.length === 0) && questionData.constraints.length > 0) {
+                        problem.constraints = questionData.constraints;
+                    }
+                    await this.problemsRepository.save(problem);
+                } catch (error) {
+                    // ignore LeetCode fetch failures
                 }
-                await this.problemsRepository.save(problem);
-            } catch (error) {
-                // ignore LeetCode fetch failures
+            }
+        } else if (platform === DsaPlatform.HACKERRANK) {
+            const externalId = problem.externalId || problem.leetcodeSlug;
+            if (externalId && (this.isEmptyContent(problem.description) || !problem.languageMeta?.length)) {
+                try {
+                    const detail = await this.hackerRankService.fetchProblemDetail(externalId);
+                    if (detail) {
+                        if (this.isEmptyContent(problem.description)) {
+                            problem.description = detail.description;
+                        }
+                        if (!problem.languageMeta?.length) {
+                            problem.languageMeta = detail.languageMeta;
+                            problem.starterCode = detail.starterCode;
+                            problem.codeTemplates = detail.starterCode;
+                        }
+                        if (!problem.externalUrl) {
+                            problem.externalUrl = detail.externalUrl;
+                        }
+                        await this.problemsRepository.save(problem);
+                    }
+                } catch (error) {
+                    // ignore HackerRank fetch failures
+                }
+            }
+        } else if (platform === DsaPlatform.CODEFORCES) {
+            const externalId = problem.externalId;
+            if (externalId && (this.isEmptyContent(problem.description) || !problem.languageMeta?.length)) {
+                try {
+                    const detail = await this.codeForcesService.getProblemDetail(externalId);
+                    if (detail) {
+                        if (this.isEmptyContent(problem.description)) {
+                            problem.description = detail.description;
+                        }
+                        if (!problem.languageMeta?.length) {
+                            problem.languageMeta = detail.languageMeta;
+                            problem.starterCode = detail.starterCode;
+                            problem.codeTemplates = detail.starterCode;
+                        }
+                        if (!problem.externalUrl) {
+                            problem.externalUrl = detail.externalUrl;
+                        }
+                        if (!problem.companyTags?.length && detail.tags?.length) {
+                            problem.companyTags = detail.tags;
+                        }
+                        await this.problemsRepository.save(problem);
+                    }
+                } catch (error) {
+                    // ignore Codeforces fetch failures
+                }
             }
         }
 
@@ -160,11 +219,13 @@ export class DsaService {
     // ── Problem Management ────────────────────────────────
 
     async createProblem(dto: CreateDsaProblemDto): Promise<DsaProblem> {
+        const platform = dto.platform || DsaPlatform.LEETCODE;
         let languageMeta = dto.languageMeta || null;
         let codeTemplates = dto.codeTemplates || null;
-        const leetcodeSlug = dto.leetcodeSlug || dto.slug;
+        const leetcodeSlug = dto.leetcodeSlug || (platform === DsaPlatform.LEETCODE ? dto.slug : null);
+        const externalId = dto.externalId || leetcodeSlug;
 
-        if ((!languageMeta || !codeTemplates) && leetcodeSlug) {
+        if (platform === DsaPlatform.LEETCODE && (!languageMeta || !codeTemplates) && leetcodeSlug) {
             try {
                 const editorData = await this.leetCodeService.fetchEditorData(leetcodeSlug);
                 languageMeta = editorData.languageMeta;
@@ -174,10 +235,29 @@ export class DsaService {
             }
         }
 
+        let externalUrl = dto.externalUrl || null;
+        if (!externalUrl) {
+            if (platform === DsaPlatform.LEETCODE && leetcodeSlug) {
+                externalUrl = `https://leetcode.com/problems/${leetcodeSlug}/`;
+            } else if (platform === DsaPlatform.HACKERRANK && externalId) {
+                externalUrl = `https://www.hackerrank.com/challenges/${externalId}/problem`;
+            } else if (platform === DsaPlatform.CODEFORCES && externalId) {
+                const match = externalId.match(/^(\d+)([A-Z0-9]+)$/i);
+                if (match) {
+                    externalUrl = `https://codeforces.com/problemset/problem/${match[1]}/${match[2].toUpperCase()}`;
+                }
+            }
+        }
+
         const problem = this.problemsRepository.create({
             ...dto,
-            leetcodeSlug,
-            leetcodeUrl: dto.leetcodeUrl || (leetcodeSlug ? `https://leetcode.com/problems/${leetcodeSlug}/` : null),
+            platform,
+            leetcodeSlug: leetcodeSlug || null,
+            leetcodeUrl: platform === DsaPlatform.LEETCODE && leetcodeSlug
+                ? `https://leetcode.com/problems/${leetcodeSlug}/`
+                : (dto.leetcodeUrl || null),
+            externalId: externalId || null,
+            externalUrl,
             languageMeta,
             codeTemplates,
         });
@@ -202,6 +282,9 @@ export class DsaService {
                 search: `%${query.search}%`,
             });
         }
+        if ((query as any).platform) {
+            qb.andWhere('problem.platform = :platform', { platform: (query as any).platform });
+        }
 
         if (order === ProblemOrder.OLDEST) {
             qb.orderBy('problem.createdAt', 'ASC');
@@ -221,7 +304,7 @@ export class DsaService {
         };
     }
 
-    async getAllProblems(difficulty?: Difficulty): Promise<DsaProblem[]> {
+    async getAllProblems(difficulty?: Difficulty, platform?: DsaPlatform): Promise<DsaProblem[]> {
         const query = this.problemsRepository
             .createQueryBuilder('problem')
             .where('problem.isActive = :isActive', { isActive: true })
@@ -229,6 +312,9 @@ export class DsaService {
 
         if (difficulty) {
             query.andWhere('problem.difficulty = :difficulty', { difficulty });
+        }
+        if (platform) {
+            query.andWhere('problem.platform = :platform', { platform });
         }
 
         return query.getMany();
@@ -466,8 +552,8 @@ export class DsaService {
 
     // ── Training Flow ─────────────────────────────────────
 
-    async getNextTrainingTask(userId: string) {
-        await this.ensureUserStates(userId);
+    async getNextTrainingTask(userId: string, platform?: DsaPlatform) {
+        await this.ensureUserStates(userId, platform);
         const end = this.getReviewWindowEnd();
 
         const activeSession = await this.trainingSessionsRepository.findOne({ where: { userId } });
@@ -478,28 +564,39 @@ export class DsaService {
                 await this.trainingSessionsRepository.delete({ id: activeSession.id });
             } else {
                 let problem = await this.getProblemById(activeSession.problemId);
-                problem = await this.ensureProblemTemplates(problem);
-                const userState = await this.userStatesRepository.findOne({
-                    where: { userId, problemId: activeSession.problemId },
-                });
-                const canSubmit = !activeSession.submitted && this.isReviewDue(userState?.nextReviewAt ?? null, end);
-                return {
-                    sessionId: activeSession.id,
-                    problem,
-                    mastery: userState?.mastery ?? 0,
-                    nextReviewAt: userState?.nextReviewAt ?? null,
-                    canSubmit,
-                    mode: activeSession.mode || 'srs',
-                };
+                // If platform filter specified, skip sessions from other platforms
+                if (platform && problem.platform !== platform) {
+                    await this.trainingSessionsRepository.delete({ id: activeSession.id });
+                } else {
+                    problem = await this.ensureProblemTemplates(problem);
+                    const userState = await this.userStatesRepository.findOne({
+                        where: { userId, problemId: activeSession.problemId },
+                    });
+                    const canSubmit = !activeSession.submitted && this.isReviewDue(userState?.nextReviewAt ?? null, end);
+                    return {
+                        sessionId: activeSession.id,
+                        problem,
+                        mastery: userState?.mastery ?? 0,
+                        nextReviewAt: userState?.nextReviewAt ?? null,
+                        canSubmit,
+                        mode: activeSession.mode || 'srs',
+                    };
+                }
             }
         }
 
-        const dueState = await this.userStatesRepository
+        const dueStateQb = this.userStatesRepository
             .createQueryBuilder('state')
             .innerJoin(DsaProblem, 'problem', 'problem.id = state.problemId')
             .where('state.userId = :userId', { userId })
             .andWhere('(state.nextReviewAt IS NULL OR state.nextReviewAt <= :end)', { end })
-            .andWhere('problem.isActive = :isActive', { isActive: true })
+            .andWhere('problem.isActive = :isActive', { isActive: true });
+
+        if (platform) {
+            dueStateQb.andWhere('problem.platform = :platform', { platform });
+        }
+
+        const dueState = await dueStateQb
             .orderBy('state.mastery', 'ASC')
             .addOrderBy('state.nextReviewAt', 'ASC')
             .getOne();
@@ -667,7 +764,7 @@ ${problem.description}`;
         const skipped: string[] = [];
 
         for (const entry of dataset) {
-            const slug = (entry.leetcode_slug || entry.title || '')
+            const slug = (entry.leetcode_slug || entry.slug || entry.title || '')
                 .toLowerCase()
                 .trim()
                 .replace(/[^a-z0-9]+/g, '-')
@@ -685,22 +782,39 @@ ${problem.description}`;
                     : rawDifficulty === 'medium'
                         ? Difficulty.MEDIUM
                         : Difficulty.EASY;
+
+            const rawPlatform = String(entry.platform || 'leetcode').toLowerCase();
+            const platform =
+                rawPlatform === 'hackerrank'
+                    ? DsaPlatform.HACKERRANK
+                    : rawPlatform === 'codeforces'
+                        ? DsaPlatform.CODEFORCES
+                        : DsaPlatform.LEETCODE;
+
+            const leetcodeSlug = platform === DsaPlatform.LEETCODE ? (entry.leetcode_slug || slug) : null;
+            const externalId = entry.external_id || entry.externalId || leetcodeSlug || entry.slug || null;
+            const externalUrl = entry.external_url || entry.externalUrl || (leetcodeSlug ? `https://leetcode.com/problems/${leetcodeSlug}/` : null);
+
             const baseProblem = {
                 title: entry.title,
                 slug,
-                leetcodeSlug: entry.leetcode_slug || slug,
-                leetcodeUrl: entry.leetcode_slug ? `https://leetcode.com/problems/${entry.leetcode_slug}/` : null,
+                platform,
+                leetcodeSlug,
+                leetcodeUrl: leetcodeSlug ? `https://leetcode.com/problems/${leetcodeSlug}/` : null,
+                externalId,
+                externalUrl,
                 difficulty,
                 description: entry.description || '<p>Description not available yet.</p>',
                 examples: [],
                 constraints: [],
-                starterCode: {},
+                starterCode: entry.starterCode || {},
                 codeTemplates: null,
                 languageMeta: null,
                 testCases: [],
-                categories: entry.patterns || [],
+                categories: entry.patterns || entry.categories || [],
                 hints: [],
                 solution: null,
+                companyTags: entry.company_tags || entry.companyTags || [],
                 isActive: true,
             } as Partial<DsaProblem>;
 

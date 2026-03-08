@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEnum, IsArray, IsOptional, IsInt } from 'class-validator';
-import { Difficulty, ProblemCategory } from '../entities/dsa-problem.entity';
+import { Difficulty, DsaPlatform, ProblemCategory } from '../entities/dsa-problem.entity';
 
 export class CreateDsaProblemDto {
     @ApiProperty({ example: 'Two Sum' })
@@ -11,7 +11,12 @@ export class CreateDsaProblemDto {
     @IsString()
     slug: string;
 
-    @ApiProperty({ required: false, example: 'two-sum' })
+    @ApiProperty({ enum: DsaPlatform, default: DsaPlatform.LEETCODE, required: false })
+    @IsOptional()
+    @IsEnum(DsaPlatform)
+    platform?: DsaPlatform;
+
+    @ApiProperty({ required: false, example: 'two-sum', description: 'LeetCode slug (LeetCode only)' })
     @IsOptional()
     @IsString()
     leetcodeSlug?: string;
@@ -20,6 +25,16 @@ export class CreateDsaProblemDto {
     @IsOptional()
     @IsString()
     leetcodeUrl?: string;
+
+    @ApiProperty({ required: false, example: 'two-sum', description: 'External platform ID (slug for HR/CF, etc.)' })
+    @IsOptional()
+    @IsString()
+    externalId?: string;
+
+    @ApiProperty({ required: false, example: 'https://www.hackerrank.com/challenges/two-sum/problem' })
+    @IsOptional()
+    @IsString()
+    externalUrl?: string;
 
     @ApiProperty({ enum: Difficulty, example: Difficulty.EASY })
     @IsEnum(Difficulty)
@@ -70,6 +85,11 @@ export class CreateDsaProblemDto {
     @IsOptional()
     @IsArray()
     categories?: ProblemCategory[];
+
+    @ApiProperty({ required: false, example: ['Google', 'Amazon'] })
+    @IsOptional()
+    @IsArray()
+    companyTags?: string[];
 
     @ApiProperty({ required: false })
     @IsOptional()

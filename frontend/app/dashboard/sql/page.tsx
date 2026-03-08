@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Panel, Group, Separator } from 'react-resizable-panels';
-import { ArrowRight, Clock, RefreshCcw, Info, Sparkles, ArrowLeft, ListFilter, GraduationCap, Copy, Maximize2, Minimize2 } from 'lucide-react';
+import { ArrowRight, Clock, RefreshCcw, Info, Sparkles, ArrowLeft, ListFilter, GraduationCap, Copy, Maximize2, Minimize2, ChevronRight, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
@@ -22,6 +22,66 @@ import {
     SqlTrainingTask,
 } from '@/app/lib/sql-training';
 
+type SqlPlatform = 'leetcode' | 'hackerrank';
+
+const SQL_PLATFORMS: { id: SqlPlatform; label: string; description: string }[] = [
+    {
+        id: 'leetcode',
+        label: 'LeetCode',
+        description: 'Industry-standard SQL interview problems covering window functions, joins, aggregations, and more.',
+    },
+    {
+        id: 'hackerrank',
+        label: 'HackerRank',
+        description: 'Widely used in company screening rounds. Covers a broad range of SQL challenges across difficulty tiers.',
+    },
+];
+
+const platformLabel = (platform?: string | null) => {
+    if (platform === 'hackerrank') return 'HackerRank';
+    return 'LeetCode';
+};
+
+function PlatformPicker({ onSelect }: { onSelect: (p: SqlPlatform) => void }) {
+    return (
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6 py-12">
+            <div className="w-full max-w-2xl">
+                <div className="mb-8 text-center">
+                    <h1 className="text-2xl font-extrabold text-slate-900">Choose a Platform</h1>
+                    <p className="text-sm text-slate-500 mt-2">
+                        Your training session will use the <span className="font-semibold text-indigo-600">adaptive SRS algorithm</span> to surface
+                        questions you need to review most — regardless of platform.
+                    </p>
+                </div>
+
+                <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-5 py-4 mb-8 text-xs text-indigo-800 leading-relaxed">
+                    <div className="font-bold mb-1">How it works</div>
+                    Write your SQL solution in the editor and submit for AI review. Your mastery score updates automatically,
+                    and the algorithm schedules the next review based on how well you performed.
+                    There is no Run button by design — this mirrors the real interview environment.
+                    A link to the original problem is always shown so you can maintain your streak on the source platform.
+                </div>
+
+                <div className="grid gap-4">
+                    {SQL_PLATFORMS.map((p) => (
+                        <button
+                            key={p.id}
+                            onClick={() => onSelect(p.id)}
+                            className="w-full text-left bg-white border border-slate-200 rounded-xl px-5 py-4 hover:border-indigo-400 hover:shadow-sm transition-all group flex items-center justify-between gap-4"
+                        >
+                            <div>
+                                <div className="font-bold text-slate-900 text-sm">{p.label}</div>
+                                <div className="text-xs text-slate-500 mt-1 leading-relaxed">{p.description}</div>
+                            </div>
+                            <ChevronRight size={18} className="text-slate-300 group-hover:text-indigo-500 shrink-0 transition-colors" />
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const Editor = dynamic(
     () => import('@monaco-editor/react').then((mod) => mod.Editor),
     { ssr: false, loading: () => <div className="h-full w-full flex items-center justify-center bg-slate-50 text-slate-400">Loading Editor...</div> }
@@ -31,9 +91,10 @@ type Theme = 'light' | 'vs-dark';
 type MaximizedSection = 'description' | 'editor' | 'submissions' | 'learn' | null;
 
 export default function SqlTrainingPage() {
+    const [platform, setPlatform] = useState<SqlPlatform | null>(null);
     const [task, setTask] = useState<SqlTrainingTask | null>(null);
     const [taskMessage, setTaskMessage] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [language, setLanguage] = useState('sql');
     const [code, setCode] = useState('');
     const [submitResult, setSubmitResult] = useState<SqlTrainingSubmitResult | null>(null);
@@ -99,13 +160,35 @@ export default function SqlTrainingPage() {
         };
     }, [problem]);
 
-    const loadTask = async () => {
+    // Read platform from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem('sql_platform') as SqlPlatform | null;
+        if (stored && ['leetcode', 'hackerrank'].includes(stored)) {
+            setPlatform(stored);
+        }
+    }, []);
+
+    const handleSelectPlatform = (p: SqlPlatform) => {
+        localStorage.setItem('sql_platform', p);
+        setPlatform(p);
+    };
+
+    const handleChangePlatform = () => {
+        localStorage.removeItem('sql_platform');
+        setTask(null);
+        setTaskMessage(null);
+        setPlatform(null);
+    };
+
+    const loadTask = async (selectedPlatform?: SqlPlatform) => {
+        const p = selectedPlatform ?? platform;
+        if (!p) return;
         setSubmitResult(null);
         try {
             setLoading(true);
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken() || '';
-            const data = await fetchSqlTrainingTask(token);
+            const data = await fetchSqlTrainingTask(token, p);
             if ('message' in data) {
                 setTaskMessage(data.message);
                 setTask(null);
@@ -130,8 +213,8 @@ export default function SqlTrainingPage() {
     };
 
     useEffect(() => {
-        loadTask();
-    }, []);
+        if (platform) loadTask(platform);
+    }, [platform]);
 
     useEffect(() => {
         if (!problem) return;
@@ -258,6 +341,10 @@ export default function SqlTrainingPage() {
         };
     }, [task]);
 
+    if (!platform) {
+        return <PlatformPicker onSelect={handleSelectPlatform} />;
+    }
+
     if (loading) {
         return <div className="min-h-screen flex items-center justify-center text-slate-500">Loading SQL training task...</div>;
     }
@@ -269,7 +356,13 @@ export default function SqlTrainingPage() {
                 <div className="text-sm text-slate-500">{taskMessage || 'You are all caught up for now.'}</div>
                 <div className="flex items-center gap-3">
                     <button
-                        onClick={loadTask}
+                        onClick={handleChangePlatform}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                    >
+                        <X size={16} /> Change Platform
+                    </button>
+                    <button
+                        onClick={() => loadTask()}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100"
                     >
                         <RefreshCcw size={16} /> Refresh
@@ -299,6 +392,12 @@ export default function SqlTrainingPage() {
                     )}
                 </div>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleChangePlatform}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+                    >
+                        <X size={11} /> {platformLabel(platform)}
+                    </button>
                     <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
                         <Sparkles size={12} /> Mastery {metadata?.mastery ?? 0}
                     </div>
@@ -386,16 +485,16 @@ export default function SqlTrainingPage() {
                                                     {maximizedSection === 'editor' ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
                                                     {maximizedSection === 'editor' ? 'Restore' : 'Maximize'}
                                                 </button>
-                                                {problem?.leetcodeUrl && (
-                                                    <a
-                                                        href={problem.leetcodeUrl}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
-                                                    >
-                                                        Solve on LeetCode <span className="material-symbols-outlined text-sm">open_in_new</span>
-                                                    </a>
-                                                )}
+                                                {(problem?.externalUrl || problem?.leetcodeUrl) && (
+                                                     <a
+                                                         href={problem.externalUrl || problem.leetcodeUrl}
+                                                         target="_blank"
+                                                         rel="noreferrer"
+                                                         className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                                                     >
+                                                         Solve on {platformLabel(problem.platform || platform)} <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                                     </a>
+                                                 )}
                                                 <select
                                                     value={language}
                                                     onChange={(e) => setLanguage(e.target.value)}

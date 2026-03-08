@@ -6,7 +6,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { SqlProblem, SqlDifficulty } from './entities/sql-problem.entity';
+import { SqlProblem, SqlDifficulty, SqlPlatform } from './entities/sql-problem.entity';
 import { SqlSubmission, SqlSubmissionSource, SqlSubmissionStatus } from './entities/sql-submission.entity';
 import { SqlUserState } from './entities/sql-user-state.entity';
 import { SqlTrainingSession } from './entities/sql-training-session.entity';
@@ -15,6 +15,7 @@ import { CreateSqlProblemDto } from './dto/create-sql-problem.dto';
 import { CreateSqlSubmissionDto } from './dto/create-sql-submission.dto';
 import { AdminSqlProblemQueryDto, SqlProblemOrder } from './dto/admin-sql-problem-query.dto';
 import { LeetCodeService } from '../dsa/services/leetcode.service';
+import { HackerRankService } from '../dsa/services/hackerrank.service';
 
 @Injectable()
 export class SqlService {
@@ -30,6 +31,7 @@ export class SqlService {
         @InjectRepository(SqlProblemInsight)
         private problemInsightsRepository: Repository<SqlProblemInsight>,
         private leetCodeService: LeetCodeService,
+        private hackerRankService: HackerRankService,
         private configService: ConfigService,
     ) { }
 
@@ -55,8 +57,11 @@ export class SqlService {
         return next;
     }
 
-    private async ensureUserStates(userId: string) {
-        const totalProblems = await this.problemsRepository.count({ where: { isActive: true } });
+    private async ensureUserStates(userId: string, platform?: SqlPlatform) {
+        const whereClause: Record<string, any> = { isActive: true };
+        if (platform) whereClause.platform = platform;
+
+        const totalProblems = await this.problemsRepository.count({ where: whereClause });
         if (totalProblems === 0) {
             return;
         }
@@ -66,7 +71,7 @@ export class SqlService {
             select: ['problemId'],
         });
         const existingIds = new Set(existingStates.map((state) => state.problemId));
-        const problems = await this.problemsRepository.find({ where: { isActive: true } });
+        const problems = await this.problemsRepository.find({ where: whereClause });
 
         const newStates = problems
             .filter((problem) => !existingIds.has(problem.id))
@@ -93,29 +98,58 @@ export class SqlService {
     }
 
     private async ensureProblemTemplates(problem: SqlProblem): Promise<SqlProblem> {
-        if ((!problem.languageMeta || !problem.codeTemplates) && problem.leetcodeSlug) {
-            try {
-                const editorData = await this.leetCodeService.fetchEditorData(problem.leetcodeSlug);
-                problem.languageMeta = editorData.languageMeta;
-                problem.codeTemplates = editorData.templates;
-                await this.problemsRepository.save(problem);
-            } catch (error) {
-                // ignore LeetCode fetch failures
-            }
-        }
+        const platform = problem.platform || SqlPlatform.LEETCODE;
 
-        if ((this.isEmptyContent(problem.description) || !problem.constraints?.length) && problem.leetcodeSlug) {
-            try {
-                const questionData = await this.leetCodeService.fetchQuestionContent(problem.leetcodeSlug);
-                if (this.isEmptyContent(problem.description) && questionData.content) {
-                    problem.description = questionData.content;
+        if (platform === SqlPlatform.LEETCODE) {
+            const slug = problem.leetcodeSlug || problem.externalId;
+            if ((!problem.languageMeta || !problem.codeTemplates) && slug) {
+                try {
+                    const editorData = await this.leetCodeService.fetchEditorData(slug);
+                    problem.languageMeta = editorData.languageMeta;
+                    problem.codeTemplates = editorData.templates;
+                    await this.problemsRepository.save(problem);
+                } catch (error) {
+                    // ignore LeetCode fetch failures
                 }
-                if ((!problem.constraints || problem.constraints.length === 0) && questionData.constraints.length > 0) {
-                    problem.constraints = questionData.constraints;
+            }
+
+            if ((this.isEmptyContent(problem.description) || !problem.constraints?.length) && slug) {
+                try {
+                    const questionData = await this.leetCodeService.fetchQuestionContent(slug);
+                    if (this.isEmptyContent(problem.description) && questionData.content) {
+                        problem.description = questionData.content;
+                    }
+                    if ((!problem.constraints || problem.constraints.length === 0) && questionData.constraints.length > 0) {
+                        problem.constraints = questionData.constraints;
+                    }
+                    await this.problemsRepository.save(problem);
+                } catch (error) {
+                    // ignore LeetCode fetch failures
                 }
-                await this.problemsRepository.save(problem);
-            } catch (error) {
-                // ignore LeetCode fetch failures
+            }
+        } else if (platform === SqlPlatform.HACKERRANK) {
+            const slug = problem.externalId || problem.leetcodeSlug;
+            if (slug && (this.isEmptyContent(problem.description) || !problem.languageMeta?.length)) {
+                try {
+                    const detail = await this.hackerRankService.fetchProblemDetail(slug);
+                    if (detail) {
+                        if (this.isEmptyContent(problem.description) && detail.description) {
+                            problem.description = detail.description;
+                        }
+                        if (!problem.languageMeta?.length && detail.languageMeta.length) {
+                            problem.languageMeta = detail.languageMeta;
+                        }
+                        if (!problem.codeTemplates || Object.keys(problem.codeTemplates).length === 0) {
+                            problem.codeTemplates = detail.starterCode;
+                        }
+                        if (!problem.externalUrl) {
+                            problem.externalUrl = detail.externalUrl;
+                        }
+                        await this.problemsRepository.save(problem);
+                    }
+                } catch (error) {
+                    // ignore HackerRank fetch failures
+                }
             }
         }
 
@@ -161,11 +195,22 @@ export class SqlService {
     // ── Problem Management ────────────────────────────────
 
     async createProblem(dto: CreateSqlProblemDto): Promise<SqlProblem> {
+        const platform = dto.platform || SqlPlatform.LEETCODE;
         let languageMeta = dto.languageMeta || null;
         let codeTemplates = dto.codeTemplates || null;
-        const leetcodeSlug = dto.leetcodeSlug || dto.slug;
+        const leetcodeSlug = dto.leetcodeSlug || (platform === SqlPlatform.LEETCODE ? dto.slug : null);
 
-        if ((!languageMeta || !codeTemplates) && leetcodeSlug) {
+        // Derive externalId and externalUrl per platform
+        let externalId = dto.externalId || null;
+        let externalUrl = dto.externalUrl || null;
+        if (platform === SqlPlatform.LEETCODE) {
+            externalId = externalId || leetcodeSlug;
+            externalUrl = externalUrl || (leetcodeSlug ? `https://leetcode.com/problems/${leetcodeSlug}/` : null);
+        } else if (platform === SqlPlatform.HACKERRANK) {
+            externalUrl = externalUrl || (externalId ? `https://www.hackerrank.com/challenges/${externalId}/problem` : null);
+        }
+
+        if (platform === SqlPlatform.LEETCODE && (!languageMeta || !codeTemplates) && leetcodeSlug) {
             try {
                 const editorData = await this.leetCodeService.fetchEditorData(leetcodeSlug);
                 languageMeta = editorData.languageMeta;
@@ -177,6 +222,9 @@ export class SqlService {
 
         const problem = this.problemsRepository.create({
             ...dto,
+            platform,
+            externalId,
+            externalUrl,
             leetcodeSlug,
             leetcodeUrl: dto.leetcodeUrl || (leetcodeSlug ? `https://leetcode.com/problems/${leetcodeSlug}/` : null),
             languageMeta,
@@ -194,6 +242,9 @@ export class SqlService {
 
         if (query.difficulty) {
             qb.andWhere('problem.difficulty = :difficulty', { difficulty: query.difficulty });
+        }
+        if (query.platform) {
+            qb.andWhere('problem.platform = :platform', { platform: query.platform });
         }
         if (query.category) {
             qb.andWhere(':category = ANY(problem.categories)', { category: query.category });
@@ -222,7 +273,7 @@ export class SqlService {
         };
     }
 
-    async getAllProblems(difficulty?: SqlDifficulty): Promise<SqlProblem[]> {
+    async getAllProblems(difficulty?: SqlDifficulty, platform?: SqlPlatform): Promise<SqlProblem[]> {
         const query = this.problemsRepository
             .createQueryBuilder('problem')
             .where('problem.isActive = :isActive', { isActive: true })
@@ -230,6 +281,9 @@ export class SqlService {
 
         if (difficulty) {
             query.andWhere('problem.difficulty = :difficulty', { difficulty });
+        }
+        if (platform) {
+            query.andWhere('problem.platform = :platform', { platform });
         }
 
         return query.getMany();
@@ -307,8 +361,8 @@ export class SqlService {
         };
     }
 
-    async getNextTrainingTask(userId: string) {
-        await this.ensureUserStates(userId);
+    async getNextTrainingTask(userId: string, platform?: SqlPlatform) {
+        await this.ensureUserStates(userId, platform);
         const end = this.getReviewWindowEnd();
 
         const activeSession = await this.trainingSessionsRepository.findOne({ where: { userId } });
@@ -319,31 +373,41 @@ export class SqlService {
                 await this.trainingSessionsRepository.delete({ id: activeSession.id });
             } else {
                 let problem = await this.getProblemById(activeSession.problemId);
-                problem = await this.ensureProblemTemplates(problem);
-                const userState = await this.userStatesRepository.findOne({
-                    where: { userId, problemId: activeSession.problemId },
-                });
-                const canSubmit = !activeSession.submitted && this.isReviewDue(userState?.nextReviewAt ?? null, end);
-                return {
-                    sessionId: activeSession.id,
-                    problem,
-                    mastery: userState?.mastery ?? 0,
-                    nextReviewAt: userState?.nextReviewAt ?? null,
-                    canSubmit,
-                    mode: activeSession.mode || 'srs',
-                };
+                // If platform filter is set and the active session problem is on a different platform, clear it
+                if (platform && problem.platform !== platform) {
+                    await this.trainingSessionsRepository.delete({ id: activeSession.id });
+                } else {
+                    problem = await this.ensureProblemTemplates(problem);
+                    const userState = await this.userStatesRepository.findOne({
+                        where: { userId, problemId: activeSession.problemId },
+                    });
+                    const canSubmit = !activeSession.submitted && this.isReviewDue(userState?.nextReviewAt ?? null, end);
+                    return {
+                        sessionId: activeSession.id,
+                        problem,
+                        mastery: userState?.mastery ?? 0,
+                        nextReviewAt: userState?.nextReviewAt ?? null,
+                        canSubmit,
+                        mode: activeSession.mode || 'srs',
+                    };
+                }
             }
         }
 
-        const dueState = await this.userStatesRepository
+        const dueStateQb = this.userStatesRepository
             .createQueryBuilder('state')
             .innerJoin(SqlProblem, 'problem', 'problem.id = state.problemId')
             .where('state.userId = :userId', { userId })
             .andWhere('(state.nextReviewAt IS NULL OR state.nextReviewAt <= :end)', { end })
             .andWhere('problem.isActive = :isActive', { isActive: true })
             .orderBy('state.mastery', 'ASC')
-            .addOrderBy('state.nextReviewAt', 'ASC')
-            .getOne();
+            .addOrderBy('state.nextReviewAt', 'ASC');
+
+        if (platform) {
+            dueStateQb.andWhere('problem.platform = :platform', { platform });
+        }
+
+        const dueState = await dueStateQb.getOne();
 
         if (!dueState) {
             return { message: 'No problems due right now. Check back later.' };
@@ -608,8 +672,14 @@ ${problem.description}`;
             const baseProblem = {
                 title: entry.title,
                 slug,
-                leetcodeSlug: entry.titleSlug || slug,
-                leetcodeUrl: entry.titleSlug ? `https://leetcode.com/problems/${entry.titleSlug}/` : null,
+                platform: (entry.platform as SqlPlatform) || SqlPlatform.LEETCODE,
+                externalId: entry.external_id || entry.titleSlug || slug,
+                externalUrl: entry.external_url || (entry.platform === SqlPlatform.HACKERRANK
+                    ? `https://www.hackerrank.com/challenges/${entry.external_id || slug}/problem`
+                    : null),
+                leetcodeSlug: entry.platform === SqlPlatform.HACKERRANK ? null : (entry.titleSlug || slug),
+                leetcodeUrl: entry.platform === SqlPlatform.HACKERRANK ? null : (entry.titleSlug ? `https://leetcode.com/problems/${entry.titleSlug}/` : null),
+                companyTags: Array.isArray(entry.company_tags) ? entry.company_tags : null,
                 difficulty,
                 description: '<p>Description not available yet.</p>',
                 examples: [],

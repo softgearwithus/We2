@@ -33,8 +33,9 @@ export type TrainingSubmitResult = {
     mastery: number;
 };
 
-export const fetchTrainingTask = async (token: string): Promise<TrainingTask | { message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/dsa-training/task`, {
+export const fetchTrainingTask = async (token: string, platform?: string): Promise<TrainingTask | { message: string }> => {
+    const params = platform ? `?platform=${platform}` : '';
+    const response = await fetch(`${API_BASE_URL}/dsa-training/task${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
         },

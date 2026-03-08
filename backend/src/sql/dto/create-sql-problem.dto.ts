@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEnum, IsArray, IsOptional } from 'class-validator';
-import { SqlDifficulty } from '../entities/sql-problem.entity';
+import { SqlDifficulty, SqlPlatform } from '../entities/sql-problem.entity';
 
 export class CreateSqlProblemDto {
     @ApiProperty({ example: 'Recyclable and Low Fat Products' })
@@ -10,6 +10,21 @@ export class CreateSqlProblemDto {
     @ApiProperty({ example: 'recyclable-and-low-fat-products' })
     @IsString()
     slug: string;
+
+    @ApiProperty({ enum: SqlPlatform, default: SqlPlatform.LEETCODE, required: false })
+    @IsOptional()
+    @IsEnum(SqlPlatform)
+    platform?: SqlPlatform;
+
+    @ApiProperty({ required: false, example: 'recyclable-and-low-fat-products' })
+    @IsOptional()
+    @IsString()
+    externalId?: string;
+
+    @ApiProperty({ required: false, example: 'https://www.hackerrank.com/challenges/abc/problem' })
+    @IsOptional()
+    @IsString()
+    externalUrl?: string;
 
     @ApiProperty({ required: false, example: 'recyclable-and-low-fat-products' })
     @IsOptional()
@@ -24,6 +39,11 @@ export class CreateSqlProblemDto {
     @ApiProperty({ enum: SqlDifficulty, example: SqlDifficulty.EASY })
     @IsEnum(SqlDifficulty)
     difficulty: SqlDifficulty;
+
+    @ApiProperty({ required: false, isArray: true, example: ['Google', 'Amazon'] })
+    @IsOptional()
+    @IsArray()
+    companyTags?: string[];
 
     @ApiProperty()
     @IsString()

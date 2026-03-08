@@ -14,6 +14,7 @@ export type DsaAdminProblem = {
     slug: string;
     difficulty: 'easy' | 'medium' | 'hard';
     categories?: string[];
+    platform?: string;
     createdAt: string;
     isActive: boolean;
 };
@@ -24,6 +25,7 @@ export type SqlAdminProblem = {
     slug: string;
     difficulty: 'easy' | 'medium' | 'hard';
     categories?: string[];
+    platform?: string;
     createdAt: string;
     isActive: boolean;
 };

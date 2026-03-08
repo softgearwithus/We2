@@ -14,6 +14,11 @@ export enum SqlDifficulty {
     HARD = 'hard',
 }
 
+export enum SqlPlatform {
+    LEETCODE = 'leetcode',
+    HACKERRANK = 'hackerrank',
+}
+
 @Entity('sql_problems')
 export class SqlProblem {
     @PrimaryGeneratedColumn('uuid')
@@ -25,14 +30,26 @@ export class SqlProblem {
     @Column({ type: 'varchar', unique: true })
     slug: string;
 
+    @Column({ type: 'varchar', length: 20, default: SqlPlatform.LEETCODE })
+    platform: SqlPlatform;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    externalId?: string | null;
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     leetcodeSlug?: string | null;
 
     @Column({ type: 'varchar', length: 512, nullable: true })
     leetcodeUrl?: string | null;
 
+    @Column({ type: 'varchar', length: 512, nullable: true })
+    externalUrl?: string | null;
+
     @Column({ type: 'varchar' })
     difficulty: SqlDifficulty;
+
+    @Column({ type: 'simple-json', nullable: true })
+    companyTags?: string[] | null;
 
     @Column({ type: 'text' })
     description: string;

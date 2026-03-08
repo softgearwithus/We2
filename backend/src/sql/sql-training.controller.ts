@@ -14,6 +14,7 @@ import {
     ApiOperation,
     ApiBearerAuth,
     ApiParam,
+    ApiQuery,
 } from '@nestjs/swagger';
 import { SqlService } from './sql.service';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
@@ -36,9 +37,10 @@ export class SqlTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('task')
     @ApiOperation({ summary: 'Get next SQL training task' })
+    @ApiQuery({ name: 'platform', required: false, enum: ['leetcode', 'hackerrank'] })
     @RequireSectionUsage(USAGE_SECTION_KEYS.SQL)
-    async getTrainingTask(@Request() req: any) {
-        return this.sqlService.getNextTrainingTask(req.user.id);
+    async getTrainingTask(@Request() req: any, @Query('platform') platform?: string) {
+        return this.sqlService.getNextTrainingTask(req.user.id, platform);
     }
 
     @ApiBearerAuth('JWT-auth')

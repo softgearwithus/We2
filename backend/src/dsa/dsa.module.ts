@@ -9,11 +9,13 @@ import { DsaUserState } from './entities/dsa-user-state.entity';
 import { DsaTrainingSession } from './entities/dsa-training-session.entity';
 import { DsaProblemInsight } from './entities/dsa-problem-insight.entity';
 import { LeetCodeService } from './services/leetcode.service';
+import { HackerRankService } from './services/hackerrank.service';
+import { CodeForcesService } from './services/codeforces.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([DsaProblem, Submission, DsaUserState, DsaTrainingSession, DsaProblemInsight])],
     controllers: [DsaController, DsaTrainingController],
-    providers: [DsaService, LeetCodeService],
-    exports: [DsaService],
+    providers: [DsaService, LeetCodeService, HackerRankService, CodeForcesService],
+    exports: [DsaService, HackerRankService, CodeForcesService],
 })
 export class DsaModule { }

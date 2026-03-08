@@ -10,6 +10,11 @@ import { fetchSqlTrainingTaskForProblem } from '@/app/lib/sql-training';
 import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
+const platformLabel = (platform?: string | null) => {
+    if (platform === 'hackerrank') return 'HackerRank';
+    return 'LeetCode';
+};
+
 export default function SqlAllProblemsPage() {
     const router = useRouter();
     const [problems, setProblems] = useState<SqlProblem[]>([]);
@@ -17,15 +22,22 @@ export default function SqlAllProblemsPage() {
     const [query, setQuery] = useState('');
     const [difficulty, setDifficulty] = useState<'all' | 'Easy' | 'Medium' | 'Hard'>('all');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [platform, setPlatform] = useState<string | null>(null);
 
     const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('sql');
 
     useEffect(() => {
+        const stored = typeof window !== 'undefined' ? localStorage.getItem('sql_platform') : null;
+        setPlatform(stored || 'leetcode');
+    }, []);
+
+    useEffect(() => {
+        if (!platform) return;
         const loadProblems = async () => {
             setLoading(true);
             try {
                 setErrorMessage(null);
-                const data = await fetchSqlProblems();
+                const data = await fetchSqlProblems(platform);
                 setProblems(data);
             } catch (error) {
                 setErrorMessage('Failed to load questions. Check your API server and try again.');
@@ -35,7 +47,7 @@ export default function SqlAllProblemsPage() {
             }
         };
         loadProblems();
-    }, []);
+    }, [platform]);
 
     const filtered = useMemo(() => {
         const normalized = query.trim().toLowerCase();
@@ -69,6 +81,11 @@ export default function SqlAllProblemsPage() {
                         </Link>
                         <span className="text-slate-300">/</span>
                         <span className="font-bold text-slate-700">All Questions</span>
+                        {platform && (
+                            <span className="ml-1 text-[10px] font-bold uppercase bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                                {platformLabel(platform)}
+                            </span>
+                        )}
                     </div>
                     <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
                         <ListFilter size={12} /> {problems.length} questions
@@ -128,8 +145,20 @@ export default function SqlAllProblemsPage() {
                                         <div>
                                             <div className="text-sm font-semibold text-slate-800">{problem.title}</div>
                                             <div className="mt-1 text-[11px] text-slate-500">{problem.id}</div>
+                                            {problem.companies && problem.companies.length > 0 && (
+                                                <div className="mt-2 flex flex-wrap gap-1">
+                                                    {problem.companies.slice(0, 5).map((c) => (
+                                                        <span key={c} className="text-[10px] font-medium bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                                                            {c}
+                                                        </span>
+                                                    ))}
+                                                    {problem.companies.length > 5 && (
+                                                        <span className="text-[10px] text-slate-400">+{problem.companies.length - 5}</span>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
-                                        <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-full ${
+                                        <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-full shrink-0 ${
                                             problem.difficulty === 'Easy'
                                                 ? 'bg-emerald-50 text-emerald-700'
                                                 : problem.difficulty === 'Medium'
@@ -151,3 +180,4 @@ export default function SqlAllProblemsPage() {
         </div>
     );
 }
+

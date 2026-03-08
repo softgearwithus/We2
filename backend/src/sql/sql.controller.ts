@@ -23,7 +23,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles, Public } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
-import { SqlDifficulty } from './entities/sql-problem.entity';
+import { SqlDifficulty, SqlPlatform } from './entities/sql-problem.entity';
 
 @ApiTags('sql')
 @Controller('sql')
@@ -45,9 +45,13 @@ export class SqlController {
     @Public()
     @ApiOperation({ summary: 'Get all SQL problems' })
     @ApiQuery({ name: 'difficulty', enum: SqlDifficulty, required: false })
+    @ApiQuery({ name: 'platform', enum: SqlPlatform, required: false })
     @ApiResponse({ status: 200, description: 'List of problems' })
-    async getAllProblems(@Query('difficulty') difficulty?: SqlDifficulty) {
-        return this.sqlService.getAllProblems(difficulty);
+    async getAllProblems(
+        @Query('difficulty') difficulty?: SqlDifficulty,
+        @Query('platform') platform?: SqlPlatform,
+    ) {
+        return this.sqlService.getAllProblems(difficulty, platform);
     }
 
     @Get('problems/slug/:slug')
