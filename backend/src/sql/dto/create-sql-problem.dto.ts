@@ -11,6 +11,21 @@ export class CreateSqlProblemDto {
     @IsString()
     slug: string;
 
+    @ApiProperty({ required: false, example: 'leetcode' })
+    @IsOptional()
+    @IsString()
+    platform?: string;
+
+    @ApiProperty({ required: false, example: '123' })
+    @IsOptional()
+    @IsString()
+    externalId?: string;
+
+    @ApiProperty({ required: false, example: 'https://leetcode.com/problems/recyclable-and-low-fat-products/' })
+    @IsOptional()
+    @IsString()
+    externalUrl?: string;
+
     @ApiProperty({ required: false, example: 'recyclable-and-low-fat-products' })
     @IsOptional()
     @IsString()
@@ -70,6 +85,11 @@ export class CreateSqlProblemDto {
     @IsOptional()
     @IsArray()
     categories?: string[];
+
+    @ApiProperty({ required: false, isArray: true })
+    @IsOptional()
+    @IsArray()
+    companyTags?: string[];
 
     @ApiProperty({ required: false })
     @IsOptional()

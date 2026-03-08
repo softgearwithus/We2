@@ -26,6 +26,15 @@ export class SqlProblem {
     slug: string;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
+    platform?: string | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    externalId?: string | null;
+
+    @Column({ type: 'varchar', length: 512, nullable: true })
+    externalUrl?: string | null;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
     leetcodeSlug?: string | null;
 
     @Column({ type: 'varchar', length: 512, nullable: true })
@@ -61,6 +70,9 @@ export class SqlProblem {
 
     @Column({ type: 'simple-json', nullable: true })
     categories: string[] | null;
+
+    @Column({ type: 'simple-json', nullable: true })
+    companyTags: string[] | null;
 
     @Column({ type: 'simple-json', nullable: true })
     hints: string[] | null;
