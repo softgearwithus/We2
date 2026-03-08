@@ -665,7 +665,7 @@ export default function SqlTrainingPage() {
                     </div>
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={loadTask}
+                            onClick={() => loadTask()}
                             className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
                         >
                             Next Task <ArrowRight size={14} />

@@ -35,6 +35,16 @@ export class SqlService {
         private configService: ConfigService,
     ) { }
 
+    private logError(context: string, error: unknown, extra?: Record<string, any>) {
+        const err = error as { message?: string; code?: string; detail?: string; stack?: string };
+        console.error(`[sql:${context}]`, {
+            message: err?.message,
+            code: err?.code,
+            detail: err?.detail,
+            ...extra,
+        });
+    }
+
     private getReviewWindowEnd(): Date {
         const end = new Date();
         end.setHours(23, 59, 59, 999);
@@ -263,7 +273,21 @@ export class SqlService {
 
         qb.skip((page - 1) * limit).take(limit);
 
-        const [items, total] = await qb.getManyAndCount();
+        let items: SqlProblem[] = [];
+        let total = 0;
+        try {
+            [items, total] = await qb.getManyAndCount();
+        } catch (error) {
+            this.logError('adminListProblems', error, {
+                difficulty: query.difficulty,
+                platform: query.platform,
+                category: query.category,
+                search: query.search,
+                page,
+                limit,
+            });
+            throw error;
+        }
         return {
             items,
             total,
@@ -362,7 +386,12 @@ export class SqlService {
     }
 
     async getNextTrainingTask(userId: string, platform?: SqlPlatform) {
-        await this.ensureUserStates(userId, platform);
+        try {
+            await this.ensureUserStates(userId, platform);
+        } catch (error) {
+            this.logError('ensureUserStates', error, { userId, platform });
+            throw error;
+        }
         const end = this.getReviewWindowEnd();
 
         const activeSession = await this.trainingSessionsRepository.findOne({ where: { userId } });
@@ -407,7 +436,13 @@ export class SqlService {
             dueStateQb.andWhere('problem.platform = :platform', { platform });
         }
 
-        const dueState = await dueStateQb.getOne();
+        let dueState: SqlUserState | null = null;
+        try {
+            dueState = await dueStateQb.getOne();
+        } catch (error) {
+            this.logError('getNextTrainingTask', error, { userId, platform });
+            throw error;
+        }
 
         if (!dueState) {
             return { message: 'No problems due right now. Check back later.' };
