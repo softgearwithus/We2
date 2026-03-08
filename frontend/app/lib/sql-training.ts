@@ -33,8 +33,9 @@ export type SqlTrainingSubmitResult = {
     mastery: number;
 };
 
-export const fetchSqlTrainingTask = async (token: string): Promise<SqlTrainingTask | { message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/sql-training/task`, {
+export const fetchSqlTrainingTask = async (token: string, platform?: string): Promise<SqlTrainingTask | { message: string }> => {
+    const params = platform ? `?platform=${platform}` : '';
+    const response = await fetch(`${API_BASE_URL}/sql-training/task${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
         },

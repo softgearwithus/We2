@@ -13,6 +13,13 @@ const DIFFICULTIES = [
     { value: 'hard', label: 'Hard' },
 ];
 
+const PLATFORMS = [
+    { value: '', label: 'All Platforms' },
+    { value: 'leetcode', label: 'LeetCode' },
+    { value: 'hackerrank', label: 'HackerRank' },
+    { value: 'codeforces', label: 'Codeforces' },
+];
+
 const CATEGORIES = [
     { value: '', label: 'All Categories' },
     { value: 'array', label: 'Array' },
@@ -37,6 +44,7 @@ export default function AdminDsaTrainingList() {
         difficulty: '',
         category: '',
         search: '',
+        platform: '',
         page: 1,
     });
 
@@ -75,6 +83,7 @@ export default function AdminDsaTrainingList() {
                 difficulty: filters.difficulty,
                 category: filters.category,
                 search: filters.search,
+                platform: filters.platform,
                 page: filters.page,
                 limit: 50,
             });
@@ -89,7 +98,7 @@ export default function AdminDsaTrainingList() {
     useEffect(() => {
         if (!token) return;
         loadData();
-    }, [filters.difficulty, filters.category, filters.search, filters.page]);
+    }, [filters.difficulty, filters.category, filters.search, filters.platform, filters.page]);
 
     return (
         <div className="max-w-6xl mx-auto space-y-8">
@@ -142,6 +151,15 @@ export default function AdminDsaTrainingList() {
                             ))}
                         </select>
                         <select
+                            value={filters.platform}
+                            onChange={(e) => setFilters((prev) => ({ ...prev, platform: e.target.value, page: 1 }))}
+                            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
+                        >
+                            {PLATFORMS.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                        <select
                             value={filters.category}
                             onChange={(e) => setFilters((prev) => ({ ...prev, category: e.target.value, page: 1 }))}
                             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
@@ -175,7 +193,14 @@ export default function AdminDsaTrainingList() {
                             <div key={problem.id} className="border border-slate-200 rounded-2xl p-5">
                                 <div className="flex items-center justify-between gap-4">
                                     <div>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{problem.difficulty}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{problem.difficulty}</p>
+                                            {problem.platform && (
+                                                <span className="text-[10px] font-bold uppercase bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                                                    {problem.platform}
+                                                </span>
+                                            )}
+                                        </div>
                                         <h3 className="text-base font-bold text-slate-900 mt-1">{problem.title}</h3>
                                         <p className="text-xs text-slate-500 mt-2">Slug: {problem.slug}</p>
                                     </div>

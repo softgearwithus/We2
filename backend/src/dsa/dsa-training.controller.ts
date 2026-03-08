@@ -14,8 +14,10 @@ import {
     ApiOperation,
     ApiBearerAuth,
     ApiParam,
+    ApiQuery,
 } from '@nestjs/swagger';
 import { DsaService } from './dsa.service';
+import { DsaPlatform } from './entities/dsa-problem.entity';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { CreateDsaProblemDto } from './dto/create-dsa-problem.dto';
@@ -36,9 +38,10 @@ export class DsaTrainingController {
     @UseGuards(JwtAuthGuard)
     @Get('task')
     @ApiOperation({ summary: 'Get next SRS training task' })
+    @ApiQuery({ name: 'platform', enum: DsaPlatform, required: false })
     @RequireSectionUsage(USAGE_SECTION_KEYS.DSA)
-    async getTrainingTask(@Request() req: any) {
-        return this.dsaService.getNextTrainingTask(req.user.id);
+    async getTrainingTask(@Request() req: any, @Query('platform') platform?: DsaPlatform) {
+        return this.dsaService.getNextTrainingTask(req.user.id, platform);
     }
 
     @ApiBearerAuth('JWT-auth')

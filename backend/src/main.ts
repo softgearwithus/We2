@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { PlatformGuard } from './admin-settings/guards/platform.guard';
 import { LastActiveInterceptor } from './admin-settings/interceptors/last-active.interceptor';
+import { DataSource } from 'typeorm';
 
 import compression from 'compression';
 import helmet from 'helmet';
@@ -12,6 +13,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const environment = process.env.NODE_ENV || 'development';
   const dbHost = process.env.PGHOST || process.env.DB_HOST || 'unknown';
+  const shouldRunMigrations =
+    environment === 'production'
+    && (process.env.RUN_MIGRATIONS_ON_BOOT || 'true').toLowerCase() === 'true';
   console.log(`[config] env=${environment} dbHost=${dbHost}`);
   const httpAdapter = app.getHttpAdapter();
   const instance = httpAdapter.getInstance();
@@ -88,6 +92,25 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  if (shouldRunMigrations) {
+    try {
+      const dataSource = app.get(DataSource);
+      if (dataSource.isInitialized) {
+        const hasPending = await dataSource.showMigrations();
+        if (hasPending) {
+          console.log('[db] Pending migrations detected. Applying...');
+          const applied = await dataSource.runMigrations({ transaction: 'all' });
+          console.log(`[db] Applied ${applied.length} migration(s).`);
+        } else {
+          console.log('[db] No pending migrations.');
+        }
+      }
+    } catch (error) {
+      console.error('[db] Migration run on boot failed:', error);
+      throw error;
+    }
+  }
 
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');

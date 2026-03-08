@@ -9,6 +9,7 @@ import { SqlUserState } from './entities/sql-user-state.entity';
 import { SqlTrainingSession } from './entities/sql-training-session.entity';
 import { SqlProblemInsight } from './entities/sql-problem-insight.entity';
 import { LeetCodeService } from '../dsa/services/leetcode.service';
+import { HackerRankService } from '../dsa/services/hackerrank.service';
 
 @Module({
     imports: [
@@ -21,7 +22,7 @@ import { LeetCodeService } from '../dsa/services/leetcode.service';
         ]),
     ],
     controllers: [SqlController, SqlTrainingController],
-    providers: [SqlService, LeetCodeService],
+    providers: [SqlService, LeetCodeService, HackerRankService],
     exports: [SqlService],
 })
 export class SqlModule { }

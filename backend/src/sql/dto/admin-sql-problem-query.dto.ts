@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { SqlDifficulty } from '../entities/sql-problem.entity';
+import { SqlDifficulty, SqlPlatform } from '../entities/sql-problem.entity';
 
 export enum SqlProblemOrder {
     LATEST = 'latest',
@@ -12,6 +12,11 @@ export class AdminSqlProblemQueryDto {
     @IsOptional()
     @IsEnum(SqlDifficulty)
     difficulty?: SqlDifficulty;
+
+    @ApiPropertyOptional({ enum: SqlPlatform })
+    @IsOptional()
+    @IsEnum(SqlPlatform)
+    platform?: SqlPlatform;
 
     @ApiPropertyOptional({ description: 'Category tag from SQL dataset' })
     @IsOptional()

@@ -27,6 +27,12 @@ export enum ProblemCategory {
     SEARCHING = 'searching',
 }
 
+export enum DsaPlatform {
+    LEETCODE = 'leetcode',
+    HACKERRANK = 'hackerrank',
+    CODEFORCES = 'codeforces',
+}
+
 @Entity('dsa_problems')
 export class DsaProblem {
     @PrimaryGeneratedColumn('uuid')
@@ -38,14 +44,26 @@ export class DsaProblem {
     @Column({ type: 'varchar', unique: true })
     slug: string;
 
+    @Column({ type: 'varchar', length: 20, default: DsaPlatform.LEETCODE })
+    platform: DsaPlatform;
+
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    externalId?: string | null; // LeetCode slug, HackerRank slug, or Codeforces problem id
+
     @Column({ type: 'varchar', length: 255, nullable: true })
     leetcodeSlug?: string | null;
 
     @Column({ type: 'varchar', length: 512, nullable: true })
     leetcodeUrl?: string | null;
 
+    @Column({ type: 'varchar', length: 512, nullable: true })
+    externalUrl?: string | null; // canonical URL for any platform
+
     @Column({ type: 'varchar' })
     difficulty: Difficulty;
+
+    @Column({ type: 'simple-json', nullable: true })
+    companyTags?: string[] | null;
 
     @Column({ type: 'text' })
     description: string; // HTML/Markdown

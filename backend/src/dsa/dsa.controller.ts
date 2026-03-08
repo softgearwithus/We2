@@ -24,7 +24,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles, Public } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
-import { Difficulty } from './entities/dsa-problem.entity';
+import { Difficulty, DsaPlatform } from './entities/dsa-problem.entity';
 
 @ApiTags('dsa')
 @Controller('dsa')
@@ -50,9 +50,13 @@ export class DsaController {
     @Public()
     @ApiOperation({ summary: 'Get all DSA problems' })
     @ApiQuery({ name: 'difficulty', enum: Difficulty, required: false })
+    @ApiQuery({ name: 'platform', enum: DsaPlatform, required: false })
     @ApiResponse({ status: 200, description: 'List of problems' })
-    async getAllProblems(@Query('difficulty') difficulty?: Difficulty) {
-        return this.dsaService.getAllProblems(difficulty);
+    async getAllProblems(
+        @Query('difficulty') difficulty?: Difficulty,
+        @Query('platform') platform?: DsaPlatform,
+    ) {
+        return this.dsaService.getAllProblems(difficulty, platform);
     }
 
     @Get('problems/slug/:slug')
