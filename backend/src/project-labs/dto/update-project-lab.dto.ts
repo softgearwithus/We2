@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsString, IsArray, IsOptional, IsEnum, IsBoolean, ValidateNested } from 'class-validator';
+import { IsString, IsArray, IsOptional, IsEnum, IsBoolean } from 'class-validator';
 import { ProjectComplexity } from '../entities/project-lab.entity';
 import type { ProjectLabDetails, ProjectLabReadme } from '../entities/project-lab.entity';
-import { ProjectLabTaskDto } from './project-lab-task.dto';
 
 export class UpdateProjectLabDto {
     @ApiProperty({ required: false, example: 'frontend' })
@@ -44,9 +42,7 @@ export class UpdateProjectLabDto {
     @ApiProperty({ required: false, type: [Object] })
     @IsOptional()
     @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => ProjectLabTaskDto)
-    tasks?: ProjectLabTaskDto[];
+    tasks?: Record<string, any>[];
 
     @ApiProperty({ required: false, type: Object })
     @IsOptional()
