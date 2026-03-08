@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { Difficulty, ProblemCategory } from '../entities/dsa-problem.entity';
+import { Difficulty, ProblemCategory, DsaPlatform } from '../entities/dsa-problem.entity';
 
 export enum ProblemOrder {
     LATEST = 'latest',
@@ -17,6 +17,11 @@ export class AdminDsaProblemQueryDto {
     @IsOptional()
     @IsEnum(ProblemCategory)
     category?: ProblemCategory;
+
+    @ApiPropertyOptional({ enum: DsaPlatform })
+    @IsOptional()
+    @IsEnum(DsaPlatform)
+    platform?: DsaPlatform;
 
     @ApiPropertyOptional({ description: 'Search by title or slug' })
     @IsOptional()
