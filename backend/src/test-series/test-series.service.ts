@@ -129,6 +129,7 @@ export class TestSeriesService {
             question.optionsJson = q.options || [];
             question.correctAnswer = q.correctAnswer !== undefined ? String(q.correctAnswer) : '';
             question.solutionText = q.solutionText || '';
+            question.passageContent = q.passageContent || undefined;
             if (q.imageUrl) question.imageUrl = q.imageUrl;
             question.marks = q.marks || 1;
             question.order = q.order || index;

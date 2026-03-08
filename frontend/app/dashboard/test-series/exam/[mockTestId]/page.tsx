@@ -11,6 +11,7 @@ import { fetchMockTestFull, submitMockTest, API_BASE } from '@/app/lib/test-seri
 import { getStoredToken } from '@/app/lib/auth-storage';
 import { initVimMode } from 'monaco-vim';
 import Editor from '@monaco-editor/react';
+import CalculatorWidget from '@/app/components/simulator/CalculatorWidget';
 
 type QuestionStatus = 'not_visited' | 'not_answered' | 'answered' | 'marked_review' | 'answered_marked_review';
 
@@ -38,6 +39,7 @@ export default function ExamSimulatorPage() {
     const [showMinimap, setShowMinimap] = useState(false);
     const [showLineNumbers, setShowLineNumbers] = useState(true);
     const [vimModeEnabled, setVimModeEnabled] = useState(false);
+    const [showCalculator, setShowCalculator] = useState(false);
 
     // IDE Refs
     const editorRef = useRef<any>(null);
@@ -451,6 +453,13 @@ export default function ExamSimulatorPage() {
                             <span className="text-base tracking-widest tabular-nums">{formatTime(timeLeftSeconds)}</span>
                         </div>
                     )}
+                    <button
+                        onClick={() => setShowCalculator(!showCalculator)}
+                        className={`flex items-center gap-2 px-4 py-1.5 font-bold rounded-lg transition border ${showCalculator ? 'bg-indigo-100 text-indigo-700 border-indigo-200 shadow-inner' : 'text-slate-600 hover:bg-slate-100 border-transparent hover:border-slate-200'}`}
+                        title="Toggle Calculator"
+                    >
+                        <Hash size={16} /> Calculator
+                    </button>
                     {isReviewMode ? (
                         <button
                             onClick={() => router.push(`/dashboard/test-series/analysis/${reviewId}`)}
@@ -468,6 +477,9 @@ export default function ExamSimulatorPage() {
                     )}
                 </div>
             </header>
+
+            {/* Draggable Calculator Widget */}
+            {showCalculator && <CalculatorWidget onClose={() => setShowCalculator(false)} />}
 
             {/* Section Tabs */}
             <div className="bg-[#E9ECEF] border-b border-[#ced4da] flex overflow-x-auto shrink-0 select-none hide-scrollbar">
@@ -496,235 +508,249 @@ export default function ExamSimulatorPage() {
                         <span>Marks for correct answer: <span className="text-emerald-600">{activeQuestion?.marks || 1}</span> | Negative Marks: <span className="text-rose-600">0</span></span>
                     </div>
 
-                    {/* Question Content */}
-                    <div className="flex-1 overflow-y-auto p-8 lg:p-12 text-base text-slate-800 leading-relaxed max-w-4xl">
-                        <div className="font-semibold text-lg mb-6 leading-relaxed text-slate-800 break-words" dangerouslySetInnerHTML={{ __html: activeQuestion?.questionText || '' }} />
-
-                        {activeQuestion?.imageUrl && (
-                            <div className="mb-8 relative inline-block">
-                                <img src={activeQuestion.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-2xl h-auto max-h-96 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
-                            </div>
-                        )}
-
-                        {activeQuestion?.questionType === 'SINGLE_CORRECT' && (
-                            <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
-                                {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
-                                    const isChecked = currentResponse === String(idx);
-                                    return (
-                                        <label
-                                            key={idx}
-                                            onClick={(e) => {
-                                                if (isReviewMode) { e.preventDefault(); return; }
-                                                setResponse(String(idx));
-                                            }}
-                                            className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
-                                        >
-                                            <div className="flex shrink-0 items-center justify-center border-2 border-slate-300 w-6 h-6 rounded-full bg-white relative">
-                                                {isChecked && <div className="w-3 h-3 bg-indigo-600 rounded-full" />}
-                                                {isReviewMode && activeQuestion?.correctAnswer === String(idx) && (
-                                                    <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
-                                                )}
-                                            </div>
-                                            <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
-                                        </label>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {activeQuestion?.questionType === 'MULTI_CORRECT' && (
-                            <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
-                                {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
-                                    const checkedIndices = currentResponse ? currentResponse.split(',') : [];
-                                    const isChecked = checkedIndices.includes(String(idx));
-                                    return (
-                                        <label
-                                            key={idx}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (isReviewMode) return;
-                                                let newArr = [...checkedIndices];
-                                                if (!isChecked) newArr.push(String(idx));
-                                                else newArr = newArr.filter(i => i !== String(idx));
-                                                setResponse(newArr.join(','));
-                                            }}
-                                            className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
-                                        >
-                                            <div className={`flex shrink-0 items-center justify-center border-2 w-6 h-6 rounded bg-white relative ${isChecked ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300'}`}>
-                                                {isChecked && <Check size={16} className="text-white absolute" strokeWidth={3} />}
-                                                {isReviewMode && (activeQuestion?.correctAnswer || '').split(',').includes(String(idx)) && (
-                                                    <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
-                                                )}
-                                            </div>
-                                            <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
-                                        </label>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {activeQuestion?.questionType === 'TEXT' && (
-                            <div className="mt-4">
-                                <textarea
-                                    className={`w-full h-48 p-4 border border-slate-300 rounded-xl outline-none resize-none font-mono text-sm leading-relaxed ${isReviewMode ? 'bg-slate-50 text-slate-600 cursor-not-allowed' : 'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}`}
-                                    placeholder="Write your answer here..."
-                                    value={currentResponse}
-                                    readOnly={isReviewMode}
-                                    onChange={(e) => setResponse(e.target.value)}
+                    {/* Split View Container for Passage vs Question */}
+                    <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
+                        {activeQuestion?.passageContent && (
+                            <div className="flex-1 overflow-y-auto p-8 lg:p-12 border-b md:border-b-0 md:border-r border-slate-200 bg-amber-50/30">
+                                <h3 className="font-bold text-sm text-slate-500 uppercase tracking-widest mb-4">Reading Passage</h3>
+                                <div
+                                    className="text-base text-slate-800 leading-relaxed font-serif prose prose-slate max-w-none"
+                                    dangerouslySetInnerHTML={{ __html: activeQuestion.passageContent }}
                                 />
                             </div>
                         )}
 
-                        {activeQuestion?.questionType === 'CODE' && (
-                            <div className="mt-4 flex flex-col h-[500px] border border-slate-300 rounded-xl overflow-hidden shadow-sm">
-                                {/* Premium Editor Toolbar */}
-                                <div className="h-10 border-b border-slate-200 bg-slate-50 flex items-center justify-between px-3 shrink-0">
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700 shadow-sm">
-                                            <Code2 size={14} className="text-indigo-600" /> Code
-                                        </div>
+                        <div className="flex-1 overflow-y-auto p-8 lg:p-12 text-base text-slate-800 leading-relaxed">
+                            <div className="max-w-4xl mx-auto">
+                                <div className="font-semibold text-lg mb-6 leading-relaxed text-slate-800 break-words" dangerouslySetInnerHTML={{ __html: activeQuestion?.questionText || '' }} />
+
+                                {activeQuestion?.imageUrl && (
+                                    <div className="mb-8 relative inline-block">
+                                        <img src={activeQuestion.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-2xl h-auto max-h-96 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center bg-white border border-slate-200 rounded-md shadow-sm mr-2">
-                                            <button
-                                                onClick={() => setShowMinimap(!showMinimap)}
-                                                className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showMinimap ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
-                                                title="Toggle Minimap"
-                                            >
-                                                <MapIcon size={12} />
-                                            </button>
-                                            <button
-                                                onClick={() => setShowLineNumbers(!showLineNumbers)}
-                                                className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showLineNumbers ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
-                                                title="Toggle Line Numbers"
-                                            >
-                                                <Hash size={12} />
-                                            </button>
-                                            <button
-                                                onClick={() => setVimModeEnabled(!vimModeEnabled)}
-                                                className={`p-1.5 text-slate-500 transition-colors ${vimModeEnabled ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
-                                                title={`Toggle VIM Mode ${vimModeEnabled ? '(On)' : '(Off)'}`}
-                                            >
-                                                <Keyboard size={12} />
-                                            </button>
-                                        </div>
-                                        <div className="flex items-center bg-white border border-slate-200 rounded-md shadow-sm mr-2">
-                                            <button
-                                                onClick={() => setFontSize(Math.max(10, fontSize - 1))}
-                                                className="p-1.5 hover:bg-slate-50 text-slate-500 border-r border-slate-100" title="Decrease Font"
-                                            >
-                                                <ZoomOut size={12} />
-                                            </button>
-                                            <span className="text-[10px] font-medium w-6 text-center text-slate-600">{fontSize}</span>
-                                            <button
-                                                onClick={() => setFontSize(Math.min(24, fontSize + 1))}
-                                                className="p-1.5 hover:bg-slate-50 text-slate-500 border-l border-slate-100" title="Increase Font"
-                                            >
-                                                <ZoomIn size={12} />
-                                            </button>
-                                        </div>
-                                        <button
-                                            onClick={() => setTheme(theme === 'light' ? 'vs-dark' : 'light')}
-                                            className="p-1.5 rounded-md hover:bg-slate-200 text-slate-500 transition-colors"
-                                            title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-                                        >
-                                            {theme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
-                                        </button>
-                                        <button
-                                            onClick={() => setResponse('')}
-                                            className="p-1.5 rounded-md hover:bg-slate-200 text-slate-500 transition-colors"
-                                            title="Clear Code"
-                                        >
-                                            <RotateCcw size={14} />
-                                        </button>
-                                        <div className="h-4 w-[1px] bg-slate-200 mx-1" />
-                                        <select
-                                            value={language}
-                                            onChange={(e) => setLanguage(e.target.value)}
-                                            className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
-                                        >
-                                            <option value="javascript">JavaScript</option>
-                                            <option value="python">Python</option>
-                                            <option value="cpp">C++</option>
-                                            <option value="java">Java</option>
-                                        </select>
+                                )}
+
+                                {activeQuestion?.questionType === 'SINGLE_CORRECT' && (
+                                    <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
+                                        {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
+                                            const isChecked = currentResponse === String(idx);
+                                            return (
+                                                <label
+                                                    key={idx}
+                                                    onClick={(e) => {
+                                                        if (isReviewMode) { e.preventDefault(); return; }
+                                                        setResponse(String(idx));
+                                                    }}
+                                                    className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
+                                                >
+                                                    <div className="flex shrink-0 items-center justify-center border-2 border-slate-300 w-6 h-6 rounded-full bg-white relative">
+                                                        {isChecked && <div className="w-3 h-3 bg-indigo-600 rounded-full" />}
+                                                        {isReviewMode && activeQuestion?.correctAnswer === String(idx) && (
+                                                            <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
+                                                        )}
+                                                    </div>
+                                                    <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
+                                                </label>
+                                            );
+                                        })}
                                     </div>
-                                </div>
-                                <div className="flex-1 overflow-hidden relative flex flex-col">
-                                    <div className="flex-1 relative">
-                                        <Editor
-                                            height="100%"
-                                            language={language}
+                                )}
+
+                                {activeQuestion?.questionType === 'MULTI_CORRECT' && (
+                                    <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
+                                        {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
+                                            const checkedIndices = currentResponse ? currentResponse.split(',') : [];
+                                            const isChecked = checkedIndices.includes(String(idx));
+                                            return (
+                                                <label
+                                                    key={idx}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (isReviewMode) return;
+                                                        let newArr = [...checkedIndices];
+                                                        if (!isChecked) newArr.push(String(idx));
+                                                        else newArr = newArr.filter(i => i !== String(idx));
+                                                        setResponse(newArr.join(','));
+                                                    }}
+                                                    className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
+                                                >
+                                                    <div className={`flex shrink-0 items-center justify-center border-2 w-6 h-6 rounded bg-white relative ${isChecked ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300'}`}>
+                                                        {isChecked && <Check size={16} className="text-white absolute" strokeWidth={3} />}
+                                                        {isReviewMode && (activeQuestion?.correctAnswer || '').split(',').includes(String(idx)) && (
+                                                            <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
+                                                        )}
+                                                    </div>
+                                                    <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {activeQuestion?.questionType === 'TEXT' && (
+                                    <div className="mt-4">
+                                        <textarea
+                                            className={`w-full h-48 p-4 border border-slate-300 rounded-xl outline-none resize-none font-mono text-sm leading-relaxed ${isReviewMode ? 'bg-slate-50 text-slate-600 cursor-not-allowed' : 'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                                            placeholder="Write your answer here..."
                                             value={currentResponse}
-                                            onChange={(value) => setResponse(value || '')}
-                                            onMount={handleEditorMount}
-                                            theme={theme}
-                                            options={{
-                                                readOnly: isReviewMode,
-                                                minimap: { enabled: showMinimap },
-                                                fontSize: fontSize,
-                                                lineNumbers: showLineNumbers ? 'on' : 'off',
-                                                scrollBeyondLastLine: false,
-                                                automaticLayout: true,
-                                                padding: { top: 16, bottom: 16 },
-                                                fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                                                fontLigatures: true,
-                                                cursorBlinking: "smooth",
-                                                smoothScrolling: true,
-                                                renderLineHighlight: 'all',
-                                            }}
+                                            readOnly={isReviewMode}
+                                            onChange={(e) => setResponse(e.target.value)}
                                         />
                                     </div>
-                                    <div
-                                        ref={vimStatusRef}
-                                        className={`border-t border-slate-200 bg-slate-100 text-xs px-2 py-0.5 font-mono text-slate-700 ${!vimModeEnabled ? 'hidden' : 'block'}`}
-                                        style={{ minHeight: '20px' }}
-                                    ></div>
-                                </div>
-                            </div>
-                        )}
-                        {isReviewMode && activeResultResponse && (
-                            <div className="mt-8 pt-6 border-t border-slate-200">
-                                {activeResultResponse.aiFeedback && (
-                                    <div className="mb-4 bg-blue-50/50 p-5 rounded-xl border border-blue-100 text-sm">
-                                        <h4 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                            AI Evaluation Feedback
-                                        </h4>
-                                        <div className="text-blue-800 leading-relaxed font-medium">
-                                            {activeResultResponse.aiFeedback}
-                                        </div>
-                                    </div>
                                 )}
-                                {activeQuestion?.solutionText && (
-                                    <div className="bg-emerald-50/50 p-5 rounded-xl border border-emerald-100 text-sm">
-                                        <h4 className="font-bold text-emerald-900 mb-2 flex items-center gap-2">
-                                            Detailed Solution
-                                        </h4>
-                                        <div className="text-emerald-800 leading-relaxed font-medium">
-                                            {activeQuestion.solutionText}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
 
-                    {/* Action Footer */}
-                    {!isReviewMode && (
-                        <div className="border-t border-slate-200 bg-slate-50 h-16 shrink-0 px-6 flex items-center justify-between">
-                            <div className="flex gap-3">
-                                <button onClick={handleMarkForReviewAndNext} className="bg-white border border-slate-300 text-slate-700 font-bold px-5 py-2 rounded shadow-sm hover:bg-slate-100 transition active:scale-[0.98]">
-                                    Mark for Review & Next
-                                </button>
-                                <button onClick={handleClearResponse} className="bg-white border border-slate-300 text-slate-700 font-bold px-5 py-2 rounded shadow-sm hover:bg-slate-100 transition active:scale-[0.98]">
-                                    Clear Response
-                                </button>
+                                {activeQuestion?.questionType === 'CODE' && (
+                                    <div className="mt-4 flex flex-col h-[500px] border border-slate-300 rounded-xl overflow-hidden shadow-sm">
+                                        {/* Premium Editor Toolbar */}
+                                        <div className="h-10 border-b border-slate-200 bg-slate-50 flex items-center justify-between px-3 shrink-0">
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700 shadow-sm">
+                                                    <Code2 size={14} className="text-indigo-600" /> Code
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center bg-white border border-slate-200 rounded-md shadow-sm mr-2">
+                                                    <button
+                                                        onClick={() => setShowMinimap(!showMinimap)}
+                                                        className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showMinimap ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                        title="Toggle Minimap"
+                                                    >
+                                                        <MapIcon size={12} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setShowLineNumbers(!showLineNumbers)}
+                                                        className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showLineNumbers ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                        title="Toggle Line Numbers"
+                                                    >
+                                                        <Hash size={12} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setVimModeEnabled(!vimModeEnabled)}
+                                                        className={`p-1.5 text-slate-500 transition-colors ${vimModeEnabled ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                        title={`Toggle VIM Mode ${vimModeEnabled ? '(On)' : '(Off)'}`}
+                                                    >
+                                                        <Keyboard size={12} />
+                                                    </button>
+                                                </div>
+                                                <div className="flex items-center bg-white border border-slate-200 rounded-md shadow-sm mr-2">
+                                                    <button
+                                                        onClick={() => setFontSize(Math.max(10, fontSize - 1))}
+                                                        className="p-1.5 hover:bg-slate-50 text-slate-500 border-r border-slate-100" title="Decrease Font"
+                                                    >
+                                                        <ZoomOut size={12} />
+                                                    </button>
+                                                    <span className="text-[10px] font-medium w-6 text-center text-slate-600">{fontSize}</span>
+                                                    <button
+                                                        onClick={() => setFontSize(Math.min(24, fontSize + 1))}
+                                                        className="p-1.5 hover:bg-slate-50 text-slate-500 border-l border-slate-100" title="Increase Font"
+                                                    >
+                                                        <ZoomIn size={12} />
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    onClick={() => setTheme(theme === 'light' ? 'vs-dark' : 'light')}
+                                                    className="p-1.5 rounded-md hover:bg-slate-200 text-slate-500 transition-colors"
+                                                    title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                                                >
+                                                    {theme === 'light' ? <Moon size={14} /> : <Sun size={14} />}
+                                                </button>
+                                                <button
+                                                    onClick={() => setResponse('')}
+                                                    className="p-1.5 rounded-md hover:bg-slate-200 text-slate-500 transition-colors"
+                                                    title="Clear Code"
+                                                >
+                                                    <RotateCcw size={14} />
+                                                </button>
+                                                <div className="h-4 w-[1px] bg-slate-200 mx-1" />
+                                                <select
+                                                    value={language}
+                                                    onChange={(e) => setLanguage(e.target.value)}
+                                                    className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
+                                                >
+                                                    <option value="javascript">JavaScript</option>
+                                                    <option value="python">Python</option>
+                                                    <option value="cpp">C++</option>
+                                                    <option value="java">Java</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 overflow-hidden relative flex flex-col">
+                                            <div className="flex-1 relative">
+                                                <Editor
+                                                    height="100%"
+                                                    language={language}
+                                                    value={currentResponse}
+                                                    onChange={(value) => setResponse(value || '')}
+                                                    onMount={handleEditorMount}
+                                                    theme={theme}
+                                                    options={{
+                                                        readOnly: isReviewMode,
+                                                        minimap: { enabled: showMinimap },
+                                                        fontSize: fontSize,
+                                                        lineNumbers: showLineNumbers ? 'on' : 'off',
+                                                        scrollBeyondLastLine: false,
+                                                        automaticLayout: true,
+                                                        padding: { top: 16, bottom: 16 },
+                                                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                                                        fontLigatures: true,
+                                                        cursorBlinking: "smooth",
+                                                        smoothScrolling: true,
+                                                        renderLineHighlight: 'all',
+                                                    }}
+                                                />
+                                            </div>
+                                            <div
+                                                ref={vimStatusRef}
+                                                className={`border-t border-slate-200 bg-slate-100 text-xs px-2 py-0.5 font-mono text-slate-700 ${!vimModeEnabled ? 'hidden' : 'block'}`}
+                                                style={{ minHeight: '20px' }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                )}
+                                {isReviewMode && activeResultResponse && (
+                                    <div className="mt-8 pt-6 border-t border-slate-200">
+                                        {activeResultResponse.aiFeedback && (
+                                            <div className="mb-4 bg-blue-50/50 p-5 rounded-xl border border-blue-100 text-sm">
+                                                <h4 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                                                    AI Evaluation Feedback
+                                                </h4>
+                                                <div className="text-blue-800 leading-relaxed font-medium">
+                                                    {activeResultResponse.aiFeedback}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {activeQuestion?.solutionText && (
+                                            <div className="bg-emerald-50/50 p-5 rounded-xl border border-emerald-100 text-sm">
+                                                <h4 className="font-bold text-emerald-900 mb-2 flex items-center gap-2">
+                                                    Detailed Solution
+                                                </h4>
+                                                <div className="text-emerald-800 leading-relaxed font-medium">
+                                                    {activeQuestion.solutionText}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
-                            <button onClick={handleSaveAndNext} className="bg-emerald-600 text-white font-bold px-8 py-2.5 rounded shadow-sm hover:bg-emerald-700 transition active:scale-[0.98] border border-emerald-700">
-                                Save & Next
-                            </button>
+
+                            {/* Action Footer */}
+                            {!isReviewMode && (
+                                <div className="border-t border-slate-200 bg-slate-50 h-16 shrink-0 px-6 flex items-center justify-between">
+                                    <div className="flex gap-3">
+                                        <button onClick={handleMarkForReviewAndNext} className="bg-white border border-slate-300 text-slate-700 font-bold px-5 py-2 rounded shadow-sm hover:bg-slate-100 transition active:scale-[0.98]">
+                                            Mark for Review & Next
+                                        </button>
+                                        <button onClick={handleClearResponse} className="bg-white border border-slate-300 text-slate-700 font-bold px-5 py-2 rounded shadow-sm hover:bg-slate-100 transition active:scale-[0.98]">
+                                            Clear Response
+                                        </button>
+                                    </div>
+                                    <button onClick={handleSaveAndNext} className="bg-emerald-600 text-white font-bold px-8 py-2.5 rounded shadow-sm hover:bg-emerald-700 transition active:scale-[0.98] border border-emerald-700">
+                                        Save & Next
+                                    </button>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </div>
                 </div>
 
                 {/* Right Palette Panel */}

@@ -40,6 +40,9 @@ export class MockTestQuestion {
     solutionText: string;
 
     @Column({ type: 'text', nullable: true })
+    passageContent?: string;
+
+    @Column({ type: 'text', nullable: true })
     imageUrl?: string;
 
     @Column({ type: 'int', default: 1 })

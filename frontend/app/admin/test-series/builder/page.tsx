@@ -43,6 +43,7 @@ export default function AdminTestSeriesBuilder() {
         options: string[];
         correctAnswer: string; // single index, comma-separated indices, or empty
         solutionText: string;
+        passageContent: string;
         marks: number;
         imageUrl: string;
     }>({
@@ -51,6 +52,7 @@ export default function AdminTestSeriesBuilder() {
         options: ['', ''],
         correctAnswer: '',
         solutionText: '',
+        passageContent: '',
         marks: 1,
         imageUrl: ''
     });
@@ -260,6 +262,7 @@ export default function AdminTestSeriesBuilder() {
         const payload: any = {
             type: questionForm.type,
             question: questionForm.question,
+            passageContent: questionForm.passageContent || undefined,
             marks: questionForm.marks,
             solutionText: questionForm.solutionText,
             imageUrl: questionForm.imageUrl || undefined
@@ -286,7 +289,7 @@ export default function AdminTestSeriesBuilder() {
         try {
             await addQuestion(token, sectionId, payload);
             setAddingQuestionToSection(null);
-            setQuestionForm({ type: 'SINGLE_CORRECT', question: '', options: ['', ''], correctAnswer: '', solutionText: '', marks: 1, imageUrl: '' });
+            setQuestionForm({ type: 'SINGLE_CORRECT', question: '', options: ['', ''], correctAnswer: '', solutionText: '', passageContent: '', marks: 1, imageUrl: '' });
             await loadHierarchy(selectedCompany.id);
             setMessage({ type: 'success', text: 'Question added successfully.' });
         } catch (error: any) {
@@ -608,6 +611,16 @@ export default function AdminTestSeriesBuilder() {
                                                                                             onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
                                                                                             className="w-full h-20 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                                                                                             placeholder="Enter question content here..."
+                                                                                        />
+                                                                                    </div>
+
+                                                                                    <div>
+                                                                                        <label className="text-xs font-bold text-slate-500 block mb-1">Passage Content / Context (Optional)</label>
+                                                                                        <textarea
+                                                                                            value={questionForm.passageContent}
+                                                                                            onChange={(e) => setQuestionForm({ ...questionForm, passageContent: e.target.value })}
+                                                                                            className="w-full h-20 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-slate-50"
+                                                                                            placeholder="Enter reading passage or common context for this question here..."
                                                                                         />
                                                                                     </div>
 
