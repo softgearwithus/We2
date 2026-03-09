@@ -38,23 +38,23 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl lg:text-[80px] font-[900] tracking-tight text-brand-black mb-8 leading-[1.1] text-balance">
               The Complete <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-600 to-purple-600 pb-2">
-                Placement Accelerator.
+                Placement & Internship Accelerator.
               </span>
             </h1>
 
             {/* Subtext - Optimized for Readability */}
             <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed max-w-xl mb-10 text-balance">
-              Closing the gap between theoretical learning and industry reality. We train you to think like an engineer, solve complex problems, and write code that companies actually hire for.
+              Closing the gap between theoretical learning and industry reality. We train you to master Data Structures & Algorithms, crush tech interviews with AI Mock Interviews, and write code that FAANG companies actually hire for.
             </p>
 
             {/* CTAs - Polished & Tactile */}
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
-              <Link href="/register" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95">
+              <Link href="/register" aria-label="Register for the top trending coding bootcamp" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95">
                 Join Bootcamp
-                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
               </Link>
-              <Link href="/curriculum" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
-                <span className="material-symbols-outlined text-brand-orange group-hover:scale-110 transition-transform filled-icon">play_circle</span>
+              <Link href="/curriculum" aria-label="View our full stack software engineering curriculum" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
+                <span className="material-symbols-outlined text-brand-orange group-hover:scale-110 transition-transform filled-icon" aria-hidden="true">play_circle</span>
                 View Curriculum
               </Link>
             </div>
@@ -62,9 +62,9 @@ export default function Home() {
             {/* Social Proof - Subtle & Trustworthy */}
             <div className="flex items-center gap-4">
               <div className="flex -space-x-4">
-                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="User" />
-                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="User" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&q=80" alt="Emble Student Reviewer 1" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&q=80" alt="Emble Student Reviewer 2" />
+                <img className="w-10 h-10 rounded-full border-[3px] border-white shadow-sm" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&q=80" alt="Emble Student Reviewer 3" />
                 <div className="w-10 h-10 rounded-full border-[3px] border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500 shadow-sm">+200</div>
               </div>
               <div className="h-8 w-px bg-gray-200 mx-2"></div>
@@ -160,10 +160,10 @@ export default function Home() {
             Start Your <br /> <span className="text-gradient">Story Today.</span>
           </h2>
           <p className="text-gray-400 text-2xl max-w-3xl mx-auto font-medium opacity-80 leading-relaxed">
-            Join 200+ students already mastering their future with EMBLE.
+            Join 200+ students already mastering their future with EMBLE's Top Trending Software Engineering Bootcamp.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6 pt-10">
-            <Link href="/register" className="h-[72px] px-16 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-[900] text-xl transition-all shadow-2xl hover:shadow-brand-orange/20 hover:-translate-y-2 flex items-center justify-center active:scale-95">
+            <Link href="/register" aria-label="Get started with EMBLE placement training" className="h-[72px] px-16 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-[900] text-xl transition-all shadow-2xl hover:shadow-brand-orange/20 hover:-translate-y-2 flex items-center justify-center active:scale-95">
               Get Started Now
             </Link>
           </div>

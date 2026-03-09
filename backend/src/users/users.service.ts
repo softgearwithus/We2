@@ -280,6 +280,12 @@ export class UsersService {
         return this.usersRepository.save(user);
     }
 
+    async updateAvatar(id: string, avatarUrl: string): Promise<User> {
+        const user = await this.findById(id);
+        user.avatarUrl = avatarUrl;
+        return this.usersRepository.save(user);
+    }
+
     async setRole(id: string, role: UserRole): Promise<User> {
         const user = await this.findById(id);
         user.role = role;

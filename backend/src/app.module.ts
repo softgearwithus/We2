@@ -117,7 +117,7 @@ import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.enti
       ignoreEnvFile: (process.env.NODE_ENV || 'development') !== 'development',
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
+      rootPath: join(__dirname, '..', '..', 'uploads'),
       serveRoot: '/uploads',
     }),
     TypeOrmModule.forRootAsync({

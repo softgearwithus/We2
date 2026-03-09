@@ -25,8 +25,6 @@ export default function LeetCodeProfile() {
         projectTotal: 0,
     });
     const [badges, setBadges] = useState<Array<{ title: string; icon: string }>>([]);
-    const [recentSubmissions, setRecentSubmissions] = useState<Array<{ title: string; type: string; status: string; time: string; lang: string }>>([]);
-    const [skills, setSkills] = useState<Array<{ name: string; count: number }>>([]);
 
     useEffect(() => {
         const loadStats = async () => {
@@ -56,19 +54,6 @@ export default function LeetCodeProfile() {
                     const sqlSubmissions = await sqlStatsRes.json();
                     sqlSolved = sqlSubmissions.filter((s: any) => s.status === 'accepted').length;
                     sqlTotal = sqlSubmissions.length || 0;
-                    setRecentSubmissions(sqlSubmissions.slice(0, 5).map((s: any) => ({
-                        title: s.problem?.title || 'SQL Submission',
-                        type: 'SQL',
-                        status: s.status === 'accepted' ? 'Accepted' : 'Attempted',
-                        time: new Date(s.submittedAt).toLocaleString(),
-                        lang: s.language || 'SQL',
-                    })));
-                    const languageCounts = sqlSubmissions.reduce((acc: Record<string, number>, submission: any) => {
-                        const lang = submission.language || 'SQL';
-                        acc[lang] = (acc[lang] || 0) + 1;
-                        return acc;
-                    }, {});
-                    setSkills(Object.entries(languageCounts).map(([name, count]) => ({ name, count: count as number })));
                 }
 
                 if (projectProgressRes.ok) {
@@ -103,7 +88,12 @@ export default function LeetCodeProfile() {
 
     const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim();
     const displayName = fullName || user?.email?.split('@')[0] || 'Student';
-    const avatarUrl = user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName)}`;
+    const getFullAvatarUrl = (url?: string | null) => {
+        if (!url) return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName)}`;
+        if (url.startsWith('http')) return url;
+        return `${API_BASE_URL}${url}`;
+    };
+    const avatarUrl = getFullAvatarUrl(user?.avatarUrl);
     const userLinks = {
         github: user?.githubUrl ? user.githubUrl.replace(/^https?:\/\//, '') : '—',
         linkedin: user?.linkedinUrl ? user.linkedinUrl.replace(/^https?:\/\//, '') : '—',
@@ -139,7 +129,6 @@ export default function LeetCodeProfile() {
         },
     };
     const totalAttempted = Math.max(1, solvedData.totalAttempted);
-    const sortedSkills = [...skills].sort((a, b) => b.count - a.count);
 
     return (
         <div className="min-h-screen bg-[#fafafa] font-sans text-slate-900 pb-20">
@@ -150,24 +139,24 @@ export default function LeetCodeProfile() {
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         {/* Avatar & Basic Info */}
                         <div className="p-6">
-                                <div className="flex items-start justify-between">
-                                    <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
-                                        <Image src={avatarUrl} alt="Avatar" width={96} height={96} className="object-cover" />
-                                    </div>
-                                    <button onClick={() => setIsEditModalOpen(true)} className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
-                                        <Edit3 size={18} />
-                                    </button>
+                            <div className="flex items-start justify-between">
+                                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
+                                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                 </div>
-                                <h1 className="text-xl font-bold text-slate-900">{displayName}</h1>
-                                <p className="text-slate-500 font-medium text-sm mb-4">@{username}</p>
+                                <button onClick={() => setIsEditModalOpen(true)} className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
+                                    <Edit3 size={18} />
+                                </button>
+                            </div>
+                            <h1 className="text-xl font-bold text-slate-900">{displayName}</h1>
+                            <p className="text-slate-500 font-medium text-sm mb-4">@{username}</p>
 
-                                <div className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-2">
-                                    <Trophy size={16} className="text-amber-500" /> Rank ~{rank.toLocaleString()}
-                                </div>
+                            <div className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-2">
+                                <Trophy size={16} className="text-amber-500" /> Rank ~{rank.toLocaleString()}
+                            </div>
 
-                                <p className="text-xs text-slate-500 flex items-center gap-2 mb-4">
-                                    <Briefcase size={14} /> {roleTitle}
-                                </p>
+                            <p className="text-xs text-slate-500 flex items-center gap-2 mb-4">
+                                <Briefcase size={14} /> {roleTitle}
+                            </p>
 
                             <button onClick={() => setIsEditModalOpen(true)} className="w-full block text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors mb-6">
                                 Edit Profile
@@ -248,7 +237,7 @@ export default function LeetCodeProfile() {
                                         <div className="flex justify-between items-center mb-1.5">
                                             <span className={`${tier.color}`}>{tier.label}</span>
                                             <span className="text-slate-900 font-medium">
-                                                {tier.solved} <span className="text-slate-400 text-xs">/ {tier.total}</span>
+                                                {tier.solved}
                                             </span>
                                         </div>
                                         <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
@@ -263,76 +252,18 @@ export default function LeetCodeProfile() {
                         </div>
                     </div>
 
-                    {/* Middle Row: Badges & Skills */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Badges */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                            <h2 className="text-slate-900 font-bold mb-4 flex items-center justify-between">
-                                Badges <span className="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-500">{badges.length}</span>
-                            </h2>
-                            <div className="flex flex-wrap gap-3">
-                                {badges.map((badge, i) => (
-                                    <div key={i} className="flex-1 min-w-[80px] text-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all cursor-crosshair">
-                                        <div className="text-3xl mb-1">{badge.icon}</div>
-                                        <div className="text-[10px] uppercase font-bold text-slate-500 whitespace-nowrap overflow-hidden text-ellipsis px-1">{badge.title}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Top Skills */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                            <h2 className="text-slate-900 font-bold mb-4">Top Languages & Skills</h2>
-                            <div className="flex flex-wrap gap-2">
-                                {sortedSkills.map((skill, i) => (
-                                    <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-sm font-medium">
-                                        <span className="text-slate-900">{skill.name}</span>
-                                        <span className="text-xs text-slate-400 items-center flex gap-1"><CheckCircle className="w-3 h-3 text-emerald-500" />{skill.count}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Bottom Row: Recent Submissions */}
+                    {/* Bottom Row: Badges */}
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <h2 className="text-slate-900 font-bold mb-6 flex items-center gap-2">
-                            <Calendar className="text-indigo-500" size={20} /> Recent Submissions
+                        <h2 className="text-slate-900 font-bold mb-4 flex items-center justify-between">
+                            Badges <span className="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-500">{badges.length}</span>
                         </h2>
-
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="text-xs font-bold uppercase text-slate-400 border-b border-slate-100">
-                                    <tr>
-                                        <th className="px-4 py-3">Time</th>
-                                        <th className="px-4 py-3">Problem</th>
-                                        <th className="px-4 py-3">Status</th>
-                                        <th className="px-4 py-3">Language</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {recentSubmissions.length === 0 ? (
-                                        <tr>
-                                            <td className="px-4 py-6 text-slate-500" colSpan={4}>No submissions yet.</td>
-                                        </tr>
-                                    ) : (
-                                        recentSubmissions.map((sub, i) => (
-                                            <tr key={i} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                                <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{sub.time}</td>
-                                                <td className="px-4 py-3 font-medium text-slate-900 hover:text-indigo-600 cursor-pointer">{sub.title}</td>
-                                                <td className="px-4 py-3">
-                                                    <span className={`inline-flex items-center gap-1.5 font-bold ${sub.status === 'Accepted' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                                        {sub.status === 'Accepted' ? <CheckCircle size={14} /> : <XCircle size={14} />} {sub.status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4 py-3">
-                                                    <span className="px-2 py-1 bg-slate-100 rounded-md text-xs font-bold text-slate-600">{sub.lang}</span>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="flex flex-wrap gap-3">
+                            {badges.map((badge, i) => (
+                                <div key={i} className="flex-1 min-w-[80px] max-w-[120px] text-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all cursor-crosshair">
+                                    <div className="text-3xl mb-1">{badge.icon}</div>
+                                    <div className="text-[10px] uppercase font-bold text-slate-500 whitespace-nowrap overflow-hidden text-ellipsis px-1">{badge.title}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 

@@ -7,33 +7,46 @@ import { AuthProvider } from './context/AuthContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://emble.in'),
   title: {
-    default: 'EMBLE | Placement Mode + Job Simulation — The #1 Career Readiness Platform',
+    default: "EMBLE | Top Trending Placement & Internship Platform 2026",
     template: '%s | EMBLE'
   },
-  description: 'Placement Mode for placement prep. Job Simulation for industry experience. Master DSA, practice with AI interviewers, and gain real-world software development experience.',
-  keywords: ['EMBLE', 'Placement Mode', 'Job Simulation', 'DSA Preparation', 'Coding Interview', 'System Design', 'Industry Simulation', 'Mock Interviews', 'Full Stack Development'],
+  description: 'Join EMBLE, the top trending platform for software engineering placements. Master DSA, crack technical interviews, and gain real-world experience through advanced Job Simulations and AI Mock Interviews.',
+  keywords: ['Top Trending Placement Platform', 'Best Coding Bootcamp', 'Job Simulation Provider', 'Crack FAANG Interviews', 'DSA Preparation', 'Software Engineering Internship', 'AI Mock Interviews', 'System Design Training', 'EMBLE'],
+  authors: [{ name: 'EMBLE' }],
   openGraph: {
-    title: 'EMBLE | Bridge the Gap Between Education and Industry',
-    description: 'Placement Mode for placement prep. Job Simulation for industry experience. Transform your coding career with real-world simulations and AI-powered mentorship.',
+    title: "EMBLE | Top Trending Placement & Job Simulation Platform",
+    description: 'Transform your coding career with real-world simulations and AI-powered mentorship. The ultimate shortcut to high-paying tech jobs.',
     url: 'https://emble.in',
     siteName: 'EMBLE',
     images: [
       {
-        url: 'https://emble.in/og-image.jpg',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'EMBLE Open Graph Image',
+        alt: 'EMBLE - Top Trending Placement Platform',
       },
     ],
-    locale: 'en_US',
+    locale: 'en_IN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EMBLE | Placement Mode + Job Simulation — Career Readiness Platform',
-    description: 'Master coding interviews and real-world dev skills.',
-    images: ['https://emble.in/twitter-image.jpg'],
+    title: "EMBLE | Top Trending Placement Platform",
+    description: 'Master coding interviews and land top tech jobs with EMBLE Job Simulations.',
+    images: ['/twitter-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 

@@ -12,6 +12,8 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     const { user, updateUser } = useAuth();
     const [isSaving, setIsSaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         username: '',
@@ -36,7 +38,21 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
             github: user.githubUrl ? user.githubUrl.replace(/^https?:\/\//, '') : '',
             linkedin: user.linkedinUrl ? user.linkedinUrl.replace(/^https?:\/\//, '') : '',
         });
+        const displayName = fullName || user.email?.split('@')[0] || 'Student';
+        const rawUrl = user.avatarUrl;
+        const initialAvatar = rawUrl
+            ? (rawUrl.startsWith('http') ? rawUrl : `${process.env.NEXT_PUBLIC_API_URL}${rawUrl}`)
+            : `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName)}`;
+        setAvatarPreview(initialAvatar);
     }, [isOpen, user]);
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setAvatarFile(file);
+            setAvatarPreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -61,6 +77,19 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
         const normalizeUrl = (value: string) => (value ? `https://${value.replace(/^https?:\/\//, '')}` : '');
 
         try {
+            if (avatarFile) {
+                const formData = new FormData();
+                formData.append('file', avatarFile);
+                const avatarRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/avatar`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                if (!avatarRes.ok) throw new Error('Failed to upload profile picture.');
+            }
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                 method: 'PATCH',
                 headers: {
@@ -147,6 +176,26 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                         {/* Scrollable Form Area */}
                         <div className="p-6 overflow-y-auto">
                             <form id="edit-profile-form" onSubmit={handleSave} className="space-y-8">
+                                {/* Avatar Upload */}
+                                <div className="flex flex-col items-center justify-center -mt-2 mb-6 pb-6 border-b border-slate-100">
+                                    <div className="relative group">
+                                        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+                                            {avatarPreview ? (
+                                                <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                                    <User size={32} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer rounded-2xl font-bold text-xs">
+                                            Upload
+                                            <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                                        </label>
+                                    </div>
+                                    <p className="text-xs text-slate-500 mt-3 font-medium">Click to upload a new profile picture</p>
+                                </div>
+
                                 {/* Basic Info */}
                                 <div>
                                     <h3 className="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">

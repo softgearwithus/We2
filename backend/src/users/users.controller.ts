@@ -12,7 +12,13 @@ import {
     ForbiddenException,
     BadRequestException,
     Query,
+    UseInterceptors,
+    UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
 import { IsString, IsNotEmpty, MaxLength, IsOptional, Matches } from 'class-validator';
 import * as crypto from 'crypto';
 import {
@@ -117,6 +123,33 @@ export class UsersController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async updateProfile(@Request() req: any, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.update(req.user.id, updateUserDto);
+    }
+
+    @Post('profile/avatar')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Upload user profile avatar' })
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: './uploads/avatars',
+                filename: (req, file, callback) => {
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                    const ext = extname(file.originalname);
+                    callback(null, `avatar-${uniqueSuffix}${ext}`);
+                },
+            }),
+            limits: {
+                fileSize: 5 * 1024 * 1024, // 5MB limit
+            },
+        }),
+        UploadLimitInterceptor
+    )
+    async uploadAvatar(@Request() req: any, @UploadedFile() file: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('No file uploaded');
+        }
+        const fileUrl = `/uploads/avatars/${file.filename}`;
+        return this.usersService.updateAvatar(req.user.id, fileUrl);
     }
 
     @Post('upgrade')

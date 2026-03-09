@@ -133,6 +133,8 @@ export class DsaController {
 
     // ── Statistics Endpoints ──────────────────────────────
 
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard)
     @Get('stats/me')
     @ApiOperation({ summary: 'Get my DSA statistics' })
     @ApiResponse({
