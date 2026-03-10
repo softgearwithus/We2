@@ -8,6 +8,7 @@ import SimulationDashboard from '../components/dashboard/SimulationDashboard';
 import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
+import UpgradeNowCard from '../components/dashboard/UpgradeNowCard';
 import { Sparkles, Target, GraduationCap, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,6 +27,7 @@ export default function DashboardPage() {
     const mode = dashboardContext?.mode;
     const router = useRouter();
     const [stats, setStats] = useState<DashboardStats | null>(null);
+    const isFreeUser = !user?.subscriptionPlan || user?.subscriptionPlan === 'free';
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -98,6 +100,9 @@ export default function DashboardPage() {
 
                     {/* Left Column (8/12) */}
                     <div className="lg:col-span-8 space-y-8">
+                        {/* Upgrade Card for Free Users */}
+                        {isFreeUser && <UpgradeNowCard />}
+
                         {/* Readiness Panel */}
                         <ReadinessPanel readinessScore={stats.readinessScore / 10} />
 

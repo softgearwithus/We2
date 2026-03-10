@@ -84,8 +84,19 @@ export default function ContactPage() {
                 });
                 if (!res.ok) throw new Error('Failed to send company lead');
             } else {
-                // Simulated general contact API call
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Submit general query to Queries module
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/queries`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        subject: subject,
+                        companyName: formData.companyName || undefined,
+                        message: formData.message
+                    })
+                });
+                if (!res.ok) throw new Error('Failed to send inquiry');
             }
             setStatus('success');
             setFormData({ name: '', email: '', companyName: '', message: '', phone: '' });
@@ -272,7 +283,7 @@ export default function ContactPage() {
                                             <motion.div
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
-                                                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                                                className="grid grid-cols-1 gap-6"
                                             >
                                                 <div className="space-y-2">
                                                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Company Name</label>
@@ -284,17 +295,6 @@ export default function ContactPage() {
                                                         type="text"
                                                         className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-emerald-100 focus:border-emerald-500 focus:bg-white outline-none transition-all text-brand-black font-medium"
                                                         placeholder="e.g. Acme Corp"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number (Optional)</label>
-                                                    <input
-                                                        name="phone"
-                                                        value={formData.phone}
-                                                        onChange={handleChange}
-                                                        type="text"
-                                                        className="w-full h-14 px-6 rounded-2xl bg-gray-50 border border-gray-100 focus:border-brand-orange focus:bg-white outline-none transition-all text-brand-black font-medium"
-                                                        placeholder="+91 90000 00000"
                                                     />
                                                 </div>
                                             </motion.div>
@@ -344,7 +344,10 @@ export default function ContactPage() {
                                 <MapPin size={24} />
                             </div>
                             <h5 className="font-bold text-brand-black uppercase text-xs tracking-widest">Global Support</h5>
-                            <p className="text-gray-500 text-sm">Remote-first team helping students <br /> across 20+ countries.</p>
+                            <p className="text-gray-500 text-sm">
+                                EMBLE Headquarters<br />
+                                Mohali,India
+                            </p>
                         </div>
                         <div className="space-y-4">
                             <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center mx-auto text-emerald-500">

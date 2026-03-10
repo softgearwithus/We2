@@ -76,6 +76,13 @@ export default function Navbar() {
         { label: 'Pricing', href: '/pricing', icon: null }
     ];
 
+    const getAvatarSrc = (url?: string | null) => {
+        if (!url) return null;
+        if (url.startsWith('http')) return url;
+        return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
+    };
+
+    const avatarSrc = user ? getAvatarSrc(user.avatarUrl) : null;
 
     return (
         <nav className={cn(
@@ -144,8 +151,12 @@ export default function Navbar() {
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                                 className="flex items-center gap-2 hover:bg-gray-100 p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-gray-200"
                             >
-                                <div className="relative w-8 h-8 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm">
-                                    {user.email[0].toUpperCase()}
+                                <div className="relative w-8 h-8 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm shrink-0">
+                                    {avatarSrc ? (
+                                        <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                                    ) : (
+                                        user.email[0].toUpperCase()
+                                    )}
                                     {profileIncomplete && (
                                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
@@ -235,8 +246,12 @@ export default function Navbar() {
                 <div className="absolute top-16 left-0 right-0 bg-white border-b border-gray-100 p-6 flex flex-col gap-4 md:hidden shadow-xl animate-fade-in-up max-h-[calc(100vh-4rem)] overflow-y-auto">
                     {user && (
                         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
-                            <div className="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold">
-                                {user.email[0].toUpperCase()}
+                            <div className="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold shrink-0">
+                                {avatarSrc ? (
+                                    <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                                ) : (
+                                    user.email[0].toUpperCase()
+                                )}
                             </div>
                             <div>
                                 <div className="font-bold text-brand-black">{user.email.split('@')[0]}</div>

@@ -89,47 +89,9 @@ export default function PreparationPage() {
                                     <span className="relative z-10">Explore Test Series</span>
                                     <ChevronRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                                 </Link>
-                                <Link href={`/dashboard/preparation/${currentPhase.id}`} className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border-2 border-slate-200 bg-white text-slate-900 font-bold text-sm hover:border-slate-300 bg-white hover:bg-slate-50 transition-colors">
-                                    Resume Phase <Play size={16} className="fill-slate-900" />
-                                </Link>
                             </div>
                         </div>
 
-                        {/* Progress Card */}
-                        <div className="w-full md:w-[340px] shrink-0 bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-200/50 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-16 -mt-16"></div>
-
-                            <div className="relative z-10 flex items-start justify-between gap-4">
-                                <div>
-                                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Total Progress</p>
-                                    <h2 className="text-3xl font-extrabold text-slate-900 mt-1">{progressPercent}%</h2>
-                                </div>
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
-                                    <ShieldCheck size={24} />
-                                </div>
-                            </div>
-
-                            <div className="relative z-10 mt-6">
-                                <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${progressPercent}%` }}
-                                        transition={{ duration: 1, ease: 'easeOut' }}
-                                        className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400"
-                                    />
-                                </div>
-                                <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                        <p className="text-slate-400 font-bold text-[10px] uppercase tracking-wider">Completed</p>
-                                        <p className="text-slate-900 font-black mt-0.5">{completedPhases.length} Phases</p>
-                                    </div>
-                                    <div className="bg-indigo-50/50 rounded-xl p-3 border border-indigo-50">
-                                        <p className="text-indigo-600/60 font-bold text-[10px] uppercase tracking-wider">Active</p>
-                                        <p className="text-indigo-900 font-black mt-0.5 truncate">{currentPhase.title.split(':')[0]}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </header>
 

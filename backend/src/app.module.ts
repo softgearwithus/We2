@@ -105,6 +105,8 @@ import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-intervi
 import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
 import { PendingUpgradeOrder } from './users/entities/pending-upgrade-order.entity';
 import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.entity';
+import { QueriesModule } from './queries/queries.module';
+import { Query } from './queries/entities/query.entity';
 
 @Module({
   imports: [
@@ -239,6 +241,7 @@ import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.enti
             VapiResumeAsset,
             PendingUpgradeOrder,
             MentorPaymentOrder,
+            Query,
           ],
           synchronize: !isProduction,
           logging: !isProduction,
@@ -285,6 +288,7 @@ import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.enti
     CompanyLeadsModule,
     TestSeriesModule,
     AiInterviewerModule,
+    QueriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

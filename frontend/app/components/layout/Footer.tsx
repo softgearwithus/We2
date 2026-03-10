@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Terminal, Github, Twitter, Linkedin } from 'lucide-react';
+import { Terminal, Github, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { fetchPublicPlatformSettings } from '@/app/lib/admin-settings';
 
 export default function Footer() {
@@ -89,11 +89,6 @@ export default function Footer() {
                                     {supportEmail}
                                 </a>
                             </li>
-                            <li>
-                                <span className="cursor-default">
-                                    +91 1xxxxx
-                                </span>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -103,9 +98,9 @@ export default function Footer() {
                         © 2026 EMBLE Technologies. <span className="group-hover:underline normal-case tracking-normal ml-2">View Copyright & Policies</span>
                     </Link>
                     <div className="flex gap-8">
-                        <Link href="#" className="hover:text-brand-black transition-colors"><Linkedin size={18} /></Link>
-                        <Link href="#" className="hover:text-brand-black transition-colors"><Twitter size={18} /></Link>
-                        <Link href="#" className="hover:text-brand-black transition-colors"><Github size={18} /></Link>
+                        <a href="https://www.linkedin.com/company/joinemble/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors"><Linkedin size={18} /></a>
+                        <a href="https://x.com/joinEmble" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors"><Twitter size={18} /></a>
+                        <a href="https://www.instagram.com/emble.in/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors"><Instagram size={18} /></a>
                     </div>
                 </div>
             </div>

@@ -52,19 +52,17 @@ export class ProjectLabsController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard, UsageGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('me/progress')
     @ApiOperation({ summary: 'Get my project lab progress' })
-    @RequireSectionUsage(USAGE_SECTION_KEYS.PROJECT_LABS)
     async getMyProgress(@Request() req: any) {
         return this.projectLabsService.getMyProgress(req.user.id);
     }
 
     @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard, UsageGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('me/submissions')
     @ApiOperation({ summary: 'Get my project lab submissions' })
-    @RequireSectionUsage(USAGE_SECTION_KEYS.PROJECT_LABS)
     async getMySubmissions(@Request() req: any) {
         return this.projectLabsService.getMySubmissions(req.user.id);
     }

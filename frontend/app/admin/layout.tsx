@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, BarChart3, Settings, Bell, BookOpen, Briefcase, GraduationCap, Code2, Radar, LogOut, Sparkles, CreditCard, ShieldCheck, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 
 export default function AdminLayout({
@@ -33,6 +33,7 @@ export default function AdminLayout({
         { icon: Bell, label: 'Updates', href: '/admin/updates', roles: ['super_admin'] },
         { icon: CreditCard, label: 'Subscriptions', href: '/admin/subscription-management', roles: ['super_admin'] },
         { icon: BarChart3, label: 'Analytics', href: '/admin/analytics', roles: ['all'] },
+        { icon: MessageSquare, label: 'Queries', href: '/admin/queries', roles: ['super_admin'] },
         { icon: Settings, label: 'Settings', href: '/admin/settings', roles: ['all'] },
         { icon: Briefcase, label: 'Careers', href: '/admin/careers', roles: ['super_admin'] },
     ];
