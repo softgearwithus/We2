@@ -91,78 +91,77 @@ function PlatformPicker({
                     </div>
                 )}
 
-                <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
-                    {/* Left side: How it Works */}
-                    <div className="lg:col-span-7 bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-premium relative overflow-hidden">
+                <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                    
+                    {/* Left side: Platforms prominently featured */}
+                    <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
+                        <div className="grid gap-4">
+                            {PLATFORMS.map((p) => (
+                                <button
+                                    key={p.id}
+                                    onClick={() => onSelect(p.id)}
+                                    className="w-full text-left bg-white border border-slate-200 rounded-2xl p-6 hover:border-brand-orange hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] hover:-translate-y-1 transition-all duration-300 group flex items-start gap-5 relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-200 group-hover:bg-brand-orange transition-colors"></div>
+                                    <div className="w-14 h-14 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-orange-50 group-hover:text-brand-orange transition-colors border border-slate-100">
+                                        <Code2 size={28} />
+                                    </div>
+                                    <div className="flex-1 mt-0.5">
+                                        <div className="font-bold text-slate-900 text-[19px] mb-1.5 group-hover:text-brand-orange transition-colors flex items-center justify-between">
+                                            {p.label}
+                                            <ChevronRight size={20} className="text-slate-300 group-hover:text-brand-orange transition-colors" />
+                                        </div>
+                                        <div className="text-[15px] text-slate-500 leading-relaxed font-medium">{p.description}</div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Right side: How it Works (Explicit SRS & Paper Pen) */}
+                    <div className="lg:col-span-7 bg-white rounded-[2rem] p-8 md:p-10 border border-slate-200 shadow-premium relative overflow-hidden order-1 lg:order-2">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -z-10"></div>
 
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 text-brand-orange text-xs font-bold uppercase tracking-widest border border-orange-100 mb-8">
-                            <Sparkles size={14} className="animate-pulse" /> Training Flow
+                            <Sparkles size={14} className="animate-pulse" /> Training Methodology
                         </div>
 
-                        <h2 className="text-2xl font-black text-slate-900 mb-8 tracking-tight">How interviews work here</h2>
+                        <h2 className="text-3xl font-black text-slate-900 mb-8 tracking-tight">How our DSA Training works</h2>
 
                         <div className="space-y-8">
                             <div className="flex gap-5">
-                                <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center font-black text-lg shrink-0 shadow-sm">1</div>
+                                <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-black text-lg shrink-0 shadow-sm relative z-10">1</div>
                                 <div>
-                                    <div className="font-bold text-slate-900 text-lg">Choose a Platform</div>
-                                    <div className="text-slate-500 mt-1.5 leading-relaxed font-medium">We'll serve you the most important questions you need to review based on your past performance using our <span className="font-bold text-indigo-600 bg-indigo-50 px-1.5 rounded">adaptive algorithm</span>.</div>
+                                    <div className="font-extrabold text-slate-900 text-lg">Spaced Repetition (SRS)</div>
+                                    <div className="text-slate-600 mt-1.5 leading-relaxed font-medium text-[15px]">The platform automatically picks a problem from our dataset based on the <span className="font-bold text-indigo-700 bg-indigo-50 px-1.5 rounded">SRS algorithm</span>. The question you score the least on will pop up first the next day.</div>
                                 </div>
                             </div>
-                            <div className="flex gap-5">
-                                <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center font-black text-lg shrink-0 shadow-sm">2</div>
+                            <div className="flex gap-5 relative">
+                                <div className="absolute top-[-40px] left-5 w-px h-10 bg-slate-200 -z-10"></div>
+                                <div className="w-10 h-10 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center font-black text-lg shrink-0 shadow-sm relative z-10">2</div>
                                 <div>
-                                    <div className="font-bold text-slate-900 text-lg">Write & Reason</div>
-                                    <div className="text-slate-500 mt-1.5 leading-relaxed font-medium">There is <span className="font-bold text-rose-500 bg-rose-50 px-1.5 rounded">no Run button</span>. You must mentally execute and reason through your code before submitting, just like a real whiteboard interview.</div>
+                                    <div className="font-extrabold text-slate-900 text-lg">The "Paper Pen" Reality</div>
+                                    <div className="text-slate-600 mt-1.5 leading-relaxed font-medium text-[15px]">You write logic in our IDE, but there is <span className="font-bold text-rose-600 bg-rose-50 px-1.5 rounded">no run button</span> to compile or check test cases before submitting. Why? Because most interviews are done on a notepad or white paper where checking outputs isn't possible.</div>
                                 </div>
                             </div>
-                            <div className="flex gap-5">
-                                <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100 text-brand-orange flex items-center justify-center font-black text-lg shrink-0 shadow-sm shadow-orange-100">3</div>
+                            <div className="flex gap-5 relative">
+                                <div className="absolute top-[-40px] left-5 w-px h-10 bg-slate-200 -z-10"></div>
+                                <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-100 text-brand-orange flex items-center justify-center font-black text-lg shrink-0 shadow-sm shadow-orange-100 relative z-10">3</div>
                                 <div>
-                                    <div className="font-bold text-slate-900 text-lg">Submit for AI Review</div>
-                                    <div className="text-slate-500 mt-1.5 leading-relaxed font-medium">Get instant feedback, an updated mastery score, and a personalized review schedule for optimal retention.</div>
+                                    <div className="font-extrabold text-slate-900 text-lg">AI Logic & Efficiency Check</div>
+                                    <div className="text-slate-600 mt-1.5 leading-relaxed font-medium text-[15px]">Once you hit submit, the AI model checks your submission for exact logical correctness and efficiency. It then assigns you a score determining when the question needs to be reviewed again.</div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="mt-10 pt-8 border-t border-slate-100 bg-slate-50 -mx-8 md:-mx-10 -mb-8 md:-mb-10 p-8 md:p-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
-                                <div className="font-bold text-slate-900 mb-1 text-lg">Want to choose questions?</div>
-                                <div className="text-sm text-slate-500 font-medium">Practice specific topics at your own pace.</div>
+                                <div className="font-bold text-slate-900 mb-1 text-[17px]">Want to pick problems manually?</div>
+                                <div className="text-[15px] text-slate-500 font-medium">Browse the bank instead of taking the SRS test.</div>
                             </div>
-                            <Link href="/dashboard/dsa/all" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:text-brand-orange hover:border-brand-orange hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] transition-all rounded-xl whitespace-nowrap">
-                                Browse All <ArrowRight size={16} />
+                            <Link href="/dashboard/dsa/all" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-[15px] font-bold text-slate-700 hover:text-brand-orange hover:border-brand-orange hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] transition-all rounded-xl whitespace-nowrap">
+                                Browse All <ArrowRight size={18} />
                             </Link>
-                        </div>
-                    </div>
-
-                    {/* Right side: Platforms */}
-                    <div className="lg:col-span-5 flex flex-col justify-center">
-                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-5 pl-2 flex items-center gap-2">
-                            <span className="w-8 h-px bg-slate-200"></span>
-                            Select Platform
-                            <span className="w-8 h-px bg-slate-200"></span>
-                        </h3>
-                        <div className="grid gap-4">
-                            {PLATFORMS.map((p) => (
-                                <button
-                                    key={p.id}
-                                    onClick={() => onSelect(p.id)}
-                                    className="w-full text-left bg-white border border-slate-200 rounded-2xl p-5 hover:border-brand-orange hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] hover:-translate-y-1 transition-all duration-300 group flex items-start gap-5"
-                                >
-                                    <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-orange-50 group-hover:text-brand-orange transition-colors">
-                                        <Code2 size={24} />
-                                    </div>
-                                    <div className="flex-1 mt-0.5">
-                                        <div className="font-bold text-slate-900 text-lg mb-1.5 group-hover:text-brand-orange transition-colors flex items-center justify-between">
-                                            {p.label}
-                                            <ChevronRight size={18} className="text-slate-300 group-hover:text-brand-orange transition-colors" />
-                                        </div>
-                                        <div className="text-sm text-slate-500 leading-relaxed font-medium">{p.description}</div>
-                                    </div>
-                                </button>
-                            ))}
                         </div>
                     </div>
                 </div>
@@ -501,7 +500,7 @@ export default function DsaTrainingPage() {
                         onClick={handleChangePlatform}
                         className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-600 border border-slate-200 rounded-full hover:bg-slate-50"
                     >
-                        <X size={12} /> Platform
+                        <X size={12} /> Switch Platform
                     </button>
                     <Link
                         href="/dashboard/dsa/all"

@@ -63,27 +63,49 @@ const modules = [
 
 export default function QuickAccessGrid() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {modules.map((item, index) => (
-                <Link key={index} href={item.href}>
+                <Link key={index} href={item.href} className="group outline-none">
                     <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
                         whileHover={{ scale: 1.02, y: -4 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`h-full bg-white border border-slate-100 rounded-2xl p-6 cursor-pointer shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_30px_-5px_rgba(0,0,0,0.08)] hover:border-indigo-100 group transition-all duration-300 relative overflow-hidden`}
+                        className={`
+                            h-full relative overflow-hidden rounded-[24px] p-6 lg:p-8 cursor-pointer
+                            bg-white/80 backdrop-blur-xl border border-white/60 
+                            shadow-[0_8px_30px_-10px_rgba(0,0,0,0.04)]
+                            hover:shadow-[0_20px_40px_-15px_rgba(79,70,229,0.15)]
+                            hover:border-indigo-200/50 hover:bg-white
+                            transition-all duration-300 ease-out flex flex-col
+                        `}
                     >
-                        {/* Hover Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-
-                        <div className="relative z-10 flex items-start justify-between">
-                            <div className={`p-3.5 rounded-xl ${item.bg} ${item.color} mb-5 shadow-inner`}>
-                                <item.icon size={26} />
+                        {/* Dynamic Ambient Glow Behind Card Content */}
+                        <div className={`absolute top-0 right-0 w-32 h-32 ${item.bg} rounded-full blur-[50px] opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none -translate-y-1/2 translate-x-1/2`}></div>
+                        
+                        <div className="relative z-10 flex items-start justify-between mb-8">
+                            <div className={`p-4 rounded-2xl ${item.bg} ${item.color} shadow-inner border ${item.border} group-hover:scale-110 transition-transform duration-300 ease-out`}>
+                                <item.icon size={28} strokeWidth={2} />
                             </div>
-                            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-md group-hover:shadow-indigo-200">
-                                <ChevronRight size={16} />
+                            <div className={`
+                                w-10 h-10 rounded-full flex items-center justify-center 
+                                bg-slate-50 text-slate-400 border border-slate-100
+                                group-hover:bg-gradient-to-tr group-hover:from-indigo-600 group-hover:to-indigo-500 
+                                group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-indigo-500/30
+                                transition-all duration-300 ease-out
+                            `}>
+                                <ChevronRight size={18} className="transform group-hover:translate-x-0.5 transition-transform" />
                             </div>
                         </div>
-                        <h3 className="relative z-10 text-lg font-bold text-slate-900 mb-1 tracking-tight">{item.title}</h3>
-                        <p className="relative z-10 text-sm text-slate-500 font-medium group-hover:text-slate-600 transition-colors">{item.desc}</p>
+
+                        <div className="relative z-10 mt-auto">
+                            <h3 className="text-xl font-extrabold text-slate-900 mb-2 tracking-tight group-hover:text-indigo-950 transition-colors">{item.title}</h3>
+                            <p className="text-[15px] text-slate-500 font-medium leading-relaxed group-hover:text-slate-600 transition-colors">{item.desc}</p>
+                        </div>
+
+                        {/* Accent Bottom Border Line */}
+                        <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-indigo-500/0 to-transparent group-hover:via-indigo-500/40 transition-all duration-500"></div>
                     </motion.div>
                 </Link>
             ))}

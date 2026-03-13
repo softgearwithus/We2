@@ -85,9 +85,17 @@ export default function PreparationPage() {
                             </p>
 
                             <div className="mt-8 flex flex-wrap items-center gap-4">
-                                <Link href="/dashboard/preparation/test-series" className="group relative bg-indigo-600 text-white px-7 py-3.5 rounded-2xl font-bold text-sm shadow-xl shadow-indigo-200 hover:bg-indigo-700 hover:shadow-2xl hover:shadow-indigo-300 transition-all flex items-center gap-3 overflow-hidden">
-                                    <span className="relative z-10">Explore Test Series</span>
-                                    <ChevronRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+                                {/* Resume Test Series Wireframe Button */}
+                                <Link href="/dashboard/test-series" className="group relative bg-white border border-indigo-100 px-6 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-100/50 hover:bg-slate-50 hover:shadow-xl hover:shadow-indigo-200/50 hover:-translate-y-0.5 transition-all flex items-center gap-4 overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 shadow-sm">
+                                        <Play size={14} className="fill-current" />
+                                    </div>
+                                    <div className="relative z-10 flex flex-col text-left">
+                                        <span className="text-[10px] uppercase tracking-wider font-extrabold text-indigo-400">In Progress</span>
+                                        <span className="text-sm text-slate-800 group-hover:text-indigo-700 transition-colors">Resume Test Series</span>
+                                    </div>
+                                    <ChevronRight size={16} className="relative z-10 text-indigo-400 group-hover:translate-x-1 transition-transform ml-1" />
                                 </Link>
                             </div>
                         </div>
@@ -99,99 +107,93 @@ export default function PreparationPage() {
                 {/* Platform Guide + Optimized Schedule */}
                 <section>
                     <div className="mb-8">
-                        <h2 className="text-2xl font-extrabold text-slate-900">Daily Simulation Roadmap</h2>
-                        <p className="text-slate-500 mt-2">Your daily engineered missions. Treat this like a live interview simulation.</p>
+                        <h2 className="text-2xl font-extrabold text-slate-900">The Placement Journey</h2>
+                        <p className="text-slate-500 mt-2">Follow these 3 proven phases to secure your dream offer. Master one phase before moving to the next.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="space-y-6 relative">
+                        {/* Connecting Line */}
+                        <div className="absolute left-8 top-12 bottom-12 w-0.5 bg-indigo-100 hidden md:block"></div>
+
                         {[
                             {
+                                phase: 'Phase 1',
+                                title: 'The Foundation',
+                                desc: 'Before writing complex scalable code, you need to master logic and data handling. This is where 90% of technical screening rounds focus.',
+                                icon: Code, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100',
+                                actions: [
+                                    { name: 'DSA Logic Building', route: '/dashboard/dsa', target: 'Core Patterns' },
+                                    { name: 'SQL Architecture', route: '/dashboard/sql', target: 'Master 5 Query Patterns' }
+                                ]
+                            },
+                            {
+                                phase: 'Phase 2',
+                                title: 'Profile & Projects',
+                                desc: 'Your resume gets you shortlisted. Build real-world proof of skill that speaks for itself and craft a narrative recruiters remember.',
+                                icon: Layers, color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100',
+                                actions: [
+                                    { name: 'Project Labs Build', route: '/dashboard/projects', target: 'Commit 1 Feature' },
+                                    { name: 'Resume Builder', route: '/dashboard/resume', target: 'ATS Optimize UI' }
+                                ]
+                            },
+                            {
+                                phase: 'Phase 3',
+                                title: 'Technical Round Validation',
+                                desc: 'Perform under pressure. Simulate the exact environment of placement test links and technical 1:1 interviews.',
                                 icon: Crosshair, color: 'text-indigo-500', bg: 'bg-indigo-50', border: 'border-indigo-100',
-                                title: 'AMCAT & MCQ Tests',
-                                time: '60 mins',
-                                target: '1 full mock section',
-                                desc: 'Simulate high-pressure AMCAT standard testing environments utilizing our premium, curated question banks.',
-                                link: '/dashboard/test-series'
-                            },
-                            {
-                                icon: Code, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100',
-                                title: 'DSA Logic Building',
-                                time: '60 mins',
-                                target: 'Solve ~10 questions',
-                                desc: 'Focus on core logic building. Solve our expertly curated FAANG-level challenges within the integrated coding studio.',
-                                link: '/dashboard/dsa'
-                            },
-                            {
-                                icon: Layers, color: 'text-sky-500', bg: 'bg-sky-50', border: 'border-sky-100',
-                                title: 'SQL Architecture',
-                                time: '45 mins',
-                                target: 'Write 5-7 queries',
-                                desc: 'Master complex joins and window functions utilizing our proprietary set of Top 50 Enterprise SQL patterns.',
-                                link: '/dashboard/sql'
-                            },
-                            {
-                                icon: Briefcase, color: 'text-brand-orange', bg: 'bg-orange-50', border: 'border-orange-100',
-                                title: 'Project Lab Build',
-                                time: '60 mins',
-                                target: 'Commit 1 core feature',
-                                desc: 'Hands-on development. Build scalable components to strengthen your startup & enterprise portfolio.',
-                                link: '/dashboard/projects'
-                            },
-                            {
-                                icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100',
-                                title: 'Soft Skills & Radar',
-                                time: '30 mins',
-                                target: 'Audio Drill + Git',
-                                desc: 'Sharpen your English fluency for cultural rounds and stay updated with backend/frontend market techs.',
-                                link: '/dashboard/market-radar'
+                                actions: [
+                                    { name: 'Technical Test Simulation', route: '/dashboard/test-series', target: '1 Full Mock Section' },
+                                    { name: 'Mock Interview (1:1)', route: '/dashboard/interview', target: 'Schedule Session' }
+                                ]
                             }
                         ].map((mission, idx) => (
-                            <Link href={mission.link} key={idx} className="group relative bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-indigo-300 hover:ring-4 hover:ring-indigo-50 transition-all flex flex-col h-full overflow-hidden">
-                                <div className="flex items-start justify-between mb-6">
-                                    <div className={`w-14 h-14 rounded-2xl ${mission.bg} ${mission.color} border ${mission.border} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                                        <mission.icon size={26} strokeWidth={2} />
-                                    </div>
-                                    <div className="bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl text-center">
-                                        <span className="block text-[9px] font-bold uppercase tracking-widest text-slate-400">Duration</span>
-                                        <span className="block text-sm font-extrabold text-slate-900">{mission.time}</span>
+                            <div key={idx} className="relative z-10 flex flex-col md:flex-row gap-6 md:gap-8 group">
+                                {/* Desktop Indicator */}
+                                <div className="hidden md:flex flex-col items-center pt-6">
+                                    <div className={`w-16 h-16 rounded-2xl ${mission.bg} ${mission.color} border ${mission.border} flex items-center justify-center shrink-0 shadow-sm z-10 relative group-hover:scale-110 group-hover:shadow-md transition-all`}>
+                                        <mission.icon size={28} strokeWidth={2} />
                                     </div>
                                 </div>
 
-                                <div className="flex-1 mb-6">
-                                    <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors mb-2 leading-tight">{mission.title}</h3>
-                                    <p className="text-sm text-slate-500 leading-relaxed">{mission.desc}</p>
-                                </div>
+                                {/* Content Card */}
+                                <div className="flex-1 bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all overflow-hidden relative">
+                                    <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-transparent via-indigo-200/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    
+                                    <div className="flex flex-col md:flex-row gap-8 justify-between">
+                                        
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                {/* Mobile Icon */}
+                                                <div className={`w-10 h-10 md:hidden rounded-xl ${mission.bg} ${mission.color} border ${mission.border} flex items-center justify-center shrink-0`}>
+                                                    <mission.icon size={20} strokeWidth={2} />
+                                                </div>
+                                                <span className="text-xs font-bold uppercase tracking-widest text-indigo-500 px-3 py-1 bg-indigo-50 rounded-full">{mission.phase}</span>
+                                            </div>
+                                            <h3 className="text-2xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors mb-3 leading-tight">{mission.title}</h3>
+                                            <p className="text-[15px] text-slate-500 leading-relaxed max-w-xl">{mission.desc}</p>
+                                        </div>
 
-                                <div className="mt-auto pt-5 border-t border-slate-100 flex items-center justify-between">
-                                    <span className="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 flex items-center gap-1.5">
-                                        <Crosshair size={12} className="text-slate-400 group-hover:text-brand-orange transition-colors" /> {mission.target}
-                                    </span>
-                                    <div className="w-10 h-10 flex shrink-0 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-indigo-600 group-hover:border-indigo-600 items-center justify-center transition-colors">
-                                        <Play size={16} className="fill-slate-400 group-hover:fill-white group-hover:text-white transition-colors" />
+                                        <div className="w-full md:w-64 shrink-0 flex flex-col gap-3 justify-center">
+                                            {mission.actions.map((act, actIdx) => (
+                                                <Link href={act.route} key={actIdx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-indigo-200 hover:shadow-sm transition-all group/btn">
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-900 group-hover/btn:text-indigo-700 transition-colors">{act.name}</p>
+                                                        <p className="text-[10px] uppercase font-bold text-slate-400 mt-0.5">{act.target}</p>
+                                                    </div>
+                                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-slate-200 group-hover/btn:bg-indigo-50 group-hover/btn:border-indigo-200 transition-colors">
+                                                        <ChevronRight size={14} className="text-slate-400 group-hover/btn:text-indigo-600" />
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+
                                     </div>
                                 </div>
-                            </Link>
+                            </div>
                         ))}
                     </div>
 
-                    {/* Weekend Protocol */}
-                    <div className="mt-6 bg-slate-900 rounded-3xl p-6 lg:p-8 text-white relative overflow-hidden shadow-2xl">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px]"></div>
-                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="flex items-center gap-5">
-                                <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-                                    <ShieldCheck size={28} className="text-brand-orange" />
-                                </div>
-                                <div className="max-w-2xl">
-                                    <h4 className="text-xl font-extrabold flex items-center gap-2">Weekend Protocol <span className="text-xs font-bold bg-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded-md tracking-widest uppercase">Sat & Sun</span></h4>
-                                    <p className="text-slate-400 text-sm mt-1.5 leading-relaxed">Shift focus from learning to executing. Perform 1 Mock Interview (90m), polish your projects, and review weak points before resetting for the week.</p>
-                                </div>
-                            </div>
-                            <Link href="/dashboard/mock-interviews" className="w-full md:w-auto px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 border border-indigo-400 font-bold text-sm transition-colors text-center whitespace-nowrap shadow-lg shadow-indigo-900/50">
-                                Book Mock Interview
-                            </Link>
-                        </div>
-                    </div>
+
                 </section>
             </div>
         </div>

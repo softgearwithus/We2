@@ -125,6 +125,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             ]
         },
         { icon: 'work', label: 'Placement Drives', href: '/dashboard/placement-drives', hasUpdate: updateIndicators['/dashboard/placement-drives'] },
+        { icon: 'support_agent', label: 'Help & Support', href: '/contact', hasUpdate: updateIndicators['/contact'] }
     ];
 
     const simulationMenu: MenuItem[] = [

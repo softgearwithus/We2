@@ -9,7 +9,7 @@ import ReadinessPanel from '../components/dashboard/prep0/ReadinessPanel';
 import RadarSkillChart from '../components/dashboard/prep0/RadarSkillChart';
 import QuickAccessGrid from '../components/dashboard/prep0/QuickAccessGrid';
 import UpgradeNowCard from '../components/dashboard/UpgradeNowCard';
-import { Sparkles, Target, GraduationCap, ArrowRight } from 'lucide-react';
+import { Sparkles, Target, ArrowRight, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 interface DashboardStats {
@@ -67,16 +67,23 @@ export default function DashboardPage() {
 
     // New Amber Dashboard Layout (Premium Light Theme)
     return (
-        <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
-            <div className="relative z-10 max-w-7xl mx-auto p-6 space-y-8">
+        <div className="min-h-screen bg-[#FAFAFC] relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
+            {/* Global Ambient Background */}
+            <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-transparent rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-gradient-to-tr from-brand-orange/5 to-transparent rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-8 space-y-10">
                 {/* Header */}
-                <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/60">
-                    <div>
-                        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
+                <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-slate-200/50">
+                    <div className="space-y-3">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></span>
+                            Live Workspace
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3 leading-[1.1]">
                             Welcome Back, {user?.email?.split('@')[0]} <span className="animate-wave origin-bottom-right">👋</span>
                         </h1>
-                        <p className="text-slate-500 mt-2 text-lg font-medium flex items-center gap-2">
-                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)] animate-pulse"></span>
+                        <p className="text-slate-500 text-lg font-medium max-w-2xl">
                             Placement season is your stage. Build daily, perform boldly.
                         </p>
                     </div>
@@ -95,70 +102,80 @@ export default function DashboardPage() {
                     </div>
                 </header>
 
-                {/* Main Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Structurally Balanced Layout */}
+                <div className="flex flex-col gap-10">
+                    
+                    {/* Top Row (Hero CTA) */}
+                    {isFreeUser && (
+                        <div className="w-full">
+                            <UpgradeNowCard />
+                        </div>
+                    )}
 
-                    {/* Left Column (8/12) */}
-                    <div className="lg:col-span-8 space-y-8">
-                        {/* Upgrade Card for Free Users */}
-                        {isFreeUser && <UpgradeNowCard />}
-
-                        {/* Readiness Panel */}
-                        <ReadinessPanel readinessScore={stats.readinessScore / 10} />
-
-                        {/* Quick Access Grid */}
+                    {/* Middle Row (Analytics Grid 50/50 Split) */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                <span className="w-1 h-6 bg-brand-orange rounded-full"></span>
-                                Start Your Momentum
-                            </h3>
-                            <QuickAccessGrid />
+                            <ReadinessPanel readinessScore={stats.readinessScore / 10} />
+                        </div>
+                        <div>
+                            <RadarSkillChart
+                                data={[
+                                    { subject: 'DSA', A: stats.skillProficiency?.[0] ?? 0, fullMark: 100 },
+                                    { subject: 'Fundamentals', A: stats.skillProficiency?.[1] ?? 0, fullMark: 100 },
+                                    { subject: 'Aptitude', A: stats.skillProficiency?.[2] ?? 0, fullMark: 100 },
+                                    { subject: 'Communication', A: stats.skillProficiency?.[3] ?? 0, fullMark: 100 },
+                                    { subject: 'Interview', A: stats.skillProficiency?.[4] ?? 0, fullMark: 100 },
+                                    { subject: 'Company Prep', A: stats.skillProficiency?.[5] ?? 0, fullMark: 100 },
+                                ]}
+                            />
                         </div>
                     </div>
 
-                    {/* Right Column (4/12) */}
-                    <div className="lg:col-span-4 space-y-8">
-                        {/* Radar Chart */}
-                        <RadarSkillChart
-                            data={[
-                                { subject: 'DSA', A: stats.skillProficiency?.[0] ?? 0, fullMark: 100 },
-                                { subject: 'Fundamentals', A: stats.skillProficiency?.[1] ?? 0, fullMark: 100 },
-                                { subject: 'Aptitude', A: stats.skillProficiency?.[2] ?? 0, fullMark: 100 },
-                                { subject: 'Communication', A: stats.skillProficiency?.[3] ?? 0, fullMark: 100 },
-                                { subject: 'Interview', A: stats.skillProficiency?.[4] ?? 0, fullMark: 100 },
-                                { subject: 'Company Prep', A: stats.skillProficiency?.[5] ?? 0, fullMark: 100 },
-                            ]}
-                        />
+                    {/* Bottom Row (Action Hub breakout) */}
+                    <div className="w-full relative z-10 pt-4">
+                        <h3 className="text-2xl font-extrabold text-slate-900 mb-6 flex items-center gap-3 tracking-tight">
+                            <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center shadow-inner border border-orange-200">
+                                <Zap size={16} className="text-brand-orange fill-brand-orange" />
+                            </div>
+                            Start Your Momentum
+                        </h3>
+                        <QuickAccessGrid />
+                    </div>
 
-                        {/* Become a Mentor Earn CTA */}
-                        <Link href="/mentor/apply" className="block mt-12 md:mt-16 group">
-                            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-black p-6 md:p-8 shadow-[0_10px_40px_-10px_rgba(79,70,229,0.4)] border border-indigo-500/20 hover:border-indigo-400/40 hover:shadow-[0_15px_50px_-10px_rgba(79,70,229,0.5)] transition-all duration-300 transform group-hover:-translate-y-1">
+                    {/* Footer Banner Row */}
+                    <div className="w-full pt-4">
+                        <Link href="/mentor/apply" className="block w-full group outline-none">
+                            <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-indigo-950 via-slate-900 to-black p-8 md:p-12 shadow-[0_10px_40px_-10px_rgba(79,70,229,0.4)] border border-indigo-500/20 hover:border-indigo-400/40 hover:shadow-[0_20px_60px_-15px_rgba(79,70,229,0.5)] transition-all duration-500 transform group-hover:-translate-y-1 flex flex-col md:flex-row items-center justify-between gap-8">
                                 {/* Decorative elements */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[60px] translate-x-1/3 -translate-y-1/3 pointer-events-none group-hover:bg-indigo-400/30 transition-colors"></div>
-                                <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand-orange/10 rounded-full blur-[40px] -translate-x-1/2 translate-y-1/2 pointer-events-none group-hover:bg-brand-orange/20 transition-colors"></div>
+                                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[80px] translate-x-1/3 -translate-y-1/3 pointer-events-none group-hover:bg-indigo-400/20 transition-colors duration-700"></div>
+                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-orange/10 rounded-full blur-[60px] -translate-x-1/2 translate-y-1/2 pointer-events-none group-hover:bg-brand-orange/20 transition-colors duration-700"></div>
 
-                                <div className="relative z-10">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-4 backdrop-blur-md">
-                                        <Sparkles size={12} className="text-brand-orange" />
+                                <div className="relative z-10 flex-1">
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-indigo-100 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4 backdrop-blur-md shadow-sm">
+                                        <Sparkles size={14} className="text-brand-orange" />
                                         Earn With EMBLE
                                     </div>
 
-                                    <h3 className="text-2xl font-extrabold text-white tracking-tight mb-2 leading-tight">
-                                        Join as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-indigo-400">Mentor</span>
+                                    <h3 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-3 leading-tight">
+                                        Join as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-indigo-300">Mentor</span>
                                     </h3>
 
-                                    <p className="text-sm text-indigo-100/80 mb-6 leading-relaxed">
-                                        Got a great GATE/Codeforces score? Monetize your free time, guide the community, and earn well by taking 1:1 sessions.
+                                    <p className="text-[15px] md:text-base text-indigo-100/70 max-w-2xl leading-relaxed font-medium">
+                                        Got a great GATE/Codeforces score? Monetize your free time, guide the community, and earn well by taking 1:1 sessions today.
                                     </p>
+                                </div>
 
-                                    <div className="flex items-center gap-2 text-sm font-bold text-white group-hover:text-brand-orange transition-colors">
+                                {/* Action Button */}
+                                <div className="relative z-10 flex-shrink-0 w-full md:w-auto">
+                                    <div className="flex justify-center items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md text-white font-extrabold rounded-2xl transition-all duration-300">
                                         Apply Now
-                                        <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
+                                        <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </div>
                             </div>
                         </Link>
                     </div>
+
                 </div>
             </div>
         </div>

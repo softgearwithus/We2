@@ -6,7 +6,7 @@ import { Terminal, Github, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { fetchPublicPlatformSettings } from '@/app/lib/admin-settings';
 
 export default function Footer() {
-    const [supportEmail, setSupportEmail] = useState('emblehelpcare@gmail.com');
+    const [supportEmail, setSupportEmail] = useState('support@emble.in');
 
     useEffect(() => {
         fetchPublicPlatformSettings()
