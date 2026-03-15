@@ -16,6 +16,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { McqCategory } from './entities/mcq-question.entity';
 import { McqApiKeyGuard } from './guards/mcq-api-key.guard';
 import { AdminDeleteMcqQueryDto } from './dto/admin-delete-mcq-query.dto';
+import { AdminUpdateDurationDto } from './dto/admin-update-duration.dto';
 import { UsageGuard } from '../usage/guards/usage.guard';
 
 @ApiTags('mcqs')
@@ -82,6 +83,36 @@ export class McqsController {
     @ApiBearerAuth('JWT-auth')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.SUPER_ADMIN)
+    @Delete('admin')
+    @ApiOperation({ summary: 'Bulk delete MCQs (Admin only)' })
+    @ApiResponse({ status: 200, description: 'MCQs deleted' })
+    async bulkRemove(@Query() query: AdminDeleteMcqQueryDto) {
+        return this.mcqsService.bulkRemove(query);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.SUPER_ADMIN)
+    @Patch('admin/duration')
+    @ApiOperation({ summary: 'Bulk update duration for MCQs in a module (Admin only)' })
+    @ApiResponse({ status: 200, description: 'Duration updated' })
+    async bulkUpdateDuration(@Body() dto: AdminUpdateDurationDto) {
+        return this.mcqsService.bulkUpdateDuration(dto);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get(':id')
+    @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Get a single MCQ' })
+    @ApiResponse({ status: 200 })
+    async findOne(@Param('id') id: string) {
+        return this.mcqsService.findOne(id);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(UserRole.SUPER_ADMIN)
     @Patch(':id')
     @ApiOperation({ summary: 'Update MCQ question (Admin only)' })
     @ApiResponse({ status: 200, description: 'MCQ updated' })
@@ -99,15 +130,7 @@ export class McqsController {
         return this.mcqsService.remove(id);
     }
 
-    @ApiBearerAuth('JWT-auth')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserRole.SUPER_ADMIN)
-    @Delete('admin')
-    @ApiOperation({ summary: 'Bulk delete MCQs (Admin only)' })
-    @ApiResponse({ status: 200, description: 'MCQs deleted' })
-    async bulkRemove(@Query() query: AdminDeleteMcqQueryDto) {
-        return this.mcqsService.bulkRemove(query);
-    }
+
 
     @UseGuards(McqApiKeyGuard)
     @Post('import')

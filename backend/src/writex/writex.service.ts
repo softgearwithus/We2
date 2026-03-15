@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AdminService } from '../admin/admin.service';
@@ -32,13 +32,17 @@ export class WriteXService {
         this.model = this.genAI.getGenerativeModel({ model: modelName });
     }
 
-    async createQuestion(prompt: string, active = true) {
-        if (active) {
-            await this.questionRepo.update({ active: true }, { active: false });
+    async createQuestion(prompt: string, active = true, topicKey?: string, topicLabel?: string) {
+        if (active && !topicKey) {
+            await this.questionRepo.update({ active: true, topicKey: null } as any, { active: false });
+        } else if (active && topicKey) {
+             await this.questionRepo.update({ active: true, topicKey }, { active: false });
         }
         const question = this.questionRepo.create({
             prompt: prompt.trim(),
             active,
+            topicKey,
+            topicLabel
         });
         const saved = await this.questionRepo.save(question);
         await this.adminService.logAction({
@@ -49,8 +53,18 @@ export class WriteXService {
         return saved;
     }
 
-    async listQuestions() {
-        return this.questionRepo.find({ order: { createdAt: 'DESC' } });
+    async listQuestions(topicKey?: string) {
+        const normalizedTopicKey = topicKey?.trim();
+        const where = normalizedTopicKey
+            ? normalizedTopicKey === 'general'
+                ? { topicKey: IsNull() }
+                : { topicKey: normalizedTopicKey }
+            : {};
+
+        return this.questionRepo.find({ 
+            where,
+            order: { createdAt: 'DESC' } 
+        });
     }
 
     async updateQuestion(id: string, dto: UpdateWriteXQuestionDto) {
@@ -63,9 +77,17 @@ export class WriteXService {
             question.prompt = dto.prompt.trim();
         }
 
+        if (dto.topicKey !== undefined) question.topicKey = dto.topicKey;
+        if (dto.topicLabel !== undefined) question.topicLabel = dto.topicLabel;
+
         if (dto.active !== undefined) {
             if (dto.active) {
-                await this.questionRepo.update({ active: true }, { active: false });
+                const topicKey = dto.topicKey !== undefined ? dto.topicKey : question.topicKey;
+                if (!topicKey) {
+                    await this.questionRepo.update({ active: true, topicKey: null } as any, { active: false });
+                } else {
+                    await this.questionRepo.update({ active: true, topicKey }, { active: false });
+                }
             }
             question.active = dto.active;
         }
@@ -93,11 +115,39 @@ export class WriteXService {
         return { success: true };
     }
 
-    async getActiveQuestion() {
-        const active = await this.questionRepo.findOne({ where: { active: true } });
+    async getGroups() {
+        const query = this.questionRepo.createQueryBuilder('q');
+        query.select(`COALESCE(q.topicKey, 'general')`, 'key');
+        query.addSelect(`COALESCE(q.topicLabel, 'General')`, 'label');
+        query.addSelect('COUNT(q.id)', 'count');
+        query.groupBy('COALESCE(q.topicKey, \'general\')');
+        query.addGroupBy('COALESCE(q.topicLabel, \'General\')');
+        query.orderBy('label', 'ASC');
+        const results = await query.getRawMany();
+        return results.map((r) => ({
+            key: r.key,
+            label: r.label,
+            count: Number(r.count),
+            category: 'writex'
+        }));
+    }
+
+    async getActiveQuestion(topicKey?: string) {
+        const normalizedTopicKey = topicKey?.trim();
+        const where: any = { active: true };
+        if (normalizedTopicKey) {
+            where.topicKey = normalizedTopicKey === 'general' ? IsNull() : normalizedTopicKey;
+        }
+
+        const active = await this.questionRepo.findOne({ where });
         if (active) return active;
 
-        const latest = await this.questionRepo.findOne({ order: { createdAt: 'DESC' } });
+        const latestWhere: any = {};
+        if (normalizedTopicKey) {
+            latestWhere.topicKey = normalizedTopicKey === 'general' ? IsNull() : normalizedTopicKey;
+        }
+
+        const latest = await this.questionRepo.findOne({ where: latestWhere, order: { createdAt: 'DESC' } });
         if (!latest) {
             throw new NotFoundException('No WriteX question found');
         }

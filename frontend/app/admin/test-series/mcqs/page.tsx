@@ -88,7 +88,12 @@ export default function AdminMcqManager() {
             ]);
             setItems(listRes.items);
             setGroups(groupRes);
-            setTopics([]);
+            if (filters.groupKey) {
+                const topicRes = await fetchMcqTopics(token, 'subject', filters.groupKey);
+                setTopics(topicRes);
+            } else {
+                setTopics([]);
+            }
         } catch (error: any) {
             setMessage({ type: 'error', text: error.message || 'Failed to load MCQs.' });
         } finally {
@@ -102,8 +107,11 @@ export default function AdminMcqManager() {
     }, [filters.category, filters.groupKey, filters.topicKey, filters.search, filters.page]);
 
     const groupOptions = useMemo(() => {
-        return SUBJECT_KEYS.map((item) => ({ key: item.value, label: item.label }));
-    }, []);
+        if (groups.length > 0) {
+            return groups;
+        }
+        return SUBJECT_KEYS.map((item) => ({ key: item.value, label: item.label, count: 0 }));
+    }, [groups]);
 
     const handleCreate = async () => {
         setIsSaving(true);
@@ -112,7 +120,7 @@ export default function AdminMcqManager() {
             await createMcq(token, {
                 category: 'subject',
                 group: form.group,
-                topic: undefined,
+                topic: form.topic || undefined,
                 question: form.question,
                 options: form.options,
                 correctOptionIndex: form.correctOptionIndex,
@@ -134,7 +142,7 @@ export default function AdminMcqManager() {
             const payload: UpdateMcqPayload = {
                 category: 'subject',
                 group: form.group,
-                topic: undefined,
+                topic: form.topic || undefined,
                 question: form.question,
                 options: form.options,
                 correctOptionIndex: form.correctOptionIndex,
@@ -273,7 +281,15 @@ export default function AdminMcqManager() {
                         />
                     </div>
 
-
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Module Name</label>
+                        <input
+                            value={form.topic}
+                            onChange={(e) => setForm((prev) => ({ ...prev, topic: e.target.value }))}
+                            placeholder="Module 1"
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold"
+                        />
+                    </div>
 
                     <div className="md:col-span-2 space-y-2">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Question</label>
@@ -383,10 +399,24 @@ export default function AdminMcqManager() {
                             onChange={(e) => setFilters((prev) => ({ ...prev, groupKey: e.target.value, topicKey: '', page: 1 }))}
                             className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold"
                         >
-                            <option value="">All Groups</option>
+                            <option value="">All Subjects</option>
                             {groupOptions.map((group) => (
                                 <option key={group.key} value={group.key}>
                                     {group.label}
+                                </option>
+                            ))}
+                        </select>
+                        <select
+                            value={filters.topicKey}
+                            onChange={(e) => setFilters((prev) => ({ ...prev, topicKey: e.target.value, page: 1 }))}
+                            className={`rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold ${!filters.groupKey ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={!filters.groupKey}
+                        >
+                            <option value="">All Modules</option>
+                            <option value="general">Unassigned (Legacy)</option>
+                            {topics.map((topic) => (
+                                <option key={topic.key} value={topic.key}>
+                                    {topic.label}
                                 </option>
                             ))}
                         </select>

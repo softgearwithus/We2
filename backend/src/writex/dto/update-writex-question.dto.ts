@@ -11,4 +11,14 @@ export class UpdateWriteXQuestionDto {
     @IsOptional()
     @IsBoolean()
     active?: boolean;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    topicKey?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsString()
+    topicLabel?: string;
 }

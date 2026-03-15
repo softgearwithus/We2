@@ -16,6 +16,7 @@ describe('TestSeriesController', () => {
             getCompanyHierarchy: jest.fn(),
             getMockTestFull: jest.fn(),
             submitTest: jest.fn(),
+            submitSubjectPractice: jest.fn(),
             getResultFull: jest.fn(),
             getStudentResults: jest.fn()
           }

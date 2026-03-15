@@ -18,6 +18,11 @@ export class UpdateMcqQuestionDto {
     @IsString()
     topic?: string;
 
+    @ApiProperty({ example: 60, description: 'Duration in minutes constraint for the module', required: false })
+    @IsOptional()
+    @IsInt()
+    topicDurationMinutes?: number;
+
     @ApiProperty({ example: 'Which sentence is grammatically correct?', required: false })
     @IsOptional()
     @IsString()

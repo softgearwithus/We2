@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AdminService } from '../admin/admin.service';
@@ -7,6 +7,7 @@ import { ImportMcqsDto } from './dto/import-mcqs.dto';
 import { ListMcqQueryDto, McqOrder } from './dto/list-mcq-query.dto';
 import { AdminMcqQueryDto } from './dto/admin-mcq-query.dto';
 import { AdminDeleteMcqQueryDto } from './dto/admin-delete-mcq-query.dto';
+import { AdminUpdateDurationDto } from './dto/admin-update-duration.dto';
 import { UpdateMcqQuestionDto } from './dto/update-mcq-question.dto';
 import { McqQuestion, McqCategory } from './entities/mcq-question.entity';
 
@@ -44,6 +45,7 @@ export class McqsService {
             question: dto.question.trim(),
             options,
             correctOptionIndex: dto.correctOptionIndex,
+            topicDurationMinutes: dto.topicDurationMinutes ?? 60,
         });
         const saved = await this.mcqRepo.save(question);
         await this.adminService.logAction({
@@ -162,6 +164,10 @@ export class McqsService {
             question.category = dto.category;
         }
 
+        if (dto.topicDurationMinutes !== undefined) {
+            question.topicDurationMinutes = dto.topicDurationMinutes;
+        }
+
         if (question.category === McqCategory.COMPANY && !question.topicLabel && !dto.topic) {
             throw new BadRequestException('Topic is required for company MCQs');
         }
@@ -202,6 +208,14 @@ export class McqsService {
         return saved;
     }
 
+    async findOne(id: string) {
+        const question = await this.mcqRepo.findOne({ where: { id } });
+        if (!question) {
+            throw new NotFoundException('MCQ not found');
+        }
+        return question;
+    }
+
     async remove(id: string) {
         const question = await this.mcqRepo.findOne({ where: { id } });
         if (!question) {
@@ -218,42 +232,78 @@ export class McqsService {
     }
 
     async bulkRemove(query: AdminDeleteMcqQueryDto) {
-        const qb = this.mcqRepo.createQueryBuilder('mcq');
+        try {
+            const qb = this.mcqRepo.createQueryBuilder('mcq');
 
-        if (query.category) {
-            qb.andWhere('mcq.category = :category', { category: query.category });
-        }
-        if (query.groupKey) {
-            qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
-        }
-        if (query.topicKey) {
-            const topicKey = this.normalizeKey(query.topicKey);
-            if (topicKey === 'general') {
-                qb.andWhere('(mcq.topicKey = :topicKey OR mcq.topicKey IS NULL)', { topicKey });
-            } else {
-                qb.andWhere('mcq.topicKey = :topicKey', { topicKey });
+            if (query.category) {
+                qb.andWhere('mcq.category = :category', { category: query.category });
             }
-        }
-        if (query.search) {
-            qb.andWhere('(mcq.question ILIKE :search OR mcq.groupLabel ILIKE :search)', {
-                search: `%${query.search}%`,
+            if (query.groupKey) {
+                qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(query.groupKey) });
+            }
+            if (query.topicKey) {
+                const topicKey = this.normalizeKey(query.topicKey);
+                if (topicKey === 'general') {
+                    qb.andWhere('(mcq.topicKey = :topicKey OR mcq.topicKey IS NULL)', { topicKey });
+                } else {
+                    qb.andWhere('mcq.topicKey = :topicKey', { topicKey });
+                }
+            }
+            if (query.search) {
+                qb.andWhere('(mcq.question ILIKE :search OR mcq.groupLabel ILIKE :search)', {
+                    search: `%${query.search}%`,
+                });
+            }
+
+            const ids = await qb.select('mcq.id', 'id').getRawMany<{ id: string }>();
+            if (ids.length === 0) {
+                return { deletedCount: 0 };
+            }
+
+            await this.mcqRepo.delete(ids.map((row) => row.id));
+            await this.adminService.logAction({
+                action: 'MCQ Bulk Deleted',
+                target: query.groupKey || query.category || 'filtered',
+                severity: 'warning',
+                metadata: { deletedCount: ids.length },
             });
+            return { deletedCount: ids.length };
+        } catch (e: any) {
+            throw new InternalServerErrorException(`Delete Error: ${e.message} \n ${e.stack}`);
         }
-
-        const ids = await qb.select('mcq.id', 'id').getRawMany<{ id: string }>();
-        if (ids.length === 0) {
-            return { deletedCount: 0 };
-        }
-
-        await this.mcqRepo.delete(ids.map((row) => row.id));
-        await this.adminService.logAction({
-            action: 'MCQ Bulk Deleted',
-            target: query.groupKey || query.category || 'filtered',
-            severity: 'warning',
-            metadata: { deletedCount: ids.length },
-        });
-        return { deletedCount: ids.length };
     }
+
+    async bulkUpdateDuration(dto: AdminUpdateDurationDto) {
+        try {
+            const qb = this.mcqRepo.createQueryBuilder('mcq');
+
+            if (dto.category) {
+                qb.andWhere('mcq.category = :category', { category: dto.category });
+            }
+            if (dto.groupKey) {
+                qb.andWhere('mcq.groupKey = :groupKey', { groupKey: this.normalizeKey(dto.groupKey) });
+            }
+            if (dto.topicKey) {
+                const topicKey = this.normalizeKey(dto.topicKey);
+                if (topicKey === 'general') {
+                    qb.andWhere('(mcq.topicKey = :topicKey OR mcq.topicKey IS NULL)', { topicKey });
+                } else {
+                    qb.andWhere('mcq.topicKey = :topicKey', { topicKey });
+                }
+            }
+
+            const ids = await qb.select('mcq.id', 'id').getRawMany<{ id: string }>();
+            if (ids.length === 0) {
+                return { updatedCount: 0 };
+            }
+
+            await this.mcqRepo.update(ids.map(row => row.id), { topicDurationMinutes: dto.durationMinutes });
+            return { updatedCount: ids.length };
+        } catch (e: any) {
+            throw new InternalServerErrorException(`Duration Error: ${e.message} \n ${e.stack}`);
+        }
+    }
+
 
     async groups(category: McqCategory, groupBy: 'group' | 'topic' = 'group', groupKey?: string) {
         const qb = this.mcqRepo.createQueryBuilder('mcq')
@@ -267,26 +317,29 @@ export class McqsService {
             qb.select('COALESCE(mcq.topicKey, :fallbackKey)', 'groupKey')
                 .addSelect('COALESCE(mcq.topicLabel, :fallbackLabel)', 'groupLabel')
                 .addSelect('COUNT(mcq.id)', 'count')
+                .addSelect('MAX(mcq.topicDurationMinutes)', 'durationMinutes')
                 .setParameter('fallbackKey', 'general')
                 .setParameter('fallbackLabel', 'General')
                 .groupBy('mcq.topicKey')
                 .addGroupBy('mcq.topicLabel')
-                .orderBy('groupLabel', 'ASC');
+                .orderBy('"groupLabel"', 'ASC');
         } else {
             qb.select('mcq.groupKey', 'groupKey')
                 .addSelect('mcq.groupLabel', 'groupLabel')
                 .addSelect('COUNT(mcq.id)', 'count')
+                .addSelect('MAX(mcq.topicDurationMinutes)', 'durationMinutes')
                 .groupBy('mcq.groupKey')
                 .addGroupBy('mcq.groupLabel')
-                .orderBy('mcq.groupLabel', 'ASC');
+                .orderBy('"groupLabel"', 'ASC');
         }
 
-        const rows = await qb.getRawMany<{ groupKey: string; groupLabel: string; count: string }>();
+        const rows = await qb.getRawMany<{ groupKey: string; groupLabel: string; count: string; durationMinutes: number }>();
 
         return rows.map((row) => ({
             key: row.groupKey,
             label: row.groupLabel,
             count: parseInt(row.count, 10),
+            durationMinutes: row.durationMinutes || 60,
         }));
     }
 

@@ -12,9 +12,21 @@ export class MockTestResult {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @ManyToOne(() => MockTest, { onDelete: 'CASCADE' })
+    @ManyToOne(() => MockTest, { nullable: true, onDelete: 'SET NULL' })
     @JoinColumn({ name: 'mock_test_id' })
     mockTest: MockTest;
+
+    @Column({ name: 'result_type', type: 'varchar', default: 'mock_test' })
+    resultType: string; // 'mock_test', 'subject_practice'
+
+    @Column({ name: 'subject', type: 'varchar', nullable: true })
+    subject: string;
+
+    @Column({ name: 'topic', type: 'varchar', nullable: true })
+    topic: string;
+
+    @Column({ name: 'title_snapshot', type: 'varchar', nullable: true })
+    titleSnapshot: string;
 
     @Column({ name: 'start_time', type: 'timestamp' })
     startTime: Date;

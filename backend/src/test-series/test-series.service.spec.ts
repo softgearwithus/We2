@@ -8,6 +8,7 @@ import { MockTestQuestion } from './entities/mock-test-question.entity';
 import { MockTestResult } from './entities/mock-test-result.entity';
 import { MockTestStudentResponse } from './entities/mock-test-student-response.entity';
 import { User } from '../users/user.entity';
+import { McqQuestion } from '../mcqs/entities/mcq-question.entity';
 import { TestEvaluationService } from './test-evaluation.service';
 
 describe('TestSeriesService', () => {
@@ -43,6 +44,10 @@ describe('TestSeriesService', () => {
         },
         {
           provide: getRepositoryToken(User),
+          useValue: {}
+        },
+        {
+          provide: getRepositoryToken(McqQuestion),
           useValue: {}
         },
         {

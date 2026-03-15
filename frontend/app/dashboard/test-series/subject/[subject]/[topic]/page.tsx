@@ -263,12 +263,15 @@ export default function SubjectModuleSimulatorPage() {
             incorrectAnswers: incorrectCount,
             unattemptedQuestions: unattemptedCount,
             timeTakenSeconds: (testData.totalDurationMinutes * 60) - timeLeftSeconds,
-            responses: mappedResponses.filter(r => r.responseValue !== '')
+            responses: mappedResponses
         };
 
         // Attempt to submit to backend for the /mock-analysis page
         try {
-            let token = getStoredToken('user') || getStoredToken('admin');
+            const token = getStoredToken('user') || getStoredToken('admin');
+            if (!token) {
+                throw new Error('No token');
+            }
             
             // We need a specific endpoint to save Subject results. If it doesn't exist, we fallback to local review.
             // Assuming we're creating a POST /student-results/subject endpoint or using the mock-test one with a flag.

@@ -383,11 +383,31 @@ export default function AdminSubjectBuilder() {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {subjects.map((subject) => (
+                                {subjects.map((subject) => {
+                                    const borderHoverClass = {
+                                        indigo: 'hover:border-indigo-200',
+                                        blue: 'hover:border-blue-200',
+                                        purple: 'hover:border-purple-200',
+                                        emerald: 'hover:border-emerald-200',
+                                        amber: 'hover:border-amber-200',
+                                        rose: 'hover:border-rose-200',
+                                        cyan: 'hover:border-cyan-200',
+                                    }[subject.color] || 'hover:border-indigo-200';
+                                    const iconClass = {
+                                        indigo: 'bg-indigo-50 text-indigo-600',
+                                        blue: 'bg-blue-50 text-blue-600',
+                                        purple: 'bg-purple-50 text-purple-600',
+                                        emerald: 'bg-emerald-50 text-emerald-600',
+                                        amber: 'bg-amber-50 text-amber-600',
+                                        rose: 'bg-rose-50 text-rose-600',
+                                        cyan: 'bg-cyan-50 text-cyan-600',
+                                    }[subject.color] || 'bg-indigo-50 text-indigo-600';
+
+                                    return (
                                     <div
                                         key={subject.id}
                                         onClick={() => selectSubject(subject)}
-                                        className={`bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-${subject.color}-200 cursor-pointer group transition-all relative group`}
+                                        className={`bg-white p-6 rounded-2xl shadow-sm border border-slate-200 ${borderHoverClass} cursor-pointer group transition-all relative group`}
                                     >
                                         <button 
                                             onClick={(e) => handleDeleteSubject(e, subject)}
@@ -396,7 +416,7 @@ export default function AdminSubjectBuilder() {
                                         >
                                             <Trash2 size={18} />
                                         </button>
-                                        <div className={`w-14 h-14 bg-${subject.color}-50 text-${subject.color}-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>
+                                        <div className={`w-14 h-14 ${iconClass} rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>
                                             {subject.icon}
                                         </div>
                                         <h3 className="text-xl font-bold text-slate-800 pr-8">{subject.name}</h3>
@@ -404,7 +424,7 @@ export default function AdminSubjectBuilder() {
                                             Manage Modules <ChevronRight size={14} />
                                         </p>
                                     </div>
-                                ))}
+                                )})}
                             </div>
                         )}
 

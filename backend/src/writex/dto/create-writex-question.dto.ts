@@ -11,4 +11,14 @@ export class CreateWriteXQuestionDto {
     @IsOptional()
     @IsBoolean()
     active?: boolean;
+
+    @ApiProperty({ required: false, example: 'module_1' })
+    @IsOptional()
+    @IsString()
+    topicKey?: string;
+
+    @ApiProperty({ required: false, example: 'Module 1' })
+    @IsOptional()
+    @IsString()
+    topicLabel?: string;
 }

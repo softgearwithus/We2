@@ -2,228 +2,124 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, PenTool, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowLeft, ChevronRight, PenTool, Sparkles } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import API_BASE_URL from '@/app/lib/api-config';
 import { useTestSeriesUsage } from '../layout';
 
-interface WriteXQuestion {
-    id: string;
-    prompt: string;
+const container: Variants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
+};
+
+const item: Variants = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
+};
+
+interface ModuleData {
+    key: string;
+    label: string;
+    count: number;
 }
 
-interface WriteXResult {
-    score: number;
-    summary: string;
-    criteria?: {
-        relevance: number;
-        fluency: number;
-        grammar: number;
-        vocabulary: number;
-    };
-    strengths: string[];
-    improvements: string[];
-}
-
-export default function CommunicationTestsPage() {
-    const [question, setQuestion] = useState<WriteXQuestion | null>(null);
-    const [answer, setAnswer] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [result, setResult] = useState<WriteXResult | null>(null);
-    const [error, setError] = useState<string | null>(null);
+export default function WriteXModulesPage() {
+    const [modules, setModules] = useState<ModuleData[]>([]);
+    const [loading, setLoading] = useState(true);
     const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
 
     useEffect(() => {
-        const loadQuestion = async () => {
-            const { getActiveToken } = await import('@/app/lib/auth-storage');
-            const token = getActiveToken();
-            if (!token) return;
+        const loadModules = async () => {
+            const { getStoredToken } = await import('@/app/lib/auth-storage');
+            const token = getStoredToken('user') || getStoredToken('admin');
+            if (!token) {
+                setModules([]);
+                setLoading(false);
+                return;
+            }
+
+            setLoading(true);
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/writex/question`, {
+                const response = await fetch(`${API_BASE_URL}/writex/groups`, {
                     headers: { Authorization: `Bearer ${token}` },
+                    cache: 'no-store',
                 });
                 if (!response.ok) return;
                 const data = await response.json();
-                if (data?.id) {
-                    setQuestion(data);
+                if (Array.isArray(data)) {
+                    setModules(data);
                 }
-            } catch {
-                return;
+            } finally {
+                setLoading(false);
             }
         };
-        loadQuestion();
+        loadModules();
     }, []);
 
-    const submitAnswer = async () => {
-        if (!question) return;
-        const { getActiveToken } = await import('@/app/lib/auth-storage');
-        const token = getActiveToken();
-        if (!token) return;
-
-        setIsSubmitting(true);
-        setError(null);
-        setResult(null);
-
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/writex/submit`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    questionId: question.id,
-                    answer,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Evaluation failed');
-            }
-
-            const data = await response.json();
-            setResult(data);
-        } catch (err: any) {
-            setError(err.message || 'Something went wrong.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
     return (
-        <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-700 overflow-x-hidden pb-20 relative">
+        <div className="min-h-screen font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-700 bg-[#F8FAFC] pb-24 relative">
             <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
 
-            <div className="max-w-4xl mx-auto p-6 lg:p-10 relative z-10">
-                <motion.header
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-14 mt-6"
-                >
-                    <Link href="/dashboard/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-bold mb-8 transition-colors group px-4 py-2 rounded-full hover:bg-white bg-transparent border border-transparent hover:border-slate-200">
-                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Test Series
-                    </Link>
+            <div className="max-w-6xl mx-auto px-6 py-10 relative z-10">
+                <Link href="/dashboard/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-medium mb-8 transition-all group px-5 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md active:scale-95">
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Test Series
+                </Link>
 
-                    <div>
+                <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-14">
+                    <div className="max-w-3xl">
                         <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-emerald-100">
-                            <Sparkles size={14} /> WriteX Analysis
+                            <Sparkles size={14} /> WriteX Modules
                         </div>
-
-                        <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 mb-4">
-                            WriteX <span className="text-emerald-600">Analysis.</span>
-                        </h1>
-                        <p className="text-lg text-slate-500 font-medium max-w-2xl">
-                            Submit your response and receive an instant AI score with actionable feedback.
-                        </p>
+                        <h1 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 mb-4">WriteX <span className="text-emerald-600">Categories</span></h1>
+                        <p className="text-lg text-slate-500 font-medium">Select a focused module to begin your targeted essay or code writing practice.</p>
                         {isFreePlan && (
                             <div className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
-                                Free plan time left in WriteX: {remainingLabel}
+                                Free plan time left: {remainingLabel}
                             </div>
                         )}
                     </div>
                 </motion.header>
 
-                    <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 24 }}
-                    className="bg-white rounded-3xl p-8 lg:p-10 border border-slate-100 shadow-sm relative overflow-hidden"
-                >
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center">
-                            <PenTool size={20} strokeWidth={2.5} />
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold uppercase tracking-widest text-slate-400">WriteX Prompt</p>
-                            <h2 className="text-xl font-bold text-slate-900">Answer the prompt below</h2>
-                        </div>
+                {loading ? (
+                    <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold shadow-sm">
+                        Loading modules...
                     </div>
-
-                    {question ? (
-                        <div className="space-y-6">
-                            <div className="p-5 bg-emerald-50/50 border border-emerald-100/50 rounded-2xl text-slate-800 font-medium leading-relaxed">
-                                {question.prompt}
-                            </div>
-                            <textarea
-                                value={answer}
-                                onChange={(e) => setAnswer(e.target.value)}
-                                placeholder="Type your response here..."
-                                disabled={isLimited}
-                                className={`w-full h-48 p-5 border border-slate-200 rounded-2xl bg-white text-sm font-medium transition-all outline-none resize-none shadow-inner ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:bg-slate-50/50 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500'}`}
-                            />
-                            <div className="flex items-center justify-between pt-2">
-                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest hidden sm:block">Aim for clarity & structure</p>
-                                <button
-                                    onClick={submitAnswer}
-                                    disabled={isSubmitting || answer.trim().length === 0 || isLimited}
-                                    className="px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-emerald-600 transition-colors disabled:opacity-50 flex items-center gap-2"
+                ) : (
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
+                        {modules.map((mod, idx) => (
+                            <motion.div variants={item} key={idx}>
+                                <Link
+                                    href={`/dashboard/test-series/communication/${mod.key}`}
+                                    className={`group flex items-center justify-between bg-white rounded-3xl p-6 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-emerald-100'}`}
                                 >
-                                    {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
-                                    {isSubmitting ? 'Evaluating...' : 'Submit Answer'}
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="text-slate-500 font-medium py-10 text-center">Loading your prompt...</div>
-                    )}
-
-                    {error && (
-                        <div className="mt-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-bold flex items-center justify-center">
-                            {error}
-                        </div>
-                    )}
-
-                    {result && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-10 pt-10 border-t border-slate-100 grid gap-6"
-                        >
-                            <div className="p-6 border border-slate-200 rounded-2xl bg-slate-50 shadow-sm">
-                                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Total Score</p>
-                                <p className="text-5xl font-black text-emerald-600 mt-2">{result.score}<span className="text-xl text-slate-400">/100</span></p>
-                                <p className="text-slate-600 mt-3 font-medium">{result.summary}</p>
-                            </div>
-
-                            {result.criteria && (
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {[
-                                        { label: 'Relevance', value: result.criteria.relevance },
-                                        { label: 'Fluency', value: result.criteria.fluency },
-                                        { label: 'Grammar', value: result.criteria.grammar },
-                                        { label: 'Vocabulary', value: result.criteria.vocabulary },
-                                    ].map((item) => (
-                                        <div key={item.label} className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
-                                            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">{item.label}</p>
-                                            <p className="text-xl font-bold text-slate-900 mt-1">{item.value}/100</p>
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                                            <PenTool size={20} strokeWidth={2.5} />
                                         </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="p-5 bg-emerald-50/50 border border-emerald-100/50 rounded-xl">
-                                    <h3 className="font-bold text-emerald-700 mb-3 text-sm uppercase tracking-wide">Strengths</h3>
-                                    <ul className="space-y-2 text-sm text-emerald-900/80 font-medium">
-                                        {result.strengths?.map((item, idx) => (
-                                            <li key={idx} className="flex items-start gap-2">
-                                                <span className="text-emerald-500 mt-0.5">•</span> {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div className="p-5 bg-orange-50/50 border border-orange-100/50 rounded-xl">
-                                    <h3 className="font-bold text-orange-700 mb-3 text-sm uppercase tracking-wide">Areas to Improve</h3>
-                                    <ul className="space-y-2 text-sm text-orange-900/80 font-medium">
-                                        {result.improvements?.map((item, idx) => (
-                                            <li key={idx} className="flex items-start gap-2">
-                                                <span className="text-orange-500 mt-0.5">•</span> {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                        <div>
+                                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors tracking-tight">{mod.label}</h3>
+                                            <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">{mod.count} prompts</p>
+                                        </div>
+                                    </div>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                        
+                        {modules.length === 0 && (
+                            <div className="col-span-full bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold shadow-sm">
+                                No WriteX modules have been created yet.
                             </div>
-                        </motion.div>
-                    )}
-                </motion.div>
+                        )}
+                    </motion.div>
+                )}
             </div>
         </div>
     );

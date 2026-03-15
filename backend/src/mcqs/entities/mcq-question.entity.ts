@@ -35,6 +35,9 @@ export class McqQuestion {
     @Column({ type: 'int' })
     correctOptionIndex: number;
 
+    @Column({ type: 'int', default: 60 })
+    topicDurationMinutes: number;
+
     @CreateDateColumn()
     createdAt: Date;
 

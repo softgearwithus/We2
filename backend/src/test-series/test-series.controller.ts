@@ -69,6 +69,26 @@ export class TestSeriesController {
         }
     }
 
+    @Post('student/results/subject')
+    @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
+    @ApiOperation({ summary: 'Submit a subject practice module and get a mock test result' })
+    async submitSubjectPractice(
+        @CurrentUser() user: any,
+        @Body() body: any
+    ) {
+        try {
+            return await this.testSeriesService.submitSubjectPractice(user.userId || user.id, body);
+        } catch (error: any) {
+            console.error('CRITICAL SUBMIT ERROR:', error);
+            throw new HttpException({
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                error: 'Submission crash',
+                message: error?.message || 'Unknown error',
+                stack: error?.stack
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Get('student/results/:id')
     @Roles(UserRole.STUDENT, UserRole.MENTOR, UserRole.SUPER_ADMIN)
     @ApiOperation({ summary: 'Get the detailed analysis results for a completed mock test session' })

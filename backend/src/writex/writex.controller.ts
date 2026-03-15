@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -23,8 +23,17 @@ export class WriteXController {
     @ApiOperation({ summary: 'Get active WriteX question' })
     @ApiResponse({ status: 200, description: 'Active question' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.TEST_SERIES)
-    async getQuestion() {
-        return this.writexService.getActiveQuestion();
+    async getQuestion(@Query('topicKey') topicKey?: string) {
+        return this.writexService.getActiveQuestion(topicKey);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, UsageGuard)
+    @Get('groups')
+    @ApiOperation({ summary: 'List WriteX topic groups' })
+    @ApiResponse({ status: 200, description: 'Groups list' })
+    async getGroups() {
+        return this.writexService.getGroups();
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -44,7 +53,7 @@ export class WriteXController {
     @ApiOperation({ summary: 'Create WriteX question (Admin only)' })
     @ApiResponse({ status: 201, description: 'Question created' })
     async create(@Body() dto: CreateWriteXQuestionDto) {
-        return this.writexService.createQuestion(dto.prompt, dto.active ?? true);
+        return this.writexService.createQuestion(dto.prompt, dto.active ?? true, dto.topicKey, dto.topicLabel);
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -53,8 +62,8 @@ export class WriteXController {
     @Get('questions')
     @ApiOperation({ summary: 'List WriteX questions (Admin only)' })
     @ApiResponse({ status: 200, description: 'Questions list' })
-    async list() {
-        return this.writexService.listQuestions();
+    async list(@Query('topicKey') topicKey?: string) {
+        return this.writexService.listQuestions(topicKey);
     }
 
     @ApiBearerAuth('JWT-auth')

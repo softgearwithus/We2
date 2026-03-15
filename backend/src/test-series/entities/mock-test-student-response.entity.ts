@@ -11,9 +11,12 @@ export class MockTestStudentResponse {
     @JoinColumn({ name: 'mock_test_result_id' })
     mockTestResult: MockTestResult;
 
-    @ManyToOne(() => MockTestQuestion, { onDelete: 'CASCADE' })
+    @ManyToOne(() => MockTestQuestion, { nullable: true, onDelete: 'SET NULL' })
     @JoinColumn({ name: 'question_id' })
     question: MockTestQuestion;
+
+    @Column({ name: 'subject_mcq_id', type: 'uuid', nullable: true })
+    subjectMcqId: string;
 
     @Column({ name: 'time_spent_seconds', type: 'int', default: 0 })
     timeSpentSeconds: number;

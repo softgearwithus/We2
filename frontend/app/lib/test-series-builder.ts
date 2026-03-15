@@ -1,4 +1,6 @@
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import API_BASE_URL from './api-config';
+
+export const API_BASE = API_BASE_URL;
 
 export async function fetchCompaniesList(token: string, isAdmin = false) {
     const route = isAdmin ? 'admin/companies' : 'student/companies';

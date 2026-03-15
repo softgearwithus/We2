@@ -12,6 +12,12 @@ export class WriteXQuestion {
     @Column({ type: 'boolean', default: true })
     active: boolean;
 
+    @Column({ type: 'varchar', nullable: true })
+    topicKey: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    topicLabel: string;
+
     @CreateDateColumn()
     createdAt: Date;
 

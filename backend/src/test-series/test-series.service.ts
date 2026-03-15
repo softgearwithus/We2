@@ -8,6 +8,7 @@ import { MockTestQuestion, MockQuestionType } from './entities/mock-test-questio
 import { MockTestResult } from './entities/mock-test-result.entity';
 import { MockTestStudentResponse } from './entities/mock-test-student-response.entity';
 import { User } from '../users/user.entity';
+import { McqQuestion } from '../mcqs/entities/mcq-question.entity';
 import { TestEvaluationService } from './test-evaluation.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/test-series.dto';
 import { In } from 'typeorm';
@@ -29,6 +30,8 @@ export class TestSeriesService {
         private mockTestResponseRepository: Repository<MockTestStudentResponse>,
         @InjectRepository(User)
         private userRepository: Repository<User>,
+        @InjectRepository(McqQuestion)
+        private mcqQuestionRepository: Repository<McqQuestion>,
         private testEvaluationService: TestEvaluationService
     ) { }
 
@@ -317,6 +320,59 @@ export class TestSeriesService {
         };
     }
 
+    async submitSubjectPractice(userId: string, payload: {
+        subject: string,
+        topic: string,
+        title: string,
+        totalScore: number,
+        correctAnswers: number,
+        incorrectAnswers: number,
+        unattemptedQuestions: number,
+        timeTakenSeconds: number,
+        responses: { question: { id: string }, responseValue: string, isCorrect: boolean | null }[]
+    }) {
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException('User not found');
+
+        const now = new Date();
+        const startTime = new Date(now.getTime() - (payload.timeTakenSeconds * 1000));
+
+        const result = this.mockTestResultRepository.create({
+            user,
+            resultType: 'subject_practice',
+            subject: payload.subject,
+            topic: payload.topic,
+            titleSnapshot: payload.title,
+            startTime: startTime,
+            endTime: now,
+            isEvaluated: true,
+            totalMarks: payload.responses.length, 
+            marksObtained: payload.totalScore
+        });
+
+        await this.mockTestResultRepository.save(result);
+
+        const studentResponses: MockTestStudentResponse[] = payload.responses.map(r => {
+            return this.mockTestResponseRepository.create({
+                mockTestResult: result,
+                subjectMcqId: r.question.id, // Store original McqQuestion id loosely
+                responseValue: r.responseValue,
+                timeSpentSeconds: 0, // Roughly speaking, or we divide time...
+                isCorrect: r.isCorrect,
+                marksAwarded: r.isCorrect ? 1 : 0
+            });
+        });
+
+        if (studentResponses.length > 0) {
+            await this.mockTestResponseRepository.save(studentResponses);
+        }
+
+        return {
+            success: true,
+            id: result.id
+        };
+    }
+
     async getStudentResults(userId: string) {
         return this.mockTestResultRepository.find({
             where: { user: { id: userId } },
@@ -332,8 +388,28 @@ export class TestSeriesService {
         });
         if (!result) throw new NotFoundException('Result not found or access denied');
 
-        // Note: For students, we might want to hide correctAnswer until a certain date, 
-        // but for immediate tests, we can just return it.
+        if (result.resultType === 'subject_practice') {
+            const mcqIds = result.responses.map(r => r.subjectMcqId).filter(id => id);
+            if (mcqIds.length > 0) {
+                const mcqs = await this.mcqQuestionRepository.find({ where: { id: In(mcqIds) } });
+                result.responses.forEach(r => {
+                    const matched = mcqs.find(m => m.id === r.subjectMcqId);
+                    if (matched) {
+                        // Map McqQuestion into MockTestQuestion format for the frontend
+                        (r as any).question = {
+                            id: matched.id,
+                            questionText: matched.question,
+                            optionsJson: matched.options,
+                            correctAnswer: matched.correctOptionIndex !== null ? String(matched.correctOptionIndex) : null,
+                            questionType: 'SINGLE_CORRECT',
+                            marks: 1,
+                            solutionText: ''
+                        };
+                    }
+                });
+            }
+        }
+
         return result;
     }
 }
