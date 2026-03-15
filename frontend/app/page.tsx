@@ -9,6 +9,13 @@ import StatsSection from './components/home/StatsSection';
 import FAQSection from './components/home/FAQSection';
 import ComparisonSection from './components/home/ComparisonSection';
 import RoadmapPreview from './components/home/RoadmapPreview';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://emble.in',
+  },
+};
 
 export default function Home() {
   return (
