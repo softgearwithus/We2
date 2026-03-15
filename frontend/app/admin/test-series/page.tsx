@@ -18,16 +18,16 @@ export default function AdminTestSeriesHub() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Link
-                    href="/admin/test-series/mcqs"
+                    href="/admin/test-series/subjects"
                     className="group bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all"
                 >
                     <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                         <BookOpen size={22} />
                     </div>
-                    <h2 className="text-xl font-black text-slate-900">MCQ Library</h2>
-                    <p className="text-sm text-slate-500 mt-2">Create, edit, and batch import subject and company question banks.</p>
+                    <h2 className="text-xl font-black text-slate-900">Subject Builder</h2>
+                    <p className="text-sm text-slate-500 mt-2">Create hierarchical subject modules and batch import questions into them.</p>
                     <div className="mt-6 inline-flex items-center gap-2 text-indigo-600 font-bold text-sm">
-                        Manage MCQs <ClipboardCheck size={16} />
+                        Build Subjects <ClipboardCheck size={16} />
                     </div>
                 </Link>
 

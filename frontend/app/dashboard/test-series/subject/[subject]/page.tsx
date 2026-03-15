@@ -1,19 +1,12 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowLeft, ChevronRight, Layers, Sparkles } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import API_BASE_URL from '@/app/lib/api-config';
 import { useTestSeriesUsage } from '../../layout';
-
-interface McqQuestion {
-    id: string;
-    subject: string;
-    question: string;
-    options: string[];
-    correctOptionIndex: number;
-}
 
 const SUBJECT_LABELS: Record<string, string> = {
     english: 'English',
@@ -22,153 +15,198 @@ const SUBJECT_LABELS: Record<string, string> = {
     computer_science: 'Computer Science',
 };
 
-export default function SubjectMcqsPage() {
+const container: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+    }
+};
+
+const item: Variants = {
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
+};
+
+interface ModuleData {
+    key: string;
+    label: string;
+    count: number;
+}
+
+const getLoadErrorMessage = (message?: string) => {
+    const normalized = message?.toLowerCase() || '';
+    if (normalized.includes('free plan limit')) {
+        return 'Your free plan limit for Test Series has been reached.';
+    }
+    if (normalized.includes('invalid') || normalized.includes('expired')) {
+        return 'Your session has expired. Please sign in again.';
+    }
+    return 'Unable to load modules right now.';
+};
+
+export default function SubjectModulesPage() {
     const params = useParams();
     const subject = String(params.subject || '');
     const label = SUBJECT_LABELS[subject] || 'Subject';
 
-    const [page, setPage] = useState(1);
-    const [limit] = useState(50);
-    const [items, setItems] = useState<McqQuestion[]>([]);
-    const [total, setTotal] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [selected, setSelected] = useState<Record<string, number>>({});
-
+    const [modules, setModules] = useState<ModuleData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
 
-    const hasNext = page * limit < total;
-
     useEffect(() => {
-        const loadQuestions = async () => {
+        let cancelled = false;
+
+        const loadModules = async () => {
             const { getStoredToken } = await import('@/app/lib/auth-storage');
-            const token = getStoredToken('user') || getStoredToken('admin');
-            if (!token || !subject) return;
+            const tokens = [getStoredToken('user'), getStoredToken('admin')].filter((token, index, arr): token is string => Boolean(token) && arr.indexOf(token) === index);
+
+            if (!subject) {
+                if (!cancelled) {
+                    setModules([]);
+                    setError('Missing subject identifier.');
+                    setLoading(false);
+                }
+                return;
+            }
+
+            if (tokens.length === 0) {
+                if (!cancelled) {
+                    setModules([]);
+                    setError('Your session has expired. Please sign in again.');
+                    setLoading(false);
+                }
+                return;
+            }
 
             setLoading(true);
+            setError(null);
+
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/mcqs?category=subject&groupKey=${subject}&page=${page}&limit=${limit}&order=latest`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (!response.ok) return;
-                const data = await response.json();
-                if (data?.items) {
-                    setItems(data.items);
-                    setTotal(data.total || 0);
+                let data: ModuleData[] | null = null;
+                let lastError: Error | null = null;
+
+                for (const token of tokens) {
+                    try {
+                        const params = new URLSearchParams({
+                            category: 'subject',
+                            groupBy: 'topic',
+                            groupKey: subject,
+                        });
+                        const response = await fetch(`${API_BASE_URL}/mcqs/groups?${params.toString()}`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                            cache: 'no-store',
+                        });
+
+                        if (!response.ok) {
+                            const payload = await response.json().catch(() => null);
+                            throw new Error(payload?.message || `Failed to load modules (${response.status})`);
+                        }
+
+                        const payload = await response.json();
+                        if (!Array.isArray(payload)) {
+                            throw new Error('Unexpected module response.');
+                        }
+
+                        data = payload;
+                        lastError = null;
+                        break;
+                    } catch (fetchError) {
+                        lastError = fetchError instanceof Error ? fetchError : new Error('Unable to load modules right now.');
+                    }
+                }
+
+                if (!cancelled) {
+                    if (data) {
+                        setModules(data);
+                    } else {
+                        setModules([]);
+                        setError(getLoadErrorMessage(lastError?.message));
+                    }
                 }
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         };
-        loadQuestions();
-    }, [subject, page, limit]);
 
-    const progressLabel = useMemo(() => {
-        const start = (page - 1) * limit + 1;
-        const end = Math.min(page * limit, total);
-        return total ? `${start}-${end} of ${total}` : '0';
-    }, [page, limit, total]);
+        loadModules();
 
-    const handleSelect = (questionId: string, optionIndex: number) => {
-        setSelected((prev) => ({ ...prev, [questionId]: optionIndex }));
-    };
+        return () => {
+            cancelled = true;
+        };
+    }, [subject]);
 
     return (
-        <div className="min-h-screen font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 bg-[#F8FAFC] pb-24">
-            <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="min-h-screen font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 bg-[#F8FAFC] pb-24 relative">
+            <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
+
+            <div className="max-w-6xl mx-auto px-6 py-10 relative z-10">
                 <Link href="/dashboard/test-series/subject" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-8 transition-all group px-5 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md active:scale-95">
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Subjects
                 </Link>
 
-                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                    <div>
-                        <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Test Series</p>
-                        <h1 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 mt-2">{label} MCQs</h1>
-                        <p className="text-slate-500 mt-3 font-medium">Practice in continuous sets of 50 questions.</p>
+                <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-14">
+                    <div className="max-w-3xl">
+                        <div className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-indigo-100">
+                            <Sparkles size={14} /> Subject Breakdown
+                        </div>
+                        <h1 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 mb-4">{label} Modules</h1>
+                        <p className="text-lg text-slate-500 font-medium">Select a focused module to begin your targeted practice session.</p>
                         {isFreePlan && (
-                            <div className={`mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                            <div className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
                                 Free plan time left: {remainingLabel}
                             </div>
                         )}
                     </div>
-                    <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-2xl px-6 py-4 shadow-sm">
-                        <div>
-                            <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest">Progress</p>
-                            <p className="text-sm font-bold text-slate-900">{progressLabel}</p>
-                        </div>
-                    </div>
-                </motion.div>
+                </motion.header>
 
                 {loading ? (
-                    <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold">Loading questions...</div>
+                    <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold shadow-sm">
+                        Loading modules...
+                    </div>
+                ) : error ? (
+                    <div className="bg-white border border-rose-200 rounded-3xl p-10 text-center text-rose-700 font-semibold shadow-sm">
+                        {error}
+                    </div>
                 ) : (
-                    <div className="space-y-8 relative">
-                        {items.map((mcq, index) => {
-                            const picked = selected[mcq.id];
-                            return (
-                                <div key={mcq.id} className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center">
-                                            {(page - 1) * limit + index + 1}
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
+                        {modules.map((mod, idx) => (
+                            <motion.div variants={item} key={idx}>
+                                <Link
+                                    href={`/dashboard/test-series/subject/${subject}/${mod.key}`}
+                                    className={`group flex items-center justify-between bg-white rounded-3xl p-6 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}
+                                >
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                            <Layers size={20} strokeWidth={2.5} />
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-bold text-slate-900 mb-4">{mcq.question}</h3>
-                                            <div className="grid gap-3">
-                                                {mcq.options.map((opt, optIndex) => {
-                                                    const isPicked = picked === optIndex;
-                                                    const isCorrect = optIndex === mcq.correctOptionIndex;
-                                                    const isWrong = isPicked && !isCorrect;
-                                                    const showCorrect = picked !== undefined;
-                                                    return (
-                                                        <button
-                                                            key={optIndex}
-                                                            onClick={() => handleSelect(mcq.id, optIndex)}
-                                                            disabled={isLimited}
-                                                            className={`w-full text-left px-4 py-3 rounded-2xl border transition-all font-medium ${showCorrect && isCorrect
-                                                                ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
-                                                                : isWrong
-                                                                    ? 'border-rose-400 bg-rose-50 text-rose-700'
-                                                                    : `border-slate-200 bg-white text-slate-700 ${isLimited ? 'opacity-60 cursor-not-allowed' : 'hover:border-indigo-200 hover:bg-indigo-50/40'}`
-                                                                }`}
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                <span>{opt}</span>
-                                                                {showCorrect && isCorrect && <CheckCircle2 size={18} className="text-emerald-600" />}
-                                                                {isWrong && <XCircle size={18} className="text-rose-600" />}
-                                                            </div>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
+                                        <div>
+                                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">{mod.label}</h3>
+                                            <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">{mod.count} questions</p>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-
-                        {items.length === 0 && (
-                            <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold">
-                                No questions available yet. Check back soon.
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                        
+                        {modules.length === 0 && (
+                            <div className="col-span-full bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold shadow-sm">
+                                No modules have been added to this subject yet.
                             </div>
                         )}
-                    </div>
+                    </motion.div>
                 )}
-
-                <div className="flex items-center justify-between mt-12">
-                    <button
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        disabled={page === 1}
-                        className="px-6 py-3 rounded-2xl border border-slate-200 bg-white text-slate-500 font-bold disabled:opacity-50"
-                    >
-                        Previous 50
-                    </button>
-                    <button
-                        onClick={() => setPage((p) => (hasNext ? p + 1 : p))}
-                        disabled={!hasNext}
-                        className="px-6 py-3 rounded-2xl border border-indigo-500 bg-indigo-600 text-white font-bold disabled:opacity-50 flex items-center gap-2"
-                    >
-                        Next 50 <ChevronRight size={16} />
-                    </button>
-                </div>
             </div>
         </div>
     );

@@ -25,12 +25,15 @@ export type McqGroup = {
     key: string;
     label: string;
     count: number;
+    durationMinutes?: number;
 };
 
 export type WriteXQuestion = {
     id: string;
     prompt: string;
     active: boolean;
+    topicKey?: string | null;
+    topicLabel?: string | null;
     createdAt: string;
 };
 
@@ -49,11 +52,15 @@ export type UpdateMcqPayload = Partial<CreateMcqPayload>;
 export type CreateWriteXPayload = {
     prompt: string;
     active?: boolean;
+    topicKey?: string;
+    topicLabel?: string;
 };
 
 export type UpdateWriteXPayload = {
     prompt?: string;
     active?: boolean;
+    topicKey?: string;
+    topicLabel?: string;
 };
 
 export const fetchAdminMcqs = async (token: string, query: Record<string, string | number | undefined>) => {
@@ -142,6 +149,43 @@ export const bulkDeleteMcqs = async (
     return response.json();
 };
 
+export const deleteMcqModule = async (token: string, category: 'subject' | 'company', groupKey: string, topicKey: string) => {
+    const params = new URLSearchParams({
+        category,
+        groupKey,
+        topicKey
+    });
+    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete module');
+    return response.json();
+};
+
+export const deleteMcqSubject = async (token: string, category: 'subject' | 'company', groupKey: string) => {
+    const params = new URLSearchParams({
+        category,
+        groupKey
+    });
+    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to delete subject');
+    return response.json();
+};
+
+export const updateMcqModuleDuration = async (token: string, category: 'subject' | 'company', groupKey: string, topicKey: string, durationMinutes: number) => {
+    const response = await fetch(`${API_BASE_URL}/mcqs/admin/duration`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ category, groupKey, topicKey, durationMinutes }),
+    });
+    if (!response.ok) throw new Error('Failed to update module duration');
+    return response.json();
+};
+
 export const importMcqsCsv = async (apiKey: string, csv: string) => {
     const response = await fetch(`${API_BASE_URL}/mcqs/import`, {
         method: 'POST',
@@ -163,16 +207,25 @@ export const fetchMcqGroups = async (token: string, category: 'subject' | 'compa
     return response.json() as Promise<McqGroup[]>;
 };
 
-export const fetchMcqTopics = async (token: string, companyKey: string) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=company&groupBy=topic&groupKey=${encodeURIComponent(companyKey)}`, {
+export const fetchMcqTopics = async (token: string, category: 'subject' | 'company', groupKey: string) => {
+    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=topic&groupKey=${encodeURIComponent(groupKey)}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch MCQ topics');
     return response.json() as Promise<McqGroup[]>;
 };
 
-export const fetchWriteXQuestions = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/writex/questions`, {
+export const fetchWriteXGroups = async (token: string) => {
+    const response = await fetch(`${API_BASE_URL}/writex/groups`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) throw new Error('Failed to fetch WriteX groups');
+    return response.json() as Promise<McqGroup[]>;
+};
+
+export const fetchWriteXQuestions = async (token: string, topicKey?: string) => {
+    const query = topicKey ? `?topicKey=${encodeURIComponent(topicKey)}` : '';
+    const response = await fetch(`${API_BASE_URL}/writex/questions${query}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch WriteX questions');
