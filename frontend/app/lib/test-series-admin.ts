@@ -1,5 +1,19 @@
 import API_BASE_URL from './api-config';
 
+const readErrorMessage = async (response: Response, fallback: string) => {
+    const payload = await response.json().catch(() => null);
+
+    if (typeof payload?.message === 'string' && payload.message.trim()) {
+        return payload.message;
+    }
+
+    if (Array.isArray(payload?.message) && payload.message.length > 0) {
+        return payload.message.join(', ');
+    }
+
+    return fallback;
+};
+
 export type McqAdminItem = {
     id: string;
     category: 'subject' | 'company';
@@ -83,7 +97,7 @@ export const createMcq = async (token: string, payload: CreateMcqPayload) => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
     });
-    if (!response.ok) throw new Error('Failed to create MCQ');
+    if (!response.ok) throw new Error(await readErrorMessage(response, 'Failed to create MCQ'));
     return response.json();
 };
 
@@ -200,10 +214,10 @@ export const importMcqsCsv = async (apiKey: string, csv: string) => {
 };
 
 export const fetchMcqGroups = async (token: string, category: 'subject' | 'company') => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=${category}`, {
+    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=group`, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    if (!response.ok) throw new Error('Failed to fetch MCQ groups');
+    if (!response.ok) throw new Error(await readErrorMessage(response, 'Failed to fetch MCQ groups'));
     return response.json() as Promise<McqGroup[]>;
 };
 
@@ -211,7 +225,7 @@ export const fetchMcqTopics = async (token: string, category: 'subject' | 'compa
     const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=topic&groupKey=${encodeURIComponent(groupKey)}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
-    if (!response.ok) throw new Error('Failed to fetch MCQ topics');
+    if (!response.ok) throw new Error(await readErrorMessage(response, 'Failed to fetch MCQ topics'));
     return response.json() as Promise<McqGroup[]>;
 };
 

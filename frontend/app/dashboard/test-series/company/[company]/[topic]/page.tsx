@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { ArrowLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTestSeriesUsage } from '../../../layout';
+import API_BASE_URL from '@/app/lib/api-config';
 
 interface McqQuestion {
     id: string;
@@ -43,7 +44,7 @@ export default function CompanyTopicMcqsPage() {
             setLoading(true);
             try {
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/mcqs?category=company&groupKey=${company}&topicKey=${topic}&page=${page}&limit=${limit}&order=latest`,
+                    `${API_BASE_URL}/mcqs?category=company&groupKey=${company}&topicKey=${topic}&page=${page}&limit=${limit}&order=latest`,
                     { headers: { Authorization: `Bearer ${token}` } },
                 );
                 if (!response.ok) return;

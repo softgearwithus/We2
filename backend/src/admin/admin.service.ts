@@ -108,7 +108,13 @@ export class AdminService {
             severity: payload.severity || 'info',
             metadata: payload.metadata || null,
         });
-        return this.logRepo.save(log);
+
+        try {
+            return await this.logRepo.save(log);
+        } catch (error) {
+            console.error('[admin] Failed to persist activity log:', error);
+            return null;
+        }
     }
 
     async getStudents() {

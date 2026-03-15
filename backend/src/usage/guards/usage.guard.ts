@@ -2,6 +2,7 @@ import { BadRequestException, CanActivate, ExecutionContext, Injectable, SetMeta
 import { Reflector } from '@nestjs/core';
 import { UsageSectionKey } from '../usage.constants';
 import { UsageService } from '../usage.service';
+import { UserRole } from '../../users/user.entity';
 
 export const USAGE_SECTION_KEY = 'usageSectionKey';
 export const RequireSectionUsage = (sectionKey: UsageSectionKey | ((context: ExecutionContext) => UsageSectionKey)) =>
@@ -27,6 +28,10 @@ export class UsageGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const userId: string | undefined = request?.user?.id;
         if (!userId) {
+            return true;
+        }
+
+        if (request?.user?.role && request.user.role !== UserRole.STUDENT) {
             return true;
         }
 

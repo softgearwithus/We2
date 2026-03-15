@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, BrainCircuit, CheckCircle, Clock, FileText, Loader2, Sparkles, CheckCircle2, XCircle } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useTestSeriesUsage } from '../../layout';
+import API_BASE_URL from '@/app/lib/api-config';
 
 const container: Variants = {
     hidden: { opacity: 0 },
@@ -37,7 +38,7 @@ export default function PracticeSessionEntry() {
 
             const attemptFetch = async (t: string) => {
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/test-series/student/session?targetId=${chapterId}&type=chapter`, {
+                    const response = await fetch(`${API_BASE_URL}/test-series/student/session?targetId=${chapterId}&type=chapter`, {
                         headers: { Authorization: `Bearer ${t}` }
                     });
                     if (response.ok) return await response.json();

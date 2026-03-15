@@ -85,11 +85,12 @@ export default function AdminSubjectBuilder() {
     const loadSubjects = useCallback(async () => {
         if (!token) return;
         setIsSubjectsLoading(true);
+        setMessage(null);
         try {
             const groups = await fetchMcqGroups(token, 'subject');
             setSubjects(buildSubjects(groups));
-        } catch {
-            setMessage({ type: 'error', text: 'Failed to load subjects.' });
+        } catch (error) {
+            setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load subjects.' });
         } finally {
             setIsSubjectsLoading(false);
         }
@@ -108,11 +109,12 @@ export default function AdminSubjectBuilder() {
 
     const loadModules = async (subjectId: string) => {
         setIsLoading(true);
+        setMessage(null);
         try {
             const data = await fetchMcqTopics(token, 'subject', subjectId);
             setModules(data || []);
         } catch (error: any) {
-            setMessage({ type: 'error', text: 'Failed to load modules.' });
+            setMessage({ type: 'error', text: error?.message || 'Failed to load modules.' });
         } finally {
             setIsLoading(false);
         }
@@ -136,8 +138,8 @@ export default function AdminSubjectBuilder() {
             
             setMessage({ type: 'success', text: 'Module created successfully.' });
             await loadModules(selectedSubject.id);
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to create module' });
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error?.message || 'Failed to create module' });
         } finally {
             setIsSaving(false);
             setIsAddingModule(false);
@@ -164,8 +166,8 @@ export default function AdminSubjectBuilder() {
 
             await loadSubjects();
             setMessage({ type: 'success', text: `Subject "${subjectName}" created successfully! Tap on it to configure modules.` });
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Failed to create subject' });
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error?.message || 'Failed to create subject' });
         } finally {
             setIsSaving(false);
             setIsAddingSubject(false);
