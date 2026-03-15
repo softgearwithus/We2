@@ -37,6 +37,15 @@ export const metadata: Metadata = {
     description: 'Master coding interviews and land top tech jobs with EMBLE Job Simulations.',
     images: ['/twitter-image.jpg'],
   },
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/icon.png',
+    },
+  },
   robots: {
     index: true,
     follow: true,
