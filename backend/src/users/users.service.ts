@@ -347,6 +347,24 @@ export class UsersService {
         return user.sessionVersion || 0;
     }
 
+    async updatePasswordAndRevokeSessions(userId: string, newPassword: string): Promise<void> {
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+        const result = await this.usersRepository
+            .createQueryBuilder()
+            .update(User)
+            .set({
+                password: hashedPassword,
+                sessionVersion: () => '"sessionVersion" + 1',
+            })
+            .where('id = :id', { id: userId })
+            .execute();
+
+        if (!result.affected) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+    }
+
     async getDashboardStats(userId: string) {
         const [dsaStats, sqlStats, interviewStats, projectStats, resume, mentorSessions, gamification] = await Promise.all([
             this.dsaSubmissionsRepository.find({

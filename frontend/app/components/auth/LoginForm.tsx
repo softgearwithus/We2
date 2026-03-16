@@ -150,7 +150,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                         />
                         <span className="text-sm text-slate-600">Remember me</span>
                     </label>
-                    <Link href="#" className={`text-sm font-medium hover:underline ${role === 'admin' ? 'text-green-600' : 'text-primary'}`}>
+                    <Link href={role === 'student' ? '/forgot-password' : '#'} className={`text-sm font-medium hover:underline ${role === 'admin' ? 'text-green-600' : 'text-primary'}`}>
                         Forgot password?
                     </Link>
                 </div>

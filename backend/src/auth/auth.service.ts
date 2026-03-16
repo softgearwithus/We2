@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, ResetPasswordDto } from './dto/auth.dto';
 import { EmailOtpService } from './services/email-otp.service';
 import { Request } from 'express';
+import { UserRole } from '../users/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -139,6 +140,37 @@ export class AuthService {
 
     async logout(userId: string) {
         await this.usersService.revokeAllSessions(userId);
+        return { success: true };
+    }
+
+    async requestStudentPasswordReset(identifier: string) {
+        const normalized = identifier.toLowerCase().trim();
+        let user = await this.usersService.findByEmail(normalized);
+        if (!user) {
+            user = await this.usersService.findByCredentialId(identifier.trim());
+        }
+
+        if (user && user.role === UserRole.STUDENT && user.isActive !== false) {
+            await this.emailOtpService.requestPasswordResetOtp(user.email);
+        }
+
+        return { success: true };
+    }
+
+    async resetStudentPassword(dto: ResetPasswordDto) {
+        const rawIdentifier = dto.identifier.trim();
+        const normalized = rawIdentifier.toLowerCase();
+        const user = await this.usersService.findByEmail(normalized)
+            || await this.usersService.findByCredentialId(rawIdentifier);
+
+        if (!user || user.role !== UserRole.STUDENT || user.isActive === false) {
+            throw new UnauthorizedException('Invalid reset request.');
+        }
+
+        await this.emailOtpService.verifyPasswordResetOtp(user.email, dto.otp);
+        await this.emailOtpService.consumePasswordResetOtp(user.email);
+        await this.usersService.updatePasswordAndRevokeSessions(user.id, dto.newPassword);
+
         return { success: true };
     }
 }

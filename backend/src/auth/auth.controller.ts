@@ -1,7 +1,14 @@
 import { Body, Controller, Post, HttpCode, HttpStatus, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, RequestOtpDto, VerifyOtpDto } from './dto/auth.dto';
+import {
+    RegisterDto,
+    LoginDto,
+    RequestOtpDto,
+    VerifyOtpDto,
+    RequestPasswordResetDto,
+    ResetPasswordDto,
+} from './dto/auth.dto';
 import { EmailOtpService } from './services/email-otp.service';
 import { Public, Roles } from './decorators/auth.decorators';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -50,6 +57,26 @@ export class AuthController {
     @ApiResponse({ status: 429, description: 'Too many requests' })
     async register(@Body() registerDto: RegisterDto) {
         return this.authService.register(registerDto);
+    }
+
+    @Public()
+    @HttpCode(HttpStatus.OK)
+    @Post('password/forgot/request-otp')
+    @ApiOperation({ summary: 'Request OTP for student password reset' })
+    @ApiBody({ type: RequestPasswordResetDto })
+    @ApiResponse({ status: 200, description: 'If account exists, OTP has been sent' })
+    async requestPasswordResetOtp(@Body() dto: RequestPasswordResetDto) {
+        return this.authService.requestStudentPasswordReset(dto.identifier);
+    }
+
+    @Public()
+    @HttpCode(HttpStatus.OK)
+    @Post('password/forgot/reset')
+    @ApiOperation({ summary: 'Reset student password using OTP' })
+    @ApiBody({ type: ResetPasswordDto })
+    @ApiResponse({ status: 200, description: 'Password reset successful' })
+    async resetPassword(@Body() dto: ResetPasswordDto) {
+        return this.authService.resetStudentPassword(dto);
     }
 
     @Public()

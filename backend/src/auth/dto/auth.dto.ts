@@ -114,6 +114,50 @@ export class VerifyOtpDto {
     otp: string;
 }
 
+export class RequestPasswordResetDto {
+    @ApiProperty({
+        example: 'student@example.com',
+        description: 'Student email address or credential ID',
+    })
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(255)
+    identifier: string;
+}
+
+export class ResetPasswordDto {
+    @ApiProperty({
+        example: 'student@example.com',
+        description: 'Student email address or credential ID',
+    })
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(255)
+    identifier: string;
+
+    @ApiProperty({
+        example: '123456',
+        description: 'One-time password sent to email',
+    })
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(12)
+    otp: string;
+
+    @ApiProperty({
+        example: 'SecurePass123!',
+        description: 'New password (minimum 8 characters)',
+        minLength: 8,
+    })
+    @IsNotEmpty()
+    @MinLength(8)
+    @MaxLength(72)
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/, {
+        message: 'Password must include uppercase, lowercase, number, and symbol',
+    })
+    newPassword: string;
+}
+
 
 export class LoginDto {
     @ApiProperty({
