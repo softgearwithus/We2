@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResumeData, ExperienceItem, EducationItem, ProjectItem } from '@/app/lib/resume.types';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Palette, LayoutTemplate } from 'lucide-react';
+import { clsx } from 'clsx';
 
 interface ResumeFormProps {
     data: ResumeData;
@@ -15,7 +16,6 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
         });
     };
 
-    // Generic helper for array updates would be cleaner, but let's be explicit for clarity
     const addExperience = () => {
         const newItem: ExperienceItem = {
             id: crypto.randomUUID(),
@@ -40,16 +40,82 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
         onChange({ ...data, experience: data.experience.filter((item) => item.id !== id) });
     };
 
-    // Similar functions for Education and Projects...
-    // For brevity in this artifact, I'll implement Experience fully and scaffold others.
-
     return (
-        <div className="space-y-8 p-6 bg-slate-900/50 backdrop-blur-sm border border-white/5 text-slate-200 rounded-xl shadow-2xl overflow-y-auto h-full custom-scrollbar">
+        <div className="space-y-8 p-6 bg-white text-slate-900 pb-32">
+            
+            {/* Theme Settings */}
+            <section className="space-y-6">
+                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                        <Palette size={20} className="text-indigo-500" /> Theme Settings
+                    </h2>
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-6">
+                    {/* Template Selector */}
+                    <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <LayoutTemplate size={14} /> Resume Template
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {[
+                                { id: 'google-standard', name: 'Google Standard', desc: 'Clean, professional, strict hierarchy' },
+                                { id: 'startup-clean', name: 'Startup Clean', desc: 'Modern SaaS vibe, subtle badges' },
+                                { id: 'creative-pro', name: 'Creative Pro', desc: 'Dual-column, stylized, bold' }
+                            ].map((tpl) => (
+                                <button
+                                    key={tpl.id}
+                                    onClick={() => onChange({ ...data, templateId: tpl.id as any })}
+                                    className={clsx(
+                                        "p-4 rounded-xl border text-left transition-all active:scale-[0.98]",
+                                        data.templateId === tpl.id
+                                            ? "bg-indigo-50 border-indigo-500 shadow-sm shadow-indigo-100 ring-1 ring-indigo-500 text-slate-900"
+                                            : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-600 hover:text-slate-900"
+                                    )}
+                                >
+                                    <div className={clsx("font-bold mb-1", data.templateId === tpl.id && "text-indigo-700")}>{tpl.name}</div>
+                                    <div className="text-[10.5px] leading-tight opacity-80">{tpl.desc}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Accent Color Picker */}
+                    {data.templateId !== 'google-standard' && (
+                        <div>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">Accent Color</label>
+                            <div className="flex flex-wrap gap-3">
+                                {[
+                                    { id: 'slate', tw: 'bg-slate-600' },
+                                    { id: 'indigo', tw: 'bg-indigo-600' },
+                                    { id: 'blue', tw: 'bg-blue-600' },
+                                    { id: 'emerald', tw: 'bg-emerald-600' },
+                                    { id: 'amber', tw: 'bg-amber-600' },
+                                    { id: 'rose', tw: 'bg-rose-600' },
+                                ].map((color) => (
+                                    <button
+                                        key={color.id}
+                                        onClick={() => onChange({ ...data, accentColor: color.id })}
+                                        className={clsx(
+                                            "w-10 h-10 rounded-full transition-all flex items-center justify-center shadow-sm active:scale-90",
+                                            color.tw,
+                                            data.accentColor === color.id ? "ring-[3px] ring-offset-2 ring-indigo-500 scale-110" : "opacity-80 hover:opacity-100 hover:scale-105"
+                                        )}
+                                        title={color.id}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </section>
+
             {/* Personal Info */}
             <section className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-indigo-500/30 pb-4">
-                    <div className="w-1 h-6 bg-indigo-500 rounded-full" />
-                    <h2 className="text-xl font-bold text-white tracking-tight">Personal Information</h2>
+                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight">Personal Information</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -67,10 +133,10 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
             {/* Experience */}
             <section className="space-y-6">
-                <div className="flex justify-between items-center border-b border-indigo-500/30 pb-4">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-1 h-6 bg-indigo-500 rounded-full" />
-                        <h2 className="text-xl font-bold text-white tracking-tight">Experience</h2>
+                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Experience</h2>
                     </div>
                     <button
                         onClick={addExperience}
@@ -82,10 +148,10 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
                 <div className="space-y-4">
                     {data.experience.map((exp) => (
-                        <div key={exp.id} className="bg-slate-800/50 border border-white/5 p-6 rounded-xl space-y-4 relative group hover:border-indigo-500/30 transition-colors">
+                        <div key={exp.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
                             <button
                                 onClick={() => removeExperience(exp.id)}
-                                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-red-500/10 rounded-lg"
+                                className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-rose-50 rounded-lg"
                                 title="Remove Role"
                             >
                                 <Trash2 size={16} />
@@ -113,12 +179,12 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
             {/* Education */}
             <section className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-indigo-500/30 pb-4">
-                    <div className="w-1 h-6 bg-indigo-500 rounded-full" />
-                    <h2 className="text-xl font-bold text-white tracking-tight">Education</h2>
+                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight">Education</h2>
                 </div>
                 {data.education.map((edu, index) => (
-                    <div key={edu.id} className="bg-slate-800/50 border border-white/5 p-6 rounded-xl space-y-4 hover:border-indigo-500/30 transition-colors">
+                    <div key={edu.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 hover:border-indigo-300 transition-colors">
                         <div className="grid grid-cols-2 gap-4">
                             <Input label="Institution" value={edu.institution} onChange={(v) => {
                                 const newEdu = [...data.education];
@@ -159,10 +225,10 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
             {/* Projects */}
             <section className="space-y-6">
-                <div className="flex justify-between items-center border-b border-indigo-500/30 pb-4">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-1 h-6 bg-indigo-500 rounded-full" />
-                        <h2 className="text-xl font-bold text-white tracking-tight">Projects</h2>
+                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Projects</h2>
                     </div>
                     <button
                         onClick={() => {
@@ -184,13 +250,13 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
                 <div className="space-y-4">
                     {data.projects.map((project, index) => (
-                        <div key={project.id} className="bg-slate-800/50 border border-white/5 p-6 rounded-xl space-y-4 relative group hover:border-indigo-500/30 transition-colors">
+                        <div key={project.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
                             <button
                                 onClick={() => {
                                     const updated = data.projects.filter((item) => item.id !== project.id);
                                     onChange({ ...data, projects: updated });
                                 }}
-                                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-red-500/10 rounded-lg"
+                                className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-rose-50 rounded-lg"
                                 title="Remove Project"
                             >
                                 <Trash2 size={16} />
@@ -235,28 +301,28 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
             {/* Skills */}
             <section className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-indigo-500/30 pb-4">
-                    <div className="w-1 h-6 bg-indigo-500 rounded-full" />
-                    <h2 className="text-xl font-bold text-white tracking-tight">Skills</h2>
+                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight">Skills</h2>
                 </div>
                 <div className="grid gap-6">
                     <TextArea
                         label="Languages"
-                        value={data.skills.languages.join(', ')}
+                        value={data.skills.languages?.join(', ') || ''}
                         onChange={(v) => onChange({ ...data, skills: { ...data.skills, languages: v.split(', ') } })}
                         placeholder="JavaScript, Python, TypeScript..."
                         rows={2}
                     />
                     <TextArea
                         label="Frameworks & Libraries"
-                        value={data.skills.frameworks.join(', ')}
+                        value={data.skills.frameworks?.join(', ') || ''}
                         onChange={(v) => onChange({ ...data, skills: { ...data.skills, frameworks: v.split(', ') } })}
                         placeholder="React, Next.js, Node.js..."
                         rows={2}
                     />
                     <TextArea
                         label="Tools & Platforms"
-                        value={data.skills.tools.join(', ')}
+                        value={data.skills.tools?.join(', ') || ''}
                         onChange={(v) => onChange({ ...data, skills: { ...data.skills, tools: v.split(', ') } })}
                         placeholder="Git, Docker, AWS..."
                         rows={2}
@@ -277,10 +343,10 @@ interface InputProps {
 
 const Input = ({ label, value, onChange, type = 'text', placeholder }: InputProps) => (
     <div className="space-y-2 group">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-400 transition-colors">{label}</label>
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-indigo-600 transition-colors">{label}</label>
         <input
             type={type}
-            className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all hover:border-slate-600"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-100 transition-all hover:border-slate-300 shadow-sm"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
@@ -298,9 +364,9 @@ interface TextAreaProps {
 
 const TextArea = ({ label, value, onChange, placeholder, rows = 3 }: TextAreaProps) => (
     <div className="space-y-2 group">
-        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider group-focus-within:text-indigo-400 transition-colors">{label}</label>
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-indigo-600 transition-colors">{label}</label>
         <textarea
-            className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all hover:border-slate-600 resize-none"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-100 transition-all hover:border-slate-300 shadow-sm resize-none"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}

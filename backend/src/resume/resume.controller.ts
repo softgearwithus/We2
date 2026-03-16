@@ -1,9 +1,10 @@
-import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException, Body, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, BadRequestException, Body, Get, UseGuards, Request, Param, Put, Delete } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ResumeService } from './resume.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { SaveResumeDto } from './dto/save-resume.dto';
+import { CreateResumeDto } from './dto/create-resume.dto';
+import { UpdateResumeDto } from './dto/update-resume.dto';
 import { RequireSectionUsage } from '../usage/guards/usage.guard';
 import { USAGE_SECTION_KEYS } from '../usage/usage.constants';
 import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
@@ -16,22 +17,52 @@ export class ResumeController {
 
     @ApiBearerAuth('JWT-auth')
     @UseGuards(JwtAuthGuard, UsageGuard)
-    @Get('me')
-    @ApiOperation({ summary: 'Get my saved resume' })
-    @ApiResponse({ status: 200, description: 'Resume data retrieved' })
+    @Get('all')
+    @ApiOperation({ summary: 'Get all saved resumes for the user' })
+    @ApiResponse({ status: 200, description: 'List of resumes retrieved' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
-    async getMyResume(@Request() req: any) {
-        return this.resumeService.getResumeByUser(req.user.id);
+    async getAllResumes(@Request() req: any) {
+        return this.resumeService.getAllResumes(req.user.id);
     }
 
     @ApiBearerAuth('JWT-auth')
     @UseGuards(JwtAuthGuard, UsageGuard)
-    @Post('me')
-    @ApiOperation({ summary: 'Save my resume' })
-    @ApiResponse({ status: 200, description: 'Resume saved' })
+    @Get(':id')
+    @ApiOperation({ summary: 'Get a specific resume by ID' })
+    @ApiResponse({ status: 200, description: 'Resume data retrieved' })
     @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
-    async saveMyResume(@Request() req: any, @Body() body: SaveResumeDto) {
-        return this.resumeService.saveResume(req.user.id, body.data);
+    async getResumeById(@Request() req: any, @Param('id') id: string) {
+        return this.resumeService.getResumeById(id, req.user.id);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, UsageGuard)
+    @Post()
+    @ApiOperation({ summary: 'Create a new resume' })
+    @ApiResponse({ status: 201, description: 'Resume created' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
+    async createResume(@Request() req: any, @Body() body: CreateResumeDto) {
+        return this.resumeService.createResume(req.user.id, body.title, body.data);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, UsageGuard)
+    @Put(':id')
+    @ApiOperation({ summary: 'Update an existing resume' })
+    @ApiResponse({ status: 200, description: 'Resume updated' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
+    async updateResume(@Request() req: any, @Param('id') id: string, @Body() body: UpdateResumeDto) {
+        return this.resumeService.updateResume(id, req.user.id, body);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(JwtAuthGuard, UsageGuard)
+    @Delete(':id')
+    @ApiOperation({ summary: 'Delete a resume' })
+    @ApiResponse({ status: 200, description: 'Resume deleted' })
+    @RequireSectionUsage(USAGE_SECTION_KEYS.RESUME)
+    async deleteResume(@Request() req: any, @Param('id') id: string) {
+        return this.resumeService.deleteResume(id, req.user.id);
     }
 
     @ApiBearerAuth('JWT-auth')

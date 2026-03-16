@@ -18,7 +18,8 @@ export interface ResumeData {
         tools: string[];
     };
     projects: ProjectItem[];
-    templateId: 'modern';
+    templateId: 'google-standard' | 'startup-clean' | 'creative-pro';
+    accentColor?: string;
 }
 
 export interface ExperienceItem {
@@ -103,5 +104,6 @@ export const initialResumeState: ResumeData = {
             repoLink: 'github.com/johndoe/ecommerce',
         },
     ],
-    templateId: 'modern',
+    templateId: 'google-standard',
+    accentColor: 'indigo',
 };

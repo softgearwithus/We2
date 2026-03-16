@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import AuthNotice from './AuthNotice';
@@ -17,6 +17,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
     const { login } = useAuth();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
@@ -120,12 +121,22 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
                 <div>
                     <label className={`block text-sm font-medium mb-2 ${role === 'admin' ? 'font-mono text-green-700' : 'text-slate-700'}`}>Password</label>
-                    <input
-                        {...register('password', { required: true })}
-                        type="password"
-                        className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${role === 'admin' ? 'bg-black border-green-800 text-green-500 font-mono focus:border-green-500' : 'border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20'}`}
-                        placeholder="••••••••"
-                    />
+                    <div className="relative">
+                        <input
+                            {...register('password', { required: true })}
+                            type={showPassword ? 'text' : 'password'}
+                            className={`w-full px-4 py-3 rounded-xl border outline-none transition-all pr-12 ${role === 'admin' ? 'bg-black border-green-800 text-green-500 font-mono focus:border-green-500' : 'border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20'}`}
+                            placeholder="••••••••"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 p-1 transition-colors ${role === 'admin' ? 'text-green-700 hover:text-green-500' : 'text-slate-400 hover:text-slate-600'}`}
+                            tabIndex={-1}
+                        >
+                            {showPassword ? <EyeOff strokeWidth={2.5} size={18} /> : <Eye strokeWidth={2.5} size={18} />}
+                        </button>
+                    </div>
                     {errors.password && <span className="text-red-500 text-xs mt-1">Password is required</span>}
                 </div>
 

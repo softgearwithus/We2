@@ -113,22 +113,46 @@ export class ResumeService {
         }
     }
 
-    async getResumeByUser(userId: string) {
-        const resume = await this.resumeRepo.findOne({ where: { userId } });
+    async getAllResumes(userId: string) {
+        return this.resumeRepo.find({
+            where: { userId },
+            order: { updatedAt: 'DESC' },
+        });
+    }
+
+    async getResumeById(id: string, userId: string) {
+        const resume = await this.resumeRepo.findOne({ where: { id, userId } });
         if (!resume) {
             throw new NotFoundException('Resume not found');
         }
         return resume;
     }
 
-    async saveResume(userId: string, data: Record<string, any>) {
-        const existing = await this.resumeRepo.findOne({ where: { userId } });
-        if (existing) {
-            existing.data = data;
-            return this.resumeRepo.save(existing);
+    async createResume(userId: string, title: string, data?: Record<string, any>) {
+        const resume = this.resumeRepo.create({
+            userId,
+            title,
+            data: data || {}, // initialize with empty object if no data provided initially
+        });
+        return this.resumeRepo.save(resume);
+    }
+
+    async updateResume(id: string, userId: string, updateData: { title?: string, data?: Record<string, any> }) {
+        const resume = await this.getResumeById(id, userId);
+
+        if (updateData.title !== undefined) {
+            resume.title = updateData.title;
+        }
+        if (updateData.data !== undefined) {
+            resume.data = updateData.data;
         }
 
-        const resume = this.resumeRepo.create({ userId, data });
         return this.resumeRepo.save(resume);
+    }
+
+    async deleteResume(id: string, userId: string) {
+        const resume = await this.getResumeById(id, userId);
+        await this.resumeRepo.remove(resume);
+        return { message: 'Resume deleted successfully' };
     }
 }
