@@ -128,7 +128,7 @@ export default function MockTestAnalysisPage() {
                         </div>
                         <div className="p-4 text-center">
                             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Questions</p>
-                            <p className="text-3xl font-black text-slate-800">{resultData.responses?.length || 0}</p>
+                            <p className="text-3xl font-black text-slate-800">{resultData.totalQuestions || resultData.responses?.length || 0}</p>
                         </div>
                         <div className="p-4 text-center">
                             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Status</p>

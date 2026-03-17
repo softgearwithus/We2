@@ -228,6 +228,7 @@ export class TestSeriesService {
             endTime: payload.endTime,
             isEvaluated: false, // will turn true after Gemini finishes (if any CODE/TEXT)
             totalMarks: 0,
+            totalQuestions: 0,
             marksObtained: 0
         });
 
@@ -235,9 +236,20 @@ export class TestSeriesService {
 
         // Fetch all questions to evaluate MCQs instantly
         const qIds = payload.responses.map(r => r.questionId);
-        let questions: MockTestQuestion[] = [];
+        let attemptedQuestions: MockTestQuestion[] = [];
         if (qIds.length > 0) {
-            questions = await this.questionRepository.find({ where: { id: In(qIds) } });
+            attemptedQuestions = await this.questionRepository.find({ where: { id: In(qIds) } });
+        }
+
+        // Fetch ALL questions for the mock test to calculate actual total marks and total questions
+        let actualTotalMarks = 0;
+        let actualTotalQuestions = 0;
+        const allSections = await this.sectionRepository.find({ where: { mockTestId } });
+        const sectionIds = allSections.map(s => s.id);
+        if (sectionIds.length > 0) {
+            const allQuestions = await this.questionRepository.find({ where: { sectionId: In(sectionIds) } });
+            actualTotalQuestions = allQuestions.length;
+            actualTotalMarks = allQuestions.reduce((sum, q) => sum + (q.marks || 1), 0);
         }
 
         let totalMarks = 0;
@@ -247,7 +259,7 @@ export class TestSeriesService {
         const studentResponses: MockTestStudentResponse[] = [];
 
         for (const r of payload.responses) {
-            const question = questions.find(q => q.id === r.questionId);
+            const question = attemptedQuestions.find(q => q.id === r.questionId);
             if (!question) continue;
 
             const studentResp = this.mockTestResponseRepository.create({
@@ -258,7 +270,7 @@ export class TestSeriesService {
                 marksAwarded: 0
             });
 
-            totalMarks += question.marks;
+            // We do not add to totalMarks here anymore, it is already calculated above
 
             if (question.questionType === MockQuestionType.SINGLE_CORRECT) {
                 if (question.correctAnswer && r.responseValue === question.correctAnswer) {
@@ -299,7 +311,8 @@ export class TestSeriesService {
         }
 
         // Update the top level result instantly with objective scores
-        result.totalMarks = totalMarks;
+        result.totalMarks = actualTotalMarks;
+        result.totalQuestions = actualTotalQuestions;
         result.marksObtained = marksObtained;
         if (!requiresAiEvaluation) {
             result.isEvaluated = true;
@@ -347,6 +360,7 @@ export class TestSeriesService {
             endTime: now,
             isEvaluated: true,
             totalMarks: payload.responses.length, 
+            totalQuestions: payload.responses.length,
             marksObtained: payload.totalScore
         });
 

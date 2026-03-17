@@ -37,6 +37,9 @@ export class MockTestResult {
     @Column({ name: 'total_marks', type: 'int', default: 0 })
     totalMarks: number;
 
+    @Column({ name: 'total_questions', type: 'int', default: 0 })
+    totalQuestions: number;
+
     @Column({ name: 'marks_obtained', type: 'decimal', precision: 5, scale: 2, default: 0 })
     marksObtained: number;
 

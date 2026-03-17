@@ -32,6 +32,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
     const { register, handleSubmit, watch, getValues, formState: { errors } } = useForm();
     const watchedEmail = watch('email');
+    const watchedPassword = watch('password') || '';
 
     const handleSendOtp = async (emailToUse?: string) => {
         const email = String(emailToUse || watchedEmail || '').trim();
@@ -202,7 +203,13 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                             <label className="block text-sm font-bold text-slate-700 mb-1.5">Password</label>
                             <div className="relative">
                                 <input
-                                    {...register('password', { required: true, minLength: 6 })}
+                                    {...register('password', {
+                                        required: 'Password is required',
+                                        pattern: {
+                                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+                                            message: 'Password must include uppercase, lowercase, number, and symbol'
+                                        }
+                                    })}
                                     type={showPassword ? 'text' : 'password'}
                                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium text-slate-900"
                                     placeholder="••••••••"
@@ -216,7 +223,26 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                                     {showPassword ? <EyeOff strokeWidth={2.5} size={18} /> : <Eye strokeWidth={2.5} size={18} />}
                                 </button>
                             </div>
-                            {errors.password && <span className="text-rose-500 text-xs mt-1.5 font-semibold flex items-center gap-1"><AlertCircle size={12} /> Password must be at least 6 characters</span>}
+                            {errors.password && <span className="text-rose-500 text-xs mt-1.5 font-semibold flex items-center gap-1"><AlertCircle size={12} /> {(errors.password.message as string) || 'Invalid password'}</span>}
+                            
+                            <div className="mt-2.5 space-y-1.5 bg-slate-100/50 p-3 rounded-lg border border-slate-100">
+                                <p className="text-xs font-semibold text-slate-600 mb-2">Password must contain:</p>
+                                <p className={`text-xs flex items-center gap-1.5 font-medium transition-colors ${watchedPassword.length >= 8 ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                    <CheckCircle2 size={14} className={`transition-opacity ${watchedPassword.length >= 8 ? "opacity-100 text-emerald-500" : "opacity-40"}`} /> At least 8 characters
+                                </p>
+                                <p className={`text-xs flex items-center gap-1.5 font-medium transition-colors ${/[A-Z]/.test(watchedPassword) ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                    <CheckCircle2 size={14} className={`transition-opacity ${/[A-Z]/.test(watchedPassword) ? "opacity-100 text-emerald-500" : "opacity-40"}`} /> One uppercase letter
+                                </p>
+                                <p className={`text-xs flex items-center gap-1.5 font-medium transition-colors ${/[a-z]/.test(watchedPassword) ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                    <CheckCircle2 size={14} className={`transition-opacity ${/[a-z]/.test(watchedPassword) ? "opacity-100 text-emerald-500" : "opacity-40"}`} /> One lowercase letter
+                                </p>
+                                <p className={`text-xs flex items-center gap-1.5 font-medium transition-colors ${/\d/.test(watchedPassword) ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                    <CheckCircle2 size={14} className={`transition-opacity ${/\d/.test(watchedPassword) ? "opacity-100 text-emerald-500" : "opacity-40"}`} /> One number
+                                </p>
+                                <p className={`text-xs flex items-center gap-1.5 font-medium transition-colors ${/[^A-Za-z\d]/.test(watchedPassword) ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                    <CheckCircle2 size={14} className={`transition-opacity ${/[^A-Za-z\d]/.test(watchedPassword) ? "opacity-100 text-emerald-500" : "opacity-40"}`} /> One special character
+                                </p>
+                            </div>
                         </div>
 
                         {otpStatus && (
