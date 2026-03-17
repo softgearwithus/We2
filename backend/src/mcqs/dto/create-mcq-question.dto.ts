@@ -37,4 +37,8 @@ export class CreateMcqQuestionDto {
     @Min(0)
     correctOptionIndex: number;
 
+    @ApiProperty({ example: true, description: 'Manually marks question sub-module as new', required: false })
+    @IsOptional()
+    isNew?: boolean;
+
 }

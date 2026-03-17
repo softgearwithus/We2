@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp, type LucideIcon } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp, Search, SlidersHorizontal, ArrowDownAZ, ArrowUpZA, Clock, type LucideIcon } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import API_BASE_URL from '@/app/lib/api-config';
 import { useTestSeriesUsage } from '../layout';
@@ -40,6 +40,8 @@ type SubjectCard = {
     color: string;
     bg: string;
     border: string;
+    isNew?: boolean;
+    createdAt?: string;
 };
 
 const getLoadErrorMessage = (message?: string) => {
@@ -106,7 +108,7 @@ export default function SubjectTestsPage() {
                 return;
             }
 
-            let data: Array<{ key: string; label: string; count: number }> | null = null;
+            let data: Array<{ key: string; label: string; count: number; createdAt: string; isNew?: boolean }> | null = null;
             let lastError: Error | null = null;
 
             for (const token of tokens) {
@@ -134,6 +136,8 @@ export default function SubjectTestsPage() {
                         key: row.key,
                         title: row.label,
                         icon: IconComp,
+                        createdAt: row.createdAt,
+                        isNew: row.isNew,
                         ...theme
                     });
                 });
@@ -159,6 +163,43 @@ export default function SubjectTestsPage() {
             cancelled = true;
         };
     }, []);
+
+    // Helper to determine if a subject is "New" (manual override or less than 7 days old)
+    const isNewCheck = (subject: SubjectCard) => {
+        if (!subject.createdAt) return false;
+        const createdAt = new Date(subject.createdAt).getTime();
+        if (!Number.isFinite(createdAt)) return false;
+        const now = Date.now();
+        const diffInDays = (now - createdAt) / (1000 * 60 * 60 * 24);
+        return diffInDays <= 7;
+    };
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortBy, setSortBy] = useState<'newest' | 'az' | 'za'>('newest');
+
+    // Filter and sort subjects
+    const displaySubjects = React.useMemo(() => {
+        let filtered = dynamicSubjects;
+
+        if (searchQuery.trim()) {
+            const lowerQuery = searchQuery.toLowerCase();
+            filtered = filtered.filter(s => s.title?.toLowerCase().includes(lowerQuery));
+        }
+
+        return [...filtered].sort((a, b) => {
+            if (sortBy === 'newest') {
+                const aNew = isNewCheck(a);
+                const bNew = isNewCheck(b);
+                if (aNew && !bNew) return -1;
+                if (!aNew && bNew) return 1;
+                // Fallback to alphabetical if neither or both are new
+                return (a.title || '').localeCompare(b.title || '');
+            }
+            if (sortBy === 'az') return (a.title || '').localeCompare(b.title || '');
+            if (sortBy === 'za') return (b.title || '').localeCompare(a.title || '');
+            return 0;
+        });
+    }, [dynamicSubjects, searchQuery, sortBy]);
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 overflow-x-hidden pb-20 relative">
@@ -192,6 +233,48 @@ export default function SubjectTestsPage() {
                     </div>
                 </motion.header>
 
+                {/* Filter & Search Bar */}
+                {!loading && dynamicSubjects.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="flex flex-col sm:flex-row items-center gap-4 mb-10 w-full"
+                    >
+                        <div className="relative flex-grow w-full">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <Search size={18} />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Search subjects..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                            />
+                        </div>
+                        <div className="relative w-full sm:w-auto shrink-0 flex items-center bg-white border border-slate-200 rounded-2xl px-1.5 py-1.5 shadow-sm">
+                            <div className="pl-3 pr-2 text-slate-400">
+                                <SlidersHorizontal size={16} />
+                            </div>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value as any)}
+                                className="bg-transparent border-none text-sm font-bold text-slate-700 py-2 pr-8 pl-1 focus:outline-none focus:ring-0 cursor-pointer appearance-none outline-none"
+                            >
+                                <option value="newest">Newest First</option>
+                                <option value="az">Alphabetical (A-Z)</option>
+                                <option value="za">Alphabetical (Z-A)</option>
+                            </select>
+                            <div className="absolute right-3 pointer-events-none text-slate-400">
+                                {sortBy === 'newest' && <Clock size={14} />}
+                                {sortBy === 'az' && <ArrowDownAZ size={14} />}
+                                {sortBy === 'za' && <ArrowUpZA size={14} />}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
                 <div className="relative">
                     {loading ? (
                         <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold shadow-sm">
@@ -205,6 +288,14 @@ export default function SubjectTestsPage() {
                         <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-500 font-semibold shadow-sm">
                             No subjects are available yet.
                         </div>
+                    ) : displaySubjects.length === 0 ? (
+                        <div className="py-20 text-center text-slate-500 font-medium bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center">
+                            <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                                <Search size={24} />
+                            </div>
+                            <p className="text-slate-600 font-bold text-lg mb-1">No matches found</p>
+                            <p className="text-slate-400 text-sm">We couldn't find any subjects matching "{searchQuery}"</p>
+                        </div>
                     ) : (
                         <motion.div
                             variants={container}
@@ -212,38 +303,49 @@ export default function SubjectTestsPage() {
                             animate="show"
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
                         >
-                            {dynamicSubjects.map((subject, idx) => (
-                                <motion.div variants={item} key={idx}>
-                                    <Link
-                                        href={`/dashboard/test-series/subject/${subject.key}`}
-                                        className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}
-                                    >
-                                        <div className={`absolute top-0 right-0 w-32 h-32 ${subject.bg} rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 transition-colors`} />
+                            {displaySubjects.map((subject, idx) => {
+                                const isSubjectNew = isNewCheck(subject);
+                                return (
+                                    <motion.div variants={item} key={idx}>
+                                        <Link
+                                            href={`/dashboard/test-series/subject/${subject.key}`}
+                                            className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}
+                                        >
+                                            <div className={`absolute top-0 right-0 w-32 h-32 ${subject.bg} rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 transition-colors`} />
 
-                                        <div className={`w-14 h-14 ${subject.bg} ${subject.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 border ${subject.border}`}>
-                                            <subject.icon size={24} strokeWidth={2.5} />
-                                        </div>
-                                        <h3 className="text-xl font-black text-slate-900 mb-3 tracking-tight group-hover:text-indigo-600 transition-colors">{subject.title}</h3>
+                                            <div className="flex items-start justify-between mb-6 relative">
+                                                <div className={`w-14 h-14 ${subject.bg} ${subject.color} rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 border ${subject.border}`}>
+                                                    <subject.icon size={24} strokeWidth={2.5} />
+                                                </div>
+                                                {isSubjectNew && (
+                                                    <div className="bg-rose-500 text-white text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest shadow-sm animate-pulse">
+                                                        New
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                        <div className="flex items-center gap-2 mb-10">
-                                            <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-                                                {counts[subject.key] ?? 0} Questions
-                                            </div>
-                                            <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                            <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
-                                                <TrendingUp size={10} /> Core
-                                            </div>
-                                        </div>
+                                            <h3 className="text-xl font-black text-slate-900 mb-3 tracking-tight group-hover:text-indigo-600 transition-colors">{subject.title}</h3>
 
-                                        <div className="flex items-center justify-between mt-auto">
-                                            <span className="text-slate-900 font-bold text-sm">Start Practice</span>
-                                            <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                                                <ChevronRight size={18} />
+                                            <div className="flex items-center gap-2 mb-10">
+                                                <div className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                                                    {counts[subject.key] ?? 0} Questions
+                                                </div>
+                                                <div className="w-1 h-1 rounded-full bg-slate-200" />
+                                                <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
+                                                    <TrendingUp size={10} /> Core
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Link>
-                                </motion.div>
-                            ))}
+
+                                            <div className="flex items-center justify-between mt-auto">
+                                                <span className="text-slate-900 font-bold text-sm">Start Practice</span>
+                                                <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                                    <ChevronRight size={18} />
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                );
+                            })}
                         </motion.div>
                     )}
                 </div>

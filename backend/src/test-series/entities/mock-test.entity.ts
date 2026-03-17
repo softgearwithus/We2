@@ -29,6 +29,9 @@ export class MockTest {
     @Column({ type: 'boolean', default: false })
     isPublished: boolean;
 
+    @Column({ type: 'boolean', default: false })
+    isNew: boolean;
+
     @OneToMany(() => MockTestSection, section => section.mockTest, { cascade: true })
     sections: MockTestSection[];
 

@@ -32,6 +32,7 @@ interface ModuleData {
     key: string;
     label: string;
     count: number;
+    createdAt?: string;
 }
 
 const getLoadErrorMessage = (message?: string) => {
@@ -139,6 +140,14 @@ export default function SubjectModulesPage() {
         };
     }, [subject]);
 
+    const isModuleNew = (createdAt?: string) => {
+        if (!createdAt) return false;
+        const created = new Date(createdAt).getTime();
+        if (!Number.isFinite(created)) return false;
+        const diffInDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
+        return diffInDays <= 7;
+    };
+
     return (
         <div className="min-h-screen font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 bg-[#F8FAFC] pb-24 relative">
             <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
@@ -189,7 +198,14 @@ export default function SubjectModulesPage() {
                                             <Layers size={20} strokeWidth={2.5} />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">{mod.label}</h3>
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">{mod.label}</h3>
+                                                {isModuleNew(mod.createdAt) && (
+                                                    <span className="bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm animate-pulse shrink-0">
+                                                        New
+                                                    </span>
+                                                )}
+                                            </div>
                                             <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">{mod.count} questions</p>
                                         </div>
                                     </div>

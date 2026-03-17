@@ -25,7 +25,7 @@ export default function AdminWriteXBuilder() {
     // Prompt Adding/Editing
     const [addingQuestionToModule, setAddingQuestionToModule] = useState<string | null>(null);
     const [editId, setEditId] = useState<string | null>(null);
-    const [promptForm, setPromptForm] = useState({ prompt: '', active: true });
+    const [promptForm, setPromptForm] = useState({ prompt: '', active: true, isNew: false });
 
     const loadModules = useCallback(async () => {
         if (!token) return;
@@ -133,6 +133,7 @@ export default function AdminWriteXBuilder() {
                 await updateWriteXQuestion(token, editId, {
                     prompt: promptForm.prompt,
                     active: promptForm.active,
+                    isNew: promptForm.isNew,
                     topicKey: moduleKey,
                     topicLabel,
                 });
@@ -141,6 +142,7 @@ export default function AdminWriteXBuilder() {
                 await createWriteXQuestion(token, {
                     prompt: promptForm.prompt,
                     active: promptForm.active,
+                    isNew: promptForm.isNew,
                     topicKey: moduleKey,
                     topicLabel: topicLabel
                 });
@@ -149,7 +151,7 @@ export default function AdminWriteXBuilder() {
             
             setAddingQuestionToModule(null);
             setEditId(null);
-            setPromptForm({ prompt: '', active: true });
+            setPromptForm({ prompt: '', active: true, isNew: false });
             
             await loadModules();
             if (expandedModule === moduleKey) {
@@ -166,7 +168,7 @@ export default function AdminWriteXBuilder() {
     const openEditForm = (q: WriteXQuestion, moduleKey: string) => {
         setAddingQuestionToModule(moduleKey);
         setEditId(q.id);
-        setPromptForm({ prompt: q.prompt, active: q.active });
+        setPromptForm({ prompt: q.prompt, active: q.active, isNew: q.isNew || false });
     };
 
     if (!token) return <div className="p-8 text-center bg-slate-50 min-h-screen text-slate-500">Not authenticated.</div>;
@@ -217,7 +219,7 @@ export default function AdminWriteXBuilder() {
                                                 <button onClick={() => {
                                                     setAddingQuestionToModule(addingQuestionToModule === mod.key ? null : mod.key);
                                                     setEditId(null);
-                                                    setPromptForm({ prompt: '', active: true });
+                                                    setPromptForm({ prompt: '', active: true, isNew: false });
                                                     setMessage(null);
                                                 }} className="px-4 py-2 bg-emerald-50 text-emerald-700 font-bold text-sm rounded-xl hover:bg-emerald-100 transition">
                                                     Add Prompt
@@ -239,15 +241,26 @@ export default function AdminWriteXBuilder() {
                                                         rows={4}
                                                         className="w-full p-4 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                                                     />
-                                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer w-max">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            checked={promptForm.active} 
-                                                            onChange={e => setPromptForm({...promptForm, active: e.target.checked})} 
-                                                            className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
-                                                        />
-                                                        Set as active (visible to students)
-                                                    </label>
+                                                    <div className="flex flex-col sm:flex-row gap-4">
+                                                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer w-max">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                checked={promptForm.active} 
+                                                                onChange={e => setPromptForm({...promptForm, active: e.target.checked})} 
+                                                                className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                                                            />
+                                                            Set as active (visible to students)
+                                                        </label>
+                                                        <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer w-max">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                checked={promptForm.isNew} 
+                                                                onChange={e => setPromptForm({...promptForm, isNew: e.target.checked})} 
+                                                                className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                                                            />
+                                                            Mark as 'New'
+                                                        </label>
+                                                    </div>
                                                     
                                                     <div className="flex gap-2">
                                                         <button onClick={() => handleSavePrompt(mod.key)} disabled={isSaving || !promptForm.prompt.trim()} className="px-5 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:bg-emerald-700 disabled:opacity-50">
@@ -256,7 +269,7 @@ export default function AdminWriteXBuilder() {
                                                         <button onClick={() => {
                                                             setAddingQuestionToModule(null);
                                                             setEditId(null);
-                                                            setPromptForm({ prompt: '', active: true });
+                                                            setPromptForm({ prompt: '', active: true, isNew: false });
                                                         }} className="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50">Cancel</button>
                                                     </div>
                                                 </div>
@@ -282,6 +295,11 @@ export default function AdminWriteXBuilder() {
                                                                         ) : (
                                                                             <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-100 border border-slate-200 px-2 py-1 rounded-full">
                                                                                 Draft
+                                                                            </span>
+                                                                        )}
+                                                                        {q.isNew && (
+                                                                            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-orange-700 bg-orange-100 border border-orange-200 px-2 py-1 rounded-full">
+                                                                                New
                                                                             </span>
                                                                         )}
                                                                         <span className="text-xs text-slate-400">{new Date(q.createdAt).toLocaleDateString()}</span>

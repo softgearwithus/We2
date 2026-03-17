@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEnum, IsInt, IsOptional, IsString, Min, IsBoolean } from 'class-validator';
 import { McqCategory } from '../entities/mcq-question.entity';
 
 export class UpdateMcqQuestionDto {
@@ -39,4 +39,9 @@ export class UpdateMcqQuestionDto {
     @IsInt()
     @Min(0)
     correctOptionIndex?: number;
+
+    @ApiProperty({ example: false, description: 'Override flag for NEW badge', required: false })
+    @IsOptional()
+    @IsBoolean()
+    isNew?: boolean;
 }

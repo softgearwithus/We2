@@ -76,6 +76,7 @@ export default function AdminSubjectBuilder() {
         options: ['', '', '', ''],
         correctOptionIndex: 0,
         explanation: '',
+        isNew: false
     });
 
     // Timer configuration
@@ -133,7 +134,8 @@ export default function AdminSubjectBuilder() {
                 topic: newModuleName.trim(),
                 question: 'Placeholder Question (Delete me after adding real questions)',
                 options: ['Option A', 'Option B', 'Option C', 'Option D'],
-                correctOptionIndex: 0
+                correctOptionIndex: 0,
+                isNew: false
             });
             
             setMessage({ type: 'success', text: 'Module created successfully.' });
@@ -161,7 +163,8 @@ export default function AdminSubjectBuilder() {
                 topic: 'Draft Module',
                 question: 'Placeholder Question (Delete me after adding real questions)',
                 options: ['Option A', 'Option B', 'Option C', 'Option D'],
-                correctOptionIndex: 0
+                correctOptionIndex: 0,
+                isNew: false
             });
 
             await loadSubjects();
@@ -275,6 +278,7 @@ export default function AdminSubjectBuilder() {
             question: q.questionText || q.question,
             options: q.optionsJson || q.options,
             correctOptionIndex: q.correctOptionIndex,
+            isNew: q.isNew || false
         }));
 
         setIsSaving(true);
@@ -310,13 +314,14 @@ export default function AdminSubjectBuilder() {
             question: questionForm.questionText,
             options: questionForm.options.filter(o => o.trim() !== ''),
             correctOptionIndex: questionForm.correctOptionIndex,
+            isNew: questionForm.isNew
         };
 
         setIsSaving(true);
         try {
             await createMcq(token, payload);
             setAddingQuestionToModule(null);
-            setQuestionForm({ questionText: '', options: ['', '', '', ''], correctOptionIndex: 0, explanation: '' });
+            setQuestionForm({ questionText: '', options: ['', '', '', ''], correctOptionIndex: 0, explanation: '', isNew: false });
             await loadModules(selectedSubject.id);
             if (expandedModule === moduleKey) {
                 await handleViewQuestions(moduleKey);
@@ -548,6 +553,16 @@ export default function AdminSubjectBuilder() {
                                                             placeholder="Explanation (Optional)" 
                                                             className="w-full p-3 border border-slate-300 rounded-xl text-sm"
                                                         />
+                                                        <div className="flex items-center gap-3 py-2">
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={questionForm.isNew}
+                                                                onChange={(e) => setQuestionForm((prev) => ({ ...prev, isNew: e.target.checked }))}
+                                                                id={`isNew-${mod.key}`}
+                                                                className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-600 cursor-pointer"
+                                                            />
+                                                            <label htmlFor={`isNew-${mod.key}`} className="text-sm font-bold text-slate-700 cursor-pointer">Mark question as 'New'</label>
+                                                        </div>
                                                         <div className="flex gap-2">
                                                             <button onClick={() => handleAddQuestion(mod.key)} disabled={isSaving} className="px-5 py-2.5 bg-slate-900 text-white font-bold rounded-xl text-sm">Save Question</button>
                                                             <button onClick={() => setAddingQuestionToModule(null)} className="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm">Cancel</button>
@@ -592,7 +607,12 @@ export default function AdminSubjectBuilder() {
                                                                 <div key={q.id} className="bg-white p-4 rounded-xl border border-slate-200 flex justify-between gap-4">
                                                                     <div>
                                                                         <span className="text-xs font-bold text-slate-400 mb-1 block">Q{idx + 1}</span>
-                                                                        <p className="font-semibold text-slate-800 text-sm whitespace-pre-wrap">{q.question}</p>
+                                                                        <div className="flex items-center gap-2 mb-1">
+                                                                            <p className="font-semibold text-slate-800 text-sm whitespace-pre-wrap leading-relaxed">{q.question}</p>
+                                                                            {q.isNew && (
+                                                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-indigo-100 text-indigo-700">New</span>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                     <button onClick={() => handleDeleteQuestion(q.id, mod.key)} disabled={isSaving} className="text-rose-400 hover:text-rose-600 transition p-2 hover:bg-rose-50 rounded-lg self-start">
                                                                         <Trash2 size={16} />

@@ -24,7 +24,7 @@ export default function AdminTestSeriesBuilder() {
     const [expandedTests, setExpandedTests] = useState<Record<string, boolean>>({});
 
     // Forms
-    const [testForm, setTestForm] = useState({ title: '', description: '', totalDurationMinutes: 45, order: 0 });
+    const [testForm, setTestForm] = useState({ title: '', description: '', totalDurationMinutes: 45, order: 0, isNew: false });
     const [editTestId, setEditTestId] = useState<string | null>(null);
 
     const [sectionForm, setSectionForm] = useState({ title: '', durationMinutes: 0, order: 0 });
@@ -106,7 +106,7 @@ export default function AdminTestSeriesBuilder() {
         setIsSaving(true);
         try {
             await createMockTest(token, { ...testForm, companyId: selectedCompany.id });
-            setTestForm({ title: '', description: '', totalDurationMinutes: 45, order: 0 });
+            setTestForm({ title: '', description: '', totalDurationMinutes: 45, order: 0, isNew: false });
             await loadHierarchy(selectedCompany.id);
             setMessage({ type: 'success', text: 'Mock Test created.' });
         } catch (error: any) {
@@ -397,7 +397,12 @@ export default function AdminTestSeriesBuilder() {
                                                     {expandedTests[test.id] ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-lg font-bold text-slate-800">{test.title}</h3>
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className="text-lg font-bold text-slate-800">{test.title}</h3>
+                                                        {test.isNew && (
+                                                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-orange-100 text-orange-700">New</span>
+                                                        )}
+                                                    </div>
                                                     <div className="flex gap-4 text-sm text-slate-500 font-medium mt-1">
                                                         <span>{test.totalDurationMinutes} minutes total</span>
                                                         <span>•</span>
@@ -844,6 +849,18 @@ export default function AdminTestSeriesBuilder() {
                                             value={testForm.order}
                                             onChange={(e) => setTestForm({ ...testForm, order: parseInt(e.target.value) || 0 })}
                                         />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-3 py-2">
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={testForm.isNew}
+                                            onChange={(e) => setTestForm((prev) => ({ ...prev, isNew: e.target.checked }))}
+                                            id="testIsNew"
+                                            className="w-5 h-5 rounded text-orange-600 border-slate-300 focus:ring-orange-600 cursor-pointer"
+                                        />
+                                        <label htmlFor="testIsNew" className="text-sm font-bold text-slate-700 cursor-pointer">Mark test as 'New'</label>
                                     </div>
                                 </div>
                                 <button

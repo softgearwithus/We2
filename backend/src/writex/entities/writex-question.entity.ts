@@ -18,6 +18,9 @@ export class WriteXQuestion {
     @Column({ type: 'varchar', nullable: true })
     topicLabel: string;
 
+    @Column({ type: 'boolean', default: false })
+    isNew: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 

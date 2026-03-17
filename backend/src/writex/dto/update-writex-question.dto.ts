@@ -21,4 +21,9 @@ export class UpdateWriteXQuestionDto {
     @IsOptional()
     @IsString()
     topicLabel?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsBoolean()
+    isNew?: boolean;
 }

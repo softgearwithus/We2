@@ -21,4 +21,9 @@ export class CreateWriteXQuestionDto {
     @IsOptional()
     @IsString()
     topicLabel?: string;
+
+    @ApiProperty({ required: false, example: true, description: 'Manually marks WriteX prompt as new' })
+    @IsOptional()
+    @IsBoolean()
+    isNew?: boolean;
 }

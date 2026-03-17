@@ -24,6 +24,7 @@ export type McqAdminItem = {
     question: string;
     options: string[];
     correctOptionIndex: number;
+    isNew?: boolean;
     createdAt: string;
 };
 
@@ -46,6 +47,7 @@ export type WriteXQuestion = {
     id: string;
     prompt: string;
     active: boolean;
+    isNew?: boolean;
     topicKey?: string | null;
     topicLabel?: string | null;
     createdAt: string;
@@ -58,6 +60,7 @@ export type CreateMcqPayload = {
     question: string;
     options: string[];
     correctOptionIndex: number;
+    isNew?: boolean;
 };
 
 export type UpdateMcqPayload = Partial<CreateMcqPayload>;
@@ -66,6 +69,7 @@ export type UpdateMcqPayload = Partial<CreateMcqPayload>;
 export type CreateWriteXPayload = {
     prompt: string;
     active?: boolean;
+    isNew?: boolean;
     topicKey?: string;
     topicLabel?: string;
 };
@@ -73,6 +77,7 @@ export type CreateWriteXPayload = {
 export type UpdateWriteXPayload = {
     prompt?: string;
     active?: boolean;
+    isNew?: boolean;
     topicKey?: string;
     topicLabel?: string;
 };

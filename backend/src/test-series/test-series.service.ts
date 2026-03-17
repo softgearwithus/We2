@@ -72,7 +72,7 @@ export class TestSeriesService {
         return this.mockTestRepository.save(mockTest);
     }
 
-    async updateMockTest(id: string, dto: { title?: string; description?: string; totalDurationMinutes?: number; order?: number }) {
+    async updateMockTest(id: string, dto: { title?: string; description?: string; totalDurationMinutes?: number; order?: number; isNew?: boolean }) {
         await this.mockTestRepository.update(id, dto);
         return this.mockTestRepository.findOne({ where: { id } });
     }
@@ -173,6 +173,8 @@ export class TestSeriesService {
                 title: mt.title,
                 description: mt.description,
                 totalDurationMinutes: mt.totalDurationMinutes,
+                createdAt: mt.createdAt,
+                isNew: mt.isNew,
                 sections: mt.sections.map(s => ({
                     id: s.id,
                     title: s.title,

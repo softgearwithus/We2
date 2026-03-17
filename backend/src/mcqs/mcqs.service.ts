@@ -198,6 +198,10 @@ export class McqsService {
             question.correctOptionIndex = dto.correctOptionIndex;
         }
 
+        if (dto.isNew !== undefined) {
+            question.isNew = dto.isNew;
+        }
+
         const saved = await this.mcqRepo.save(question);
         await this.adminService.logAction({
             action: 'MCQ Updated',
@@ -318,6 +322,7 @@ export class McqsService {
                 .addSelect('COALESCE(mcq.topicLabel, :fallbackLabel)', 'groupLabel')
                 .addSelect('COUNT(mcq.id)', 'count')
                 .addSelect('MAX(mcq.topicDurationMinutes)', 'durationMinutes')
+                .addSelect('MAX(mcq.createdAt)', 'createdAt')
                 .setParameter('fallbackKey', 'general')
                 .setParameter('fallbackLabel', 'General')
                 .groupBy('mcq.topicKey')
@@ -328,18 +333,20 @@ export class McqsService {
                 .addSelect('mcq.groupLabel', 'groupLabel')
                 .addSelect('COUNT(mcq.id)', 'count')
                 .addSelect('MAX(mcq.topicDurationMinutes)', 'durationMinutes')
+                .addSelect('MAX(mcq.createdAt)', 'createdAt')
                 .groupBy('mcq.groupKey')
                 .addGroupBy('mcq.groupLabel')
                 .orderBy('"groupLabel"', 'ASC');
         }
 
-        const rows = await qb.getRawMany<{ groupKey: string; groupLabel: string; count: string; durationMinutes: number }>();
+        const rows = await qb.getRawMany<{ groupKey: string; groupLabel: string; count: string; durationMinutes: number; createdAt: Date }>();
 
         return rows.map((row) => ({
             key: row.groupKey,
             label: row.groupLabel,
             count: parseInt(row.count, 10),
             durationMinutes: row.durationMinutes || 60,
+            createdAt: row.createdAt
         }));
     }
 

@@ -159,6 +159,32 @@ export async function fetchStudentResults(token: string) {
     return res.json();
 }
 
+export interface WriteXQuestion {
+    id: string;
+    topicKey: string;
+    topicLabel: string;
+    prompt: string;
+    active: boolean;
+    isNew?: boolean;
+    createdAt: string;
+}
+
+export interface CreateWriteXPayload {
+    topicKey: string;
+    topicLabel: string;
+    prompt: string;
+    active: boolean;
+    isNew?: boolean;
+}
+
+export interface UpdateWriteXPayload {
+    topicKey?: string;
+    topicLabel?: string;
+    prompt?: string;
+    active?: boolean;
+    isNew?: boolean;
+}
+
 export async function submitMockTest(token: string, id: string, payload: {
     startTime: string | Date,
     endTime: string | Date,

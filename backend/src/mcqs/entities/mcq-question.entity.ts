@@ -38,6 +38,9 @@ export class McqQuestion {
     @Column({ type: 'int', default: 60 })
     topicDurationMinutes: number;
 
+    @Column({ type: 'boolean', default: false })
+    isNew: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 

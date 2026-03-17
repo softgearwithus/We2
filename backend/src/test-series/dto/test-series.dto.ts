@@ -26,6 +26,10 @@ export class UpdateCompanyDto {
     @IsOptional()
     @IsBoolean()
     isActive?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    isNew?: boolean;
 }
 
 export class BulkQuestionsDto {

@@ -14,6 +14,9 @@ export class Company {
     @Column({ type: 'boolean', default: true })
     isActive: boolean;
 
+    @Column({ type: 'boolean', default: false })
+    isNew: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 

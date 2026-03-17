@@ -12,7 +12,7 @@ export default function AdminCompaniesManager() {
     const [isSaving, setIsSaving] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-    const [form, setForm] = useState({ name: '', logoUrl: '', isActive: true });
+    const [form, setForm] = useState({ name: '', logoUrl: '', isActive: true, isNew: false });
     const [editId, setEditId] = useState<string | null>(null);
 
     const token = typeof window !== 'undefined' ? (getStoredToken('admin') || '') : '';
@@ -41,7 +41,7 @@ export default function AdminCompaniesManager() {
             if (!payload.logoUrl) delete payload.logoUrl;
 
             await createCompany(token, payload);
-            setForm({ name: '', logoUrl: '', isActive: true });
+            setForm({ name: '', logoUrl: '', isActive: true, isNew: false });
             setMessage({ type: 'success', text: 'Company created.' });
             await loadData();
         } catch (error: any) {
@@ -60,7 +60,7 @@ export default function AdminCompaniesManager() {
 
             await updateCompany(token, id, payload);
             setEditId(null);
-            setForm({ name: '', logoUrl: '', isActive: true });
+            setForm({ name: '', logoUrl: '', isActive: true, isNew: false });
             setMessage({ type: 'success', text: 'Company updated.' });
             await loadData();
         } catch (error: any) {
@@ -87,7 +87,7 @@ export default function AdminCompaniesManager() {
 
     const startEdit = (c: any) => {
         setEditId(c.id);
-        setForm({ name: c.name, logoUrl: c.logoUrl || '', isActive: c.isActive });
+        setForm({ name: c.name, logoUrl: c.logoUrl || '', isActive: c.isActive, isNew: c.isNew || false });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -134,15 +134,27 @@ export default function AdminCompaniesManager() {
                         />
                     </div>
 
-                    <div className="flex items-center gap-3 md:col-span-2">
-                        <input
-                            type="checkbox"
-                            checked={form.isActive}
-                            onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
-                            id="isActive"
-                            className="w-5 h-5 rounded text-orange-600 border-slate-300 focus:ring-orange-600"
-                        />
-                        <label htmlFor="isActive" className="text-sm font-bold text-slate-700">Active (Visible to students)</label>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-6 md:col-span-2">
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                checked={form.isActive}
+                                onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
+                                id="isActive"
+                                className="w-5 h-5 rounded text-orange-600 border-slate-300 focus:ring-orange-600 cursor-pointer"
+                            />
+                            <label htmlFor="isActive" className="text-sm font-bold text-slate-700 cursor-pointer">Active (Visible)</label>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                checked={form.isNew}
+                                onChange={(e) => setForm((prev) => ({ ...prev, isNew: e.target.checked }))}
+                                id="isNew"
+                                className="w-5 h-5 rounded text-orange-600 border-slate-300 focus:ring-orange-600 cursor-pointer"
+                            />
+                            <label htmlFor="isNew" className="text-sm font-bold text-slate-700 cursor-pointer">Mark as 'New'</label>
+                        </div>
                     </div>
 
                     <div className="flex items-end gap-3 md:col-span-2">
@@ -158,7 +170,7 @@ export default function AdminCompaniesManager() {
                                 <button
                                     onClick={() => {
                                         setEditId(null);
-                                        setForm({ name: '', logoUrl: '', isActive: true });
+                                        setForm({ name: '', logoUrl: '', isActive: true, isNew: false });
                                     }}
                                     className="px-5 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm flex items-center gap-2"
                                 >
@@ -197,6 +209,9 @@ export default function AdminCompaniesManager() {
                                 <div className="flex items-center gap-4">
                                     <div className={`w-3 h-3 rounded-full ${c.isActive ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                                     <span className="font-bold text-slate-900">{c.name}</span>
+                                    {c.isNew && (
+                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-orange-100 text-orange-700">New</span>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => startEdit(c)} className="px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200 text-sm font-medium flex gap-2 items-center">

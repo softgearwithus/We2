@@ -66,7 +66,6 @@ export class WriteXService {
             order: { createdAt: 'DESC' } 
         });
     }
-
     async updateQuestion(id: string, dto: UpdateWriteXQuestionDto) {
         const question = await this.questionRepo.findOne({ where: { id } });
         if (!question) {
@@ -79,6 +78,7 @@ export class WriteXService {
 
         if (dto.topicKey !== undefined) question.topicKey = dto.topicKey;
         if (dto.topicLabel !== undefined) question.topicLabel = dto.topicLabel;
+        if (dto.isNew !== undefined) question.isNew = dto.isNew;
 
         if (dto.active !== undefined) {
             if (dto.active) {
@@ -115,11 +115,13 @@ export class WriteXService {
         return { success: true };
     }
 
+
     async getGroups() {
         const query = this.questionRepo.createQueryBuilder('q');
         query.select(`COALESCE(q.topicKey, 'general')`, 'key');
         query.addSelect(`COALESCE(q.topicLabel, 'General')`, 'label');
         query.addSelect('COUNT(q.id)', 'count');
+        query.addSelect('MAX(q.createdAt)', 'createdAt');
         query.groupBy('COALESCE(q.topicKey, \'general\')');
         query.addGroupBy('COALESCE(q.topicLabel, \'General\')');
         query.orderBy('label', 'ASC');
@@ -128,7 +130,8 @@ export class WriteXService {
             key: r.key,
             label: r.label,
             count: Number(r.count),
-            category: 'writex'
+            category: 'writex',
+            createdAt: r.createdAt
         }));
     }
 
