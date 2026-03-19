@@ -169,9 +169,12 @@ export default function Home() {
           <p className="text-gray-400 text-2xl max-w-3xl mx-auto font-medium opacity-80 leading-relaxed">
             Join 200+ students already mastering their future with EMBLE's Top Trending Software Engineering Bootcamp.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 pt-10">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 pt-10">
             <Link href="/register" aria-label="Get started with EMBLE placement training" className="h-[72px] px-16 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-[900] text-xl transition-all shadow-2xl hover:shadow-brand-orange/20 hover:-translate-y-2 flex items-center justify-center active:scale-95">
               Get Started Now
+            </Link>
+            <Link href="/computer-science-placement-preparation" className="h-[72px] px-10 rounded-2xl bg-white border-2 border-brand-black text-brand-black font-[900] text-xl transition-all shadow-lg hover:-translate-y-2 flex items-center justify-center active:scale-95">
+              Ultimate CS Placement Guide
             </Link>
           </div>
         </div>

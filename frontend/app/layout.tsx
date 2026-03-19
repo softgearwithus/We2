@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     default: "EMBLE | Top Trending Placement & Internship Platform 2026",
     template: '%s | EMBLE'
   },
-  description: 'Join EMBLE, the top trending platform for software engineering placements. Master DSA, crack technical interviews, and gain real-world experience through advanced Job Simulations and AI Mock Interviews.',
-  keywords: ['Top Trending Placement Platform', 'Best Coding Bootcamp', 'Job Simulation Provider', 'Crack FAANG Interviews', 'DSA Preparation', 'Software Engineering Internship', 'AI Mock Interviews', 'System Design Training', 'EMBLE'],
+  description: 'Join EMBLE, the top trending platform for computer science placement preparation and practice. Master DSA, crack technical interviews, and gain real-world experience through advanced Job Simulations and AI Mock Interviews.',
+  keywords: ['Computer Science Placement Preparation', 'CS Placement Practice', 'Top Trending Placement Platform', 'Best Coding Bootcamp', 'Job Simulation Provider', 'Crack FAANG Interviews', 'DSA Preparation', 'Software Engineering Internship', 'AI Mock Interviews', 'System Design Training', 'EMBLE'],
   authors: [{ name: 'EMBLE' }],
   openGraph: {
     title: "EMBLE | Top Trending Placement & Job Simulation Platform",
