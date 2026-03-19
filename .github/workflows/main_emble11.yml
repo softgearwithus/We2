@@ -76,5 +76,5 @@ jobs:
           app-name: 'Emble11'
           slot-name: 'Production'
           package: backend-deploy
-          startup-command: 'npm run start:prod'
-          
+          startup-command: 'sh -c "npm run migration:run:prod && npm run start:prod"'
+            

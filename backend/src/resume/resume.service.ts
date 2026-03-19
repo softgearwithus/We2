@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException, BadRequest
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Resume } from './entities/resume.entity';
 import { User } from '../users/user.entity';
 const pdfParse = require('pdf-parse');
@@ -134,7 +134,32 @@ export class ResumeService {
             title,
             data: data || {}, // initialize with empty object if no data provided initially
         });
-        return this.resumeRepo.save(resume);
+
+        try {
+            return await this.resumeRepo.save(resume);
+        } catch (error: any) {
+            const isUniqueViolation =
+                error instanceof QueryFailedError &&
+                error?.driverError?.code === '23505' &&
+                String(error?.driverError?.detail || '').includes('(\"userId\")');
+
+            if (!isUniqueViolation) {
+                throw error;
+            }
+
+            const existingResume = await this.resumeRepo.findOne({
+                where: { userId },
+                order: { updatedAt: 'DESC' },
+            });
+
+            if (!existingResume) {
+                throw error;
+            }
+
+            existingResume.title = title;
+            existingResume.data = data || {};
+            return this.resumeRepo.save(existingResume);
+        }
     }
 
     async updateResume(id: string, userId: string, updateData: { title?: string, data?: Record<string, any> }) {
