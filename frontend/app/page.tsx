@@ -45,20 +45,19 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl lg:text-[80px] font-[900] tracking-tight text-brand-black mb-8 leading-[1.1] text-balance">
               The Complete <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-600 to-purple-600 pb-2">
-                Placement & Internship Accelerator.
+                Placement Accelerator.
               </span>
             </h1>
 
             {/* Subtext - Optimized for Readability */}
             <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed max-w-xl mb-10 text-balance">
-              Closing the gap between theoretical learning and industry reality. We train you to master Data Structures & Algorithms, crush tech interviews with AI Mock Interviews, and write code that FAANG companies actually hire for.
+              Master DSA, SQL, and Core Subjects through our immersive curriculum. Practice with AI Mock Interviews, and get your Free Readiness Score before facing a real recruiter.
             </p>
 
             {/* CTAs - Polished & Tactile */}
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
-              <Link href="/register" aria-label="Register for the top trending coding bootcamp" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-lg transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95">
-                Join Bootcamp
-                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">arrow_forward</span>
+              <Link href="/register" aria-label="Get Free Interview Readiness Score" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-brand-black hover:bg-gray-900 text-white font-bold text-[17px] transition-all shadow-xl hover:shadow-brand-orange/20 hover:-translate-y-1 flex items-center justify-center gap-2 active:scale-95 whitespace-nowrap">
+                Get Free Readiness Score <span className="text-xl leading-none">✨</span>
               </Link>
               <Link href="/curriculum" aria-label="View our full stack software engineering curriculum" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-white border border-gray-200 text-brand-black font-bold text-lg hover:border-brand-orange hover:bg-gray-50 transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 group">
                 <span className="material-symbols-outlined text-brand-orange group-hover:scale-110 transition-transform filled-icon" aria-hidden="true">play_circle</span>
