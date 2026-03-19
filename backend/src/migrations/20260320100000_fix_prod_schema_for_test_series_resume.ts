@@ -20,6 +20,11 @@ export class FixProdSchemaForTestSeriesResume20260320100000 implements Migration
     `);
 
     await queryRunner.query(`
+      ALTER TABLE "mcq_question"
+      ADD COLUMN IF NOT EXISTS "isNew" boolean NOT NULL DEFAULT false
+    `);
+
+    await queryRunner.query(`
       DROP INDEX IF EXISTS "IDX_6543e24d4d8714017acd1a1b39"
     `);
 
@@ -42,6 +47,11 @@ export class FixProdSchemaForTestSeriesResume20260320100000 implements Migration
     await queryRunner.query(`
       ALTER TABLE "mock_test_results"
       DROP COLUMN IF EXISTS "total_questions"
+    `);
+
+    await queryRunner.query(`
+      ALTER TABLE "mcq_question"
+      DROP COLUMN IF EXISTS "isNew"
     `);
 
     await queryRunner.query(`
