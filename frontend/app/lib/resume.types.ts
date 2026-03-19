@@ -20,6 +20,11 @@ export interface ResumeData {
     projects: ProjectItem[];
     templateId: 'google-standard' | 'startup-clean' | 'creative-pro';
     accentColor?: string;
+    sectionOrder?: string[];
+    customSection?: {
+        title: string;
+        items: CustomSectionItem[];
+    };
 }
 
 export interface ExperienceItem {
@@ -50,6 +55,15 @@ export interface ProjectItem {
     technologies: string[];
     liveLink?: string;
     repoLink?: string;
+}
+
+export interface CustomSectionItem {
+    id: string;
+    title: string;
+    subtitle?: string;
+    date?: string;
+    location?: string;
+    description: string[];
 }
 
 export const initialResumeState: ResumeData = {
@@ -106,4 +120,9 @@ export const initialResumeState: ResumeData = {
     ],
     templateId: 'google-standard',
     accentColor: 'indigo',
+    sectionOrder: ['experience', 'projects', 'education', 'skills', 'custom'],
+    customSection: {
+        title: 'Certifications & Awards',
+        items: [],
+    },
 };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { ResumeData, ExperienceItem, EducationItem, ProjectItem } from '@/app/lib/resume.types';
-import { Plus, Trash2, Palette, LayoutTemplate } from 'lucide-react';
+import { ResumeData, ExperienceItem, EducationItem, ProjectItem, CustomSectionItem } from '@/app/lib/resume.types';
+import { Plus, Trash2, Palette, LayoutTemplate, ChevronUp, ChevronDown } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface ResumeFormProps {
@@ -38,6 +38,33 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
     const removeExperience = (id: string) => {
         onChange({ ...data, experience: data.experience.filter((item) => item.id !== id) });
+    };
+
+    const addEducation = () => {
+        const newItem: EducationItem = {
+            id: crypto.randomUUID(),
+            institution: '',
+            degree: '',
+            fieldOfStudy: '',
+            startDate: '',
+            endDate: '',
+            location: '',
+        };
+        onChange({ ...data, education: [...data.education, newItem] });
+    };
+
+    const removeEducation = (id: string) => {
+        onChange({ ...data, education: data.education.filter((item) => item.id !== id) });
+    };
+
+    const moveSection = (index: number, direction: number) => {
+        const newOrder = [...(data.sectionOrder || ['experience', 'projects', 'education', 'skills', 'custom'])];
+        if (index + direction >= 0 && index + direction < newOrder.length) {
+            const temp = newOrder[index];
+            newOrder[index] = newOrder[index + direction];
+            newOrder[index + direction] = temp;
+            onChange({ ...data, sectionOrder: newOrder });
+        }
     };
 
     return (
@@ -108,6 +135,34 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                             </div>
                         </div>
                     )}
+                    
+                    {/* Section Order */}
+                    <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">Section Order</label>
+                        <div className="flex flex-col gap-2">
+                            {(data.sectionOrder || ['experience', 'projects', 'education', 'skills', 'custom']).map((sectionId, idx, arr) => (
+                                <div key={sectionId} className="flex justify-between items-center bg-white border border-slate-200 p-3 rounded-xl shadow-sm hover:border-indigo-200 transition-colors">
+                                    <span className="text-sm font-bold text-slate-700 capitalize">{sectionId.replace('-', ' ')}</span>
+                                    <div className="flex gap-2">
+                                        <button 
+                                            onClick={() => moveSection(idx, -1)} 
+                                            disabled={idx === 0}
+                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
+                                        >
+                                            <ChevronUp size={16} />
+                                        </button>
+                                        <button 
+                                            onClick={() => moveSection(idx, 1)} 
+                                            disabled={idx === arr.length - 1}
+                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
+                                        >
+                                            <ChevronDown size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -179,12 +234,29 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
             {/* Education */}
             <section className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
-                    <h2 className="text-xl font-black text-slate-900 tracking-tight">Education</h2>
+                <div className="flex justify-between items-center border-b border-slate-200 pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Education</h2>
+                    </div>
+                    <button
+                        onClick={addEducation}
+                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                    >
+                        <Plus size={14} /> Add Education
+                    </button>
                 </div>
-                {data.education.map((edu, index) => (
-                    <div key={edu.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 hover:border-indigo-300 transition-colors">
+                
+                <div className="space-y-4">
+                    {data.education.map((edu, index) => (
+                        <div key={edu.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
+                            <button
+                                onClick={() => removeEducation(edu.id)}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-rose-50 rounded-lg"
+                                title="Remove Education"
+                            >
+                                <Trash2 size={16} />
+                            </button>
                         <div className="grid grid-cols-2 gap-4">
                             <Input label="Institution" value={edu.institution} onChange={(v) => {
                                 const newEdu = [...data.education];
@@ -219,8 +291,9 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                                 }} placeholder="YYYY" />
                             </div>
                         </div>
-                    </div>
-                ))}
+                        </div>
+                    ))}
+                </div>
             </section>
 
             {/* Projects */}
@@ -267,9 +340,9 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                                     newProjects[index].name = v;
                                     onChange({ ...data, projects: newProjects });
                                 }} placeholder="Project Title" />
-                                <Input label="Tech Stack" value={project.technologies.join(', ')} onChange={(v) => {
+                                <Input label="Tech Stack" value={(project.technologies || []).join(',')} onChange={(v) => {
                                     const newProjects = [...data.projects];
-                                    newProjects[index].technologies = v.split(',').map((t) => t.trim()).filter(Boolean);
+                                    newProjects[index].technologies = v.split(',');
                                     onChange({ ...data, projects: newProjects });
                                 }} placeholder="React, Node.js, PostgreSQL" />
                                 <Input label="Live Link" value={project.liveLink || ''} onChange={(v) => {
@@ -308,25 +381,108 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                 <div className="grid gap-6">
                     <TextArea
                         label="Languages"
-                        value={data.skills.languages?.join(', ') || ''}
-                        onChange={(v) => onChange({ ...data, skills: { ...data.skills, languages: v.split(', ') } })}
+                        value={data.skills.languages?.join(',') || ''}
+                        onChange={(v) => onChange({ ...data, skills: { ...data.skills, languages: v.split(',') } })}
                         placeholder="JavaScript, Python, TypeScript..."
                         rows={2}
                     />
                     <TextArea
                         label="Frameworks & Libraries"
-                        value={data.skills.frameworks?.join(', ') || ''}
-                        onChange={(v) => onChange({ ...data, skills: { ...data.skills, frameworks: v.split(', ') } })}
+                        value={data.skills.frameworks?.join(',') || ''}
+                        onChange={(v) => onChange({ ...data, skills: { ...data.skills, frameworks: v.split(',') } })}
                         placeholder="React, Next.js, Node.js..."
                         rows={2}
                     />
                     <TextArea
                         label="Tools & Platforms"
-                        value={data.skills.tools?.join(', ') || ''}
-                        onChange={(v) => onChange({ ...data, skills: { ...data.skills, tools: v.split(', ') } })}
+                        value={data.skills.tools?.join(',') || ''}
+                        onChange={(v) => onChange({ ...data, skills: { ...data.skills, tools: v.split(',') } })}
                         placeholder="Git, Docker, AWS..."
                         rows={2}
                     />
+                </div>
+            </section>
+
+            {/* Custom Section */}
+            <section className="space-y-6">
+                <div className="flex justify-between items-center border-b border-slate-200 pb-4">
+                    <div className="flex items-center gap-3 flex-1">
+                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <input 
+                            className="text-xl font-black text-slate-900 tracking-tight bg-transparent border-none focus:outline-none focus:ring-0 p-0 placeholder-slate-300 w-full hover:bg-slate-50 transition-colors rounded"
+                            value={data.customSection?.title || 'Certifications & Awards'}
+                            onChange={(e) => onChange({ ...data, customSection: { ...data.customSection, title: e.target.value, items: data.customSection?.items || [] } })}
+                            placeholder="Section Title (e.g., Certifications)"
+                        />
+                    </div>
+                    <button
+                        onClick={() => {
+                            const newItem: CustomSectionItem = {
+                                id: crypto.randomUUID(),
+                                title: '',
+                                subtitle: '',
+                                date: '',
+                                location: '',
+                                description: [''],
+                            };
+                            const items = data.customSection?.items || [];
+                            onChange({ ...data, customSection: { title: data.customSection?.title || 'Certifications & Awards', items: [...items, newItem] } });
+                        }}
+                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95 whitespace-nowrap ml-4"
+                    >
+                        <Plus size={14} /> Add Item
+                    </button>
+                </div>
+
+                <div className="space-y-4">
+                    {(data.customSection?.items || []).map((item, index) => (
+                        <div key={item.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
+                            <button
+                                onClick={() => {
+                                    const items = data.customSection?.items || [];
+                                    const updated = items.filter((i) => i.id !== item.id);
+                                    onChange({ ...data, customSection: { ...data.customSection!, items: updated } });
+                                }}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-rose-50 rounded-lg"
+                                title="Remove Item"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input label="Title" value={item.title} onChange={(v) => {
+                                    const items = [...(data.customSection?.items || [])];
+                                    items[index].title = v;
+                                    onChange({ ...data, customSection: { ...data.customSection!, items } });
+                                }} placeholder="e.g. AWS Certified Developer" />
+                                <Input label="Subtitle/Organization" value={item.subtitle || ''} onChange={(v) => {
+                                    const items = [...(data.customSection?.items || [])];
+                                    items[index].subtitle = v;
+                                    onChange({ ...data, customSection: { ...data.customSection!, items } });
+                                }} placeholder="e.g. Amazon Web Services" />
+                                <Input label="Date" value={item.date || ''} onChange={(v) => {
+                                    const items = [...(data.customSection?.items || [])];
+                                    items[index].date = v;
+                                    onChange({ ...data, customSection: { ...data.customSection!, items } });
+                                }} placeholder="e.g. Aug 2023" />
+                                <Input label="Location" value={item.location || ''} onChange={(v) => {
+                                    const items = [...(data.customSection?.items || [])];
+                                    items[index].location = v;
+                                    onChange({ ...data, customSection: { ...data.customSection!, items } });
+                                }} placeholder="e.g. Online" />
+                            </div>
+                            <TextArea
+                                label="Description (Optional)"
+                                value={(item.description || []).join('\n')}
+                                onChange={(v) => {
+                                    const items = [...(data.customSection?.items || [])];
+                                    items[index].description = v.split('\n');
+                                    onChange({ ...data, customSection: { ...data.customSection!, items } });
+                                }}
+                                placeholder="• Scored 900/1000..."
+                                rows={3}
+                            />
+                        </div>
+                    ))}
                 </div>
             </section>
         </div>

@@ -41,10 +41,11 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
     const hasProjects = data.projects && data.projects.length > 0;
     const hasEducation = data.education && data.education.length > 0;
     const hasSkills = data.skills && (
-        (data.skills.languages && data.skills.languages.length > 0) ||
-        (data.skills.frameworks && data.skills.frameworks.length > 0) ||
-        (data.skills.tools && data.skills.tools.length > 0)
+        (data.skills.languages && data.skills.languages.some(s => s.trim())) ||
+        (data.skills.frameworks && data.skills.frameworks.some(s => s.trim())) ||
+        (data.skills.tools && data.skills.tools.some(s => s.trim()))
     );
+    const hasCustom = data.customSection && data.customSection.items && data.customSection.items.length > 0;
 
     const template = data.templateId || 'google-standard';
     const accent = data.accentColor || 'slate';
@@ -53,31 +54,14 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
     const accentBorder = borderMap[accent] || borderMap['slate'];
     const accentBg = bgMap[accent] || bgMap['slate'];
 
+    const sectionOrder = data.sectionOrder || ['experience', 'projects', 'education', 'skills', 'custom'];
+
     // --- TEMPLATE: GOOGLE STANDARD ---
     // Strict, high whitespace, no icons, classic hierarchy
-    const renderGoogleStandard = () => (
-        <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-[1.3] font-serif text-[13px] text-gray-800 shadow-sm relative">
-            <header className="text-center mb-6">
-                <h1 className="text-4xl font-black mb-2 text-black tracking-tight">{data.personalInfo.fullName}</h1>
-                <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 text-[12px] text-gray-600">
-                    {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
-                    {data.personalInfo.phone && <span className="text-gray-400">•</span>}
-                    {data.personalInfo.email && <span>{data.personalInfo.email}</span>}
-                    {data.personalInfo.linkedin && <><span className="text-gray-400">•</span><span>{data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}</span></>}
-                    {data.personalInfo.github && <><span className="text-gray-400">•</span><span>{data.personalInfo.github.replace('https://', '').replace('www.', '')}</span></>}
-                    {data.personalInfo.portfolio && <><span className="text-gray-400">•</span><span>{data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}</span></>}
-                    {data.personalInfo.location && <><span className="text-gray-400">•</span><span>{data.personalInfo.location}</span></>}
-                </div>
-            </header>
-
-            {data.personalInfo.summary && (
-                <div className="mb-5">
-                    <p className="text-slate-700">{data.personalInfo.summary}</p>
-                </div>
-            )}
-
-            {hasExperience && (
-                <section className="mb-5">
+    const renderGoogleStandard = () => {
+        const sections: Record<string, React.ReactNode> = {
+            experience: hasExperience && (
+                <section key="experience" className="mb-5">
                     <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Professional Experience</h2>
                     <div className="space-y-4">
                         {data.experience.map(exp => (
@@ -97,10 +81,9 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                         ))}
                     </div>
                 </section>
-            )}
-
-            {hasProjects && (
-                <section className="mb-5">
+            ),
+            projects: hasProjects && (
+                <section key="projects" className="mb-5">
                     <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Projects</h2>
                     <div className="space-y-4">
                         {data.projects.map(proj => (
@@ -108,11 +91,11 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                                 <div className="flex justify-between items-baseline mb-[2px]">
                                     <h3 className="font-bold text-[14px] text-black">
                                         {proj.name}
-                                        {proj.technologies?.length > 0 && <span className="font-normal italic text-gray-600 ml-2">({proj.technologies.join(', ')})</span>}
+                                        {proj.technologies?.filter(t => t.trim()).length > 0 && <span className="font-normal italic text-gray-600 ml-2">({proj.technologies.map(t=>t.trim()).filter(Boolean).join(', ')})</span>}
                                     </h3>
                                     <div className="text-right italic text-gray-600 flex gap-2 text-[12px]">
-                                        {proj.liveLink && <span>{proj.liveLink}</span>}
-                                        {proj.repoLink && <span>{proj.liveLink ? ' | ' : ''}{proj.repoLink}</span>}
+                                        {proj.liveLink && <a href={proj.liveLink.startsWith('http') ? proj.liveLink : `https://${proj.liveLink}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">Live</a>}
+                                        {proj.repoLink && <span>{proj.liveLink ? ' | ' : ''}<a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">Repo</a></span>}
                                     </div>
                                 </div>
                                 <ul className="list-disc list-outside ml-4 space-y-1 text-gray-800 mt-1">
@@ -122,10 +105,9 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                         ))}
                     </div>
                 </section>
-            )}
-
-            {hasEducation && (
-                <section className="mb-5">
+            ),
+            education: hasEducation && (
+                <section key="education" className="mb-5">
                     <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Education</h2>
                     <div className="space-y-3">
                         {data.education.map(edu => (
@@ -135,68 +117,99 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                                     <span className="font-bold text-[12px] text-black">{edu.startDate} - {edu.endDate}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="italic text-gray-800">{edu.degree} in {edu.fieldOfStudy}</span>
+                                    <span className="italic text-gray-800">{edu.degree} {edu.fieldOfStudy ? `in ${edu.fieldOfStudy}` : ''}</span>
                                     {edu.gpa && <span className="font-bold text-gray-600 text-[12px]">GPA: {edu.gpa}</span>}
                                 </div>
                             </div>
                         ))}
                     </div>
                 </section>
-            )}
-
-            {hasSkills && (
-                <section>
+            ),
+            skills: hasSkills && (
+                <section key="skills" className="mb-5">
                     <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Technical Skills</h2>
                     <div className="grid grid-cols-[140px_1fr] gap-y-1">
-                        {data.skills.languages?.length > 0 && (
+                        {data.skills.languages?.filter(s => s.trim()).length > 0 && (
                             <>
                                 <div className="font-bold text-black">Languages:</div>
-                                <div className="text-gray-800">{data.skills.languages.join(', ')}</div>
+                                <div className="text-gray-800">{data.skills.languages.map(s=>s.trim()).filter(Boolean).join(', ')}</div>
                             </>
                         )}
-                        {data.skills.frameworks?.length > 0 && (
+                        {data.skills.frameworks?.filter(s => s.trim()).length > 0 && (
                             <>
                                 <div className="font-bold text-black">Frameworks:</div>
-                                <div className="text-gray-800">{data.skills.frameworks.join(', ')}</div>
+                                <div className="text-gray-800">{data.skills.frameworks.map(s=>s.trim()).filter(Boolean).join(', ')}</div>
                             </>
                         )}
-                        {data.skills.tools?.length > 0 && (
+                        {data.skills.tools?.filter(s => s.trim()).length > 0 && (
                             <>
                                 <div className="font-bold text-black">Developer Tools:</div>
-                                <div className="text-gray-800">{data.skills.tools.join(', ')}</div>
+                                <div className="text-gray-800">{data.skills.tools.map(s=>s.trim()).filter(Boolean).join(', ')}</div>
                             </>
                         )}
                     </div>
                 </section>
-            )}
-        </div>
-    );
+            ),
+            custom: hasCustom && (
+                <section key="custom" className="mb-5">
+                    <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">{data.customSection?.title || 'Certifications & Awards'}</h2>
+                    <div className="space-y-4">
+                        {data.customSection?.items.map(item => (
+                            <div key={item.id}>
+                                <div className="flex justify-between items-baseline mb-[2px]">
+                                    <h3 className="font-bold text-[14px] text-black">{item.title}</h3>
+                                    {item.date && <span className="font-bold text-[12px] text-black">{item.date}</span>}
+                                </div>
+                                {(item.subtitle || item.location) && (
+                                    <div className="flex justify-between mb-2">
+                                        <span className="italic text-gray-800">{item.subtitle}</span>
+                                        <span className="italic text-gray-600 text-[12px]">{item.location}</span>
+                                    </div>
+                                )}
+                                {item.description && item.description.some(d => d.trim()) && (
+                                    <ul className="list-disc list-outside ml-4 space-y-1 text-gray-800 mt-1">
+                                        {item.description.map((desc, i) => desc.trim() && <li key={i} className="pl-1">{desc}</li>)}
+                                    </ul>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )
+        };
+
+        return (
+            <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-[1.3] font-serif text-[13px] text-gray-800 shadow-sm relative">
+                <header className="text-center mb-6">
+                    <h1 className="text-4xl font-black mb-2 text-black tracking-tight">{data.personalInfo.fullName}</h1>
+                    <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 text-[12px] text-gray-600">
+                        {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
+                        {data.personalInfo.phone && <span className="text-gray-400">•</span>}
+                        {data.personalInfo.email && <a href={`mailto:${data.personalInfo.email}`} className="hover:underline text-indigo-600">{data.personalInfo.email}</a>}
+                        {data.personalInfo.linkedin && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">{data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.github && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.github.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">{data.personalInfo.github.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.portfolio && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">{data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.location && <><span className="text-gray-400">•</span><span>{data.personalInfo.location}</span></>}
+                    </div>
+                </header>
+
+                {data.personalInfo.summary && (
+                    <div className="mb-5">
+                        <p className="text-slate-700">{data.personalInfo.summary}</p>
+                    </div>
+                )}
+
+                {sectionOrder.map(section => sections[section])}
+            </div>
+        );
+    };
 
     // --- TEMPLATE: STARTUP CLEAN ---
     // Modern SaaS vibe, accent colored headers, left aligned, subtle badges
-    const renderStartupClean = () => (
-        <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-relaxed font-sans text-[14px] text-slate-800 shadow-sm relative">
-            <header className="mb-8 flex justify-between items-end">
-                <div>
-                    <h1 className={`text-5xl font-extrabold tracking-tight mb-2 ${accentText}`}>{data.personalInfo.fullName}</h1>
-                    <div className="text-[15px] text-slate-500 font-medium">Software Engineer based in {data.personalInfo.location || 'Unknown'}</div>
-                </div>
-                <div className="text-right text-xs space-y-1 text-slate-500 flex flex-col items-end">
-                    {data.personalInfo.email && <div className="flex items-center gap-2"><Mail size={12} /> {data.personalInfo.email}</div>}
-                    {data.personalInfo.phone && <div className="flex items-center gap-2"><Phone size={12} /> {data.personalInfo.phone}</div>}
-                    {data.personalInfo.linkedin && <div className="flex items-center gap-2"><Linkedin size={12} /> {data.personalInfo.linkedin.replace('https://', '')}</div>}
-                    {data.personalInfo.github && <div className="flex items-center gap-2"><Github size={12} /> {data.personalInfo.github.replace('https://', '')}</div>}
-                </div>
-            </header>
-
-            {data.personalInfo.summary && (
-                <section className="mb-8">
-                    <p className="text-slate-600 font-medium leading-relaxed">{data.personalInfo.summary}</p>
-                </section>
-            )}
-
-            {hasExperience && (
-                <section className="mb-8">
+    const renderStartupClean = () => {
+        const sections: Record<string, React.ReactNode> = {
+            experience: hasExperience && (
+                <section key="experience" className="mb-8 w-full">
                     <div className="flex items-center gap-3 mb-5">
                         <div className={`w-8 h-[3px] rounded-full ${accentBg}`} />
                         <h2 className="text-[16px] font-black uppercase tracking-widest text-slate-900">Experience</h2>
@@ -219,10 +232,9 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                         ))}
                     </div>
                 </section>
-            )}
-
-            {hasProjects && (
-                <section className="mb-8">
+            ),
+            projects: hasProjects && (
+                <section key="projects" className="mb-8 w-full">
                     <div className="flex items-center gap-3 mb-5">
                         <div className={`w-8 h-[3px] rounded-full ${accentBg}`} />
                         <h2 className="text-[16px] font-black uppercase tracking-widest text-slate-900">Featured Projects</h2>
@@ -232,10 +244,10 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                             <div key={proj.id} className="border border-slate-200 p-5 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow">
                                 <h3 className="font-bold text-slate-900 text-[15px] mb-2 flex justify-between items-start">
                                     {proj.name}
-                                    {proj.repoLink && <a href={proj.repoLink} className="text-slate-400 hover:text-slate-600"><Github size={16} /></a>}
+                                    {proj.repoLink && <a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-slate-600"><Github size={16} /></a>}
                                 </h3>
                                 <div className="flex flex-wrap gap-1.5 mb-3">
-                                    {proj.technologies.slice(0, 4).map(tech => (
+                                    {proj.technologies.map(t=>t.trim()).filter(Boolean).slice(0, 4).map(tech => (
                                         <span key={tech} className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold ${accentText} bg-slate-50 border border-slate-100`}>{tech}</span>
                                     ))}
                                 </div>
@@ -246,45 +258,100 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                         ))}
                     </div>
                 </section>
-            )}
-
-            <div className="grid grid-cols-2 gap-8">
-                {hasEducation && (
-                    <section>
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className={`w-6 h-[2px] ${accentBg}`} />
-                            <h2 className="text-[15px] font-bold uppercase tracking-widest text-slate-900">Education</h2>
-                        </div>
-                        <div className="space-y-4">
-                            {data.education.map(edu => (
-                                <div key={edu.id}>
-                                    <h3 className="font-bold text-slate-900">{edu.institution}</h3>
-                                    <div className="text-sm text-slate-600">{edu.degree} in {edu.fieldOfStudy}</div>
-                                    <div className="text-xs text-slate-400 mt-1">{edu.startDate} - {edu.endDate} {edu.gpa && `| GPA: ${edu.gpa}`}</div>
-                                </div>
+            ),
+            education: hasEducation && (
+                <section key="education" className="mb-8 w-full">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-6 h-[2px] ${accentBg}`} />
+                        <h2 className="text-[15px] font-bold uppercase tracking-widest text-slate-900">Education</h2>
+                    </div>
+                    <div className="space-y-4">
+                        {data.education.map(edu => (
+                            <div key={edu.id}>
+                                <h3 className="font-bold text-slate-900">{edu.institution}</h3>
+                                <div className="text-sm text-slate-600">{edu.degree} {edu.fieldOfStudy ? `in ${edu.fieldOfStudy}` : ''}</div>
+                                <div className="text-xs text-slate-400 mt-1">{edu.startDate} - {edu.endDate} {edu.gpa && `| GPA: ${edu.gpa}`}</div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ),
+            skills: hasSkills && (
+                <section key="skills" className="mb-8 w-full">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-6 h-[2px] ${accentBg}`} />
+                        <h2 className="text-[15px] font-bold uppercase tracking-widest text-slate-900">Skills Core</h2>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {[...(data.skills.languages || []), ...(data.skills.frameworks || []), ...(data.skills.tools || [])]
+                            .map(s => s.trim())
+                            .filter(Boolean)
+                            .map(skill => (
+                                <span key={skill} className="text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg">{skill}</span>
                             ))}
-                        </div>
-                    </section>
-                )}
+                    </div>
+                </section>
+            ),
+            custom: hasCustom && (
+                <section key="custom" className="mb-8 w-full">
+                    <div className="flex items-center gap-3 mb-5">
+                        <div className={`w-8 h-[3px] rounded-full ${accentBg}`} />
+                        <h2 className="text-[16px] font-black uppercase tracking-widest text-slate-900">{data.customSection?.title || 'Certifications & Awards'}</h2>
+                    </div>
+                    <div className="space-y-6">
+                        {data.customSection?.items.map(item => (
+                            <div key={item.id} className="relative pl-5 before:absolute before:left-0 before:top-2 before:bottom-0 before:w-[2px] before:bg-slate-100">
+                                <div className={`absolute left-[-3px] top-2.5 w-2 h-2 rounded-full ${accentBg} ring-4 ring-white`}></div>
+                                <div className="flex justify-between items-baseline mb-1">
+                                    <h3 className="font-bold text-lg text-slate-900 leading-tight">{item.title}</h3>
+                                    {item.date && <span className="text-[12px] font-bold tracking-wide text-slate-500 bg-slate-100/80 border border-slate-200 px-2.5 py-1 rounded-md">{item.date}</span>}
+                                </div>
+                                {(item.subtitle || item.location) && (
+                                    <div className="text-[14px] font-medium text-slate-600 mb-2">
+                                        {item.subtitle && <span className={accentText}>{item.subtitle}</span>}
+                                        {item.subtitle && item.location && ' • '}
+                                        {item.location}
+                                    </div>
+                                )}
+                                {item.description && item.description.some(d => d.trim()) && (
+                                    <ul className="list-disc list-outside ml-4 space-y-1.5 text-slate-600 mt-1">
+                                        {item.description.map((desc, i) => desc.trim() && <li key={i} className="pl-2 leading-relaxed">{desc}</li>)}
+                                    </ul>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )
+        };
 
-                {hasSkills && (
-                    <section>
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className={`w-6 h-[2px] ${accentBg}`} />
-                            <h2 className="text-[15px] font-bold uppercase tracking-widest text-slate-900">Skills Core</h2>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {[...(data.skills.languages || []), ...(data.skills.frameworks || []), ...(data.skills.tools || [])]
-                                .filter(Boolean)
-                                .map(skill => (
-                                    <span key={skill} className="text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg">{skill}</span>
-                                ))}
-                        </div>
+        return (
+            <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-relaxed font-sans text-[14px] text-slate-800 shadow-sm relative flex flex-col">
+                <header className="mb-8 flex justify-between items-end">
+                    <div>
+                        <h1 className={`text-5xl font-extrabold tracking-tight mb-2 ${accentText}`}>{data.personalInfo.fullName}</h1>
+                        <div className="text-[15px] text-slate-500 font-medium">Software Engineer based in {data.personalInfo.location || 'Unknown'}</div>
+                    </div>
+                    <div className="text-right text-xs space-y-1 text-slate-500 flex flex-col items-end">
+                        {data.personalInfo.email && <div className="flex items-center gap-2"><Mail size={12} /> {data.personalInfo.email}</div>}
+                        {data.personalInfo.phone && <div className="flex items-center gap-2"><Phone size={12} /> {data.personalInfo.phone}</div>}
+                        {data.personalInfo.linkedin && <div className="flex items-center gap-2"><Linkedin size={12} /> {data.personalInfo.linkedin.replace('https://', '')}</div>}
+                        {data.personalInfo.github && <div className="flex items-center gap-2"><Github size={12} /> {data.personalInfo.github.replace('https://', '')}</div>}
+                    </div>
+                </header>
+
+                {data.personalInfo.summary && (
+                    <section className="mb-8 w-full">
+                        <p className="text-slate-600 font-medium leading-relaxed">{data.personalInfo.summary}</p>
                     </section>
                 )}
+                
+                <div className="flex flex-col w-full columns-1">
+                    {sectionOrder.map(section => sections[section])}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     // --- TEMPLATE: CREATIVE PRO ---
     // Split layout (sidebar + main content), heavy on accents, highly stylized
@@ -356,57 +423,100 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                     </section>
                 )}
 
-                {hasExperience && (
-                    <section className="mb-10">
-                        <h2 className={`text-2xl font-black uppercase tracking-widest mb-6 flex items-center gap-3 ${accentText}`}>
-                            Experience <span className="h-[2px] flex-1 bg-slate-100"></span>
-                        </h2>
-                        <div className="space-y-8">
-                            {data.experience.map(exp => (
-                                <div key={exp.id} className="relative">
-                                    <div className={`absolute -left-3 top-2 w-[3px] h-full ${accentBg} rounded-full opacity-30`}></div>
-                                    <div className="pl-4">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <div>
-                                                <h3 className="font-bold text-lg text-slate-900 leading-tight">{exp.position}</h3>
-                                                <div className={`text-[14px] font-bold ${accentText} mt-0.5`}>{exp.company}</div>
-                                            </div>
-                                            <div className="text-[12px] font-bold tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
-                                                {exp.startDate} – {exp.endDate}
+                {(() => {
+                    const mainSections: Record<string, React.ReactNode> = {
+                        experience: hasExperience && (
+                            <section key="experience" className="mb-10">
+                                <h2 className={`text-2xl font-black uppercase tracking-widest mb-6 flex items-center gap-3 ${accentText}`}>
+                                    Experience <span className="h-[2px] flex-1 bg-slate-100"></span>
+                                </h2>
+                                <div className="space-y-8">
+                                    {data.experience.map(exp => (
+                                        <div key={exp.id} className="relative">
+                                            <div className={`absolute -left-3 top-2 w-[3px] h-full ${accentBg} rounded-full opacity-30`}></div>
+                                            <div className="pl-4">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <div>
+                                                        <h3 className="font-bold text-lg text-slate-900 leading-tight">{exp.position}</h3>
+                                                        <div className={`text-[14px] font-bold ${accentText} mt-0.5`}>{exp.company}</div>
+                                                    </div>
+                                                    <div className="text-[12px] font-bold tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                                                        {exp.startDate} – {exp.endDate}
+                                                    </div>
+                                                </div>
+                                                <ul className="list-disc list-outside ml-4 mt-3 space-y-1.5 text-[13.5px] text-slate-600 leading-relaxed">
+                                                    {exp.description.map((desc, i) => desc && <li key={i} className="pl-2">{desc}</li>)}
+                                                </ul>
                                             </div>
                                         </div>
-                                        <ul className="list-disc list-outside ml-4 mt-3 space-y-1.5 text-[13.5px] text-slate-600 leading-relaxed">
-                                            {exp.description.map((desc, i) => desc && <li key={i} className="pl-2">{desc}</li>)}
-                                        </ul>
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {hasProjects && (
-                    <section>
-                        <h2 className={`text-2xl font-black uppercase tracking-widest mb-6 flex items-center gap-3 ${accentText}`}>
-                            Portfolio <span className="h-[2px] flex-1 bg-slate-100"></span>
-                        </h2>
-                        <div className="space-y-6">
-                            {data.projects.map(proj => (
-                                <div key={proj.id}>
-                                    <div className="flex justify-between items-baseline mb-2">
-                                        <h3 className="font-bold text-slate-900 text-[16px]">{proj.name}</h3>
-                                        <div className="text-[13px] text-slate-400 font-medium">
-                                            {proj.technologies.join(' • ')}
+                            </section>
+                        ),
+                        projects: hasProjects && (
+                            <section key="projects" className="mb-10">
+                                <h2 className={`text-2xl font-black uppercase tracking-widest mb-6 flex items-center gap-3 ${accentText}`}>
+                                    Portfolio <span className="h-[2px] flex-1 bg-slate-100"></span>
+                                </h2>
+                                <div className="space-y-6">
+                                    {data.projects.map(proj => (
+                                        <div key={proj.id}>
+                                            <div className="flex justify-between items-baseline mb-2">
+                                                <h3 className="font-bold text-slate-900 text-[16px]">
+                                                    {proj.name}
+                                                    {proj.repoLink && <a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-slate-600 ml-2 inline-block"><Github size={14} /></a>}
+                                                </h3>
+                                                <div className="text-[13px] text-slate-400 font-medium">
+                                                    {proj.technologies.map(t=>t.trim()).filter(Boolean).join(' • ')}
+                                                </div>
+                                            </div>
+                                            <ul className="list-disc list-outside ml-4 space-y-1.5 text-slate-600 text-sm">
+                                                {proj.description.map((desc, i) => desc && <li key={i} className="pl-2">{desc}</li>)}
+                                            </ul>
                                         </div>
-                                    </div>
-                                    <ul className="list-disc list-outside ml-4 space-y-1.5 text-slate-600 text-sm">
-                                        {proj.description.map((desc, i) => desc && <li key={i} className="pl-2">{desc}</li>)}
-                                    </ul>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                            </section>
+                        ),
+                        custom: hasCustom && (
+                            <section key="custom" className="mb-10">
+                                <h2 className={`text-2xl font-black uppercase tracking-widest mb-6 flex items-center gap-3 ${accentText}`}>
+                                    {data.customSection?.title || 'Certifications'} <span className="h-[2px] flex-1 bg-slate-100"></span>
+                                </h2>
+                                <div className="space-y-8">
+                                    {data.customSection?.items.map(item => (
+                                        <div key={item.id} className="relative">
+                                            <div className={`absolute -left-3 top-2 w-[3px] h-full ${accentBg} rounded-full opacity-30`}></div>
+                                            <div className="pl-4">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <div>
+                                                        <h3 className="font-bold text-lg text-slate-900 leading-tight">{item.title}</h3>
+                                                        {(item.subtitle || item.location) && (
+                                                            <div className={`text-[14px] font-bold ${accentText} mt-0.5`}>
+                                                                {item.subtitle} {item.subtitle && item.location && ' • '} {item.location}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {item.date && (
+                                                        <div className="text-[12px] font-bold tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                                                            {item.date}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {item.description && item.description.some(d => d.trim()) && (
+                                                    <ul className="list-disc list-outside ml-4 mt-3 space-y-1.5 text-[13.5px] text-slate-600 leading-relaxed">
+                                                        {item.description.map((desc, i) => desc.trim() && <li key={i} className="pl-2">{desc}</li>)}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )
+                    };
+                    return sectionOrder.filter(s => ['experience', 'projects', 'custom'].includes(s)).map(s => mainSections[s]);
+                })()}
             </div>
         </div>
     );
