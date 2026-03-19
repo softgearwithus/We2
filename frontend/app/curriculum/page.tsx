@@ -126,14 +126,6 @@ function FAQItem({ q, a, idx }: { q: string, a: string, idx: number }) {
 }
 
 export default function CurriculumPage() {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
-
     return (
         <main className="min-h-screen bg-white selection:bg-brand-orange/10 selection:text-brand-orange">
             <Navbar />

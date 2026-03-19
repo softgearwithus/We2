@@ -39,13 +39,13 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                         <span className="font-black text-2xl text-white tracking-tight">EMBLE</span>
                     </Link>
 
-                    <h2 className="text-5xl font-black mb-6 leading-tight tracking-tight">
+                    <h1 className="text-5xl font-black mb-6 leading-tight tracking-tight">
                         {title}
                         <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-white">
                             {role === 'student' ? 'Launch Career.' : role === 'college' ? 'Empower Talent.' : 'Hire Best.'}
                         </span>
-                    </h2>
+                    </h1>
 
                     <p className="text-lg text-white/80 font-medium leading-relaxed mb-12 max-w-md">
                         {subtitle}
