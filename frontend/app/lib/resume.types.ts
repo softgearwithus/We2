@@ -46,6 +46,7 @@ export interface EducationItem {
     endDate: string;
     location: string;
     gpa?: string;
+    scoreType?: 'GPA' | 'CGPA' | 'Percentage';
 }
 
 export interface ProjectItem {
@@ -101,6 +102,7 @@ export const initialResumeState: ResumeData = {
             endDate: '2023-05',
             location: 'New York, NY',
             gpa: '3.8',
+            scoreType: 'GPA',
         },
     ],
     skills: {

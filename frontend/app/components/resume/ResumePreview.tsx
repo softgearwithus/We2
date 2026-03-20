@@ -118,7 +118,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="italic text-gray-800">{edu.degree} {edu.fieldOfStudy ? `in ${edu.fieldOfStudy}` : ''}</span>
-                                    {edu.gpa && <span className="font-bold text-gray-600 text-[12px]">GPA: {edu.gpa}</span>}
+                                    {edu.gpa && <span className="font-bold text-gray-600 text-[12px]">{edu.scoreType || 'GPA'}: {edu.gpa}</span>}
                                 </div>
                             </div>
                         ))}
@@ -179,7 +179,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
         };
 
         return (
-            <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-[1.3] font-serif text-[13px] text-gray-800 shadow-sm relative">
+            <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-[1.4] font-sans text-[13.5px] text-gray-800 shadow-sm relative">
                 <header className="text-center mb-6">
                     <h1 className="text-4xl font-black mb-2 text-black tracking-tight">{data.personalInfo.fullName}</h1>
                     <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 text-[12px] text-gray-600">
@@ -270,7 +270,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                             <div key={edu.id}>
                                 <h3 className="font-bold text-slate-900">{edu.institution}</h3>
                                 <div className="text-sm text-slate-600">{edu.degree} {edu.fieldOfStudy ? `in ${edu.fieldOfStudy}` : ''}</div>
-                                <div className="text-xs text-slate-400 mt-1">{edu.startDate} - {edu.endDate} {edu.gpa && `| GPA: ${edu.gpa}`}</div>
+                                <div className="text-xs text-slate-400 mt-1">{edu.startDate} - {edu.endDate} {edu.gpa && `| ${edu.scoreType || 'GPA'}: ${edu.gpa}`}</div>
                             </div>
                         ))}
                     </div>
@@ -388,6 +388,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                                         <div className="text-[10.5px] font-black tracking-widest text-white/50 mb-1 uppercase">{edu.startDate.slice(-4)} - {edu.endDate.slice(-4)}</div>
                                         <div className="font-bold text-[14px] leading-tight mb-1">{edu.degree}</div>
                                         <div className="text-[12px] text-white/80">{edu.institution}</div>
+                                        {edu.gpa && <div className="text-[11px] font-medium text-white/70 mt-1">{edu.scoreType || 'GPA'}: {edu.gpa}</div>}
                                     </div>
                                 ))}
                             </div>

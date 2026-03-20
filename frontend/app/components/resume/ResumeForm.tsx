@@ -273,11 +273,33 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                                 newEdu[index].fieldOfStudy = v;
                                 onChange({ ...data, education: newEdu });
                             }} placeholder="Major" />
-                            <Input label="GPA" value={edu.gpa || ''} onChange={(v) => {
-                                const newEdu = [...data.education];
-                                newEdu[index].gpa = v;
-                                onChange({ ...data, education: newEdu });
-                            }} placeholder="e.g. 3.8/4.0" />
+                            <div className="flex gap-2">
+                                <div className="w-[120px] shrink-0">
+                                    <div className="space-y-2 group">
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-indigo-600 transition-colors">Score Type</label>
+                                        <select
+                                            className="w-full bg-white border border-slate-200 rounded-xl px-2 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-100 transition-all hover:border-slate-300 shadow-sm"
+                                            value={edu.scoreType || 'GPA'}
+                                            onChange={(e) => {
+                                                const newEdu = [...data.education];
+                                                newEdu[index].scoreType = e.target.value as any;
+                                                onChange({ ...data, education: newEdu });
+                                            }}
+                                        >
+                                            <option value="GPA">GPA</option>
+                                            <option value="CGPA">CGPA</option>
+                                            <option value="Percentage">Percentage</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="flex-1">
+                                    <Input label="Score" value={edu.gpa || ''} onChange={(v) => {
+                                        const newEdu = [...data.education];
+                                        newEdu[index].gpa = v;
+                                        onChange({ ...data, education: newEdu });
+                                    }} placeholder="e.g. 3.8/4.0 or 85%" />
+                                </div>
+                            </div>
                             <div className="flex gap-4">
                                 <Input label="Start Date" value={edu.startDate} onChange={(v) => {
                                     const newEdu = [...data.education];
