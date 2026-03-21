@@ -11,7 +11,7 @@ import { Search, SlidersHorizontal, ArrowDownAZ, ArrowUpZA, Clock } from 'lucide
 const COLOR_OPTIONS = [
     { color: 'text-orange-600', bg: 'bg-orange-50', hoverBg: 'group-hover:bg-orange-600', hoverBorder: 'hover:border-orange-100' },
     { color: 'text-red-600', bg: 'bg-red-50', hoverBg: 'group-hover:bg-red-600', hoverBorder: 'hover:border-red-100' },
-    { color: 'text-indigo-600', bg: 'bg-indigo-50', hoverBg: 'group-hover:bg-indigo-600', hoverBorder: 'hover:border-indigo-100' },
+    { color: 'text-slate-800', bg: 'bg-slate-50', hoverBg: 'group-hover:bg-slate-800', hoverBorder: 'hover:border-slate-200' },
     { color: 'text-emerald-600', bg: 'bg-emerald-50', hoverBg: 'group-hover:bg-emerald-600', hoverBorder: 'hover:border-emerald-100' },
     { color: 'text-sky-600', bg: 'bg-sky-50', hoverBg: 'group-hover:bg-sky-600', hoverBorder: 'hover:border-sky-100' },
 ];
@@ -199,7 +199,7 @@ export default function CompanyTestsPage() {
                                             <div className="flex items-start justify-between mb-6 relative">
                                                 <div className={`w-14 h-14 ${palette.bg} ${palette.color} rounded-2xl flex items-center justify-center group-hover:scale-110 ${palette.hoverBg} group-hover:text-white transition-all duration-300`}>
                                                     {company.logoUrl ? (
-                                                        <img src={company.logoUrl} alt={company.name} className="w-8 h-8 object-contain" />
+                                                        <img loading="lazy" decoding="async" src={company.logoUrl} alt={company.name} className="w-8 h-8 object-contain" />
                                                     ) : (
                                                         <Building2 size={24} strokeWidth={2.5} />
                                                     )}

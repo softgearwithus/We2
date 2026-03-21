@@ -56,8 +56,8 @@ function PlatformPicker({
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-full max-w-full max-w-[500px] h-[500px] bg-brand-orange/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[500px] h-[500px] bg-slate-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
 
             <div className="w-full max-w-5xl relative z-10">
                 <div className="mb-12 text-center pb-4">
@@ -114,10 +114,10 @@ function PlatformPicker({
 
                         <div className="space-y-8">
                             <div className="flex gap-5">
-                                <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-black text-lg shrink-0 shadow-sm relative z-10">1</div>
+                                <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 flex items-center justify-center font-black text-lg shrink-0 shadow-sm relative z-10">1</div>
                                 <div>
                                     <div className="font-extrabold text-slate-900 text-lg">Spaced Repetition (SRS)</div>
-                                    <div className="text-slate-600 mt-1.5 leading-relaxed font-medium text-[15px]">The platform automatically picks a problem from our dataset based on the <span className="font-bold text-indigo-700 bg-indigo-50 px-1.5 rounded">SRS algorithm</span>. The question you score the least on will pop up first the next day.</div>
+                                    <div className="text-slate-600 mt-1.5 leading-relaxed font-medium text-[15px]">The platform automatically picks a problem from our dataset based on the <span className="font-bold text-slate-900 bg-slate-50 px-1.5 rounded">SRS algorithm</span>. The question you score the least on will pop up first the next day.</div>
                                 </div>
                             </div>
                             <div className="flex gap-5 relative">
@@ -448,7 +448,7 @@ export default function SqlTrainingPage() {
                     </button>
                     <Link
                         href="/dashboard/sql/all"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-semibold hover:bg-slate-900"
                     >
                         <ListFilter size={16} /> Browse All Questions
                     </Link>
@@ -461,7 +461,7 @@ export default function SqlTrainingPage() {
         <div className="h-[calc(100vh-6rem)] w-full bg-slate-50 flex flex-col font-sans overflow-hidden">
             <div className="h-12 shrink-0 flex items-center justify-between px-4 border-b border-slate-200 bg-white shadow-sm z-20">
                 <div className="flex items-center gap-3 text-sm text-slate-500">
-                    <Link href="/dashboard" className="flex items-center hover:text-indigo-600 transition-colors">
+                    <Link href="/dashboard" className="flex items-center hover:text-slate-800 transition-colors">
                         <ArrowLeft size={16} /> <span className="ml-1">Dashboard</span>
                     </Link>
                     <span className="text-slate-300">/</span>
@@ -492,7 +492,7 @@ export default function SqlTrainingPage() {
                     )}
                     <Link
                         href="/dashboard/sql/all"
-                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-indigo-600 border border-indigo-200 rounded-full hover:bg-indigo-50"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-800 border border-slate-200 rounded-full hover:bg-slate-50"
                     >
                         <ListFilter size={12} /> All Questions
                     </Link>
@@ -536,7 +536,7 @@ export default function SqlTrainingPage() {
                     )}
 
                     {maximizedSection === null && (
-                        <Separator className="w-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
+                        <Separator className="w-1.5 bg-slate-100 hover:bg-slate-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
                     )}
 
                     {(maximizedSection === null || maximizedSection === 'editor' || maximizedSection === 'submissions' || maximizedSection === 'learn') && (
@@ -569,7 +569,7 @@ export default function SqlTrainingPage() {
                                                         href={problem.externalUrl || problem.leetcodeUrl}
                                                         target="_blank"
                                                         rel="noreferrer"
-                                                        className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                                                        className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold text-slate-800 hover:text-slate-900"
                                                     >
                                                         Solve on {platformLabel(problem.platform || platform)} <span className="material-symbols-outlined text-sm">open_in_new</span>
                                                     </a>
@@ -577,7 +577,7 @@ export default function SqlTrainingPage() {
                                                 <select
                                                     value={language}
                                                     onChange={(e) => setLanguage(e.target.value)}
-                                                    className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
+                                                    className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-200 shadow-sm"
                                                 >
                                                     {(normalizedProblem?.languageMeta || [
                                                         { lang: 'SQL', langSlug: 'sql' },
@@ -619,7 +619,7 @@ export default function SqlTrainingPage() {
                                 )}
 
                                 {maximizedSection === null && (
-                                    <Separator className="h-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-row-resize flex items-center justify-center group z-10" />
+                                    <Separator className="h-1.5 bg-slate-100 hover:bg-slate-400 transition-colors cursor-row-resize flex items-center justify-center group z-10" />
                                 )}
 
                                 {(maximizedSection === null || maximizedSection === 'submissions' || maximizedSection === 'learn') && (
@@ -670,7 +670,7 @@ export default function SqlTrainingPage() {
                                             )}
 
                                             {maximizedSection === null && (
-                                                <Separator className="w-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
+                                                <Separator className="w-1.5 bg-slate-100 hover:bg-slate-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
                                             )}
 
                                             {(maximizedSection === null || maximizedSection === 'learn') && (
@@ -702,7 +702,7 @@ export default function SqlTrainingPage() {
                                                             {!insight?.trim() && !insightLoading && (
                                                                 <button
                                                                     onClick={handleGenerateInsight}
-                                                                    className="inline-flex items-center gap-2 px-3 py-1.5 text-[11px] font-semibold text-indigo-600 border border-indigo-200 rounded-md hover:bg-indigo-50"
+                                                                    className="inline-flex items-center gap-2 px-3 py-1.5 text-[11px] font-semibold text-slate-800 border border-slate-200 rounded-md hover:bg-slate-50"
                                                                 >
                                                                     <GraduationCap size={12} /> Generate Insight
                                                                 </button>
@@ -745,7 +745,7 @@ export default function SqlTrainingPage() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => loadTask()}
-                            className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 hover:text-slate-900"
                         >
                             Next Task <ArrowRight size={14} />
                         </button>

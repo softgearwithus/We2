@@ -59,7 +59,7 @@ export default function PlacementRoadmap() {
                     </h3>
                     <p className="text-sm text-slate-500 mt-1">Your step-by-step path to dream companies</p>
                 </div>
-                <Link href="/dashboard/roadmap" className="text-indigo-600 font-bold text-sm hover:underline flex items-center gap-1">
+                <Link href="/dashboard/roadmap" className="text-slate-800 font-bold text-sm hover:underline flex items-center gap-1">
                     View Full Roadmap <ArrowRight size={16} />
                 </Link>
             </div>
@@ -84,7 +84,7 @@ export default function PlacementRoadmap() {
                                 className={`w-12 h-12 rounded-full flex items-center justify-center border-4 mb-4 transition-all duration-300 relative bg-white
                                     ${step.status === 'completed' ? 'border-emerald-500 text-emerald-600 shadow-md shadow-emerald-100' : ''}
                                     ${step.status === 'current' ? 'border-brand-orange text-brand-orange shadow-lg shadow-orange-200' : ''}
-                                    ${step.status === 'upcoming' ? 'border-slate-200 text-slate-400 hover:border-indigo-200 hover:text-indigo-500' : ''}
+                                    ${step.status === 'upcoming' ? 'border-slate-200 text-slate-400 hover:border-slate-200 hover:text-slate-700' : ''}
                                     ${step.status === 'locked' ? 'border-slate-100 text-slate-300' : ''}
                                 `}
                             >
@@ -105,7 +105,7 @@ export default function PlacementRoadmap() {
                             </motion.div>
 
                             {/* Text */}
-                            <h4 className={`text-sm font-bold mb-1 transition-colors ${step.status === 'locked' ? 'text-slate-400' : 'text-slate-900 group-hover:text-indigo-600'}`}>
+                            <h4 className={`text-sm font-bold mb-1 transition-colors ${step.status === 'locked' ? 'text-slate-400' : 'text-slate-900 group-hover:text-slate-800'}`}>
                                 {step.title}
                             </h4>
                             <p className="text-xs text-slate-500 max-w-[100px] leading-tight opacity-80 group-hover:opacity-100 transition-opacity">

@@ -64,7 +64,7 @@ export default function PremiumPopup() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-6 right-6 z-[100] w-[calc(100%-3rem)] max-w-[360px] bg-white rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 will-change-transform"
+                        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] w-[calc(100%-2rem)] sm:w-full max-w-[380px] bg-white rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 will-change-transform"
                     >
                         {/* Close Button */}
                         <button
@@ -72,7 +72,7 @@ export default function PremiumPopup() {
                                 setShowMainModal(false);
                                 setShowMinimizedBanner(true);
                             }}
-                            className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors z-10"
+                            className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange"
                         >
                             <X size={16} />
                         </button>
@@ -84,7 +84,7 @@ export default function PremiumPopup() {
                                 </div>
                                 <h3 className="text-lg font-black text-brand-black tracking-tight leading-tight">
                                     Unlock Premium <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Placement Mode</span>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">Placement Mode</span>
                                 </h3>
                             </div>
 
@@ -96,7 +96,7 @@ export default function PremiumPopup() {
                                 <Link
                                     href="/pricing"
                                     onClick={() => setShowMainModal(false)}
-                                    className="flex-1 h-10 bg-brand-black hover:bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98] text-sm"
+                                    className="flex-1 h-10 bg-brand-black hover:bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2"
                                 >
                                     Upgrade Now
                                     <ArrowRight size={16} />
@@ -140,7 +140,7 @@ export default function PremiumPopup() {
                             href="/pricing"
                             className="relative w-14 h-14 bg-brand-black rounded-full flex items-center justify-center shadow-2xl border-4 border-white z-10 hover:scale-110 transition-transform duration-300"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-purple-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-md -z-10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-slate-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-md -z-10"></div>
                             <ShieldCheck size={24} className="text-white relative z-10" />
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>

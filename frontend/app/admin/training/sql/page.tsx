@@ -178,7 +178,7 @@ export default function AdminSqlTrainingList() {
                                         <div className="flex items-center gap-2">
                                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{problem.difficulty}</p>
                                             {problem.platform && (
-                                                <span className="text-[10px] font-bold uppercase bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                                                <span className="text-[10px] font-bold uppercase bg-slate-50 text-slate-800 px-2 py-0.5 rounded-full">
                                                     {problem.platform}
                                                 </span>
                                             )}

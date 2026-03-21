@@ -163,7 +163,7 @@ export default function VideoQASection({ onComplete }: VideoQASectionProps) {
             <div className="relative z-10 flex flex-col justify-between flex-1 p-8 bg-black/40 backdrop-blur-sm">
 
                 <div className="flex justify-between items-start">
-                    <div className="bg-black/60 px-4 py-2 rounded-full text-indigo-400 font-bold border border-indigo-500/30">
+                    <div className="bg-black/60 px-4 py-2 rounded-full text-slate-400 font-bold border border-slate-400/30">
                         Question {currentIndex + 1} / {questions.length}
                     </div>
                 </div>

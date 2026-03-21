@@ -65,7 +65,7 @@ export default function PartnerApplyPage() {
                                 <Building2 size={12} /> B2B Employer Portal
                             </div>
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight">
-                                Hire Verified <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Engineers</span> Natively.
+                                Hire Verified <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-slate-600">Engineers</span> Natively.
                             </h1>
                             <p className="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed font-medium">
                                 Skip the noisy resumes. EMBLE partners get exclusive access to our deterministic tech talent pipeline and built-in Kanban ATS.

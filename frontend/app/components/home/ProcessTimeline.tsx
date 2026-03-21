@@ -7,20 +7,20 @@ import Link from 'next/link';
 const steps = [
     {
         icon: Target,
-        title: "Master the Fundamentals",
-        desc: "Build a rock-solid foundation. You'll master DSA patterns, SQL queries, and core computer science concepts that top companies actually test for.",
-        features: ["MNC-Specific DSA", "Logic-Based SQL", "Deep-Tech Skill Audit"],
+        title: "Master the Core Loop",
+        desc: "Build a rock-solid algorithmic foundation. You'll master the exact DSA patterns, Graph traversal, and Complex SQL queries that MNCs use to filter 90% of candidates.",
+        features: ["FAANG Pattern Mapping", "Complex SQL Optimization", "Time/Space Complexity Audit"],
         color: "text-blue-600",
         bg: "bg-blue-50",
         border: "border-blue-100",
         shadow: "shadow-blue-500/10",
-        gradient: "from-blue-500 to-indigo-600"
+        gradient: "from-blue-500 to-slate-600"
     },
     {
         icon: Code2,
-        title: "Build Full Stack Systems",
-        desc: "Stop watching tutorials. You'll build production-ready applications using professional tech stacks (React, Node, AWS) and collaborate using GitHub.",
-        features: ["Professional Workflows", "Production Deployment", "Scale & Architecture"],
+        title: "Build Production Systems",
+        desc: "Stop watching simple tutorials. You'll build and scale actual React/Node applications, manage cloud deployments, and collaborate using professional Git workflows.",
+        features: ["Microservices Architecture", "Vercel/AWS Deployment", "API Rate Limiting"],
         color: "text-orange-600",
         bg: "bg-orange-50",
         border: "border-orange-100",
@@ -29,20 +29,20 @@ const steps = [
     },
     {
         icon: Briefcase,
-        title: "Crack AI Interviews",
-        desc: "Practice makes perfect. Face our AI-driven voice and video interviews to get real-time feedback on your communication and technical logic.",
-        features: ["Voice AI Interviews", "Video Performance Analysis", "Senior Engineering Feedback"],
+        title: "Survive the AI Grilling",
+        desc: "Subject yourself to real pressure. Face our aggressive AI interviewers designed to probe your system design decisions and test your behavioral resilience.",
+        features: ["System Design Pressure Tests", "Behavioral Logic Checks", "Immediate Feedback Loops"],
         color: "brand-orange-600",
-        bg: "bg-purple-50",
-        border: "border-purple-100",
-        shadow: "shadow-purple-500/10",
-        gradient: "from-purple-500 to-pink-600"
+        bg: "bg-slate-50",
+        border: "border-slate-100",
+        shadow: "shadow-slate-500/10",
+        gradient: "from-slate-500 to-pink-600"
     },
     {
         icon: Trophy,
-        title: "Launch Your Career",
-        desc: "Graduate with a verified portfolio. We take your completed projects and Skill Scorecard directly to our network of hiring partners.",
-        features: ["Skill Scorecard", "Verified Profile", "MNC Hiring Network"],
+        title: "Secure the Offer",
+        desc: "Walk in with undeniable proof of competence. We attach your verified Skill Scorecard directly to your applications, bypassing the standard resume black hole.",
+        features: ["Verified Technical Score", "Cryptographic Proof of Work", "Direct Partner Referrals"],
         color: "text-green-600",
         bg: "bg-green-50",
         border: "border-green-100",
@@ -56,7 +56,7 @@ export default function ProcessTimeline() {
         <section className="py-10 md:py-24 relative bg-gray-50 overflow-hidden">
             {/* Background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none transform-gpu hidden md:block">
-                <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[1200px] h-[600px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-100/10 via-purple-100/5 to-transparent opacity-30 transform-gpu"></div>
+                <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-full max-w-full max-w-[1200px] h-[600px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-100/10 via-slate-100/5 to-transparent opacity-30 transform-gpu"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -65,7 +65,7 @@ export default function ProcessTimeline() {
                         The Emble journey
                     </span>
                     <h2 className="text-5xl md:text-7xl font-[1000] text-brand-black tracking-tighter mb-8 leading-[0.95] drop-shadow-sm">
-                        From Campus to <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Corporate in 4 Steps.</span>
+                        From Campus to <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">Corporate in 4 Steps.</span>
                     </h2>
                     <p className="text-xl text-gray-500 font-medium leading-relaxed">
                         Everything from preparation to industrial simulation, synchronized in one flow.
@@ -75,7 +75,7 @@ export default function ProcessTimeline() {
                 <div className="relative">
                     {/* Connecting Line (Desktop) - Static */}
                     <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-[2px] bg-slate-200 z-0">
-                        <div className="h-full bg-gradient-to-r from-blue-300 via-orange-300 to-purple-400 w-full" />
+                        <div className="h-full bg-gradient-to-r from-blue-300 via-orange-300 to-slate-400 w-full" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">

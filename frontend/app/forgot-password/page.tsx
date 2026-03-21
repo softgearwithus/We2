@@ -103,7 +103,7 @@ export default function ForgotPasswordPage() {
             role="student"
             title="Account Recovery"
             subtitle="Regain access to your learning ecosystem. Enter your credentials to receive a secure OTP."
-            themeColor="bg-indigo-600"
+            themeColor="bg-slate-800"
             visual={
                 <div className="space-y-6">
                     <div className="flex items-center gap-4 mb-2">
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
 
                     <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">Security Status</span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-slate-300">Security Status</span>
                             <span className="text-emerald-400 font-bold flex items-center gap-1">
                                 <ShieldCheck size={16} /> Protected
                             </span>
@@ -147,14 +147,14 @@ export default function ForgotPasswordPage() {
                                 value={identifier}
                                 onChange={(event) => setIdentifier(event.target.value)}
                                 placeholder="student@example.com or UID"
-                                className="w-full px-4 py-3.5 rounded-xl border border-slate-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium"
+                                className="w-full px-4 py-3.5 rounded-xl border border-slate-200 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-200 transition-all font-medium"
                             />
                         </div>
 
                         <button
                             type="submit"
                             disabled={requesting}
-                            className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+                            className="w-full h-12 bg-slate-800 hover:bg-slate-900 active:scale-[0.98] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-slate-200"
                         >
                             {requesting ? <Loader2 size={18} className="animate-spin" /> : 'Send Reset Code'}
                         </button>
@@ -167,7 +167,7 @@ export default function ForgotPasswordPage() {
                                 type="text"
                                 value={identifier}
                                 onChange={(event) => setIdentifier(event.target.value)}
-                                className="w-full px-4 py-3 placeholder-slate-400 rounded-xl border border-slate-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium"
+                                className="w-full px-4 py-3 placeholder-slate-400 rounded-xl border border-slate-200 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-200 transition-all font-medium"
                             />
                         </div>
 
@@ -189,7 +189,7 @@ export default function ForgotPasswordPage() {
                                 value={newPassword}
                                 onChange={(event) => setNewPassword(event.target.value)}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 placeholder-slate-400 rounded-xl border border-slate-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium"
+                                className="w-full px-4 py-3 placeholder-slate-400 rounded-xl border border-slate-200 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-200 transition-all font-medium"
                             />
                         </div>
 
@@ -200,7 +200,7 @@ export default function ForgotPasswordPage() {
                                 value={confirmPassword}
                                 onChange={(event) => setConfirmPassword(event.target.value)}
                                 placeholder="••••••••"
-                                className="w-full px-4 py-3 placeholder-slate-400 rounded-xl border border-slate-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium"
+                                className="w-full px-4 py-3 placeholder-slate-400 rounded-xl border border-slate-200 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-200 transition-all font-medium"
                             />
                         </div>
 
@@ -216,7 +216,7 @@ export default function ForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={resetting}
-                                className="w-2/3 h-12 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+                                className="w-2/3 h-12 bg-slate-800 hover:bg-slate-900 active:scale-[0.98] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-slate-200"
                             >
                                 {resetting ? <Loader2 size={18} className="animate-spin" /> : 'Confirm Reset'}
                             </button>
@@ -238,7 +238,7 @@ export default function ForgotPasswordPage() {
                 )}
 
                 <div className="mt-6 text-center">
-                    <Link href="/login/student" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+                    <Link href="/login/student" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">
                         ← Back to Student Login
                     </Link>
                 </div>

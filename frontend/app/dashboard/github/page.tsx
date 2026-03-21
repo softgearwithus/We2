@@ -58,7 +58,7 @@ export default function GitMasteryPage() {
     };
 
     return (
-        <div className="max-w-[1400px] mx-auto h-[calc(100vh-8rem)] flex flex-col pt-6 font-sans">
+        <div className="max-w-full max-w-[1400px] mx-auto h-[calc(100vh-8rem)] flex flex-col pt-6 font-sans">
             {/* Header */}
             <header className="flex items-center justify-between mb-8 shrink-0">
                 <div>
@@ -114,7 +114,7 @@ export default function GitMasteryPage() {
                                     </div>
                                     <button
                                         onClick={() => { setCurrentLessonIndex(idx); setViewMode('lesson'); }}
-                                        className="text-xs font-bold text-indigo-500 hover:text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+                                        className="text-xs font-bold text-slate-700 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
                                     >
                                         Practice <ArrowRight size={14} />
                                     </button>
@@ -151,7 +151,7 @@ export default function GitMasteryPage() {
                                     className="space-y-8"
                                 >
                                     <div>
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-100">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 text-slate-800 rounded-lg text-xs font-bold uppercase tracking-wider mb-4 border border-slate-200">
                                             Lesson {currentLessonIndex + 1}
                                         </div>
                                         <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-tight">
@@ -206,7 +206,7 @@ export default function GitMasteryPage() {
                                     "flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm",
                                     hasExecutedCurrent || isLast
                                         ? "bg-slate-900 text-white hover:bg-slate-800 hover:shadow-md"
-                                        : "bg-indigo-100 text-indigo-400 cursor-not-allowed opacity-60"
+                                        : "bg-slate-100 text-slate-400 cursor-not-allowed opacity-60"
                                 )}
                                 disabled={!hasExecutedCurrent && !isLast}
                             >

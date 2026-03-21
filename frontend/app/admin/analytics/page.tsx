@@ -63,14 +63,14 @@ export default function AnalyticsPage() {
     const overviewStats = [
         { label: 'Total Visitors', value: stats.visitors.toLocaleString(), icon: MousePointer2, color: 'text-blue-600' },
         { label: 'Total Subscribers', value: stats.subscribers.toLocaleString(), icon: CreditCard, color: 'text-emerald-600' },
-        { label: 'Conversion Rate', value: `${conversionRate}%`, icon: Target, subtitle: 'Visitors to Subscribers', color: 'text-indigo-600' },
+        { label: 'Conversion Rate', value: `${conversionRate}%`, icon: Target, subtitle: 'Visitors to Subscribers', color: 'text-slate-800' },
         { label: 'Active Now', value: stats.activeNow.toLocaleString(), icon: Clock, color: 'text-slate-600' },
     ];
 
     const featureEngagement = analyticsData.featureEngagement;
 
     return (
-        <div className="max-w-[1400px] mx-auto space-y-10 pb-20 pt-4">
+        <div className="max-w-full max-w-[1400px] mx-auto space-y-10 pb-20 pt-4">
             {/* Simple Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/60 pb-10">
                 <div>

@@ -29,9 +29,9 @@ const modules = [
         desc: 'Practice under pressure, speak with conviction.',
         icon: Video,
         href: '/dashboard/interview',
-        color: 'text-purple-400',
-        bg: 'bg-purple-500/10',
-        border: 'border-purple-500/20'
+        color: 'text-slate-400',
+        bg: 'bg-slate-500/10',
+        border: 'border-slate-500/20'
     },
     {
         title: 'Resume Builder',
@@ -77,7 +77,7 @@ export default function QuickAccessGrid() {
                             bg-white/80 backdrop-blur-xl border border-white/60 
                             shadow-[0_8px_30px_-10px_rgba(0,0,0,0.04)]
                             hover:shadow-[0_20px_40px_-15px_rgba(79,70,229,0.15)]
-                            hover:border-indigo-200/50 hover:bg-white
+                            hover:border-slate-200/50 hover:bg-white
                             transition-all duration-300 ease-out flex flex-col
                         `}
                     >
@@ -91,8 +91,8 @@ export default function QuickAccessGrid() {
                             <div className={`
                                 w-10 h-10 rounded-full flex items-center justify-center 
                                 bg-slate-50 text-slate-400 border border-slate-100
-                                group-hover:bg-gradient-to-tr group-hover:from-indigo-600 group-hover:to-indigo-500 
-                                group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-indigo-500/30
+                                group-hover:bg-gradient-to-tr group-hover:from-slate-600 group-hover:to-slate-500 
+                                group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-slate-200
                                 transition-all duration-300 ease-out
                             `}>
                                 <ChevronRight size={18} className="transform group-hover:translate-x-0.5 transition-transform" />
@@ -100,12 +100,12 @@ export default function QuickAccessGrid() {
                         </div>
 
                         <div className="relative z-10 mt-auto">
-                            <h3 className="text-xl font-extrabold text-slate-900 mb-2 tracking-tight group-hover:text-indigo-950 transition-colors">{item.title}</h3>
+                            <h3 className="text-xl font-extrabold text-slate-900 mb-2 tracking-tight group-hover:text-slate-950 transition-colors">{item.title}</h3>
                             <p className="text-[15px] text-slate-500 font-medium leading-relaxed group-hover:text-slate-600 transition-colors">{item.desc}</p>
                         </div>
 
                         {/* Accent Bottom Border Line */}
-                        <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-indigo-500/0 to-transparent group-hover:via-indigo-500/40 transition-all duration-500"></div>
+                        <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-slate-500/0 to-transparent group-hover:via-slate-500/40 transition-all duration-500"></div>
                     </motion.div>
                 </Link>
             ))}

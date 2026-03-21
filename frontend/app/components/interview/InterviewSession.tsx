@@ -269,16 +269,16 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                     className="bg-white p-10 rounded-3xl shadow-xl border border-slate-100 max-w-md w-full"
                 >
                     <div className="relative mb-8 mx-auto w-24 h-24">
-                        <div className="absolute inset-0 rounded-full border-4 border-indigo-50 border-t-indigo-600 animate-spin" />
+                        <div className="absolute inset-0 rounded-full border-4 border-slate-50 border-t-slate-600 animate-spin" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+                            <Loader2 className="w-10 h-10 text-slate-800 animate-spin" />
                         </div>
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-3">Analyzing Performance</h2>
                     <p className="text-slate-500 mb-6 leading-relaxed">Placement Mode AI is generating your detailed scorecard. This might take a few moments...</p>
                     
                     {analysisHint && (
-                        <div className="mb-4 text-xs font-medium text-indigo-600 bg-indigo-50 py-2 px-3 rounded-lg">
+                        <div className="mb-4 text-xs font-medium text-slate-800 bg-slate-50 py-2 px-3 rounded-lg">
                             {analysisHint}
                         </div>
                     )}
@@ -312,7 +312,7 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
     return (
         <div className="fixed inset-0 z-[100] bg-slate-950 flex font-sans text-slate-100 overflow-hidden">
             {/* Soft Ambient Background for Dark Theme */}
-            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950" />
+            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900/20 via-slate-950 to-slate-950" />
 
             {/* Top Bar */}
             <div className="absolute top-0 left-0 right-0 h-20 z-50 px-8 flex items-center justify-between border-b border-white/5 bg-slate-950/50 backdrop-blur-xl">
@@ -384,14 +384,14 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                                         animate={{ y: 0, opacity: 1 }}
                                         className="bg-slate-900 p-8 rounded-3xl shadow-2xl text-center max-w-md border border-white/10"
                                     >
-                                        <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-indigo-400 ring-1 ring-indigo-500/30">
+                                        <div className="w-16 h-16 bg-slate-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-400 ring-1 ring-slate-200">
                                             <Play size={32} className="ml-1" />
                                         </div>
                                         <h2 className="text-2xl font-bold text-white mb-3 tracking-tight">Ready to Begin?</h2>
                                         <p className="text-slate-400 mb-8 leading-relaxed text-sm">
                                             You're about to start a 15-minute technical screening. Make sure you're in a quiet environment.
                                         </p>
-                                        <Button onClick={handleStart} className="w-full h-12 text-base bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold shadow-lg shadow-indigo-900/20 transition-all">
+                                        <Button onClick={handleStart} className="w-full h-12 text-base bg-slate-800 hover:bg-slate-500 text-white rounded-xl font-semibold shadow-lg shadow-slate-200 transition-all">
                                             Start Interview
                                         </Button>
                                     </motion.div>
@@ -427,12 +427,12 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                 </div>
 
                 {/* Visualizer & Chat (Right) */}
-                <div className="w-full lg:w-[420px] h-full flex flex-col gap-6">
+                <div className="w-full lg:w-full max-w-full max-w-[420px] h-full flex flex-col gap-6">
                     {/* AI Avatar / Status */}
                     <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-white/10 flex flex-col items-center justify-center relative overflow-hidden shrink-0 h-[220px]">
                         {/* Animated background glow when speaking */}
                         <div className={cn(
-                            "absolute inset-0 bg-indigo-500/10 transition-opacity duration-700 blur-3xl",
+                            "absolute inset-0 bg-slate-500/10 transition-opacity duration-700 blur-3xl",
                             isSpeaking ? "opacity-100" : "opacity-0"
                         )} />
                         
@@ -441,22 +441,22 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                                 {/* Outer pulsing ring */}
                                 {isSpeaking && (
                                     <motion.div 
-                                        className="absolute inset-0 rounded-full border-2 border-indigo-500"
+                                        className="absolute inset-0 rounded-full border-2 border-slate-400"
                                         animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
                                         transition={{ duration: 2, repeat: Infinity }}
                                     />
                                 )}
                                 
                                 <div className={cn(
-                                    "absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg transition-transform duration-300",
-                                    isSpeaking ? "scale-105 shadow-indigo-500/30" : "scale-100"
+                                    "absolute inset-0 rounded-full bg-gradient-to-tr from-slate-600 to-slate-600 flex items-center justify-center shadow-lg transition-transform duration-300",
+                                    isSpeaking ? "scale-105 shadow-slate-200" : "scale-100"
                                 )}>
                                     <Volume2 className={cn("w-8 h-8 text-white transition-opacity", isSpeaking ? "opacity-100" : "opacity-70")} />
                                 </div>
                             </div>
                             
                             <h3 className="font-bold text-lg text-white tracking-tight">Emble AI</h3>
-                            <p className="text-xs font-medium text-indigo-400 uppercase tracking-widest mt-1">Lead Interviewer</p>
+                            <p className="text-xs font-medium text-slate-400 uppercase tracking-widest mt-1">Lead Interviewer</p>
                         </div>
 
                         {/* Audio Waveform */}
@@ -464,7 +464,7 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                             {[...Array(12)].map((_, i) => (
                                 <motion.div
                                     key={i}
-                                    className="w-1.5 bg-indigo-400 rounded-t-full"
+                                    className="w-1.5 bg-slate-400 rounded-t-full"
                                     animate={{ height: isSpeaking ? [4, 15 + Math.random() * 20, 4] : 4 }}
                                     transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
                                 />
@@ -507,12 +507,12 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                                         <div className={cn(
                                             "max-w-[85%] px-4 py-3 text-sm leading-relaxed shadow-sm",
                                             msg.role === 'user'
-                                                ? "bg-indigo-600 text-white rounded-2xl rounded-tr-sm"
+                                                ? "bg-slate-800 text-white rounded-2xl rounded-tr-sm"
                                                 : "bg-slate-800 text-slate-200 border border-white/5 rounded-2xl rounded-tl-sm"
                                         )}>
                                             {msg.role === 'assistant' && msg.followup && (
-                                                <div className="text-[10px] uppercase tracking-widest text-indigo-300 font-bold mb-1.5 flex items-center gap-1">
-                                                    <div className="w-1 h-1 rounded-full bg-indigo-400" /> Follow-up
+                                                <div className="text-[10px] uppercase tracking-widest text-slate-300 font-bold mb-1.5 flex items-center gap-1">
+                                                    <div className="w-1 h-1 rounded-full bg-slate-400" /> Follow-up
                                                 </div>
                                             )}
                                             {msg.text}

@@ -71,7 +71,7 @@ export default function InstituteDashboard() {
             variants={container}
             initial="hidden"
             animate="show"
-            className="space-y-8 pb-10 max-w-[1600px] mx-auto"
+            className="space-y-8 pb-10 max-w-full max-w-[1600px] mx-auto"
         >
             <motion.div variants={item} className="flex flex-col md:flex-row justify-between items-end gap-4">
                 <div>
@@ -135,7 +135,7 @@ export default function InstituteDashboard() {
                         {topStudents.slice(0, 3).map((student, i) => (
                             <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-md transition-all group hover:border-brand-orange/20">
                                 <div className="flex items-center gap-5">
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-[900] text-white shadow-lg ${i === 0 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-purple-500 to-indigo-600'}`}>
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-[900] text-white shadow-lg ${i === 0 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-slate-500 to-slate-600'}`}>
                                         {student.name.charAt(0)}
                                     </div>
                                     <div>

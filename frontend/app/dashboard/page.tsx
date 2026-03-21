@@ -62,15 +62,15 @@ export default function DashboardPage() {
     }
 
     if (loading || !stats) {
-        return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>;
+        return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div></div>;
     }
 
     // New Amber Dashboard Layout (Premium Light Theme)
     return (
-        <div className="min-h-screen bg-[#FAFAFC] relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
+        <div className="min-h-screen bg-[#FAFAFC] relative overflow-hidden font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900">
             {/* Global Ambient Background */}
-            <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-transparent rounded-full blur-[120px] pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-gradient-to-tr from-brand-orange/5 to-transparent rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-[-10%] right-[-5%] w-full max-w-full max-w-[800px] h-[800px] bg-gradient-to-br from-slate-700/5 via-slate-500/5 to-transparent rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] left-[-5%] w-full max-w-full max-w-[600px] h-[600px] bg-gradient-to-tr from-brand-orange/5 to-transparent rounded-full blur-[100px] pointer-events-none"></div>
 
             <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-8 space-y-10">
                 {/* Header */}
@@ -145,22 +145,22 @@ export default function DashboardPage() {
                     {/* Footer Banner Row */}
                     <div className="w-full pt-4">
                         <Link href="/mentor/apply" className="block w-full group outline-none">
-                            <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-indigo-950 via-slate-900 to-black p-8 md:p-12 shadow-[0_10px_40px_-10px_rgba(79,70,229,0.4)] border border-indigo-500/20 hover:border-indigo-400/40 hover:shadow-[0_20px_60px_-15px_rgba(79,70,229,0.5)] transition-all duration-500 transform group-hover:-translate-y-1 flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-black p-8 md:p-12 shadow-[0_10px_40px_-10px_rgba(79,70,229,0.4)] border border-slate-400/20 hover:border-slate-400/40 hover:shadow-[0_20px_60px_-15px_rgba(79,70,229,0.5)] transition-all duration-500 transform group-hover:-translate-y-1 flex flex-col md:flex-row items-center justify-between gap-8">
                                 {/* Decorative elements */}
-                                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[80px] translate-x-1/3 -translate-y-1/3 pointer-events-none group-hover:bg-indigo-400/20 transition-colors duration-700"></div>
+                                <div className="absolute top-0 right-0 w-96 h-96 bg-slate-500/10 rounded-full blur-[80px] translate-x-1/3 -translate-y-1/3 pointer-events-none group-hover:bg-slate-400/20 transition-colors duration-700"></div>
                                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-orange/10 rounded-full blur-[60px] -translate-x-1/2 translate-y-1/2 pointer-events-none group-hover:bg-brand-orange/20 transition-colors duration-700"></div>
 
                                 <div className="relative z-10 flex-1">
-                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-indigo-100 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4 backdrop-blur-md shadow-sm">
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-slate-100 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4 backdrop-blur-md shadow-sm">
                                         <Sparkles size={14} className="text-brand-orange" />
                                         Earn With EMBLE
                                     </div>
 
                                     <h3 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-3 leading-tight">
-                                        Join as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-indigo-300">Mentor</span>
+                                        Join as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-300">Mentor</span>
                                     </h3>
 
-                                    <p className="text-[15px] md:text-base text-indigo-100/70 max-w-2xl leading-relaxed font-medium">
+                                    <p className="text-[15px] md:text-base text-slate-100/70 max-w-2xl leading-relaxed font-medium">
                                         Got a great GATE/Codeforces score? Monetize your free time, guide the community, and earn well by taking 1:1 sessions today.
                                     </p>
                                 </div>

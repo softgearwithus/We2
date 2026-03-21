@@ -455,13 +455,13 @@ export default function SubjectModuleSimulatorPage() {
 
 
     if (isLoading) return <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500 font-semibold tracking-wide">Loading Practice Set...</div>;
-    if (!testData) return <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">No questions inside this module.<button className="mt-4 text-indigo-600 font-bold underline px-6 py-2 rounded border border-indigo-200" onClick={() => router.back()}>Go Back</button></div>;
+    if (!testData) return <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">No questions inside this module.<button className="mt-4 text-slate-800 font-bold underline px-6 py-2 rounded border border-slate-200" onClick={() => router.back()}>Go Back</button></div>;
 
     if (!hasStarted) {
         return (
             <div className="fixed inset-0 z-50 bg-slate-100 overflow-y-auto">
                 <div className="max-w-4xl mx-auto my-12 bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-                    <div className="bg-indigo-900 px-8 py-6 text-white text-center">
+                    <div className="bg-slate-900 px-8 py-6 text-white text-center">
                         <h1 className="text-3xl font-black">{testData.title}</h1>
                         <p className="opacity-80 mt-2 text-lg">Practice Set • {testData.totalDurationMinutes} Minutes recommended</p>
                     </div>
@@ -486,7 +486,7 @@ export default function SubjectModuleSimulatorPage() {
                         </button>
                         <button
                             onClick={beginTest}
-                            className="bg-indigo-600 text-indigo-50 px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-indigo-700 transition shadow-sm"
+                            className="bg-slate-800 text-slate-50 px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-slate-900 transition shadow-sm"
                         >
                             Begin Practice Session
                         </button>
@@ -503,7 +503,7 @@ export default function SubjectModuleSimulatorPage() {
     Object.values(statuses).forEach(qMap => { Object.values(qMap).forEach(s => { statusCounts[s as keyof typeof statusCounts]++; }); });
 
     return (
-        <div className="fixed inset-0 z-[100] bg-white flex flex-col font-sans text-sm border-t-[6px] border-indigo-600">
+        <div className="fixed inset-0 z-[100] bg-white flex flex-col font-sans text-sm border-t-[6px] border-slate-800">
             <header className="h-14 bg-slate-50 border-b border-slate-200 flex items-center justify-between px-6 shadow-sm z-10 shrink-0">
                 <div className="flex flex-col">
                     <span className="font-black text-slate-800 tracking-tight text-lg leading-tight">{testData.title}</span>
@@ -516,12 +516,12 @@ export default function SubjectModuleSimulatorPage() {
                             <span className="text-base tracking-widest">EVALUATION OVERVIEW</span>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 font-bold px-4 py-1.5 rounded-full">
+                        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 text-slate-900 font-bold px-4 py-1.5 rounded-full">
                             <Clock size={16} />
                             <span className="text-base tracking-widest tabular-nums">{formatTime(timeLeftSeconds)}</span>
                         </div>
                     )}
-                    <button onClick={() => setShowCalculator(!showCalculator)} className={`flex items-center gap-2 px-4 py-1.5 font-bold rounded-lg ${showCalculator ? 'bg-indigo-100 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'}`}><Hash size={16} /> Calculator</button>
+                    <button onClick={() => setShowCalculator(!showCalculator)} className={`flex items-center gap-2 px-4 py-1.5 font-bold rounded-lg ${showCalculator ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-100'}`}><Hash size={16} /> Calculator</button>
                     {isReviewMode ? (
                         <button onClick={() => router.back()} className="flex items-center gap-2 text-slate-600 hover:bg-slate-100 px-4 py-1.5 font-bold rounded-lg"><LogOut size={16} /> Exit Practice</button>
                     ) : (
@@ -536,9 +536,9 @@ export default function SubjectModuleSimulatorPage() {
                 {testData.sections.map((section: any, idx: number) => {
                     const isActive = idx === activeSectionIndex;
                     return (
-                        <div key={section.id} onClick={() => navigateToQuestion(idx, 0)} className={`px-8 py-2.5 cursor-pointer font-bold relative transition-colors ${isActive ? 'bg-indigo-600 text-white shadow-md z-10' : 'text-[#495057] hover:bg-[#dee2e6]'}`}>
+                        <div key={section.id} onClick={() => navigateToQuestion(idx, 0)} className={`px-8 py-2.5 cursor-pointer font-bold relative transition-colors ${isActive ? 'bg-slate-800 text-white shadow-md z-10' : 'text-[#495057] hover:bg-[#dee2e6]'}`}>
                             {section.title}
-                            {isActive && <div className="absolute top-0 right-[-10px] w-0 h-0 border-t-[20px] border-b-[20px] border-l-[10px] border-l-indigo-600 border-t-transparent border-b-transparent z-20" />}
+                            {isActive && <div className="absolute top-0 right-[-10px] w-0 h-0 border-t-[20px] border-b-[20px] border-l-[10px] border-l-slate-600 border-t-transparent border-b-transparent z-20" />}
                         </div>
                     );
                 })}
@@ -556,19 +556,19 @@ export default function SubjectModuleSimulatorPage() {
                             <div className="font-semibold text-lg mb-6 leading-relaxed text-slate-800 break-words" dangerouslySetInnerHTML={{ __html: activeQuestion?.questionText || '' }} />
 
                             {activeQuestion?.questionType === 'SINGLE_CORRECT' && (
-                                <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
+                                <div className="space-y-3 pl-4 border-l-2 border-slate-200">
                                     {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
                                         const isChecked = currentResponse === String(idx);
                                         return (
                                             <label key={idx} onClick={(e) => { if (isReviewMode) { e.preventDefault(); return; } setResponse(String(idx)); }} 
-                                                className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}>
+                                                className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-slate-400 bg-slate-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}>
                                                 <div className="flex shrink-0 items-center justify-center border-2 border-slate-300 w-6 h-6 rounded-full bg-white relative">
-                                                    {isChecked && <div className="w-3 h-3 bg-indigo-600 rounded-full" />}
+                                                    {isChecked && <div className="w-3 h-3 bg-slate-800 rounded-full" />}
                                                     {isReviewMode && activeQuestion?.correctAnswer === String(idx) && (
                                                         <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
                                                     )}
                                                 </div>
-                                                <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
+                                                <span className={`font-medium ${isChecked ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</span>
                                             </label>
                                         );
                                     })}
@@ -618,7 +618,7 @@ export default function SubjectModuleSimulatorPage() {
                     </div>
 
                     <div className="bg-[#eff1f4] flex-1 overflow-y-auto px-1">
-                        <div className="bg-indigo-600 text-white font-bold py-1.5 px-4 sticky top-0 z-10 mb-3 shadow">
+                        <div className="bg-slate-800 text-white font-bold py-1.5 px-4 sticky top-0 z-10 mb-3 shadow">
                             Choose a Question
                         </div>
                         <div className="flex flex-wrap gap-2.5 px-4 pb-8">
@@ -628,7 +628,7 @@ export default function SubjectModuleSimulatorPage() {
                                     <button
                                         key={q.id}
                                         onClick={() => navigateToQuestion(activeSectionIndex, idx)}
-                                        className={`relative w-10 h-10 flex items-center justify-center font-bold text-sm shadow-sm transition-all border ${getStatusStyle(status, q.id)} ${idx === activeQuestionIndex ? 'ring-2 ring-offset-2 ring-indigo-500 z-10 scale-110' : 'hover:scale-105'}`}
+                                        className={`relative w-10 h-10 flex items-center justify-center font-bold text-sm shadow-sm transition-all border ${getStatusStyle(status, q.id)} ${idx === activeQuestionIndex ? 'ring-2 ring-offset-2 ring-slate-200 z-10 scale-110' : 'hover:scale-105'}`}
                                     >
                                         {idx + 1}
                                     </button>

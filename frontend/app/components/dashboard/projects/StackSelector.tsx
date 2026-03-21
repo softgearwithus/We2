@@ -18,7 +18,7 @@ export default function StackSelector({ domain, onSelect }: StackSelectorProps) 
             className="w-full"
         >
             <h2 className="text-lg font-bold mb-4 text-slate-800">
-                Technology Stack <span className="text-slate-400 font-normal">/</span> <span className="text-indigo-600">{domain.title}</span>
+                Technology Stack <span className="text-slate-400 font-normal">/</span> <span className="text-slate-800">{domain.title}</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {domain.stacks.map((stack) => (

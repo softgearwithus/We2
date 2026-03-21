@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Quote, Linkedin, CheckCircle2, Star } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle2, Star } from 'lucide-react';
 
 const testimonials = [
     {
@@ -18,11 +18,11 @@ const testimonials = [
         name: "Neha Gupta",
         role: "Full Stack Student",
         initials: "NG",
-        color: "bg-purple-500",
+        color: "bg-slate-500",
         rating: 4.2,
         text: "The Job Simulation is different from any other platform. It doesn't just give you questions - it gives you a system to build. Definitely worth the transition.",
         verified: false,
-        gradient: "from-purple-50 to-purple-100/50"
+        gradient: "from-slate-50 to-slate-100/50"
     },
     {
         name: "Rohan",
@@ -38,11 +38,11 @@ const testimonials = [
         name: "Pooja Sharma",
         role: "Associate Engineer @ Infosys",
         initials: "PS",
-        color: "bg-indigo-500",
+        color: "bg-slate-500",
         rating: 4.6,
         text: "The AI Mentor is a lifesaver. It doesn't spoil the answer but guides you through the logic - helped me stay consistent even during college exams.",
         verified: true,
-        gradient: "from-indigo-50 to-indigo-100/50"
+        gradient: "from-slate-50 to-slate-100/50"
     },
     {
         name: "Vikram Kumar",
@@ -138,11 +138,11 @@ const testimonials = [
         name: "Varun Sharma",
         role: "Backend Dev @ TCS",
         initials: "VS",
-        color: "bg-indigo-600",
+        color: "bg-slate-800",
         rating: 4.6,
         text: "System design simulations are spot on. I used the exact same patterns in my onsite migration project. Highly correlated stuff.",
         verified: true,
-        gradient: "from-indigo-50 to-indigo-200/50"
+        gradient: "from-slate-50 to-slate-200/50"
     },
     {
         name: "Sneha",
@@ -218,11 +218,11 @@ const testimonials = [
         name: "Sanya Roy",
         role: "Placement Ready Student",
         initials: "SR",
-        color: "bg-purple-700",
+        color: "bg-slate-900",
         rating: 4.4,
         text: "The SQL 50 set is brutal but necessary. It transformed my query optimization logic entirely for the placement season.",
         verified: false,
-        gradient: "from-purple-50 to-purple-200/50"
+        gradient: "from-slate-50 to-slate-200/50"
     },
     {
         name: "Amit",
@@ -238,11 +238,11 @@ const testimonials = [
         name: "Pooja",
         role: "Full Stack Student",
         initials: "P",
-        color: "bg-indigo-700",
+        color: "bg-slate-900",
         rating: 4.6,
         text: "The industrial sprint projects are high quality. You actually build stuff that you can talk about confidently in interviews.",
         verified: false,
-        gradient: "from-indigo-50 to-indigo-300/50"
+        gradient: "from-slate-50 to-slate-300/50"
     },
     {
         name: "Rishi",
@@ -256,12 +256,9 @@ const testimonials = [
     }
 ];
 
-// Duplicate for marquee effect
-const marqueeTestimonials = [...testimonials, ...testimonials];
-
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
-    <div className="w-[400px] shrink-0 mx-4 group relative cursor-pointer transform-gpu will-change-transform">
-        <div className="relative h-full bg-white rounded-[1.8rem] p-8 border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-2xl hover:shadow-brand-orange/10 transition-shadow duration-300 flex flex-col justify-between">
+    <div className="group relative w-full h-full transform-gpu will-change-transform">
+        <div className="relative h-full bg-white rounded-[1.8rem] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between">
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -270,16 +267,16 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                         </div>
                         <div>
                             <h4 className="font-bold text-brand-black text-sm">{t.name}</h4>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t.role}</p>
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t.role}</p>
                         </div>
                     </div>
                     {t.verified && <CheckCircle2 size={18} className="text-blue-500 fill-blue-50" />}
                 </div>
 
-                <p className="text-gray-600 text-[15px] leading-relaxed font-medium">"{t.text}"</p>
+                <p className="text-gray-700 text-[15px] leading-relaxed font-medium">"{t.text}"</p>
             </div>
 
-            <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
+            <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
                 <div className="flex gap-0.5 items-center">
                     <div className="flex gap-0.5 mr-2">
                         {[...Array(5)].map((_, i) => (
@@ -290,7 +287,7 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                             />
                         ))}
                     </div>
-                    <span className="text-[11px] font-bold text-gray-400">{t.rating}</span>
+                    <span className="text-[11px] font-bold text-gray-500">{t.rating}</span>
                 </div>
             </div>
         </div>
@@ -298,62 +295,59 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
 );
 
 export default function Testimonials() {
-    return (
-        <section className="py-20 bg-white relative overflow-hidden">
+    const [showAll, setShowAll] = useState(false);
+    const displayedTestimonials = showAll ? testimonials : testimonials.slice(0, 9);
 
+    return (
+        <section className="py-20 md:py-32 bg-gray-50/30 relative overflow-hidden border-y border-gray-100">
             {/* Header */}
             <div className="max-w-7xl mx-auto px-6 mb-16 relative z-10 text-center">
-                <span className="text-green-600 font-bold text-[11px] uppercase tracking-[0.2em] bg-green-50 px-4 py-2 rounded-full border border-green-100 inline-block mb-6">
-                    Wall of Love
+                <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-orange-50 px-4 py-2 rounded-full border border-orange-100 inline-block mb-6 shadow-sm">
+                    Verified Outcomes
                 </span>
                 <h2 className="text-4xl md:text-6xl font-[1000] text-brand-black tracking-tighter mb-4">
-                    Offers dropped. <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-500">Lives changed.</span>
+                    Offers dropped. <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">Lives changed.</span>
                 </h2>
-                <p className="text-xl text-gray-400 font-medium">
-                    Join the community that's redefining placement prep.
+                <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
+                    Stop practicing blindly. See what happens when you train like a senior engineer and finally beat the applicant tracking systems.
                 </p>
             </div>
 
-            {/* Marquee Container */}
-            <div className="relative w-full overflow-hidden mask-linear-fade transform-gpu">
-                {/* Row 1: Left to Right */}
-                <div className="flex mb-8 w-fit animate-marquee hover:[animation-play-state:paused] transform-gpu will-change-transform">
-                    {marqueeTestimonials.map((t, i) => (
-                        <Card key={`row1-${i}`} t={t} />
-                    ))}
+            {/* Grid Container */}
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {displayedTestimonials.map((t, i) => {
+                        const uniqueKey = `${t.name.replace(/\s+/g, '-')}-${i}`;
+                        
+                        if (!showAll && i === 8) {
+                            return (
+                                <div key={uniqueKey} className="group relative w-full h-full transform-gpu will-change-transform cursor-pointer" onClick={() => setShowAll(true)}>
+                                    <div className="absolute inset-0 z-20 bg-white/50 backdrop-blur-[3px] rounded-[1.8rem] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/30 border border-gray-100 overflow-hidden">
+                                        <div className="bg-brand-black text-white px-6 py-3 rounded-full font-bold shadow-2xl group-hover:scale-105 transition-transform flex items-center gap-2">
+                                            View {testimonials.length - 8} More Stories →
+                                        </div>
+                                    </div>
+                                    <div className="relative z-10 opacity-70 pointer-events-none h-full">
+                                        <Card t={t} />
+                                    </div>
+                                </div>
+                            );
+                        }
+                        return <Card key={uniqueKey} t={t} />;
+                    })}
                 </div>
 
-                {/* Row 2: Right to Left */}
-                <div className="flex w-fit animate-marquee-reverse hover:[animation-play-state:paused] transform-gpu will-change-transform">
-                    {marqueeTestimonials.map((t, i) => (
-                        <Card key={`row2-${i}`} t={t} />
-                    ))}
-                </div>
-
-                {/* Gradient Masks */}
-                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-                <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+                {showAll && (
+                    <div className="mt-16 text-center">
+                        <button 
+                            onClick={() => setShowAll(false)}
+                            className="bg-white border border-gray-200 text-gray-500 hover:text-brand-black hover:border-gray-300 px-8 py-3 rounded-full font-bold text-sm tracking-wider uppercase transition-all shadow-sm"
+                        >
+                            Show Less
+                        </button>
+                    </div>
+                )}
             </div>
-
-            <style jsx>{`
-                .mask-linear-fade {
-                    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-                }
-                @keyframes marquee {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
-                }
-                @keyframes marquee-reverse {
-                    0% { transform: translateX(-50%); }
-                    100% { transform: translateX(0); }
-                }
-                .animate-marquee {
-                    animation: marquee 120s linear infinite;
-                }
-                .animate-marquee-reverse {
-                    animation: marquee-reverse 130s linear infinite;
-                }
-            `}</style>
         </section>
     );
 }

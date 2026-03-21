@@ -75,20 +75,20 @@ export default function MockAnalysisPage() {
             <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-slate-600">
                 <AlertCircle size={36} className="text-rose-500" />
                 <p className="mt-4 font-semibold">{errorMsg}</p>
-                <button onClick={() => router.back()} className="mt-6 text-indigo-600 font-bold hover:underline">Go Back</button>
+                <button onClick={() => router.back()} className="mt-6 text-slate-800 font-bold hover:underline">Go Back</button>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 pb-20">
+        <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900 pb-20">
             <div className="max-w-6xl mx-auto p-6 lg:p-10">
-                <Link href="/dashboard/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-bold mb-8 transition-colors group px-4 py-2 rounded-full hover:bg-white bg-transparent border border-transparent hover:border-slate-200">
+                <Link href="/dashboard/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-8 transition-colors group px-4 py-2 rounded-full hover:bg-white bg-transparent border border-transparent hover:border-slate-200">
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Test Series
                 </Link>
 
                 <div className="mb-10">
-                    <div className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-indigo-100">
+                    <div className="bg-slate-50 text-slate-800 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-slate-200">
                         Mock Analysis
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight">Your completed mock submissions.</h1>
@@ -111,7 +111,7 @@ export default function MockAnalysisPage() {
                                     placeholder="Search by module or company..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-800 placeholder:text-slate-400"
+                                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all font-medium text-slate-800 placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="flex bg-white border border-slate-200 rounded-xl p-1 shrink-0">
@@ -148,11 +148,11 @@ export default function MockAnalysisPage() {
                             return (
                                 <div
                                     key={result.id}
-                                    className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-indigo-200 hover:shadow-lg transition-all flex flex-col"
+                                    className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-slate-200 hover:shadow-lg transition-all flex flex-col"
                                 >
                                     <div className="flex items-center justify-between mb-5">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                            <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-800 flex items-center justify-center">
                                                 <Building2 size={22} />
                                             </div>
                                             <div>
@@ -186,7 +186,7 @@ export default function MockAnalysisPage() {
                                     <button
                                         onClick={() => router.push(`/dashboard/test-series/analysis/${result.id}`)}
                                         className={`mt-6 w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${status === 'ready'
-                                            ? 'bg-slate-900 text-white hover:bg-indigo-600'
+                                            ? 'bg-slate-900 text-white hover:bg-slate-800'
                                             : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
                                             }`}
                                     >

@@ -2,39 +2,39 @@
 
 const features = [
   {
-    title: "Adaptive DSA Training",
-    description: "Master algorithms with Spaced Repetition (SRS) and an AI Logic Check that mimics real 'Paper Pen' interviews.",
+    title: "Simulate the exact FAANG tech stack.",
+    description: "Stop writing algorithms in a vacuum. Build full-stack applications with React, Node, and PostgreSQL, precisely mapped to current industry requirements.",
     image: "/images/dsa-training-dashboard.png",
     color: "from-brand-orange to-red-500",
-    badge: "Problem Solving"
+    badge: "Machine Coding"
   },
   {
-    title: "Targeted Company Test Series",
-    description: "Don't guess what they'll ask. Take mock tests mirroring the exact patterns of TCS, Accenture, Deloitte, and more.",
+    title: "The Amazon SDE Loop, deconstructed.",
+    description: "Don't guess what they'll ask. Take timed, proctored mock tests mirroring the exact difficulty and patterns of TCS, Amazon, Deloitte, and more.",
     image: "/images/test-series-dashboard.png",
-    color: "from-blue-500 to-indigo-600",
-    badge: "Company specific"
+    color: "from-blue-500 to-slate-600",
+    badge: "Oa & Technical Rounds"
   },
   {
-    title: "AI-Powered Mock Interviews",
-    description: "Refine your communication and body language in our Video Simulation Lab before the real thing.",
+    title: "Beat the behavioral filter.",
+    description: "Pass the technical, fail the cultural? Not anymore. Train against our AI hiring manager that grills you on Leadership Principles and past projects.",
     image: "/images/interview-dashboard.png",
-    color: "from-purple-500 to-pink-600",
-    badge: "Communication"
+    color: "from-slate-500 to-pink-600",
+    badge: "Behavioral & System Design"
   },
   {
-    title: "ATS Resume Builder",
-    description: "Build your future, one resume at a time. Create ATS-friendly resumes in minutes to get past automated screeners.",
+    title: "Bypass the automated screeners.",
+    description: "Your code is worthless if your resume is rejected. Generate strictly-formatted, ATS-optimized technical resumes that actually reach a human recruiter.",
     image: "/images/resume-builder-dashboard.png",
     color: "from-green-500 to-emerald-600",
-    badge: "Career Assets"
+    badge: "ATS Optimization"
   },
   {
-    title: "Real-Time Market Radar",
-    description: "Stay ahead of hiring curves with real-time job trends, high-demand roles, and actionable portfolio advice.",
+    title: "Real-time hiring radar.",
+    description: "The market moves fast. Get live updates on actively hiring companies, shifting tech stacks, and exactly what skills are closing offers today.",
     image: "/images/market-radar-for-latest-updates.png",
-    color: "from-indigo-500 to-cyan-500",
-    badge: "Industry Insights"
+    color: "from-slate-700 to-cyan-500",
+    badge: "Market Intelligence"
   }
 ];
 
@@ -48,7 +48,7 @@ export default function FeatureShowcase() {
           </span>
           <h2 className="text-4xl md:text-6xl font-[900] text-brand-black tracking-tight mb-6 leading-tight">
             Stop guessing. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Start experiencing.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">Start experiencing.</span>
           </h2>
           <p className="text-xl text-gray-500 font-medium leading-relaxed">
             Don't just read about our features. See exactly the tools you'll use to land your dream job.
@@ -77,7 +77,7 @@ export default function FeatureShowcase() {
                 <div className={`absolute -inset-4 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-10 blur-2xl transition duration-500 rounded-[40px]`}></div>
                 
                 <div className={`relative transform transition duration-700 ease-in-out ${index % 2 === 0 ? 'rotate-y-[-5deg]' : 'rotate-y-[5deg]'} rotate-x-[2deg] group-hover:rotate-y-0 group-hover:rotate-x-0`}>
-                  <img 
+                  <img loading="lazy" decoding="async" 
                     src={feature.image} 
                     alt={feature.title} 
                     className="relative rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-gray-100 object-cover w-full h-auto"

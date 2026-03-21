@@ -93,7 +93,7 @@ export default function TopicPage() {
                             <button
                                 key={lang}
                                 onClick={() => setSelectedLanguage(lang)}
-                                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${selectedLanguage === lang ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${selectedLanguage === lang ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
                             >
                                 {lang}
                             </button>
@@ -120,12 +120,12 @@ export default function TopicPage() {
                                 onClick={() => setActiveTopicIndex(idx)}
                                 className={`w-full text-left p-3 rounded-xl border transition-all text-sm font-medium flex items-start gap-3
                                     ${activeTopicIndex === idx
-                                        ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
+                                        ? 'bg-slate-50 border-slate-200 text-slate-900'
                                         : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 hover:text-slate-900'}
                                 `}
                             >
                                 <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 border 
-                                    ${activeTopicIndex === idx ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-transparent border-slate-300 text-transparent'}
+                                    ${activeTopicIndex === idx ? 'bg-slate-800 text-white border-slate-800' : 'bg-transparent border-slate-300 text-transparent'}
                                 `}>
                                     <span className="text-[10px]">{(idx + 1)}</span>
                                 </span>
@@ -148,20 +148,20 @@ export default function TopicPage() {
                                 <h2 className="text-3xl font-bold text-slate-900 mb-2">{phase.topics[activeTopicIndex].title}</h2>
                                 <p className="text-slate-500 text-lg">{phase.topics[activeTopicIndex].desc}</p>
                             </div>
-                            <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                            <div className="bg-slate-50 text-slate-900 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
                                 <Code size={18} /> {selectedLanguage} Mode
                             </div>
                         </div>
 
                         {/* Resource Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 group hover:border-indigo-200 transition-colors cursor-pointer">
-                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-indigo-600 mb-4 group-hover:scale-110 transition-transform">
+                            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 group hover:border-slate-200 transition-colors cursor-pointer">
+                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-slate-800 mb-4 group-hover:scale-110 transition-transform">
                                     <BookOpen size={20} />
                                 </div>
                                 <h3 className="font-bold text-slate-900 mb-1">Interactive Guide</h3>
                                 <p className="text-sm text-slate-500 mb-4">Read visual explanations and concepts.</p>
-                                <span className="text-xs font-bold text-indigo-600 flex items-center gap-1">Read Now <ExternalLink size={12} /></span>
+                                <span className="text-xs font-bold text-slate-800 flex items-center gap-1">Read Now <ExternalLink size={12} /></span>
                             </div>
 
                             <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 group hover:border-brand-orange hover:bg-orange-50/10 transition-colors cursor-pointer">
@@ -182,11 +182,11 @@ export default function TopicPage() {
                             <div className="bg-slate-900 rounded-xl p-6 font-mono text-sm text-slate-300 relative group">
                                 <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button className="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1 rounded-md text-xs">Copy</button>
-                                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-md text-xs">Run</button>
+                                    <button className="bg-slate-800 hover:bg-slate-500 text-white px-3 py-1 rounded-md text-xs">Run</button>
                                 </div>
-                                <p className="text-indigo-400 mb-2">// Write your {selectedLanguage} code here</p>
+                                <p className="text-slate-400 mb-2">// Write your {selectedLanguage} code here</p>
                                 <p>
-                                    <span className="text-purple-400">function</span> <span className="text-blue-400">helloWorld</span>() {'{'} <br />
+                                    <span className="text-slate-400">function</span> <span className="text-blue-400">helloWorld</span>() {'{'} <br />
                                     &nbsp;&nbsp;console.<span className="text-yellow-400">log</span>(<span className="text-green-400">"Happy Learning!"</span>); <br />
                                     {'}'}
                                 </p>

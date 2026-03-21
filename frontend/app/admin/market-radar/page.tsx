@@ -83,14 +83,14 @@ export default function AdminMarketRadar() {
 
     if (isLoading) {
         return (
-            <div className="p-8 max-w-[1200px] mx-auto min-h-screen font-sans flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <div className="p-8 max-w-full max-w-[1200px] mx-auto min-h-screen font-sans flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
             </div>
         );
     }
 
     return (
-        <div className="p-8 max-w-[1200px] mx-auto min-h-screen font-sans pb-24">
+        <div className="p-8 max-w-full max-w-[1200px] mx-auto min-h-screen font-sans pb-24">
             <header className="flex justify-between items-center mb-8">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Manage Market Radar</h1>
@@ -99,7 +99,7 @@ export default function AdminMarketRadar() {
                 <button
                     onClick={handleSubmit}
                     disabled={isSaving}
-                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-md shadow-indigo-600/20 transition-all"
+                    className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold shadow-md shadow-slate-200 transition-all"
                 >
                     <Save className="w-5 h-5" /> {isSaving ? 'Saving...' : 'Save Updates'}
                 </button>
@@ -116,40 +116,40 @@ export default function AdminMarketRadar() {
                 {/* 1. Global Stats */}
                 <section className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
                     <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <Globe className="w-5 h-5 text-indigo-500" /> Global Market Stats
+                        <Globe className="w-5 h-5 text-slate-700" /> Global Market Stats
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2">Total Active Jobs</label>
                             <input type="text" value={formData.globalStats.totalActiveJobs} onChange={(e) => handleGlobalStatsChange('totalActiveJobs', e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none placeholder-slate-400" />
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-200 focus:outline-none placeholder-slate-400" />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2">New Jobs Today</label>
                             <input type="text" value={formData.globalStats.newJobsToday} onChange={(e) => handleGlobalStatsChange('newJobsToday', e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-200 focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2">Remote Work %</label>
                             <input type="number" value={formData.globalStats.remoteWorkPercentage} onChange={(e) => handleGlobalStatsChange('remoteWorkPercentage', Number(e.target.value))}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-200 focus:outline-none" />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2">Avg Time to Hire</label>
                             <input type="text" value={formData.globalStats.averageHiringTime} onChange={(e) => handleGlobalStatsChange('averageHiringTime', e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-200 focus:outline-none" />
                         </div>
                     </div>
                 </section>
 
                 {/* 2. Job Trends */}
                 <section className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
+                    <div className="absolute top-0 left-0 w-1 h-full bg-slate-500" />
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-indigo-500" /> High-Demand Roles
+                            <TrendingUp className="w-5 h-5 text-slate-700" /> High-Demand Roles
                         </h2>
-                        <button type="button" onClick={() => addArrayItem('jobTrends', { id: `role-${Date.now()}`, role: '', demandGrowth: 0, averageSalary: '', openingsGlobally: '', icon: 'briefcase', color: 'text-slate-500 bg-slate-50' })} className="text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg transition-colors flex items-center gap-1">
+                        <button type="button" onClick={() => addArrayItem('jobTrends', { id: `role-${Date.now()}`, role: '', demandGrowth: 0, averageSalary: '', openingsGlobally: '', icon: 'briefcase', color: 'text-slate-500 bg-slate-50' })} className="text-sm font-bold text-slate-800 bg-slate-50 hover:bg-slate-100 px-4 py-2 rounded-lg transition-colors flex items-center gap-1">
                             <Plus size={16} /> Add Role
                         </button>
                     </div>
@@ -158,19 +158,19 @@ export default function AdminMarketRadar() {
                             <div key={job.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl relative group">
                                 <div className="md:col-span-3">
                                     <label className="block text-xs font-bold text-slate-500 mb-1">Role Title</label>
-                                    <input type="text" value={job.role} onChange={(e) => handleArrayChange('jobTrends', index, 'role', e.target.value)} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-indigo-500" />
+                                    <input type="text" value={job.role} onChange={(e) => handleArrayChange('jobTrends', index, 'role', e.target.value)} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-200" />
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="block text-xs font-bold text-slate-500 mb-1">Growth %</label>
-                                    <input type="number" value={job.demandGrowth} onChange={(e) => handleArrayChange('jobTrends', index, 'demandGrowth', Number(e.target.value))} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-indigo-500" />
+                                    <input type="number" value={job.demandGrowth} onChange={(e) => handleArrayChange('jobTrends', index, 'demandGrowth', Number(e.target.value))} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-200" />
                                 </div>
                                 <div className="md:col-span-3">
                                     <label className="block text-xs font-bold text-slate-500 mb-1">Avg Salary</label>
-                                    <input type="text" value={job.averageSalary} onChange={(e) => handleArrayChange('jobTrends', index, 'averageSalary', e.target.value)} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-indigo-500" placeholder="e.g. $120k - $150k" />
+                                    <input type="text" value={job.averageSalary} onChange={(e) => handleArrayChange('jobTrends', index, 'averageSalary', e.target.value)} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-200" placeholder="e.g. $120k - $150k" />
                                 </div>
                                 <div className="md:col-span-3">
                                     <label className="block text-xs font-bold text-slate-500 mb-1">Globally Open</label>
-                                    <input type="text" value={job.openingsGlobally} onChange={(e) => handleArrayChange('jobTrends', index, 'openingsGlobally', e.target.value)} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-indigo-500" placeholder="e.g. 150k+" />
+                                    <input type="text" value={job.openingsGlobally} onChange={(e) => handleArrayChange('jobTrends', index, 'openingsGlobally', e.target.value)} className="w-full border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-slate-200" placeholder="e.g. 150k+" />
                                 </div>
                                 <div className="md:col-span-1 flex items-end justify-end pb-1">
                                     <button type="button" onClick={() => removeArrayItem('jobTrends', index)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">
@@ -321,7 +321,7 @@ export default function AdminMarketRadar() {
                 <div className="pt-6">
                     <button
                         type="submit"
-                        className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/20 transition-all hover:-translate-y-1"
+                        className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-xl shadow-slate-200 transition-all hover:-translate-y-1"
                     >
                         <Save className="w-6 h-6" /> Publish Market Radar Data to Platform
                     </button>

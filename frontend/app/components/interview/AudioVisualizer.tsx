@@ -31,7 +31,7 @@ export default function AudioVisualizer({ isActive }: { isActive: boolean }) {
             }
 
             // Animated Bars
-            ctx.fillStyle = '#6366f1'; // indigo-500
+            ctx.fillStyle = '#6366f1'; // slate-500
             for (let i = 0; i < bars; i++) {
                 // Random height for simulation
                 const height = Math.random() * 40 + 10;

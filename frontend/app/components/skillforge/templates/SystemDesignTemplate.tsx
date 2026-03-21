@@ -60,7 +60,7 @@ export default function SystemDesignTemplate() {
             <div className="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 z-10">
                 <div className="p-6 border-b border-slate-100">
                     <h2 className="font-bold text-slate-800 flex items-center gap-2">
-                        <Layers size={20} className="text-indigo-600" />
+                        <Layers size={20} className="text-slate-800" />
                         Components
                     </h2>
                     <p className="text-xs text-slate-500 mt-1">Drag to build your architecture</p>
@@ -101,8 +101,8 @@ export default function SystemDesignTemplate() {
                         <button
                             onClick={handleSimulate}
                             disabled={isSimulating}
-                            className={`flex items-center gap-2 px-6 py-2 text-sm font-bold text-white rounded-lg transition-all shadow-lg shadow-indigo-200 active:scale-95
-                                ${isSimulating ? 'bg-indigo-400 cursor-wait' : 'bg-indigo-600 hover:bg-indigo-500'}
+                            className={`flex items-center gap-2 px-6 py-2 text-sm font-bold text-white rounded-lg transition-all shadow-lg shadow-slate-200 active:scale-95
+                                ${isSimulating ? 'bg-slate-400 cursor-wait' : 'bg-slate-800 hover:bg-slate-500'}
                             `}
                         >
                             {isSimulating ? (
@@ -136,16 +136,16 @@ export default function SystemDesignTemplate() {
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.8 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="w-32 h-32 bg-white rounded-2xl border-2 border-slate-200 shadow-xl flex flex-col items-center justify-center gap-3 relative group hover:border-indigo-400 transition-colors cursor-move"
+                                        className="w-32 h-32 bg-white rounded-2xl border-2 border-slate-200 shadow-xl flex flex-col items-center justify-center gap-3 relative group hover:border-slate-400 transition-colors cursor-move"
                                     >
-                                        <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
+                                        <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-800">
                                             <item.icon size={24} />
                                         </div>
                                         <span className="text-xs font-bold text-slate-700">{item.label}</span>
 
                                         {/* Connection Points */}
-                                        <div className="absolute -right-1 w-2 h-2 bg-slate-300 rounded-full group-hover:bg-indigo-500"></div>
-                                        <div className="absolute -left-1 w-2 h-2 bg-slate-300 rounded-full group-hover:bg-indigo-500"></div>
+                                        <div className="absolute -right-1 w-2 h-2 bg-slate-300 rounded-full group-hover:bg-slate-500"></div>
+                                        <div className="absolute -left-1 w-2 h-2 bg-slate-300 rounded-full group-hover:bg-slate-500"></div>
                                     </motion.div>
                                 </Reorder.Item>
                             ))}

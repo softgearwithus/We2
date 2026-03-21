@@ -17,11 +17,11 @@ const RichContentRenderer = ({ content }: { content: string }) => {
         <div className="space-y-6">
             {lines.map((line, i) => {
                 if (line.startsWith('# ')) {
-                    return <h1 key={i} className="text-3xl font-black text-slate-900 mt-8 mb-4 border-b-2 border-indigo-100 pb-2">{line.replace('# ', '')}</h1>;
+                    return <h1 key={i} className="text-3xl font-black text-slate-900 mt-8 mb-4 border-b-2 border-slate-200 pb-2">{line.replace('# ', '')}</h1>;
                 }
                 if (line.startsWith('## ')) {
                     return <h2 key={i} className="text-2xl font-extrabold text-slate-800 mt-6 mb-3 flex items-center gap-2">
-                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
+                        <div className="w-1.5 h-6 bg-slate-500 rounded-full"></div>
                         {line.replace('## ', '')}
                     </h2>;
                 }
@@ -31,7 +31,7 @@ const RichContentRenderer = ({ content }: { content: string }) => {
                 if (line.startsWith('- ') || line.startsWith('* ')) {
                     return (
                         <div key={i} className="flex gap-3 text-slate-600 mb-2 pl-2">
-                            <span className="text-indigo-500 font-bold">•</span>
+                            <span className="text-slate-700 font-bold">•</span>
                             <span className="leading-relaxed">{line.substring(2)}</span>
                         </div>
                     );
@@ -42,7 +42,7 @@ const RichContentRenderer = ({ content }: { content: string }) => {
                     if (altMatch && urlMatch) {
                         return (
                             <div key={i} className="my-8 rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 group">
-                                <img
+                                <img loading="lazy" decoding="async"
                                     src={urlMatch[1]}
                                     alt={altMatch[1]}
                                     className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
@@ -168,7 +168,7 @@ export default function TopicPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
+        <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900">
             {/* Header */}
             <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
                 <div className="max-w-7xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
@@ -189,7 +189,7 @@ export default function TopicPage() {
                                     <button
                                         key={lang}
                                         onClick={() => setSelectedLanguage(lang)}
-                                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${selectedLanguage === lang ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                                        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${selectedLanguage === lang ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
                                     >
                                         {lang}
                                     </button>
@@ -217,12 +217,12 @@ export default function TopicPage() {
                                 }}
                                 className={`w-full text-left p-3 rounded-xl border transition-all text-sm font-medium flex items-start gap-3
                                     ${activeTopicIndex === idx
-                                        ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm'
+                                        ? 'bg-slate-50 border-slate-200 text-slate-900 shadow-sm'
                                         : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 hover:text-slate-900'}
                                 `}
                             >
                                 <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 border text-[10px] font-bold transition-colors
-                                    ${activeTopicIndex === idx ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 border-slate-200 text-slate-400'}
+                                    ${activeTopicIndex === idx ? 'bg-slate-800 text-white border-slate-800' : 'bg-slate-50 border-slate-200 text-slate-400'}
                                 `}>
                                     {idx + 1}
                                 </span>
@@ -249,7 +249,7 @@ export default function TopicPage() {
 
                                 <button
                                     onClick={handleReadMore}
-                                    className="mt-6 inline-flex items-center gap-3 bg-white border-2 border-indigo-100 text-indigo-600 px-6 py-3 rounded-2xl font-black shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group"
+                                    className="mt-6 inline-flex items-center gap-3 bg-white border-2 border-slate-200 text-slate-800 px-6 py-3 rounded-2xl font-black shadow-sm hover:shadow-md hover:border-slate-300 transition-all group"
                                 >
                                     <BookOpen size={20} />
                                     <span>Read Comprehensive Guide</span>
@@ -264,9 +264,9 @@ export default function TopicPage() {
                                 {activeTopic.content?.keyConcepts && (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {activeTopic.content.keyConcepts.map((concept: any, i: number) => (
-                                            <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-indigo-100 transition-colors">
+                                            <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-slate-200 transition-colors">
                                                 <div className="flex items-center gap-2 mb-2">
-                                                    <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                                                    <div className="w-2 h-2 rounded-full bg-slate-500"></div>
                                                     <h3 className="font-bold text-slate-900">{concept.label}</h3>
                                                 </div>
                                                 <p className="text-sm text-slate-500">{concept.text}</p>
@@ -279,7 +279,7 @@ export default function TopicPage() {
                                     <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-slate-900">
                                         <div className="bg-slate-800/50 px-4 py-3 flex items-center justify-between border-b border-slate-700">
                                             <div className="flex items-center gap-2">
-                                                <Code size={16} className="text-indigo-400" />
+                                                <Code size={16} className="text-slate-400" />
                                                 <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">{selectedLanguage} Example</span>
                                             </div>
                                         </div>
@@ -302,7 +302,7 @@ export default function TopicPage() {
                             <button
                                 disabled={activeTopicIndex === 0}
                                 onClick={() => setActiveTopicIndex(prev => prev - 1)}
-                                className="text-slate-500 hover:text-indigo-600 font-bold text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="text-slate-500 hover:text-slate-800 font-bold text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 <ArrowLeft size={16} /> Previous Topic
                             </button>
@@ -347,7 +347,7 @@ export default function TopicPage() {
                         >
                             <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-100 px-8 py-6 flex items-center justify-between z-10">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white shadow-lg shadow-slate-200">
                                         <BookOpen size={20} />
                                     </div>
                                     <div>
@@ -367,7 +367,7 @@ export default function TopicPage() {
                                 {loadingDetails ? (
                                     <div className="py-40 flex flex-col items-center justify-center gap-6 text-slate-400">
                                         <div className="relative">
-                                            <Loader2 className="animate-spin text-indigo-600" size={50} />
+                                            <Loader2 className="animate-spin text-slate-800" size={50} />
                                             <Sparkles className="absolute top-0 right-0 text-brand-orange animate-pulse" size={20} />
                                         </div>
                                         <p className="font-black text-lg text-slate-500">Preparing your deep dive lesson...</p>
@@ -383,13 +383,13 @@ export default function TopicPage() {
 
                                         <RichContentRenderer content={detailedContent.content} />
 
-                                        <div className="mt-20 p-8 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-start gap-4">
-                                            <div className="p-3 bg-white rounded-2xl shadow-sm text-indigo-600">
+                                        <div className="mt-20 p-8 rounded-3xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                                            <div className="p-3 bg-white rounded-2xl shadow-sm text-slate-800">
                                                 <Lightbulb size={24} />
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-indigo-900 mb-1">Learning Tip</h4>
-                                                <p className="text-indigo-700/80 leading-relaxed font-medium">
+                                                <h4 className="font-black text-slate-900 mb-1">Learning Tip</h4>
+                                                <p className="text-slate-900/80 leading-relaxed font-medium">
                                                     Try implementing the logic explained above in the code editor to solidify your understanding. Practical application is the fastest way to master these concepts.
                                                 </p>
                                             </div>

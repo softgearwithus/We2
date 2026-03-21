@@ -166,7 +166,7 @@ export default function AdminContentPage() {
             <div className="max-w-6xl mx-auto">
                 <header className="mb-8 flex items-center justify-between">
                     <div>
-                        <Link href="/admin/students" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-4 transition-colors">
+                        <Link href="/admin/students" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-medium mb-4 transition-colors">
                             <ArrowLeft size={18} /> Back to Admin
                         </Link>
                         <h1 className="text-3xl font-extrabold text-slate-900">Course Content Management</h1>
@@ -182,7 +182,7 @@ export default function AdminContentPage() {
                             <select
                                 value={selectedTopicId}
                                 onChange={(e) => setSelectedTopicId(e.target.value)}
-                                className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all outline-none text-sm"
+                                className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-slate-200 transition-all outline-none text-sm"
                             >
                                 <option value="">-- Choose a Topic --</option>
                                 {roadmapData.map(phase => (
@@ -199,7 +199,7 @@ export default function AdminContentPage() {
                         {selectedTopicId && (
                             <button
                                 onClick={handleApplyTemplate}
-                                className="w-full bg-white border border-indigo-200 text-indigo-600 p-4 rounded-3xl font-bold text-sm hover:bg-indigo-50 transition-all flex items-center justify-center gap-3 shadow-sm group"
+                                className="w-full bg-white border border-slate-200 text-slate-800 p-4 rounded-3xl font-bold text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-3 shadow-sm group"
                             >
                                 <Sparkles size={18} className="group-hover:rotate-12 transition-transform" />
                                 Apply Lesson Template
@@ -222,13 +222,13 @@ export default function AdminContentPage() {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => setPreview(false)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${!preview ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-indigo-600'}`}
+                                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${!preview ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                                         >
                                             <Edit3 size={16} /> Edit
                                         </button>
                                         <button
                                             onClick={() => setPreview(true)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${preview ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-indigo-600'}`}
+                                            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${preview ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                                         >
                                             <Eye size={16} /> Preview
                                         </button>
@@ -245,7 +245,7 @@ export default function AdminContentPage() {
                                         <button
                                             onClick={handleSave}
                                             disabled={saving || loading || generating}
-                                            className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-100 disabled:opacity-50"
+                                            className="bg-slate-800 text-white px-6 py-2 rounded-xl font-bold text-sm hover:bg-slate-900 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 disabled:opacity-50"
                                         >
                                             {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                             {saving ? 'Saving...' : 'Save Content'}
@@ -256,7 +256,7 @@ export default function AdminContentPage() {
                                 <div className="flex-1 p-8">
                                     {loading ? (
                                         <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-3">
-                                            <Loader2 className="animate-spin text-indigo-500" size={32} />
+                                            <Loader2 className="animate-spin text-slate-700" size={32} />
                                             <p className="text-sm font-medium">Fetching content...</p>
                                         </div>
                                     ) : (
@@ -279,7 +279,7 @@ export default function AdminContentPage() {
                                                     placeholder="Write your comprehensive lesson here... Markdown supported."
                                                     value={content}
                                                     onChange={(e) => setContent(e.target.value)}
-                                                    className="flex-1 w-full mt-2 border border-slate-100 rounded-3xl p-6 font-mono text-sm text-slate-700 outline-none focus:border-indigo-200 transition-colors resize-none placeholder:text-slate-300 bg-slate-50/30 leading-relaxed min-h-[500px]"
+                                                    className="flex-1 w-full mt-2 border border-slate-100 rounded-3xl p-6 font-mono text-sm text-slate-700 outline-none focus:border-slate-200 transition-colors resize-none placeholder:text-slate-300 bg-slate-50/30 leading-relaxed min-h-[500px]"
                                                 />
                                             )}
                                         </div>

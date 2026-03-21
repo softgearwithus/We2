@@ -25,7 +25,7 @@ const item: Variants = {
 export default function TestSeriesPage() {
     const { remainingLabel, isLimited, isFreePlan } = useTestSeriesUsage();
     return (
-        <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 overflow-x-hidden pb-20 relative">
+        <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900 overflow-x-hidden pb-20 relative">
             {/* Minimalist Background pattern */}
             <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
 
@@ -36,16 +36,16 @@ export default function TestSeriesPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-14 mt-6"
                 >
-                    <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-bold mb-8 transition-colors group px-4 py-2 rounded-full hover:bg-white bg-transparent border border-transparent hover:border-slate-200">
+                    <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-8 transition-colors group px-4 py-2 rounded-full hover:bg-white bg-transparent border border-transparent hover:border-slate-200">
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Dashboard
                     </Link>
 
                     <div className="max-w-3xl">
-                        <div className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-indigo-100">
+                        <div className="bg-slate-50 text-slate-800 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-slate-200">
                             <Sparkles size={14} /> Pro Practice Platform
                         </div>
                         <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 mb-4">
-                            Test <span className="text-indigo-600">Series.</span>
+                            Test <span className="text-slate-800">Series.</span>
                         </h1>
                         <p className="text-lg text-slate-500 font-medium">
                             Master your skills. Train with focused, high-speed practice simulations.
@@ -67,10 +67,10 @@ export default function TestSeriesPage() {
                     >
                         {/* Subject Wise Card */}
                         <motion.div variants={item}>
-                            <Link href="/dashboard/test-series/subject" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}>
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-100 transition-colors" />
+                            <Link href="/dashboard/test-series/subject" className={`group block h-full bg-white rounded-3xl p-8 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-slate-200'}`}>
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-slate-100 transition-colors" />
 
-                                <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                <div className="w-14 h-14 bg-slate-50 text-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-slate-800 group-hover:text-white transition-all duration-300">
                                     <BookOpen size={24} strokeWidth={2.5} />
                                 </div>
                                 <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Subject <br /> Practice.</h3>
@@ -79,8 +79,8 @@ export default function TestSeriesPage() {
                                 </p>
 
                                 <div className="flex items-center justify-between mt-auto">
-                                    <span className="text-indigo-600 font-bold text-sm">Start Practice</span>
-                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                    <span className="text-slate-800 font-bold text-sm">Start Practice</span>
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-slate-50 group-hover:text-slate-800 transition-colors">
                                         <ChevronRight size={18} />
                                     </div>
                                 </div>

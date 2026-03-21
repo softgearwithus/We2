@@ -33,15 +33,17 @@ const config = {
                 'glass-gradient': 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
             },
             fontFamily: {
-                "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
+                "sans": ["var(--font-inter)", "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"],
+                "display": ["var(--font-pjs)", "sans-serif"],
+                "mono": ["var(--font-jetbrains-mono)", "monospace"],
             },
             borderRadius: {
                 "2xl": "1rem",
                 "3xl": "1.5rem",
             },
             boxShadow: {
-                "subtle": "0 2px 10px rgba(0, 0, 0, 0.05)",
-                "premium": "0 20px 40px -10px rgba(0, 0, 0, 0.05)",
+                "subtle": "0 4px 20px rgba(0, 0, 0, 0.08)",
+                "premium": "0 24px 48px -12px rgba(0, 0, 0, 0.15)",
                 'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
                 'neon': '0 0 10px rgba(67, 97, 238, 0.5), 0 0 20px rgba(67, 97, 238, 0.3)',
             },

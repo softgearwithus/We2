@@ -54,7 +54,7 @@ export default function LanguageCoursePage() {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                    <div className="w-12 h-12 border-4 border-slate-200 border-t-slate-600 rounded-full animate-spin"></div>
                     <p className="text-slate-500 font-medium animate-pulse">Loading Syllabus...</p>
                 </div>
             </div>
@@ -69,7 +69,7 @@ export default function LanguageCoursePage() {
                 <p className="text-slate-500 mb-8 max-w-md">
                     We couldn't find any chapters for <strong>{languageId}</strong>. This content might be coming soon!
                 </p>
-                <Link href="/dashboard/skillforge/programming" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
+                <Link href="/dashboard/skillforge/programming" className="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 transition">
                     Back to Languages
                 </Link>
             </div>
@@ -81,9 +81,9 @@ export default function LanguageCoursePage() {
             {/* Header */}
             <div className="bg-slate-900 pt-20 pb-24 px-6 lg:px-10 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/20 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
+                <div className="absolute top-0 right-0 w-full max-w-full max-w-[500px] h-[500px] bg-slate-500/20 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
 
-                <div className="max-w-[1200px] mx-auto relative z-10">
+                <div className="max-w-full max-w-[1200px] mx-auto relative z-10">
                     <Link href="/dashboard/skillforge/programming" className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors">
                         <ArrowLeft size={16} /> Back to Languages
                     </Link>
@@ -100,7 +100,7 @@ export default function LanguageCoursePage() {
                             <BookOpen size={18} />
                             <span>{chapters.length} Modules</span>
                         </div>
-                        <div className="flex items-center gap-2 text-indigo-400 font-bold bg-white/10 px-4 py-2 rounded-full backdrop-blur-md">
+                        <div className="flex items-center gap-2 text-slate-400 font-bold bg-white/10 px-4 py-2 rounded-full backdrop-blur-md">
                             <BrainCircuit size={18} />
                             <span>Beginner Friendly</span>
                         </div>
@@ -109,7 +109,7 @@ export default function LanguageCoursePage() {
             </div>
 
             {/* Syllabus Content */}
-            <div className="max-w-[1000px] mx-auto px-6 lg:px-10 -mt-12 relative z-20 pb-20">
+            <div className="max-w-full max-w-[1000px] mx-auto px-6 lg:px-10 -mt-12 relative z-20 pb-20">
                 <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
                     <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-6">
                         <h2 className="text-2xl font-bold text-slate-900">Course Syllabus</h2>
@@ -123,7 +123,7 @@ export default function LanguageCoursePage() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="flex items-center gap-5 p-5 rounded-2xl hover:bg-slate-50 border border-slate-100 group-hover:border-indigo-100 transition-all cursor-pointer"
+                                    className="flex items-center gap-5 p-5 rounded-2xl hover:bg-slate-50 border border-slate-100 group-hover:border-slate-200 transition-all cursor-pointer"
                                 >
                                     <div className="flex-shrink-0">
                                         {chapter.completed ? (
@@ -131,7 +131,7 @@ export default function LanguageCoursePage() {
                                                 <CheckCircle2 size={20} />
                                             </div>
                                         ) : index === 0 || chapters[index - 1]?.completed ? (
-                                            <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
                                                 <Play size={20} fill="currentColor" />
                                             </div>
                                         ) : (
@@ -142,7 +142,7 @@ export default function LanguageCoursePage() {
                                     </div>
 
                                     <div className="flex-1">
-                                        <h3 className="font-bold text-slate-800 text-lg group-hover:text-indigo-600 transition-colors">
+                                        <h3 className="font-bold text-slate-800 text-lg group-hover:text-slate-800 transition-colors">
                                             {chapter.title}
                                         </h3>
                                         <p className="text-slate-500 font-medium text-sm mt-1">
@@ -154,7 +154,7 @@ export default function LanguageCoursePage() {
                                         <button className="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-all">
                                             Skip
                                         </button>
-                                        <span className="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 bg-white border border-slate-200 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all">
+                                        <span className="px-4 py-2 rounded-lg text-xs font-bold text-slate-500 bg-white border border-slate-200 group-hover:bg-slate-800 group-hover:text-white group-hover:border-slate-800 transition-all">
                                             Start Module
                                         </span>
                                     </div>

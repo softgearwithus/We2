@@ -149,7 +149,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-slate-100 shrink-0">
                             <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                                <User className="text-indigo-500" /> Edit Profile
+                                <User className="text-slate-700" /> Edit Profile
                             </h2>
                             <button
                                 onClick={onClose}
@@ -181,7 +181,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                     <div className="relative group">
                                         <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
                                             {avatarPreview ? (
-                                                <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                                                <img loading="lazy" decoding="async" src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-slate-400">
                                                     <User size={32} />
@@ -210,7 +210,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleChange}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                     required
                                                 />
                                             </div>
@@ -223,7 +223,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                         name="username"
                                                         value={formData.username}
                                                         onChange={handleChange}
-                                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                        className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                         required
                                                     />
                                                 </div>
@@ -237,7 +237,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                 value={formData.bio}
                                                 onChange={handleChange}
                                                 rows={3}
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium resize-none"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium resize-none"
                                             />
                                         </div>
 
@@ -248,7 +248,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                 name="location"
                                                 value={formData.location}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -280,7 +280,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                     name="website"
                                                     value={formData.website}
                                                     onChange={handleChange}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-16 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-16 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                 />
                                             </div>
                                         </div>
@@ -293,7 +293,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                     name="github"
                                                     value={formData.github}
                                                     onChange={handleChange}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                 />
                                             </div>
                                             <div>
@@ -303,7 +303,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                                     name="linkedin"
                                                     value={formData.linkedin}
                                                     onChange={handleChange}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                 />
                                             </div>
                                         </div>
@@ -325,7 +325,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                                 type="submit"
                                 form="edit-profile-form"
                                 disabled={isSaving}
-                                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all disabled:opacity-50"
+                                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all disabled:opacity-50"
                             >
                                 <Save size={16} />
                                 {isSaving ? 'Saving...' : 'Save Changes'}

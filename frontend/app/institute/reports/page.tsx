@@ -65,7 +65,7 @@ export default function ReportsPage() {
                     </button>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+                        className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-slate-200 flex items-center gap-2"
                     >
                         <Printer className="w-4 h-4" />
                         Print Summary

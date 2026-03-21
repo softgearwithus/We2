@@ -34,7 +34,7 @@ export default function TechnologyTemplate({
     const workflowSteps = [
         { id: 1, title: 'Development', desc: 'Write clean, modular code', icon: Code, color: 'bg-blue-500' },
         { id: 2, title: 'Version Control', desc: 'Commit & Push changes', icon: GitBranch, color: 'bg-orange-500' },
-        { id: 3, title: 'CI/CD Pipeline', desc: 'Auto-build & Test', icon: Layers, color: 'bg-purple-500' },
+        { id: 3, title: 'CI/CD Pipeline', desc: 'Auto-build & Test', icon: Layers, color: 'bg-slate-500' },
         { id: 4, title: 'Containerization', desc: 'Dockerize application', icon: Box, color: 'bg-cyan-500' },
         { id: 5, title: 'Deployment', desc: 'Go live on cloud', icon: Cloud, color: 'bg-emerald-500' }
     ];
@@ -48,7 +48,7 @@ export default function TechnologyTemplate({
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center space-y-4"
             >
-                <span className="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold uppercase tracking-wider">
+                <span className="px-4 py-1.5 bg-slate-100 text-slate-900 rounded-full text-sm font-bold uppercase tracking-wider">
                     Technology Track
                 </span>
                 <h1 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tight">
@@ -62,7 +62,7 @@ export default function TechnologyTemplate({
             {/* 2. Interactive Roadmap (Horizontal) */}
             <section>
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
+                    <div className="p-2 bg-slate-100 rounded-lg text-slate-800">
                         <GitBranch size={24} />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900">DevOps Workflow</h2>
@@ -84,8 +84,8 @@ export default function TechnologyTemplate({
                                 className={`
                                     relative bg-white p-6 rounded-2xl border transition-all duration-300 cursor-pointer
                                     ${activeStep === step.id
-                                        ? 'border-indigo-500 shadow-xl shadow-indigo-100 -translate-y-2'
-                                        : 'border-slate-200 shadow-sm hover:border-indigo-200'
+                                        ? 'border-slate-400 shadow-xl shadow-slate-200 -translate-y-2'
+                                        : 'border-slate-200 shadow-sm hover:border-slate-200'
                                     }
                                 `}
                             >
@@ -126,13 +126,13 @@ export default function TechnologyTemplate({
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.2 + (index * 0.1) }}
-                                className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all flex items-start gap-4"
+                                className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all flex items-start gap-4"
                             >
-                                <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-indigo-50 transition-colors">
-                                    <item.icon className="text-slate-600 group-hover:text-indigo-600 transition-colors" size={28} />
+                                <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-slate-50 transition-colors">
+                                    <item.icon className="text-slate-600 group-hover:text-slate-800 transition-colors" size={28} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-indigo-700 transition-colors">{item.title}</h3>
+                                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-slate-900 transition-colors">{item.title}</h3>
                                     <p className="text-slate-500 leading-relaxed mt-1">{item.description}</p>
                                 </div>
                             </motion.div>
@@ -161,15 +161,15 @@ export default function TechnologyTemplate({
                             >
                                 <div className={`relative w-full h-full duration-500 preserve-3d transition-transform ${flippedCard === card.id ? 'rotate-y-180' : ''}`}>
                                     {/* Front */}
-                                    <div className="absolute inset-0 backface-hidden bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md group-hover:border-indigo-300 transition-all">
+                                    <div className="absolute inset-0 backface-hidden bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md group-hover:border-slate-300 transition-all">
                                         <p className="font-bold text-slate-800 text-lg">{card.question}</p>
-                                        <div className="mt-4 text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="mt-4 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <RotateCw size={20} />
                                         </div>
                                     </div>
 
                                     {/* Back */}
-                                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl p-6 flex items-center justify-center text-center shadow-lg text-white">
+                                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-slate-600 to-violet-600 rounded-2xl p-6 flex items-center justify-center text-center shadow-lg text-white">
                                         <p className="font-medium text-lg leading-relaxed">{card.answer}</p>
                                     </div>
                                 </div>

@@ -58,7 +58,7 @@ export default function SubscriptionGuard({ children, requiredPlan, featureName 
                 </h3>
 
                 <p className="text-slate-600 max-w-md mb-8 font-medium leading-relaxed">
-                    This feature requires the <span className="text-indigo-600 font-bold">{PLAN_NAMES[requiredPlan]}</span> plan or higher. Upgrade now to unlock full access.
+                    This feature requires the <span className="text-slate-800 font-bold">{PLAN_NAMES[requiredPlan]}</span> plan or higher. Upgrade now to unlock full access.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">

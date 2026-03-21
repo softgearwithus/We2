@@ -116,7 +116,7 @@ export default function CollegesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                     { label: 'Total Institutions', value: colleges.length, icon: Building2, color: 'text-blue-600' },
-                    { label: 'Total Students', value: colleges.reduce((acc, c) => acc + (c.students || 0), 0).toLocaleString(), icon: Users, color: 'text-indigo-600' }
+                    { label: 'Total Students', value: colleges.reduce((acc, c) => acc + (c.students || 0), 0).toLocaleString(), icon: Users, color: 'text-slate-800' }
                 ].map((stat, i) => (
                     <div key={i} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
                         <div className={`p-2.5 rounded-lg bg-slate-50 ${stat.color} border border-slate-100`}>

@@ -41,8 +41,8 @@ export default function RegisterPage() {
             >
                 {/* Background Effects */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-orange/10 rounded-full blur-[100px] -mr-32 -mt-32" />
-                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px] -ml-20 -mb-20" />
+                    <div className="absolute top-0 right-0 w-full max-w-full max-w-[600px] h-[600px] bg-brand-orange/10 rounded-full blur-[100px] -mr-32 -mt-32" />
+                    <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[500px] h-[500px] bg-slate-800/10 rounded-full blur-[100px] -ml-20 -mb-20" />
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
                     {/* Grid Pattern */}
                     <div className="absolute inset-0 opacity-[0.03]" style={{
@@ -131,11 +131,11 @@ export default function RegisterPage() {
                                 whileTap={!isNavigating ? { scale: 0.98 } : {}}
                                 animate={isNavigating && selection !== 'student' ? { opacity: 0.5, scale: 0.95 } : {}}
                                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-hidden ${selection === 'student'
-                                    ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-105'
-                                    : 'border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/50'
+                                    ? 'border-slate-800 bg-slate-50 shadow-lg scale-105'
+                                    : 'border-slate-100 hover:border-slate-400 hover:bg-slate-50/50'
                                     } ${registrationsAllowed ? '' : 'opacity-60 cursor-not-allowed'}`}
                             >
-                                <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform ${selection === 'student' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600 group-hover:scale-110'
+                                <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform ${selection === 'student' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-800 group-hover:scale-110'
                                     }`}>
                                     {selection === 'student' && isNavigating ? (
                                         <Loader2 size={28} className="animate-spin" />
@@ -144,17 +144,17 @@ export default function RegisterPage() {
                                     )}
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className={`font-bold transition-colors text-lg ${selection === 'student' ? 'text-indigo-700' : 'text-slate-900'}`}>I am a Student</h3>
+                                    <h3 className={`font-bold transition-colors text-lg ${selection === 'student' ? 'text-slate-900' : 'text-slate-900'}`}>I am a Student</h3>
                                     <p className="text-sm text-slate-500 mt-1">
                                         Prepare for interviews & build projects.
                                     </p>
                                 </div>
                                 {selection === 'student' ? (
-                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-indigo-600">
+                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-slate-800">
                                         <ArrowRight size={24} />
                                     </motion.div>
                                 ) : (
-                                    <ArrowRight className="text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                                    <ArrowRight className="text-slate-300 group-hover:text-slate-700 transition-colors" />
                                 )}
                             </motion.div>
 

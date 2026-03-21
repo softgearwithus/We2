@@ -118,7 +118,7 @@ export default function GenericTrackPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="animate-spin text-indigo-600" size={48} />
+                <Loader2 className="animate-spin text-slate-800" size={48} />
             </div>
         );
     }
@@ -131,7 +131,7 @@ export default function GenericTrackPage() {
                 <p className="text-slate-500 mb-8 max-w-md">
                     We couldn't load content for <strong>{trackId}</strong>. It might be coming soon!
                 </p>
-                <Link href="/dashboard/skillforge" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
+                <Link href="/dashboard/skillforge" className="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 transition">
                     Back to Skill Forge
                 </Link>
             </div>
@@ -139,9 +139,9 @@ export default function GenericTrackPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 lg:p-10 max-w-[1600px] mx-auto">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 lg:p-10 max-w-full max-w-[1600px] mx-auto">
             <div className="mb-12">
-                <Link href="/dashboard/skillforge" className="text-sm font-bold text-slate-500 hover:text-indigo-600 mb-4 inline-block transition-colors">
+                <Link href="/dashboard/skillforge" className="text-sm font-bold text-slate-500 hover:text-slate-800 mb-4 inline-block transition-colors">
                     ← Back to Skill Forge
                 </Link>
                 <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-4 capitalize">
@@ -168,21 +168,21 @@ export default function GenericTrackPage() {
                             So we can reuse the chapter viewer if we route correctly.
                         */}
                         <Link href={`/dashboard/skillforge/${trackId}/${topic.id}`} className="block h-full group">
-                            <div className="bg-white h-full p-8 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative overflow-hidden">
+                            <div className="bg-white h-full p-8 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 relative overflow-hidden">
                                 <div className={`absolute top-0 right-0 p-32 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${topic.bg.replace('/10', '/30')}`}></div>
 
                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${topic.bg} ${topic.color} mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
                                     {getIcon(topic.icon)}
                                 </div>
 
-                                <h2 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+                                <h2 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-slate-800 transition-colors">
                                     {topic.name}
                                 </h2>
                                 <p className="text-slate-500 font-medium leading-relaxed mb-8">
                                     {topic.description}
                                 </p>
 
-                                <div className="flex items-center gap-2 text-sm font-bold text-slate-400 group-hover:text-indigo-600 transition-colors mt-auto">
+                                <div className="flex items-center gap-2 text-sm font-bold text-slate-400 group-hover:text-slate-800 transition-colors mt-auto">
                                     Start Topic <ArrowRight size={16} />
                                 </div>
                             </div>

@@ -7,7 +7,7 @@ export default function UpgradeNowCard() {
         <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-white to-orange-50/30 p-8 lg:p-10 border border-orange-100 shadow-[0_8px_30px_-12px_rgba(249,115,22,0.15)] mb-8 w-full group transition-all duration-500 hover:shadow-[0_20px_60px_-15px_rgba(249,115,22,0.2)] hover:-translate-y-1">
             {/* Ambient Background Glows */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-brand-orange/20 to-orange-400/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none transition-all duration-700 group-hover:bg-brand-orange/25"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-slate-500/5 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
 
             <div className="relative z-10 flex flex-col xl:flex-row items-center gap-10 justify-between">
                 

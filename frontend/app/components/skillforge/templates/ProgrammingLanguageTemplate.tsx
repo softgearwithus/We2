@@ -78,7 +78,7 @@ export default function ProgrammingLanguageTemplate({
                     <div className="p-2 hover:bg-[#333] rounded cursor-pointer text-slate-400 hover:text-white transition-colors">
                         <Settings size={18} />
                     </div>
-                    <div className="w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                    <div className="w-7 h-7 bg-slate-800 rounded-full flex items-center justify-center text-xs font-bold text-white">
                         AY
                     </div>
                 </div>
@@ -87,7 +87,7 @@ export default function ProgrammingLanguageTemplate({
             {/* 2. Main Workspace (Split View) */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Left Panel: Problem Description */}
-                <div className="w-1/2 flex flex-col border-r border-[#333] bg-[#1e1e1e] min-w-[400px]">
+                <div className="w-1/2 flex flex-col border-r border-[#333] bg-[#1e1e1e] min-w-full max-w-full max-w-[400px]">
                     {/* Tabs */}
                     <div className="h-10 bg-[#262626] flex items-center px-2 border-b border-[#333] gap-1">
                         <div className="flex items-center gap-2 px-3 py-2 bg-[#1e1e1e] border-t-2 border-transparent border-t-blue-500 text-xs font-medium text-white cursor-pointer select-none">
@@ -149,7 +149,7 @@ export default function ProgrammingLanguageTemplate({
                 </div>
 
                 {/* Right Panel: Editor & Result */}
-                <div className="w-1/2 flex flex-col bg-[#1e1e1e] min-w-[400px]">
+                <div className="w-1/2 flex flex-col bg-[#1e1e1e] min-w-full max-w-full max-w-[400px]">
                     {/* Editor Header */}
                     <div className="h-10 bg-[#262626] flex items-center justify-between px-2 border-b border-[#333]">
                         <div className="flex items-center gap-1">

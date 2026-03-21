@@ -220,7 +220,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                             // Logic to determine if parent or any child is active
                             const activeSubHref = getActiveSubHref(item.subItems);
                             const isParentActive = pathname === item.href || Boolean(activeSubHref);
-                            const itemActiveClass = mode === 'prep' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600';
+                            const itemActiveClass = mode === 'prep' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-800';
 
                             // Check if this specific item is the exact active path
                             const isExactActive = pathname === item.href;
@@ -289,7 +289,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                                                         key={sub.href}
                                                         href={sub.href}
                                                         className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${isSubActive
-                                                            ? 'text-indigo-600 font-bold bg-indigo-50/50'
+                                                            ? 'text-slate-800 font-bold bg-slate-50/50'
                                                             : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
                                                             }`}
                                                     >

@@ -117,8 +117,8 @@ export default function LeetCodeProfile() {
             label: 'SQL',
             solved: stats.sqlSolved,
             total: stats.sqlTotal,
-            color: 'text-indigo-600',
-            bg: 'bg-indigo-500',
+            color: 'text-slate-800',
+            bg: 'bg-slate-500',
         },
         projects: {
             label: 'Projects',
@@ -132,18 +132,18 @@ export default function LeetCodeProfile() {
 
     return (
         <div className="min-h-screen bg-[#fafafa] font-sans text-slate-900 pb-20">
-            <div className="max-w-[1200px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6">
+            <div className="max-w-full max-w-[1200px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6">
 
                 {/* LEFT SIDEBAR (User Info) */}
-                <div className="w-full md:w-[320px] shrink-0 space-y-4">
+                <div className="w-full md:w-full max-w-full max-w-[320px] shrink-0 space-y-4">
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         {/* Avatar & Basic Info */}
                         <div className="p-6">
                             <div className="flex items-start justify-between">
                                 <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 mb-4 border border-slate-200">
-                                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                    <img loading="lazy" decoding="async" src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                 </div>
-                                <button onClick={() => setIsEditModalOpen(true)} className="text-slate-400 hover:text-indigo-600 transition-colors p-2 bg-slate-50 hover:bg-indigo-50 rounded-lg">
+                                <button onClick={() => setIsEditModalOpen(true)} className="text-slate-400 hover:text-slate-800 transition-colors p-2 bg-slate-50 hover:bg-slate-50 rounded-lg">
                                     <Edit3 size={18} />
                                 </button>
                             </div>
@@ -205,7 +205,7 @@ export default function LeetCodeProfile() {
                     {/* Top Row: Problems Solved */}
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                         <h2 className="text-slate-900 font-bold mb-6 flex items-center gap-2">
-                            <Code className="text-indigo-500" size={20} /> Solved Problems
+                            <Code className="text-slate-700" size={20} /> Solved Problems
                         </h2>
 
                         <div className="flex flex-col md:flex-row items-center gap-8">

@@ -21,12 +21,12 @@ export default function AdminTestSeriesHub() {
                     href="/admin/test-series/subjects"
                     className="group bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all"
                 >
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-800 flex items-center justify-center mb-6 group-hover:bg-slate-800 group-hover:text-white transition-colors">
                         <BookOpen size={22} />
                     </div>
                     <h2 className="text-xl font-black text-slate-900">Subject Builder</h2>
                     <p className="text-sm text-slate-500 mt-2">Create hierarchical subject modules and batch import questions into them.</p>
-                    <div className="mt-6 inline-flex items-center gap-2 text-indigo-600 font-bold text-sm">
+                    <div className="mt-6 inline-flex items-center gap-2 text-slate-800 font-bold text-sm">
                         Build Subjects <ClipboardCheck size={16} />
                     </div>
                 </Link>

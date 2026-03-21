@@ -117,7 +117,7 @@ export default function ATSBoardPage() {
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold font-serif text-lg overflow-hidden shrink-0 border border-blue-200 shadow-inner">
                                                 {applicant.student?.avatarUrl ? (
-                                                    <img src={applicant.student.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                                    <img loading="lazy" decoding="async" src={applicant.student.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                                 ) : (
                                                     (applicant.student?.firstName?.[0] || 'U')
                                                 )}

@@ -215,7 +215,7 @@ export default function StatusPage() {
                                     <div className={`w-6 h-6 rounded-full bg-white border-4 border-gray-100 flex items-center justify-center`}>
                                         <div className={`w-2 h-2 rounded-full ${entry.type === 'Feature' ? 'bg-brand-orange' :
                                             entry.type === 'Release' ? 'bg-emerald-500' :
-                                                entry.type === 'Fix' ? 'bg-purple-500' : 'bg-blue-500'
+                                                entry.type === 'Fix' ? 'bg-slate-500' : 'bg-blue-500'
                                             }`} />
                                     </div>
                                 </div>
@@ -228,7 +228,7 @@ export default function StatusPage() {
                                         </span>
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${entry.type === 'Feature' ? 'bg-orange-50 text-brand-orange' :
                                             entry.type === 'Release' ? 'bg-emerald-50 text-emerald-600' :
-                                                entry.type === 'Fix' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'
+                                                entry.type === 'Fix' ? 'bg-slate-50 text-slate-800' : 'bg-blue-50 text-blue-600'
                                             }`}>
                                             <Zap size={10} />
                                             {entry.type}

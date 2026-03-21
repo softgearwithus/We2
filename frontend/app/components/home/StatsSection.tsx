@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import { Users, Star, Zap, Layers } from 'lucide-react';
 
 const stats = [
-    { icon: Users, label: 'Active Students', value: 400, suffix: '+', color: 'orange' },
-    { icon: Star, label: 'Impact Rating', text: '4.3/5', color: 'blue' },
-    { icon: Layers, label: 'Stable Release', text: 'v1.8.2', color: 'purple' },
-    { icon: Zap, label: 'Platform Feature', text: 'AI-powered', color: 'emerald' },
+    { icon: Layers, label: 'Industrial Logic Patterns', value: 200, suffix: '+', color: 'orange' },
+    { icon: Users, label: 'AI Mentorship Access', text: '24/7', color: 'blue' },
+    { icon: Star, label: 'MNC OA Scenarios', value: 50, suffix: '+', color: 'emerald' },
+    { icon: Zap, label: 'Development Focus', text: '100%', color: 'purple' },
 ];
 
 function Counter({ value, suffix }: { value: number, suffix: string }) {

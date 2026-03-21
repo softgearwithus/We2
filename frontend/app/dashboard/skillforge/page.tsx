@@ -24,8 +24,8 @@ const tracks = [
         title: 'Full Stack Development',
         desc: 'Build scalable web applications from scratch.',
         icon: Cpu,
-        color: 'text-purple-500',
-        bg: 'bg-purple-500/10',
+        color: 'text-slate-500',
+        bg: 'bg-slate-500/10',
         href: '/dashboard/skillforge/technology',
         progress: 30,
         total: 80,
@@ -50,8 +50,8 @@ const tracks = [
         title: 'System Design',
         desc: 'Architect scalable systems (HLD/LLD).',
         icon: Users,
-        color: 'text-indigo-500',
-        bg: 'bg-indigo-500/10',
+        color: 'text-slate-700',
+        bg: 'bg-slate-500/10',
         href: '/dashboard/skillforge/system-design',
         progress: 15,
         total: 50,
@@ -76,8 +76,8 @@ const tracks = [
         title: 'AI & Machine Learning',
         desc: 'Neural Networks and Deep Learning.',
         icon: Cpu,
-        color: 'text-purple-500',
-        bg: 'bg-purple-500/10',
+        color: 'text-slate-500',
+        bg: 'bg-slate-500/10',
         href: '/dashboard/skillforge/aiml',
         progress: 25,
         total: 100,
@@ -176,11 +176,11 @@ export default function SkillForgeLanding() {
     });
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 lg:p-10 max-w-[1600px] mx-auto">
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 lg:p-10 max-w-full max-w-[1600px] mx-auto">
 
             {/* Ambient Background Gradient */}
             <div className="fixed inset-0 pointer-events-none opacity-40">
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-200/50 rounded-full blur-[120px]"></div>
+                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-slate-200/50 rounded-full blur-[120px]"></div>
                 <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-emerald-200/50 rounded-full blur-[120px]"></div>
             </div>
 
@@ -223,14 +223,14 @@ export default function SkillForgeLanding() {
                     <div className="space-y-4">
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <Search className="text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                                <Search className="text-slate-400 group-focus-within:text-slate-700 transition-colors" size={20} />
                             </div>
                             <input
                                 type="text"
                                 placeholder="Search by skill, technology, or category..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="block w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all shadow-sm group-hover:shadow-md font-medium text-slate-700"
+                                className="block w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-200 focus:border-slate-400 outline-none transition-all shadow-sm group-hover:shadow-md font-medium text-slate-700"
                             />
                         </div>
 
@@ -285,7 +285,7 @@ export default function SkillForgeLanding() {
                                                 </div>
                                             </div>
 
-                                            <h3 className="font-bold text-slate-900 text-lg mb-2 relative z-10 group-hover:text-indigo-600 transition-colors">
+                                            <h3 className="font-bold text-slate-900 text-lg mb-2 relative z-10 group-hover:text-slate-800 transition-colors">
                                                 {track.title}
                                             </h3>
                                             <p className="text-sm text-slate-500 font-medium mb-5 line-clamp-2 flex-1 relative z-10 leading-relaxed">

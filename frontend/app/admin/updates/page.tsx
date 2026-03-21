@@ -66,11 +66,11 @@ export default function AdminUpdatesPage() {
 
     const modules = [
         { id: '/dashboard', label: 'Overview', icon: <div className="text-slate-500 material-symbols-outlined">dashboard</div>, desc: 'Show indicator for general platform announcements.' },
-        { id: '/dashboard/preparation', label: 'Placement Preparation', icon: <div className="text-indigo-500 material-symbols-outlined">school</div>, desc: 'Show indicator for new preparation roadmaps.' },
+        { id: '/dashboard/preparation', label: 'Placement Preparation', icon: <div className="text-slate-700 material-symbols-outlined">school</div>, desc: 'Show indicator for new preparation roadmaps.' },
         { id: '/dashboard/test-series', label: 'Test Series', icon: <div className="text-red-500 material-symbols-outlined">quiz</div>, desc: 'Show indicator for new or upcoming mock tests.' },
         { id: '/dashboard/dsa', label: 'DSA Training', icon: <Code2 size={20} className="text-blue-500" />, desc: 'Show indicator for new DSA problems or modules.' },
         { id: '/dashboard/sql', label: 'SQL Training', icon: <Database size={20} className="text-emerald-500" />, desc: 'Show indicator for new SQL challenges.' },
-        { id: '/dashboard/projects', label: 'Project Labs', icon: <Rocket size={20} className="text-purple-500" />, desc: 'Show indicator for newly added full-stack project builds.' },
+        { id: '/dashboard/projects', label: 'Project Labs', icon: <Rocket size={20} className="text-slate-500" />, desc: 'Show indicator for newly added full-stack project builds.' },
         { id: '/dashboard/interview', label: 'Mock Interview', icon: <div className="text-amber-500 material-symbols-outlined">mic</div>, desc: 'Show indicator for new interview experiences or slots.' },
         { id: '/dashboard/resume', label: 'Resume', icon: <div className="text-sky-500 material-symbols-outlined">description</div>, desc: 'Show indicator for new resume templates or feedback.' },
         { id: '/dashboard/github', label: 'Git Mastery', icon: <div className="text-orange-500 material-symbols-outlined">memory</div>, desc: 'Show indicator for new Git lessons or pipelines.' },

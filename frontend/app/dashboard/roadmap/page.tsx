@@ -40,12 +40,12 @@ export default function RoadmapPage() {
     return (
         <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900">
             {/* Ambient Background */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-full max-w-full max-w-[600px] h-[600px] bg-slate-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
             <div className="relative z-10 max-w-5xl mx-auto p-6 lg:p-12">
                 {/* Header */}
                 <header className="mb-12">
-                    <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-6 transition-colors group">
+                    <Link href="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-medium mb-6 transition-colors group">
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -60,16 +60,16 @@ export default function RoadmapPage() {
                         </div>
 
                         {/* Overall Progress */}
-                        <div className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm min-w-[250px]">
+                        <div className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm min-w-full max-w-full max-w-[250px]">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-bold text-slate-700">Journey Progress</span>
-                                <span className="text-sm font-bold text-indigo-600">{progress}%</span>
+                                <span className="text-sm font-bold text-slate-800">{progress}%</span>
                             </div>
                             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${progress}%` }}
-                                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                    className="h-full bg-gradient-to-r from-brand-orange to-amber-500"
                                 />
                             </div>
                         </div>
@@ -77,7 +77,7 @@ export default function RoadmapPage() {
                 </header>
 
                 {/* Vertical Timeline */}
-                <div className="relative border-l-2 border-indigo-100 ml-6 lg:ml-10 space-y-8 pb-12">
+                <div className="relative border-l-2 border-slate-200 ml-6 lg:ml-10 space-y-8 pb-12">
                     {roadmapData.map((step, index) => {
                         const isCompleted = completedPhases.includes(step.id);
                         const isCurrent = !isCompleted && index === currentStepIndex;
@@ -89,7 +89,7 @@ export default function RoadmapPage() {
                                 {/* Icon Dot */}
                                 <div className={`absolute -left-[21px] lg:-left-[25px] top-0 w-10 h-10 lg:w-12 lg:h-12 rounded-full border-4 flex items-center justify-center shadow-sm z-10 transition-colors duration-300
                                     ${isCompleted ? 'bg-emerald-500 border-emerald-100 text-white' :
-                                        isCurrent ? 'bg-white border-indigo-500 text-indigo-600 ring-4 ring-indigo-50' :
+                                        isCurrent ? 'bg-white border-slate-400 text-slate-800 ring-4 ring-slate-200' :
                                             'bg-slate-100 border-slate-50 text-slate-400'}
                                 `}>
                                     {isCompleted ? <CheckCircle2 size={20} /> :
@@ -103,7 +103,7 @@ export default function RoadmapPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className={`bg-white rounded-3xl border transition-all duration-300 overflow-hidden
-                                        ${isCurrent ? 'border-indigo-200 shadow-lg shadow-indigo-50 ring-1 ring-indigo-100' :
+                                        ${isCurrent ? 'border-slate-200 shadow-lg shadow-slate-200 ring-1 ring-slate-200' :
                                             isLocked ? 'border-slate-100 opacity-80' :
                                                 'border-slate-100 shadow-sm hover:shadow-md'}
                                     `}
@@ -117,7 +117,7 @@ export default function RoadmapPage() {
                                             <div>
                                                 <div className="flex items-center gap-3 mb-1">
                                                     <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border
-                                                        ${isCurrent ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
+                                                        ${isCurrent ? 'bg-slate-50 text-slate-900 border-slate-200' :
                                                             isCompleted ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
                                                                 'bg-slate-50 text-slate-500 border-slate-200'}
                                                     `}>
@@ -129,7 +129,7 @@ export default function RoadmapPage() {
                                             </div>
                                         </div>
 
-                                        <div className={`p-2 rounded-full transition-colors ${isExpanded ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-400'}`}>
+                                        <div className={`p-2 rounded-full transition-colors ${isExpanded ? 'bg-slate-50 text-slate-800' : 'bg-slate-50 text-slate-400'}`}>
                                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@ export default function RoadmapPage() {
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                         {step.topics.map((topic, i) => (
                                                             <div key={i} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                                                                <div className={`w-2 h-2 rounded-full ${isCurrent ? 'bg-indigo-500' : 'bg-slate-300'}`}></div>
+                                                                <div className={`w-2 h-2 rounded-full ${isCurrent ? 'bg-slate-500' : 'bg-slate-300'}`}></div>
                                                                 <span className="text-sm font-medium text-slate-700">{topic.title}</span>
                                                             </div>
                                                         ))}
@@ -161,7 +161,7 @@ export default function RoadmapPage() {
 
                                                     {isCurrent && (
                                                         <div className="mt-8 flex justify-end">
-                                                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-indigo-200">
+                                                            <button className="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-lg shadow-slate-200">
                                                                 Continue Learning
                                                             </button>
                                                         </div>

@@ -90,7 +90,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
     const getButtonColor = () => {
         switch (role) {
-            case 'student': return 'bg-indigo-600 hover:bg-indigo-700';
+            case 'student': return 'bg-slate-800 hover:bg-slate-900';
             case 'college': return 'bg-slate-800 hover:bg-slate-900';
             case 'industry': return 'bg-slate-900 hover:bg-black';
             case 'admin': return 'bg-green-600 hover:bg-green-700 font-mono'; // Matrix style
@@ -167,7 +167,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             {role !== 'admin' && (
                 <p className="text-center text-sm text-slate-500">
                     Don't have an account?{' '}
-                    <Link href="/register" className={`font-bold hover:underline ${role === 'student' ? 'text-indigo-600' : 'text-slate-900'}`}>
+                    <Link href="/register" className={`font-bold hover:underline ${role === 'student' ? 'text-slate-800' : 'text-slate-900'}`}>
                         Get Started
                     </Link>
                 </p>

@@ -31,13 +31,13 @@ export default function DomainSelector({ domains, onSelect }: DomainSelectorProp
                     <div
                         key={domain.id}
                         onClick={() => !domain.disabled && onSelect(domain)}
-                        className={`group relative p-6 bg-white border border-slate-200 rounded-xl transition-all duration-200 hover:shadow-md ${domain.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-indigo-500 cursor-pointer'}`}
+                        className={`group relative p-6 bg-white border border-slate-200 rounded-xl transition-all duration-200 hover:shadow-md ${domain.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-slate-400 cursor-pointer'}`}
                     >
                         <div className="flex flex-col h-full">
-                            <div className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center mb-4 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                            <div className="w-12 h-12 rounded-lg bg-slate-50 flex items-center justify-center mb-4 text-slate-800 group-hover:bg-slate-800 group-hover:text-white transition-colors duration-300">
                                 <domain.icon size={24} />
                             </div>
-                            <h3 className="text-base font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">{domain.title}</h3>
+                            <h3 className="text-base font-bold text-slate-900 mb-1 group-hover:text-slate-800 transition-colors">{domain.title}</h3>
                             <p className="text-slate-500 text-sm leading-relaxed mb-4 flex-1">{domain.description}</p>
 
                             {typeof domain.count === 'number' && (
@@ -47,7 +47,7 @@ export default function DomainSelector({ domains, onSelect }: DomainSelectorProp
                             )}
 
                             {!domain.disabled && (
-                                <div className="flex items-center text-xs font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0 duration-200">
+                                <div className="flex items-center text-xs font-bold text-slate-800 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0 duration-200">
                                     EXPLORE <ArrowRight size={14} className="ml-1" />
                                 </div>
                             )}

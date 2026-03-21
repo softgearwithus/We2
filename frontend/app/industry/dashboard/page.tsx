@@ -92,9 +92,9 @@ export default function IndustryDashboard() {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-indigo-100 transition-all">
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-slate-200 transition-all">
                     <div className="flex justify-between items-start">
-                        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-slate-50 text-slate-800 rounded-xl group-hover:scale-110 transition-transform">
                             <Users size={24} />
                         </div>
                         <span className="flex items-center gap-1 text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
@@ -107,7 +107,7 @@ export default function IndustryDashboard() {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-2xl shadow-md text-white flex flex-col justify-between relative overflow-hidden">
+                <div className="bg-gradient-to-br from-blue-600 to-slate-700 p-6 rounded-2xl shadow-md text-white flex flex-col justify-between relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <Building2 size={120} />
                     </div>

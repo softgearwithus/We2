@@ -1,11 +1,16 @@
-import type { Metadata } from 'next';
-import './lib/api-config';
-import { Inter } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import './globals.css';
-import { AuthProvider } from './context/AuthContext';
+import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+import { AuthProvider } from './context/AuthContext';
+import PremiumPopup from './components/shared/PremiumPopup';
+
+import './lib/api-config';
+import './globals.css';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'], display: 'swap', variable: '--font-pjs' });
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jetbrains-mono' });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://emble.in'),
@@ -60,7 +65,12 @@ export const metadata: Metadata = {
   },
 };
 
-import PremiumPopup from './components/shared/PremiumPopup';
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+};
 
 export default function RootLayout({
   children,
@@ -82,7 +92,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${inter.className} ${plusJakartaSans.variable} ${jetbrainsMono.variable} font-sans font-medium text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`} suppressHydrationWarning>
         <AuthProvider>
           {children}
           <PremiumPopup />

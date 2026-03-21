@@ -45,7 +45,7 @@ export default function KanbanBoard() {
                 <div className="flex items-center gap-3">
                     <div className="flex -space-x-2">
                         <div className="w-8 h-8 rounded-full bg-blue-600 border-2 border-[#1e1e1e] flex items-center justify-center text-xs font-bold">JD</div>
-                        <div className="w-8 h-8 rounded-full bg-purple-600 border-2 border-[#1e1e1e] flex items-center justify-center text-xs font-bold">Me</div>
+                        <div className="w-8 h-8 rounded-full bg-slate-800 border-2 border-[#1e1e1e] flex items-center justify-center text-xs font-bold">Me</div>
                         <div className="w-8 h-8 rounded-full bg-gray-600 border-2 border-[#1e1e1e] flex items-center justify-center text-xs font-bold">+3</div>
                     </div>
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold text-sm transition-colors">
@@ -58,7 +58,7 @@ export default function KanbanBoard() {
                 {columns.map(col => (
                     <div
                         key={col}
-                        className="min-w-[300px] bg-[#252526] rounded-xl flex flex-col h-full border border-[#333]"
+                        className="min-w-full max-w-full max-w-[300px] bg-[#252526] rounded-xl flex flex-col h-full border border-[#333]"
                         onDrop={(e) => onDrop(e, col)}
                         onDragOver={onDragOver}
                     >
@@ -79,7 +79,7 @@ export default function KanbanBoard() {
                                 >
                                     <div className="flex items-center justify-between mb-3">
                                         <span className="text-xs font-mono text-gray-500 group-hover:text-blue-400 transition-colors">{task.id}</span>
-                                        <div className="w-6 h-6 rounded-full bg-purple-900 text-purple-200 flex items-center justify-center text-[10px] font-bold border border-purple-700">
+                                        <div className="w-6 h-6 rounded-full bg-slate-900 text-slate-200 flex items-center justify-center text-[10px] font-bold border border-slate-700">
                                             {task.assignee}
                                         </div>
                                     </div>

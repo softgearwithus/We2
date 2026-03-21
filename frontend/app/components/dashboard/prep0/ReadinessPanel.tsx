@@ -29,7 +29,7 @@ export default function ReadinessPanel({ readinessScore = 0 }: { readinessScore?
     return (
         <div className="w-full bg-white border border-slate-100 rounded-3xl p-8 relative overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] group transition-all hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]">
             {/* Background Blob (Subtle) */}
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-50 rounded-full blur-[40px] group-hover:bg-indigo-100/50 transition-all duration-700"></div>
+            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-slate-50 rounded-full blur-[40px] group-hover:bg-slate-100/50 transition-all duration-700"></div>
 
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 {/* Score Circle */}
@@ -47,7 +47,7 @@ export default function ReadinessPanel({ readinessScore = 0 }: { readinessScore?
                             cx="80"
                             cy="80"
                             r="70"
-                            stroke="#4F46E5" // Indigo-600
+                            stroke="#FF5722" // Brand-orange
                             strokeWidth="10"
                             fill="transparent"
                             strokeDasharray="440"
@@ -59,7 +59,7 @@ export default function ReadinessPanel({ readinessScore = 0 }: { readinessScore?
                     </svg>
                     <div className="absolute flex flex-col items-center">
                         <span className="text-4xl font-extrabold text-slate-900 tracking-tight">{score}%</span>
-                        <span className="text-xs text-indigo-600 font-bold uppercase tracking-widest mt-1">Ready</span>
+                        <span className="text-xs text-slate-800 font-bold uppercase tracking-widest mt-1">Ready</span>
                     </div>
                 </div>
 
@@ -71,9 +71,9 @@ export default function ReadinessPanel({ readinessScore = 0 }: { readinessScore?
                     </p>
 
                     <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                        <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2.5 rounded-xl border border-indigo-100 shadow-sm">
-                            <Sparkles size={18} className="text-indigo-600" />
-                            <span className="text-sm text-indigo-700 font-bold">{mantra}</span>
+                        <div className="flex items-center gap-2 bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
+                            <Sparkles size={18} className="text-slate-800" />
+                            <span className="text-sm text-slate-900 font-bold">{mantra}</span>
                         </div>
                         <div className="flex items-center gap-2 bg-amber-50 px-4 py-2.5 rounded-xl border border-amber-100 shadow-sm">
                             <span className="text-sm text-amber-700 font-bold">Own your preparation. Own your result.</span>

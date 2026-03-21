@@ -55,7 +55,7 @@ export default function ChapterPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="animate-spin text-indigo-600" size={48} />
+                <Loader2 className="animate-spin text-slate-800" size={48} />
             </div>
         );
     }
@@ -64,7 +64,7 @@ export default function ChapterPage() {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-center p-6">
                 <h2 className="text-2xl font-bold text-slate-800 mb-4">Content Not Found</h2>
-                <Link href={`/dashboard/skillforge/programming/${languageId}`} className="text-indigo-600 font-bold hover:underline">
+                <Link href={`/dashboard/skillforge/programming/${languageId}`} className="text-slate-800 font-bold hover:underline">
                     Back to Syllabus
                 </Link>
             </div>
@@ -76,15 +76,15 @@ export default function ChapterPage() {
             {/* Sidebar (Optional - for larger screens could show chapter list) */}
             <div className="hidden lg:flex flex-col w-80 border-r border-slate-100 bg-slate-50/50 h-full">
                 <div className="p-6 border-b border-slate-100">
-                    <Link href={`/dashboard/skillforge/programming/${languageId}`} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors mb-4">
+                    <Link href={`/dashboard/skillforge/programming/${languageId}`} className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors mb-4">
                         <ArrowLeft size={16} /> Back to Course
                     </Link>
                     <h2 className="text-xl font-black text-slate-900 capitalize">{languageId} Mastery</h2>
                 </div>
                 <div className="flex-1 overflow-y-auto p-6">
-                    <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl mb-4">
-                        <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-1">Current Module</p>
-                        <p className="font-bold text-indigo-900">{content.title}</p>
+                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl mb-4">
+                        <p className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-1">Current Module</p>
+                        <p className="font-bold text-slate-900">{content.title}</p>
                     </div>
                 </div>
             </div>
@@ -106,13 +106,13 @@ export default function ChapterPage() {
                 <div className="flex-1 overflow-y-auto p-6 lg:p-12 custom-scrollbar">
                     <div className="max-w-3xl mx-auto pb-24">
                         <div className="mb-8">
-                            <span className="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
+                            <span className="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider mb-4">
                                 Module Content
                             </span>
                         </div>
 
                         {/* Markdown Rendering */}
-                        <div className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:tracking-tight prose-a:text-indigo-600 prose-img:rounded-2xl">
+                        <div className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:tracking-tight prose-a:text-slate-800 prose-img:rounded-2xl">
                             <ReactMarkdown
                                 components={{
                                     code({ node, inline, className, children, ...props }: any) {
@@ -149,7 +149,7 @@ export default function ChapterPage() {
                             <button className="flex items-center gap-3 px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors">
                                 <ChevronLeft size={18} /> Previous
                             </button>
-                            <button className="flex items-center gap-3 px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:translate-x-1">
+                            <button className="flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-800 text-white font-bold hover:bg-slate-900 shadow-lg shadow-slate-200 transition-all hover:translate-x-1">
                                 Next Lesson <ChevronRight size={18} />
                             </button>
                         </div>

@@ -75,7 +75,7 @@ export default function AptitudeTemplate() {
         return (
             <div className="h-screen bg-slate-900 flex items-center justify-center p-6 text-white font-sans">
                 <div className="max-w-md w-full text-center space-y-8">
-                    <div className="w-24 h-24 bg-indigo-500 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(99,102,241,0.5)] animate-pulse">
+                    <div className="w-24 h-24 bg-slate-500 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(99,102,241,0.5)] animate-pulse">
                         <BrainCircuit size={48} />
                     </div>
                     <div>
@@ -126,7 +126,7 @@ export default function AptitudeTemplate() {
                         >
                             Try Again
                         </button>
-                        <button className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition-colors shadow-lg shadow-indigo-500/20">
+                        <button className="flex-1 py-3 bg-slate-800 hover:bg-slate-500 rounded-xl font-bold transition-colors shadow-lg shadow-slate-200">
                             View Analysis
                         </button>
                     </div>
@@ -176,7 +176,7 @@ export default function AptitudeTemplate() {
                                 onClick={() => handleAnswer(idx)}
                                 className={`p-6 rounded-2xl text-left font-bold text-lg transition-all border-2 relative overflow-hidden group
                                     ${selectedOption === null
-                                        ? 'bg-white border-slate-200 hover:border-indigo-400 hover:shadow-lg text-slate-700'
+                                        ? 'bg-white border-slate-200 hover:border-slate-400 hover:shadow-lg text-slate-700'
                                         : selectedOption === idx
                                             ? idx === question.correct
                                                 ? 'bg-emerald-50 border-emerald-500 text-emerald-700'
@@ -201,7 +201,7 @@ export default function AptitudeTemplate() {
             {/* Footer */}
             <div className="h-2 bg-slate-200">
                 <motion.div
-                    className="h-full bg-indigo-600"
+                    className="h-full bg-slate-800"
                     initial={{ width: 0 }}
                     animate={{ width: `${((currentQ) / sampleQuestions.length) * 100}%` }}
                 />

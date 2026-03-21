@@ -96,7 +96,7 @@ export default function AdminLayout({
                     <div className={`flex items-center justify-between ${!sidebarOpen && 'justify-center'}`}>
                         <div className={`flex items-center gap-3 ${!sidebarOpen && 'hidden'}`}>
                             <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Admin" alt="Admin" />
+                                <img loading="lazy" decoding="async" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Admin" alt="Admin" />
                             </div>
                             <div className="overflow-hidden">
                                 <p className="text-sm font-bold truncate">{user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Super Admin'}</p>

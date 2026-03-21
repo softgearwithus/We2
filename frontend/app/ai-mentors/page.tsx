@@ -32,7 +32,7 @@ export default function AiMentorsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
                         {/* Technical Mentor */}
                         <div className="group relative rounded-[2.5rem] bg-brand-black overflow-hidden shadow-premium border border-gray-800">
-                            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-brand-orange/10 blur-[80px] rounded-full pointer-events-none"></div>
+                            <div className="absolute top-0 right-0 w-full max-w-full max-w-[300px] h-[300px] bg-brand-orange/10 blur-[80px] rounded-full pointer-events-none"></div>
                             <div className="relative p-10 h-full flex flex-col items-start">
                                 <div className="w-16 h-16 rounded-2xl bg-gray-800 border border-gray-700 flex items-center justify-center mb-8 backdrop-blur-sm">
                                     <Code className="text-brand-orange" size={32} />
@@ -57,7 +57,7 @@ export default function AiMentorsPage() {
 
                         {/* Career Coach */}
                         <div className="group relative rounded-[2.5rem] bg-white border border-gray-100 overflow-hidden shadow-subtle hover:shadow-premium transition-shadow duration-300">
-                            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-orange-50 blur-[80px] rounded-full pointer-events-none"></div>
+                            <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[300px] h-[300px] bg-orange-50 blur-[80px] rounded-full pointer-events-none"></div>
                             <div className="relative p-10 h-full flex flex-col items-start">
                                 <div className="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-8">
                                     <MessageSquare className="text-brand-orange" size={32} />

@@ -87,13 +87,13 @@ export default function DualModeSection() {
                             {/* Brand Name */}
                             <div className="mb-auto">
                                 <h3 className="text-4xl md:text-5xl font-[1000] text-brand-black mb-2 tracking-tighter transition-colors duration-300 group-hover:text-emerald-700">
-                                    Placement Ecosystem Hub
+                                    The Screening Filter
                                 </h3>
                                 <p className="text-xs font-black uppercase tracking-[0.3em] text-emerald-600/70 mb-8">
-                                    Solve the rejection problem
+                                    Survive the technical rounds
                                 </p>
                                 <p className="text-gray-500 text-lg leading-relaxed mb-10 max-w-md font-medium">
-                                    Are you clearing the technical rounds? We bridge the logic gap that video lectures miss, ensuring you're ready for every screening.
+                                    Lectures don't pass interviews; writing optimal code under a timer does. We simulate the exact technical checks you'll face before a recruiter ever looks at your resume.
                                 </p>
 
                                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
@@ -162,13 +162,13 @@ export default function DualModeSection() {
                             {/* Brand Name */}
                             <div className="mb-auto">
                                 <h3 className="text-4xl md:text-5xl font-[1000] text-white mb-2 tracking-tighter transition-colors duration-300 group-hover:text-brand-orange">
-                                    Industrial Simulation
+                                    Industrial Proof of Work
                                 </h3>
                                 <p className="text-xs font-black uppercase tracking-[0.3em] text-brand-orange/70 mb-8">
-                                    Solve the "No Experience" problem
+                                    Beat the "No Experience" trap
                                 </p>
                                 <p className="text-gray-300/80 text-lg leading-relaxed mb-10 max-w-md font-medium">
-                                    Stop being just another "fresher". Build the industrial proof-of-work that top engineering teams actually respect.
+                                    Stop being just another fresher with a to-do list app. Build and deploy production-scale systems that force senior engineers to take you seriously.
                                 </p>
 
                                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">

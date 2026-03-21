@@ -234,9 +234,9 @@ export default function DocsPage() {
                                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform flex-shrink-0 ${cat.color === 'blue' ? 'bg-blue-100 text-blue-600' :
                                         cat.color === 'orange' ? 'bg-orange-100 text-brand-orange' :
                                             cat.color === 'emerald' ? 'bg-emerald-100 text-emerald-600' :
-                                                cat.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                                                cat.color === 'purple' ? 'bg-slate-100 text-slate-800' :
                                                     cat.color === 'rose' ? 'bg-rose-100 text-rose-600' :
-                                                        'bg-indigo-100 text-indigo-600'
+                                                        'bg-slate-100 text-slate-800'
                                         }`}>
                                         <cat.icon size={28} />
                                     </div>

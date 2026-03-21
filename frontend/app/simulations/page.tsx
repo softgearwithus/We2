@@ -115,7 +115,7 @@ export default function SimulationsPage() {
                         </div>
 
                         {/* Background Glows */}
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/5 blur-[100px] rounded-full pointer-events-none"></div>
+                        <div className="absolute top-0 right-0 w-full max-w-full max-w-[500px] h-[500px] bg-brand-orange/5 blur-[100px] rounded-full pointer-events-none"></div>
                     </div>
                 </div>
             </main>

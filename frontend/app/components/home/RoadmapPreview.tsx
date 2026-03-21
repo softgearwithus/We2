@@ -4,7 +4,7 @@ import { ChevronRight, Database, Globe, Lock, Rocket, Server, Terminal } from 'l
 
 const roadmapNodes = [
     { title: "Foundations & DSA", icon: Terminal, color: "text-blue-500", bg: "bg-blue-50" },
-    { title: "CS Core & SQL", icon: Database, color: "text-purple-500", bg: "bg-purple-50" },
+    { title: "CS Core & SQL", icon: Database, color: "text-slate-500", bg: "bg-slate-50" },
     { title: "Full-Stack Web Projects", icon: Server, color: "text-orange-500", bg: "bg-orange-50" },
     { title: "AI Mock Interviews", icon: Rocket, color: "text-green-500", bg: "bg-green-50" }
 ];
@@ -22,7 +22,7 @@ export default function RoadmapPreview() {
                     <div className="lg:w-1/2 space-y-8">
                         <span className="px-3 py-1 bg-white border border-gray-200 rounded-full text-xs font-bold uppercase tracking-widest text-brand-black">Curriculum</span>
                         <h2 className="text-4xl md:text-5xl font-extrabold text-brand-black tracking-tight leading-[1.1]">
-                            Proven path to <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">SDE Readiness.</span>
+                            Proven path to <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">SDE Readiness.</span>
                         </h2>
                         <p className="text-xl text-gray-500 leading-relaxed font-medium">
                             Don't guess what to learn. Our adaptive engine tracks your progress and gives you the exact tasks needed to level up.

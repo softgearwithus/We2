@@ -17,7 +17,7 @@ export default function ComparisonSection() {
             <div className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-14">
                     <h2 className="text-4xl font-bold text-brand-black tracking-tight mb-4">
-                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600 font-black">EMBLE Edge</span>
+                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600 font-black">EMBLE Edge</span>
                     </h2>
                     <p className="text-xl text-gray-500 max-w-2xl mx-auto">
                         Why traditional courses leave you "job-unready" and how we solve it.
@@ -25,7 +25,7 @@ export default function ComparisonSection() {
                 </div>
 
                 <div className="rounded-3xl border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.03)] overflow-x-auto w-full">
-                    <table className="w-full text-left border-collapse min-w-[600px]">
+                    <table className="w-full text-left border-collapse min-w-full max-w-full max-w-[600px]">
                         <thead>
                             <tr className="bg-gray-50/50">
                                 <th className="p-6 text-sm font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Feature</th>
@@ -52,8 +52,8 @@ export default function ComparisonSection() {
                     </table>
                 </div>
 
-                <div className="mt-8 md:mt-12 p-6 bg-purple-50 rounded-2xl border border-purple-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <div className="text-purple-900 font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
+                <div className="mt-8 md:mt-12 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="text-slate-900 font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
                         Students using EMBLE are <strong>3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Placement ecosystem.
                     </div>
                     <Link href="/register" className="whitespace-nowrap px-6 py-2.5 bg-brand-black text-white rounded-xl font-bold text-sm hover:bg-gray-900 transition-all">

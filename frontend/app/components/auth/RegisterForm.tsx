@@ -137,7 +137,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
     const getButtonColor = () => {
         switch (role) {
-            case 'student': return 'bg-indigo-600 hover:bg-indigo-700';
+            case 'student': return 'bg-slate-800 hover:bg-slate-900';
             case 'college': return 'bg-slate-800 hover:bg-slate-900';
             case 'industry': return 'bg-slate-900 hover:bg-black';
             default: return 'bg-primary';
@@ -174,7 +174,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                                 <label className="block text-sm font-bold text-slate-700 mb-1.5">First Name</label>
                                 <input
                                     {...register('firstName', { required: true })}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium text-slate-900"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-200 outline-none transition-all font-medium text-slate-900"
                                     placeholder="John"
                                 />
                             </div>
@@ -182,7 +182,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                                 <label className="block text-sm font-bold text-slate-700 mb-1.5">Last Name</label>
                                 <input
                                     {...register('lastName', { required: true })}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium text-slate-900"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-200 outline-none transition-all font-medium text-slate-900"
                                     placeholder="Doe"
                                 />
                             </div>
@@ -193,7 +193,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                             <input
                                 {...register('email', { required: true, pattern: /^\S+@\S+$/i })}
                                 type="email"
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium text-slate-900"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-200 outline-none transition-all font-medium text-slate-900"
                                 placeholder="name@example.com"
                             />
                             {errors.email && <span className="text-rose-500 text-xs mt-1.5 font-semibold flex items-center gap-1"><AlertCircle size={12} /> Please enter a valid email address</span>}
@@ -211,7 +211,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                                         }
                                     })}
                                     type={showPassword ? 'text' : 'password'}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium text-slate-900"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-200 outline-none transition-all font-medium text-slate-900"
                                     placeholder="••••••••"
                                 />
                                 <button
@@ -254,7 +254,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`w-full text-white py-3.5 mt-2 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-indigo-200 hover:shadow-md hover:-translate-y-0.5 ${getButtonColor()}`}
+                            className={`w-full text-white py-3.5 mt-2 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-slate-200 hover:shadow-md hover:-translate-y-0.5 ${getButtonColor()}`}
                         >
                             {isLoading ? <Loader2 className="animate-spin" size={20} /> : (role === 'student' ? 'Continue' : 'Create Account')}
                         </button>
@@ -263,11 +263,11 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
                 {step === 2 && role === 'student' && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                        <div className="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 flex gap-3 items-start">
-                            <Mail className="text-indigo-500 shrink-0 mt-0.5" size={20} />
+                        <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-4 flex gap-3 items-start">
+                            <Mail className="text-slate-700 shrink-0 mt-0.5" size={20} />
                             <div>
-                                <h4 className="text-sm font-bold text-indigo-900">Verification Code Sent</h4>
-                                <p className="text-xs font-medium text-indigo-700 mt-1 leading-relaxed">
+                                <h4 className="text-sm font-bold text-slate-900">Verification Code Sent</h4>
+                                <p className="text-xs font-medium text-slate-900 mt-1 leading-relaxed">
                                     Please enter the 6-digit code sent to <strong>{watchedEmail}</strong>. Check your spam folder if you can't find it.
                                 </p>
                             </div>
@@ -279,7 +279,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                                 type="text"
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
-                                className="w-full px-4 py-3 text-center text-xl tracking-[0.5em] rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-bold text-slate-900"
+                                className="w-full px-4 py-3 text-center text-xl tracking-[0.5em] rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-slate-400 focus:ring-4 focus:ring-slate-200 outline-none transition-all font-bold text-slate-900"
                                 placeholder="------"
                                 maxLength={6}
                                 autoFocus
@@ -296,7 +296,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                         <button
                             type="submit"
                             disabled={isLoading || otp.length < 6}
-                            className={`w-full text-white py-3.5 mt-2 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-indigo-200 hover:shadow-md hover:-translate-y-0.5 ${getButtonColor()} disabled:opacity-50 disabled:hover:translate-y-0`}
+                            className={`w-full text-white py-3.5 mt-2 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-slate-200 hover:shadow-md hover:-translate-y-0.5 ${getButtonColor()} disabled:opacity-50 disabled:hover:translate-y-0`}
                         >
                             {isLoading ? <Loader2 className="animate-spin" size={20} /> : <><ShieldCheck size={20} /> Verify & Create Account</>}
                         </button>
@@ -318,7 +318,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
             <p className="text-center text-sm text-slate-500 mt-8 font-medium">
                 Already have an account?{' '}
-                <Link href={`/login/${role}`} className={`font-bold hover:underline ${role === 'student' ? 'text-indigo-600' : 'text-slate-900'}`}>
+                <Link href={`/login/${role}`} className={`font-bold hover:underline ${role === 'student' ? 'text-slate-800' : 'text-slate-900'}`}>
                     Sign in
                 </Link>
             </p>

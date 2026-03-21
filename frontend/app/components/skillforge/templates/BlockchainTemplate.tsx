@@ -124,7 +124,7 @@ export default function BlockchainTemplate() {
             {/* Glossy Header */}
             <header className="h-20 bg-slate-900 shadow-2xl border-b border-white/5 flex items-center justify-between px-10 z-30">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/30">
+                    <div className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-200">
                         <Globe size={24} className="text-white animate-pulse-slow" />
                     </div>
                     <div>
@@ -141,7 +141,7 @@ export default function BlockchainTemplate() {
                                 <button
                                     key={d}
                                     onClick={() => setDifficulty(d)}
-                                    className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-black transition-all ${difficulty === d ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-500 hover:text-slate-300'}`}
+                                    className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-black transition-all ${difficulty === d ? 'bg-slate-500 text-white' : 'bg-slate-800 text-slate-500 hover:text-slate-300'}`}
                                 >
                                     {d}
                                 </button>
@@ -163,10 +163,10 @@ export default function BlockchainTemplate() {
                 <div className="w-96 bg-slate-900/50 border-r border-white/5 flex flex-col shrink-0">
                     <div className="p-6 border-b border-white/5">
                         <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-xs font-black text-indigo-400 uppercase tracking-widest flex items-center gap-2">
+                            <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                 <Database size={14} /> Mempool
                             </h2>
-                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded-md text-[10px] font-bold">{mempool.length} Pending</span>
+                            <span className="px-2 py-0.5 bg-slate-500/20 text-slate-400 rounded-md text-[10px] font-bold">{mempool.length} Pending</span>
                         </div>
                         <p className="text-[10px] text-slate-500 font-medium">Verified transactions waiting for mining</p>
                     </div>
@@ -179,7 +179,7 @@ export default function BlockchainTemplate() {
                                     initial={{ x: -20, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     exit={{ scale: 0.8, opacity: 0 }}
-                                    className="p-4 bg-slate-800/40 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-indigo-500/30 transition-all"
+                                    className="p-4 bg-slate-800/40 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-slate-400/30 transition-all"
                                 >
                                     <div>
                                         <div className="text-[10px] font-black text-slate-500 uppercase mb-1">TXID: {tx.id}</div>
@@ -237,7 +237,7 @@ export default function BlockchainTemplate() {
                                             className={`px-6 py-3 rounded-2xl font-black text-xs flex items-center gap-2 transition-all active:scale-95
                                                 ${miningNode === node.id
                                                     ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
-                                                    : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/20'}
+                                                    : 'bg-slate-800 text-white hover:bg-slate-500 shadow-xl shadow-slate-200'}
                                                 ${(!!miningNode || mempool.length === 0) && miningNode !== node.id ? 'opacity-30 cursor-not-allowed grayscale' : ''}
                                             `}
                                         >
@@ -264,7 +264,7 @@ export default function BlockchainTemplate() {
                                                     <Box size={48} strokeWidth={1} className="text-slate-700" />
                                                 </div>
 
-                                                <h4 className="font-black text-indigo-400 text-sm mb-4 flex items-center gap-2">
+                                                <h4 className="font-black text-slate-400 text-sm mb-4 flex items-center gap-2">
                                                     BLOCK #{block.id} <ShieldCheck size={14} className="text-emerald-500" />
                                                 </h4>
 
@@ -280,7 +280,7 @@ export default function BlockchainTemplate() {
                                                             {block.transactions.map((tx, i) => (
                                                                 <div key={i} className="text-[10px] text-slate-200 bg-white/5 p-1.5 rounded-lg border border-white/5 flex justify-between">
                                                                     <span>{tx.from} &rarr; {tx.to}</span>
-                                                                    <span className="font-bold text-indigo-400">{tx.amount}</span>
+                                                                    <span className="font-bold text-slate-400">{tx.amount}</span>
                                                                 </div>
                                                             ))}
                                                         </div>
@@ -303,7 +303,7 @@ export default function BlockchainTemplate() {
                                             </motion.div>
 
                                             {idx < chains[node.id].length - 1 && (
-                                                <div className="w-10 h-px bg-gradient-to-r from-indigo-500/50 to-transparent"></div>
+                                                <div className="w-10 h-px bg-gradient-to-r from-slate-700/50 to-transparent"></div>
                                             )}
                                         </div>
                                     ))}

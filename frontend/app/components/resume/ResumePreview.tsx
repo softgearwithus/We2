@@ -9,7 +9,7 @@ interface ResumePreviewProps {
 
 // Map color choices to Tailwind classes for flexibility
 const colorMap: Record<string, string> = {
-    indigo: 'text-indigo-600',
+    indigo: 'text-slate-800',
     blue: 'text-blue-600',
     emerald: 'text-emerald-600',
     rose: 'text-rose-600',
@@ -18,7 +18,7 @@ const colorMap: Record<string, string> = {
 };
 
 const borderMap: Record<string, string> = {
-    indigo: 'border-indigo-600',
+    indigo: 'border-slate-800',
     blue: 'border-blue-600',
     emerald: 'border-emerald-600',
     rose: 'border-rose-600',
@@ -27,7 +27,7 @@ const borderMap: Record<string, string> = {
 };
 
 const bgMap: Record<string, string> = {
-    indigo: 'bg-indigo-600',
+    indigo: 'bg-slate-800',
     blue: 'bg-blue-600',
     emerald: 'bg-emerald-600',
     rose: 'bg-rose-600',
@@ -94,8 +94,8 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                                         {proj.technologies?.filter(t => t.trim()).length > 0 && <span className="font-normal italic text-gray-600 ml-2">({proj.technologies.map(t=>t.trim()).filter(Boolean).join(', ')})</span>}
                                     </h3>
                                     <div className="text-right italic text-gray-600 flex gap-2 text-[12px]">
-                                        {proj.liveLink && <a href={proj.liveLink.startsWith('http') ? proj.liveLink : `https://${proj.liveLink}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">Live</a>}
-                                        {proj.repoLink && <span>{proj.liveLink ? ' | ' : ''}<a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">Repo</a></span>}
+                                        {proj.liveLink && <a href={proj.liveLink.startsWith('http') ? proj.liveLink : `https://${proj.liveLink}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">Live</a>}
+                                        {proj.repoLink && <span>{proj.liveLink ? ' | ' : ''}<a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">Repo</a></span>}
                                     </div>
                                 </div>
                                 <ul className="list-disc list-outside ml-4 space-y-1 text-gray-800 mt-1">
@@ -185,10 +185,10 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                     <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 text-[12px] text-gray-600">
                         {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
                         {data.personalInfo.phone && <span className="text-gray-400">•</span>}
-                        {data.personalInfo.email && <a href={`mailto:${data.personalInfo.email}`} className="hover:underline text-indigo-600">{data.personalInfo.email}</a>}
-                        {data.personalInfo.linkedin && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">{data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}</a></>}
-                        {data.personalInfo.github && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.github.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">{data.personalInfo.github.replace('https://', '').replace('www.', '')}</a></>}
-                        {data.personalInfo.portfolio && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-indigo-600">{data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.email && <a href={`mailto:${data.personalInfo.email}`} className="hover:underline text-slate-800">{data.personalInfo.email}</a>}
+                        {data.personalInfo.linkedin && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">{data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.github && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.github.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">{data.personalInfo.github.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.portfolio && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">{data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}</a></>}
                         {data.personalInfo.location && <><span className="text-gray-400">•</span><span>{data.personalInfo.location}</span></>}
                     </div>
                 </header>

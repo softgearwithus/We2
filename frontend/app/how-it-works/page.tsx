@@ -67,7 +67,7 @@ export default function HowItWorksPage() {
                         <div className="relative">
                             <div className="absolute -inset-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-3xl opacity-20 blur-2xl"></div>
                             <div className="relative rounded-2xl overflow-hidden border border-gray-100 shadow-premium">
-                                <img
+                                <img loading="lazy" decoding="async"
                                     src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
                                     alt="Team collaboration"
                                     className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700"

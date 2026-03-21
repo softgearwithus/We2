@@ -95,7 +95,7 @@ export default function AdminCompaniesManager() {
         <div className="max-w-4xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/60 pb-6">
                 <div>
-                    <Link href="/admin/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-4 transition-colors">
+                    <Link href="/admin/test-series" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-medium mb-4 transition-colors">
                         <ArrowLeft size={18} /> Back to Test Series Hub
                     </Link>
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Companies Management</h1>
@@ -163,7 +163,7 @@ export default function AdminCompaniesManager() {
                                 <button
                                     onClick={() => handleUpdate(editId)}
                                     disabled={isSaving}
-                                    className="px-5 py-3 rounded-xl bg-indigo-600 text-white font-bold text-sm flex items-center gap-2 disabled:opacity-50"
+                                    className="px-5 py-3 rounded-xl bg-slate-800 text-white font-bold text-sm flex items-center gap-2 disabled:opacity-50"
                                 >
                                     {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Changes
                                 </button>

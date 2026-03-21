@@ -206,7 +206,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                         <div className="relative p-6 md:p-8 flex-1 flex flex-col justify-between h-full">
                             <div className="space-y-4">
                                 <div className="flex justify-between items-start">
-                                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-50 flex items-center justify-center text-violet-600 shadow-sm border border-violet-100 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-100 to-slate-50 flex items-center justify-center text-violet-600 shadow-sm border border-violet-100 group-hover:scale-110 transition-transform duration-300">
                                         <Mic size={24} />
                                     </div>
                                     <div className="flex -space-x-2">

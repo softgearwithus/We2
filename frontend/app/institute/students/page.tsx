@@ -108,7 +108,7 @@ export default function StudentAnalyticsPage() {
             variants={container}
             initial="hidden"
             animate="show"
-            className="space-y-8 relative pb-10 max-w-[1600px] mx-auto"
+            className="space-y-8 relative pb-10 max-w-full max-w-[1600px] mx-auto"
         >
             <motion.div variants={item} className="flex flex-col md:flex-row justify-between items-end gap-4">
                 <div>
@@ -142,7 +142,7 @@ export default function StudentAnalyticsPage() {
                 <div className="lg:col-span-3 space-y-8">
                     {/* Search Bar */}
                     <motion.div variants={item} className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange/20 to-purple-600/20 rounded-3xl opacity-20 group-hover:opacity-40 transition duration-700 blur-xl"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange/20 to-slate-600/20 rounded-3xl opacity-20 group-hover:opacity-40 transition duration-700 blur-xl"></div>
                         <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl shadow-sm">
                             <Search className="absolute left-6 w-6 h-6 text-gray-400" />
                             <input

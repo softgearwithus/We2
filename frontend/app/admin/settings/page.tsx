@@ -230,7 +230,7 @@ export default function AdminSettingsPage() {
 
                                 <div className="flex items-center gap-6">
                                     <div className="w-24 h-24 rounded-full bg-slate-100 border-4 border-white shadow-lg overflow-hidden shrink-0">
-                                        <img src={profile.avatarUrl ?? undefined} alt="Admin Avatar" className="w-full h-full object-cover" />
+                                        <img loading="lazy" decoding="async" src={profile.avatarUrl ?? undefined} alt="Admin Avatar" className="w-full h-full object-cover" />
                                     </div>
                                     <div>
                                         <button className="px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-blue-600 transition-colors">

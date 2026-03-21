@@ -368,7 +368,7 @@ export default function NewProjectForm({
                 {/* 4. Curriculum & Indexing */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
                     <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-6">
-                        <LayoutDashboard size={20} className="text-indigo-500" /> Curriculum Setup
+                        <LayoutDashboard size={20} className="text-slate-700" /> Curriculum Setup
                     </h2>
 
                     <div className="mb-8">

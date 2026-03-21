@@ -100,7 +100,7 @@ export default function ChatPage() {
                     </div>
 
                     <div className="flex gap-4 group">
-                        <div className="w-10 h-10 rounded bg-purple-600 flex-shrink-0 flex items-center justify-center font-bold text-white">M</div>
+                        <div className="w-10 h-10 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center font-bold text-white">M</div>
                         <div>
                             <div className="flex items-baseline gap-2">
                                 <span className="font-bold text-white hover:underline cursor-pointer">Mike Ross</span>

@@ -187,7 +187,7 @@ export default function MentorsDiscoveryPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {sessions.map((session: MentorSession) => (
                             <div key={session.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-start gap-4">
-                                <img src={session.avatarUrl || 'https://ui-avatars.com/api/?name=Mentor'} alt="" className="w-12 h-12 rounded-full border border-slate-100 shrink-0" />
+                                <img loading="lazy" decoding="async" src={session.avatarUrl || 'https://ui-avatars.com/api/?name=Mentor'} alt="" className="w-12 h-12 rounded-full border border-slate-100 shrink-0" />
                                 <div className="flex-1 min-w-0">
                                     <h3 className="text-sm font-bold text-slate-900">{session.mentorName || 'Mentor'}</h3>
                                     <p className="text-xs text-slate-500 truncate">{session.topic}</p>
@@ -254,7 +254,7 @@ export default function MentorsDiscoveryPage() {
                                 <div className="shrink-0 flex flex-col items-center">
                                     <div className="relative">
                                         <div className="w-24 h-24 rounded-full border-4 border-emerald-600 overflow-hidden shadow-sm">
-                                            <img src={mentor.avatarUrl ?? undefined} alt={mentor.name} className="w-full h-full object-cover" />
+                                            <img loading="lazy" decoding="async" src={mentor.avatarUrl ?? undefined} alt={mentor.name} className="w-full h-full object-cover" />
                                         </div>
                                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border-2 border-white uppercase tracking-wider shadow-sm">
                                             Mentor
@@ -374,7 +374,7 @@ export default function MentorsDiscoveryPage() {
                             {activeModal === 'connect' && selectedMentor && (
                                 <div className="p-8">
                                     <div className="flex flex-col items-center text-center mb-6">
-                                        <img src={selectedMentor.avatarUrl ?? undefined} alt="" className="w-20 h-20 rounded-full border-4 border-emerald-50 shadow-md mb-4" />
+                                        <img loading="lazy" decoding="async" src={selectedMentor.avatarUrl ?? undefined} alt="" className="w-20 h-20 rounded-full border-4 border-emerald-50 shadow-md mb-4" />
                                         <h3 className="text-xl font-extrabold text-slate-900">Book 1:1 with {selectedMentor.name.split(' ')[0]}</h3>
                                         <p className="text-sm text-slate-500 mt-1">₹ {selectedMentor.pricePerMinute} / Min • Voice & Video</p>
                                     </div>

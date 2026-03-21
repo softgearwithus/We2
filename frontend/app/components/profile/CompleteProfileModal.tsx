@@ -54,7 +54,7 @@ export default function CompleteProfileModal() {
                         className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden"
                     >
                         {/* Decorative Header Background */}
-                        <div className="h-32 bg-gradient-to-br from-indigo-500 to-purple-600 relative overflow-hidden">
+                        <div className="h-32 bg-gradient-to-br from-slate-700 to-slate-600 relative overflow-hidden">
                             <div className="absolute inset-0 opacity-20">
                                 <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full mix-blend-overlay blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
                                 <div className="absolute bottom-0 right-0 w-32 h-32 bg-white rounded-full mix-blend-overlay blur-2xl translate-x-1/2 translate-y-1/2"></div>
@@ -84,7 +84,7 @@ export default function CompleteProfileModal() {
                             <div className="space-y-3">
                                 <button
                                     onClick={handleCompleteNow}
-                                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-indigo-600/20 group hover:-translate-y-0.5"
+                                    className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-slate-200 group hover:-translate-y-0.5"
                                 >
                                     <Settings size={18} className="group-hover:rotate-90 transition-transform" />
                                     Complete Profile Now

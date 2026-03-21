@@ -73,9 +73,9 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             {/* Theme Settings */}
             <section className="space-y-6">
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                     <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                        <Palette size={20} className="text-indigo-500" /> Theme Settings
+                        <Palette size={20} className="text-slate-700" /> Theme Settings
                     </h2>
                 </div>
 
@@ -97,11 +97,11 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                                     className={clsx(
                                         "p-4 rounded-xl border text-left transition-all active:scale-[0.98]",
                                         data.templateId === tpl.id
-                                            ? "bg-indigo-50 border-indigo-500 shadow-sm shadow-indigo-100 ring-1 ring-indigo-500 text-slate-900"
+                                            ? "bg-slate-50 border-slate-400 shadow-sm shadow-slate-200 ring-1 ring-slate-200 text-slate-900"
                                             : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-600 hover:text-slate-900"
                                     )}
                                 >
-                                    <div className={clsx("font-bold mb-1", data.templateId === tpl.id && "text-indigo-700")}>{tpl.name}</div>
+                                    <div className={clsx("font-bold mb-1", data.templateId === tpl.id && "text-slate-900")}>{tpl.name}</div>
                                     <div className="text-[10.5px] leading-tight opacity-80">{tpl.desc}</div>
                                 </button>
                             ))}
@@ -115,7 +115,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                             <div className="flex flex-wrap gap-3">
                                 {[
                                     { id: 'slate', tw: 'bg-slate-600' },
-                                    { id: 'indigo', tw: 'bg-indigo-600' },
+                                    { id: 'indigo', tw: 'bg-slate-800' },
                                     { id: 'blue', tw: 'bg-blue-600' },
                                     { id: 'emerald', tw: 'bg-emerald-600' },
                                     { id: 'amber', tw: 'bg-amber-600' },
@@ -127,7 +127,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                                         className={clsx(
                                             "w-10 h-10 rounded-full transition-all flex items-center justify-center shadow-sm active:scale-90",
                                             color.tw,
-                                            data.accentColor === color.id ? "ring-[3px] ring-offset-2 ring-indigo-500 scale-110" : "opacity-80 hover:opacity-100 hover:scale-105"
+                                            data.accentColor === color.id ? "ring-[3px] ring-offset-2 ring-slate-200 scale-110" : "opacity-80 hover:opacity-100 hover:scale-105"
                                         )}
                                         title={color.id}
                                     />
@@ -141,20 +141,20 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">Section Order</label>
                         <div className="flex flex-col gap-2">
                             {(data.sectionOrder || ['experience', 'projects', 'education', 'skills', 'custom']).map((sectionId, idx, arr) => (
-                                <div key={sectionId} className="flex justify-between items-center bg-white border border-slate-200 p-3 rounded-xl shadow-sm hover:border-indigo-200 transition-colors">
+                                <div key={sectionId} className="flex justify-between items-center bg-white border border-slate-200 p-3 rounded-xl shadow-sm hover:border-slate-200 transition-colors">
                                     <span className="text-sm font-bold text-slate-700 capitalize">{sectionId.replace('-', ' ')}</span>
                                     <div className="flex gap-2">
                                         <button 
                                             onClick={() => moveSection(idx, -1)} 
                                             disabled={idx === 0}
-                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
+                                            className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-50 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
                                         >
                                             <ChevronUp size={16} />
                                         </button>
                                         <button 
                                             onClick={() => moveSection(idx, 1)} 
                                             disabled={idx === arr.length - 1}
-                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
+                                            className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-50 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 transition-colors"
                                         >
                                             <ChevronDown size={16} />
                                         </button>
@@ -169,7 +169,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             {/* Personal Info */}
             <section className="space-y-6">
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                     <h2 className="text-xl font-black text-slate-900 tracking-tight">Personal Information</h2>
                 </div>
 
@@ -190,12 +190,12 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             <section className="space-y-6">
                 <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                         <h2 className="text-xl font-black text-slate-900 tracking-tight">Experience</h2>
                     </div>
                     <button
                         onClick={addExperience}
-                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                        className="flex items-center gap-2 text-xs font-bold bg-slate-500 hover:bg-slate-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-slate-200 active:scale-95"
                     >
                         <Plus size={14} /> Add Role
                     </button>
@@ -203,7 +203,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
                 <div className="space-y-4">
                     {data.experience.map((exp) => (
-                        <div key={exp.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
+                        <div key={exp.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-slate-300 transition-colors">
                             <button
                                 onClick={() => removeExperience(exp.id)}
                                 className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-rose-50 rounded-lg"
@@ -236,12 +236,12 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             <section className="space-y-6">
                 <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                         <h2 className="text-xl font-black text-slate-900 tracking-tight">Education</h2>
                     </div>
                     <button
                         onClick={addEducation}
-                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                        className="flex items-center gap-2 text-xs font-bold bg-slate-500 hover:bg-slate-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-slate-200 active:scale-95"
                     >
                         <Plus size={14} /> Add Education
                     </button>
@@ -249,7 +249,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                 
                 <div className="space-y-4">
                     {data.education.map((edu, index) => (
-                        <div key={edu.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
+                        <div key={edu.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-slate-300 transition-colors">
                             <button
                                 onClick={() => removeEducation(edu.id)}
                                 className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-rose-50 rounded-lg"
@@ -276,9 +276,9 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                             <div className="flex gap-2">
                                 <div className="w-[120px] shrink-0">
                                     <div className="space-y-2 group">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-indigo-600 transition-colors">Score Type</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-slate-800 transition-colors">Score Type</label>
                                         <select
-                                            className="w-full bg-white border border-slate-200 rounded-xl px-2 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-100 transition-all hover:border-slate-300 shadow-sm"
+                                            className="w-full bg-white border border-slate-200 rounded-xl px-2 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-slate-400 focus:ring-[3px] focus:ring-slate-200 transition-all hover:border-slate-300 shadow-sm"
                                             value={edu.scoreType || 'GPA'}
                                             onChange={(e) => {
                                                 const newEdu = [...data.education];
@@ -322,7 +322,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             <section className="space-y-6">
                 <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                         <h2 className="text-xl font-black text-slate-900 tracking-tight">Projects</h2>
                     </div>
                     <button
@@ -337,7 +337,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                             };
                             onChange({ ...data, projects: [...data.projects, newProject] });
                         }}
-                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                        className="flex items-center gap-2 text-xs font-bold bg-slate-500 hover:bg-slate-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-slate-200 active:scale-95"
                     >
                         <Plus size={14} /> Add Project
                     </button>
@@ -345,7 +345,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
                 <div className="space-y-4">
                     {data.projects.map((project, index) => (
-                        <div key={project.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
+                        <div key={project.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-slate-300 transition-colors">
                             <button
                                 onClick={() => {
                                     const updated = data.projects.filter((item) => item.id !== project.id);
@@ -397,7 +397,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             {/* Skills */}
             <section className="space-y-6">
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                    <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                     <h2 className="text-xl font-black text-slate-900 tracking-tight">Skills</h2>
                 </div>
                 <div className="grid gap-6">
@@ -429,7 +429,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
             <section className="space-y-6">
                 <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                     <div className="flex items-center gap-3 flex-1">
-                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                        <div className="w-1.5 h-6 bg-slate-500 rounded-full" />
                         <input 
                             className="text-xl font-black text-slate-900 tracking-tight bg-transparent border-none focus:outline-none focus:ring-0 p-0 placeholder-slate-300 w-full hover:bg-slate-50 transition-colors rounded"
                             value={data.customSection?.title || 'Certifications & Awards'}
@@ -450,7 +450,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                             const items = data.customSection?.items || [];
                             onChange({ ...data, customSection: { title: data.customSection?.title || 'Certifications & Awards', items: [...items, newItem] } });
                         }}
-                        className="flex items-center gap-2 text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-indigo-500/20 active:scale-95 whitespace-nowrap ml-4"
+                        className="flex items-center gap-2 text-xs font-bold bg-slate-500 hover:bg-slate-400 text-white px-3 py-1.5 rounded-lg transition-all shadow-lg shadow-slate-200 active:scale-95 whitespace-nowrap ml-4"
                     >
                         <Plus size={14} /> Add Item
                     </button>
@@ -458,7 +458,7 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
 
                 <div className="space-y-4">
                     {(data.customSection?.items || []).map((item, index) => (
-                        <div key={item.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-indigo-300 transition-colors">
+                        <div key={item.id} className="bg-slate-50 border border-slate-200 p-6 rounded-2xl space-y-4 relative group hover:border-slate-300 transition-colors">
                             <button
                                 onClick={() => {
                                     const items = data.customSection?.items || [];
@@ -521,10 +521,10 @@ interface InputProps {
 
 const Input = ({ label, value, onChange, type = 'text', placeholder }: InputProps) => (
     <div className="space-y-2 group">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-indigo-600 transition-colors">{label}</label>
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-slate-800 transition-colors">{label}</label>
         <input
             type={type}
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-100 transition-all hover:border-slate-300 shadow-sm"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:ring-[3px] focus:ring-slate-200 transition-all hover:border-slate-300 shadow-sm"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
@@ -542,9 +542,9 @@ interface TextAreaProps {
 
 const TextArea = ({ label, value, onChange, placeholder, rows = 3 }: TextAreaProps) => (
     <div className="space-y-2 group">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-indigo-600 transition-colors">{label}</label>
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider group-focus-within:text-slate-800 transition-colors">{label}</label>
         <textarea
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-100 transition-all hover:border-slate-300 shadow-sm resize-none"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:ring-[3px] focus:ring-slate-200 transition-all hover:border-slate-300 shadow-sm resize-none"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}

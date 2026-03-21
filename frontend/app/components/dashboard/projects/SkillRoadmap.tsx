@@ -40,7 +40,7 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
             <div
                 key={project.id}
                 onClick={() => !isLocked && onSelectProject(project)}
-                className={`bg-white border ${isCompleted ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-100/50'} rounded-3xl p-6 transition-all duration-300 ${isLocked ? 'grayscale opacity-75 cursor-not-allowed' : 'hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 cursor-pointer'} group relative`}
+                className={`bg-white border ${isCompleted ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-100/50'} rounded-3xl p-6 transition-all duration-300 ${isLocked ? 'grayscale opacity-75 cursor-not-allowed' : 'hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200 cursor-pointer'} group relative`}
             >
                 {isCompleted && (
                     <div className="absolute top-4 right-4">
@@ -48,7 +48,7 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
                     </div>
                 )}
                 <div className="flex justify-between items-start mb-4">
-                    <h4 className="font-bold text-slate-800 text-lg group-hover:text-indigo-600 transition-colors line-clamp-1 pr-8 leading-tight">{project.title}</h4>
+                    <h4 className="font-bold text-slate-800 text-lg group-hover:text-slate-800 transition-colors line-clamp-1 pr-8 leading-tight">{project.title}</h4>
                     {!isCompleted && (
                         <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${project.complexity === 'Beginner' ? 'bg-emerald-50 text-emerald-600' : project.complexity === 'Intermediate' ? 'bg-orange-50 text-orange-600' : 'bg-rose-50 text-rose-600'
                             }`}>
@@ -65,7 +65,7 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
                     </div>
                     <div className="flex gap-1">
                         {!isLocked && (
-                            <span className="text-xs font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white px-3 py-1.5 rounded-full bg-indigo-50/80 transition-all duration-300">Start Project</span>
+                            <span className="text-xs font-bold text-slate-800 group-hover:bg-slate-800 group-hover:text-white px-3 py-1.5 rounded-full bg-slate-50/80 transition-all duration-300">Start Project</span>
                         )}
                     </div>
                 </div>
@@ -88,7 +88,7 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
 
         return (
             <div className={`relative ${!isUnlocked ? 'opacity-60' : ''}`}>
-                <div className={`absolute -left-[41px] top-0 w-6 h-6 rounded-full border-4 z-10 flex items-center justify-center ${isUnlocked ? 'bg-white border-indigo-600' : 'bg-slate-100 border-slate-300'}`}>
+                <div className={`absolute -left-[41px] top-0 w-6 h-6 rounded-full border-4 z-10 flex items-center justify-center ${isUnlocked ? 'bg-white border-slate-800' : 'bg-slate-100 border-slate-300'}`}>
                     {!isUnlocked && <Lock size={10} className="text-slate-400" />}
                 </div>
 
@@ -96,7 +96,7 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
                     <h3 className={`text-base font-bold flex items-center gap-2 ${isUnlocked ? 'text-slate-900' : 'text-slate-500'}`}>
                         {name}
                         {isUnlocked ? (
-                            <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold border border-indigo-100">
+                            <span className="px-2 py-0.5 rounded-full bg-slate-50 text-slate-800 text-xs font-bold border border-slate-200">
                                 {completedCount} / {projects.length} Completed
                             </span>
                         ) : (
@@ -113,15 +113,15 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
                         {isUnlocked && hasMore && (
                             <div
                                 onClick={() => toggleExpanded(tierKey)}
-                                className="bg-indigo-50/50 border border-indigo-100/50 rounded-3xl p-6 transition-all duration-300 hover:bg-indigo-100/80 hover:shadow-lg hover:shadow-indigo-500/5 cursor-pointer flex flex-col items-center justify-center text-center group min-h-[180px]"
+                                className="bg-slate-50/50 border border-slate-200/50 rounded-3xl p-6 transition-all duration-300 hover:bg-slate-100/80 hover:shadow-lg hover:shadow-slate-200 cursor-pointer flex flex-col items-center justify-center text-center group min-h-[180px]"
                             >
-                                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600 mb-3 group-hover:scale-110 transition-transform">
+                                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-800 mb-3 group-hover:scale-110 transition-transform">
                                     {isExpanded ? <ChevronUp size={24} /> : <span className="font-bold text-xl">+{projects.length - 4}</span>}
                                 </div>
-                                <h4 className="font-bold text-indigo-900 mb-1">
+                                <h4 className="font-bold text-slate-900 mb-1">
                                     {isExpanded ? 'View Less' : 'More Projects'}
                                 </h4>
-                                <p className="text-sm text-indigo-600/70 font-medium">
+                                <p className="text-sm text-slate-800/70 font-medium">
                                     {isExpanded ? 'Collapse list' : 'Click to view all'}
                                 </p>
                             </div>
@@ -152,17 +152,17 @@ export default function SkillRoadmap({ stack, onSelectProject, completedProjectI
             className="w-full h-full"
         >
             <h2 className="text-2xl font-black mb-8 text-slate-900 tracking-tight">
-                Projects <span className="text-slate-300 font-normal mx-2">/</span> <span className="text-indigo-600">{stack.name}</span>
+                Projects <span className="text-slate-300 font-normal mx-2">/</span> <span className="text-slate-800">{stack.name}</span>
             </h2>
 
             {/* Resume Banner */}
-            <div className="mb-10 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100/50 rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
-                <div className="w-12 h-12 shrink-0 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600 border border-indigo-50">
+            <div className="mb-10 bg-gradient-to-r from-slate-50 to-slate-50 border border-slate-200/50 rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
+                <div className="w-12 h-12 shrink-0 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-800 border border-slate-50">
                     <Briefcase size={20} />
                 </div>
                 <div>
-                    <h3 className="font-bold text-indigo-950 mb-1 leading-tight">Build Your Portfolio</h3>
-                    <p className="text-sm text-indigo-900/70 leading-relaxed font-medium">
+                    <h3 className="font-bold text-slate-950 mb-1 leading-tight">Build Your Portfolio</h3>
+                    <p className="text-sm text-slate-900/70 leading-relaxed font-medium">
                         These real-world projects are strictly designed to be added directly to your resume. Completing them provides strong, verifiable talking points for technical interviews.
                     </p>
                 </div>

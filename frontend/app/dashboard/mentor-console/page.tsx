@@ -154,11 +154,11 @@ export default function MentorConsolePage() {
         <div className="max-w-7xl mx-auto space-y-6">
             {/* Header */}
             <div className="bg-emerald-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg shadow-emerald-900/10">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-800/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute top-0 right-0 w-full max-w-full max-w-[600px] h-[600px] bg-emerald-800/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-5">
-                        <img
+                        <img loading="lazy" decoding="async"
                             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(mentorDisplayName)}&background=10B981&color=fff`}
                             alt="Profile"
                             className="w-16 h-16 rounded-full border-2 border-emerald-400/50 shadow-md"
@@ -263,7 +263,7 @@ export default function MentorConsolePage() {
                                             <div key={req.id} className="p-6 transition-colors hover:bg-slate-50">
                                                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-start">
                                                     <div className="flex items-start gap-4">
-                                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
+                                                        <img loading="lazy" decoding="async" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
                                                         <div>
                                                             <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
                                                             <p className="text-sm text-slate-700 font-medium mt-1">{req.topic}</p>
@@ -328,7 +328,7 @@ export default function MentorConsolePage() {
                                         return (
                                             <div key={session.id} className="p-6">
                                                 <div className="flex items-center gap-4 mb-4">
-                                                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
+                                                    <img loading="lazy" decoding="async" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(studentName)}`} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
                                                     <div>
                                                         <h3 className="text-sm font-bold text-slate-900">{studentName}</h3>
                                                         <p className="text-xs text-slate-500">{formatSessionDate(session)}</p>

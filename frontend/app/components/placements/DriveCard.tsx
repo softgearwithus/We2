@@ -26,7 +26,7 @@ export default function DriveCard({ drive }: DriveCardProps) {
                 <div className="flex items-center gap-4">
                     <div className="w-14 h-14 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden shrink-0">
                         {drive.companyLogo ? (
-                            <img src={drive.companyLogo} alt={drive.companyName} className="w-full h-full object-cover" />
+                            <img loading="lazy" decoding="async" src={drive.companyLogo} alt={drive.companyName} className="w-full h-full object-cover" />
                         ) : (
                             <span className="material-symbols-outlined text-slate-400 text-3xl">apartment</span>
                         )}
@@ -45,7 +45,7 @@ export default function DriveCard({ drive }: DriveCardProps) {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-6">
-                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${isInternship ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${isInternship ? 'bg-slate-50 text-slate-900 border-slate-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>
                     {drive.type}
                 </span>
                 {drive.location && (

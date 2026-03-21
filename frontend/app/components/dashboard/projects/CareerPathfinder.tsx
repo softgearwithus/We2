@@ -33,9 +33,9 @@ export default function CareerPathfinder({ onComplete }: CareerPathfinderProps) 
                                     setSelectedInterest(domain);
                                     setStep(2);
                                 }}
-                                className="group p-6 rounded-xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all bg-slate-50 hover:bg-white"
+                                className="group p-6 rounded-xl border border-slate-200 hover:border-slate-400 hover:shadow-lg transition-all bg-slate-50 hover:bg-white"
                             >
-                                <div className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-colors">
+                                <div className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center mb-4 group-hover:bg-slate-800 group-hover:border-slate-800 transition-colors">
                                     <domain.icon className="text-slate-600 group-hover:text-white" size={24} />
                                 </div>
                                 <h3 className="font-bold text-slate-900 text-lg mb-2">{domain.title}</h3>
@@ -69,7 +69,7 @@ export default function CareerPathfinder({ onComplete }: CareerPathfinderProps) 
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
                     {/* Left: Pitch */}
                     <div className="p-8 md:p-12 flex flex-col justify-center">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-sm font-bold w-fit mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 text-slate-900 text-sm font-bold w-fit mb-6">
                             <selectedInterest.icon size={16} />
                             Excellent Choice
                         </div>
@@ -85,10 +85,10 @@ export default function CareerPathfinder({ onComplete }: CareerPathfinderProps) 
                                     <div className="font-bold text-slate-900">{selectedInterest.avgSalary}</div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
-                                <div className="p-2 bg-white rounded-full text-purple-600 shadow-sm"><Briefcase size={20} /></div>
+                            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div className="p-2 bg-white rounded-full text-slate-800 shadow-sm"><Briefcase size={20} /></div>
                                 <div>
-                                    <div className="text-xs font-bold text-purple-800 uppercase">Popular Roles</div>
+                                    <div className="text-xs font-bold text-slate-800 uppercase">Popular Roles</div>
                                     <div className="font-bold text-slate-900">{selectedInterest.title} Engineer, Tech Lead</div>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@ export default function CareerPathfinder({ onComplete }: CareerPathfinderProps) 
 
                         <button
                             onClick={() => onComplete(selectedInterest)}
-                            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-lg shadow-lg shadow-slate-200 transition-all flex items-center justify-center gap-2"
                         >
                             Start My Journey <ArrowRight size={20} />
                         </button>
@@ -108,7 +108,7 @@ export default function CareerPathfinder({ onComplete }: CareerPathfinderProps) 
                         <div className="space-y-4">
                             {selectedInterest.popularApps?.map((app, idx) => (
                                 <div key={idx} className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
-                                    <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
+                                    <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 font-bold text-lg">
                                         {app[0]}
                                     </div>
                                     <span className="font-bold text-slate-700">{app}</span>

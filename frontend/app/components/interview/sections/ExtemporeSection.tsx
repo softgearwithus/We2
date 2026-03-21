@@ -124,7 +124,7 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
 
                         <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-xl shadow-slate-100 rounded-[2.5rem] relative overflow-hidden text-center">
                             <div className="mb-8">
-                                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-4 border-indigo-100 bg-indigo-50 text-indigo-600 mb-6">
+                                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full border-4 border-slate-200 bg-slate-50 text-slate-800 mb-6">
                                     <span className="text-4xl font-black font-mono animate-pulse">{timeLeft}</span>
                                 </div>
                                 <p className="text-slate-500 font-medium">Recording starts automatically in {timeLeft} seconds</p>
@@ -132,7 +132,7 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
 
                             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 max-w-2xl mx-auto text-left space-y-6 shadow-inner">
                                 <div>
-                                    <h3 className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-2">Topic</h3>
+                                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest mb-2">Topic</h3>
                                     <p className="text-2xl font-bold text-slate-900 leading-snug">"{topicContent.topic}"</p>
                                 </div>
 
@@ -177,7 +177,7 @@ export default function ExtemporeSection({ onComplete, topicContent, globalStrea
                             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">"{topicContent.topic}"</h2>
                         </div>
 
-                        <Card className="p-8 md:p-12 bg-white border-indigo-200 shadow-2xl shadow-indigo-100 ring-4 ring-indigo-50 rounded-[2.5rem] text-center flex flex-col items-center justify-center min-h-[400px]">
+                        <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-2xl shadow-slate-200 ring-4 ring-slate-200 rounded-[2.5rem] text-center flex flex-col items-center justify-center min-h-[400px]">
                             <div className="relative h-40 w-40 flex items-center justify-center mb-10">
                                 <div className="absolute inset-0 bg-rose-100 rounded-full animate-ping opacity-60" />
                                 <div className="absolute inset-4 bg-rose-50 rounded-full" />

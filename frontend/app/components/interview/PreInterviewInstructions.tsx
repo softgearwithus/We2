@@ -58,9 +58,9 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center justify-center p-3 bg-indigo-50 rounded-full mb-4"
+                    className="inline-flex items-center justify-center p-3 bg-slate-50 rounded-full mb-4"
                 >
-                    <Video className="w-8 h-8 text-indigo-600" />
+                    <Video className="w-8 h-8 text-slate-800" />
                 </motion.div>
                 <h1 className="text-3xl font-bold text-slate-900">Before We Begin</h1>
                 <p className="text-slate-500 max-w-lg mx-auto">
@@ -72,7 +72,7 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
             <div className="w-full max-w-xl">
                 <Card className="p-6 border border-slate-200 bg-white/80 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
-                        <UploadCloud className="text-indigo-600" />
+                        <UploadCloud className="text-slate-800" />
                         <div>
                             <div className="font-bold text-slate-900">Upload Resume</div>
                             <div className="text-xs text-slate-500">PDF or DOCX. Used to personalize questions.</div>
@@ -164,7 +164,7 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
                 <Button
                     onClick={handleUpload}
                     disabled={isUploading}
-                    className="flex-1 rounded-xl h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all transform hover:-translate-y-1"
+                    className="flex-1 rounded-xl h-12 bg-slate-800 hover:bg-slate-900 text-white font-bold shadow-lg shadow-slate-200 hover:shadow-slate-200 transition-all transform hover:-translate-y-1"
                 >
                     {isUploading ? 'Uploading...' : 'I\'m Ready'} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>

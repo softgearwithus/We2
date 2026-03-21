@@ -121,7 +121,7 @@ export default function AdminProjects() {
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                        <div className="p-2 bg-slate-50 text-slate-800 rounded-lg">
                             <Search size={20} />
                         </div>
                         <h3 className="text-sm font-medium text-slate-600">Search Results</h3>

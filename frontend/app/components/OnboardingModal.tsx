@@ -40,7 +40,7 @@ export default function OnboardingModal() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
             <div className="bg-[#252526] w-full max-w-md rounded-2xl border border-[#444] shadow-2xl overflow-hidden p-8 text-center relative">
                 <div className="w-20 h-20 bg-[#333] rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden border-2 border-blue-500">
-                    <img src={currentStep.image} alt="Icon" className="w-12 h-12" />
+                    <img loading="lazy" decoding="async" src={currentStep.image} alt="Icon" className="w-12 h-12" />
                 </div>
 
                 <h2 className="text-2xl font-bold text-white mb-4">{currentStep.title}</h2>

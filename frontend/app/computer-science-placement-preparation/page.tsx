@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 const colorMap: Record<string, string> = {
   'emerald': 'bg-emerald-100 text-emerald-600',
   'brand-orange': 'bg-orange-100 text-orange-600',
-  'indigo': 'bg-indigo-100 text-indigo-600',
+  'indigo': 'bg-slate-100 text-slate-800',
   'slate': 'bg-slate-100 text-slate-600'
 };
 
@@ -48,7 +48,7 @@ export default function CSPlacementPreparation() {
       />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 lg:pt-48 lg:pb-20 bg-gradient-to-br from-brand-orange/5 to-purple-600/5 relative overflow-hidden">
+      <section className="pt-32 pb-16 lg:pt-48 lg:pb-20 bg-gradient-to-br from-brand-orange/5 to-slate-600/5 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 mb-8 shadow-sm">
             <span className="text-sm font-bold tracking-tight text-gray-600">Updated for 2026 Hiring Trends</span>
@@ -56,7 +56,7 @@ export default function CSPlacementPreparation() {
         
           <h1 className="text-4xl md:text-6xl font-[900] tracking-tight text-brand-black mb-6 text-balance leading-tight">
             The Ultimate Guide to <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">
               Computer Science Placement Preparation
             </span>
           </h1>

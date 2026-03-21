@@ -264,7 +264,7 @@ export default function CareersPage() {
                         <div className="relative">
                             <div className="absolute -inset-4 bg-orange-50 rounded-[40px] -rotate-2" />
                             <div className="relative aspect-video rounded-[32px] overflow-hidden shadow-2xl bg-brand-black border border-white/10">
-                                <img src="https://images.unsplash.com/photo-152207182399e-b89e7df830c5?q=80&w=800&auto=format&fit=crop" alt="Team Work" className="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-700" />
+                                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-152207182399e-b89e7df830c5?q=80&w=800&auto=format&fit=crop" alt="Team Work" className="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all duration-700" />
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="w-20 h-20 rounded-full bg-brand-orange text-white flex items-center justify-center animate-pulse">
                                         <Users size={32} />

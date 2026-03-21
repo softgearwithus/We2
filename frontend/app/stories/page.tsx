@@ -102,7 +102,7 @@ function StoryCard({ story, idx }: { story: typeof successStories[0], idx: numbe
             <div className="flex items-start justify-between mb-8">
                 <div className="flex items-center gap-4">
                     <div className="relative w-16 h-16 rounded-2xl overflow-hidden ring-4 ring-gray-50 group-hover:ring-brand-orange/10 transition-all">
-                        <img src={story.image} alt={story.name} className="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src={story.image} alt={story.name} className="w-full h-full object-cover" />
                     </div>
                     <div>
                         <h4 className="text-lg font-bold text-brand-black">{story.name}</h4>
@@ -201,7 +201,7 @@ export default function StoriesPage() {
                                 <div className={`w-10 h-10 rounded-2xl bg-gray-50 text-gray-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${stat.color === 'emerald' ? 'group-hover:text-emerald-500 group-hover:bg-emerald-50' :
                                     stat.color === 'orange' ? 'group-hover:text-brand-orange group-hover:bg-orange-50' :
                                         stat.color === 'blue' ? 'group-hover:text-blue-500 group-hover:bg-blue-50' :
-                                            'group-hover:text-purple-500 group-hover:bg-purple-50'
+                                            'group-hover:text-slate-500 group-hover:bg-slate-50'
                                     }`}>
                                     <stat.icon size={20} />
                                 </div>
@@ -250,7 +250,7 @@ export default function StoriesPage() {
 
             {/* Final CTA */}
             <section className="py-24 bg-brand-black text-white relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-orange via-purple-500 to-emerald-500" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-orange via-slate-500 to-emerald-500" />
                 <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
                     <h2 className="text-4xl font-black mb-8">Ready to write your own Story?</h2>
                     <p className="text-gray-400 text-lg mb-10 max-w-2xl mx-auto font-medium leading-relaxed">

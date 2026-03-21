@@ -111,7 +111,7 @@ export default function MockTestAnalysisPage() {
 
                 {/* Header Card */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-900 to-indigo-900 p-8 text-white relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-900 to-slate-900 p-8 text-white relative overflow-hidden">
                         <div className="absolute top-0 right-0 opacity-10 blur-3xl w-64 h-64 bg-white rounded-full translate-x-1/2 -translate-y-1/2" />
                         <h1 className="text-3xl font-black mb-2">{resultData.mockTest?.title || 'Mock Test Analysis'}</h1>
                         <p className="text-blue-200 font-medium">Session Report & Solution Review</p>
@@ -151,7 +151,7 @@ export default function MockTestAnalysisPage() {
                                     <div className="font-semibold text-slate-800 text-lg break-words" dangerouslySetInnerHTML={{ __html: resp.question.questionText }} />
                                     {resp.question.imageUrl && (
                                         <div className="mt-4 mb-4 relative inline-block">
-                                            <img src={resp.question.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-xl h-auto max-h-80 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
+                                            <img loading="lazy" decoding="async" src={resp.question.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-xl h-auto max-h-80 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
                                         </div>
                                     )}
                                     <p className="text-sm text-slate-500 font-medium mt-1 uppercase tracking-wider">{resp.question.questionType}</p>

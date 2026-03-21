@@ -359,7 +359,7 @@ export default function AdminTestSeriesBuilder() {
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 object-cover overflow-hidden">
-                                        {company.logoUrl ? <img src={company.logoUrl} alt={company.name} className="w-8 h-8 object-contain" /> : <BookOpen className="text-slate-400" size={20} />}
+                                        {company.logoUrl ? <img loading="lazy" decoding="async" src={company.logoUrl} alt={company.name} className="w-8 h-8 object-contain" /> : <BookOpen className="text-slate-400" size={20} />}
                                     </div>
                                     <ChevronRight className="text-slate-300 group-hover:text-orange-500 transition-colors" />
                                 </div>
@@ -534,7 +534,7 @@ export default function AdminTestSeriesBuilder() {
 
                                                                                                     {q.imageUrl && (
                                                                                                         <div className="mt-3 relative inline-block">
-                                                                                                            <img src={q.imageUrl} alt="Question Graphic" className="max-w-xs md:max-w-sm h-auto max-h-48 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
+                                                                                                            <img loading="lazy" decoding="async" src={q.imageUrl} alt="Question Graphic" className="max-w-xs md:max-w-sm h-auto max-h-48 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
                                                                                                         </div>
                                                                                                     )}
 
@@ -633,7 +633,7 @@ export default function AdminTestSeriesBuilder() {
                                                                                         <label className="text-xs font-bold text-slate-500 block mb-2">Question Image (Optional)</label>
                                                                                         {questionForm.imageUrl ? (
                                                                                             <div className="relative inline-block group">
-                                                                                                <img src={questionForm.imageUrl} alt="Uploaded" className="max-w-xs h-auto max-h-48 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block transition-opacity group-hover:opacity-90" />
+                                                                                                <img loading="lazy" decoding="async" src={questionForm.imageUrl} alt="Uploaded" className="max-w-xs h-auto max-h-48 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block transition-opacity group-hover:opacity-90" />
                                                                                                 <button
                                                                                                     onClick={() => setQuestionForm({ ...questionForm, imageUrl: '' })}
                                                                                                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 hover:scale-105 transition-all opacity-0 group-hover:opacity-100"

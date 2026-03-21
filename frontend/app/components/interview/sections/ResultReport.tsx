@@ -28,13 +28,13 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
             </div>
 
             {/* Overall Score Card */}
-            <Card className="p-8 bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-xl rounded-2xl overflow-hidden relative">
+            <Card className="p-8 bg-gradient-to-br from-slate-600 to-slate-700 text-white shadow-xl rounded-2xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="space-y-4">
                         <div>
                             <h2 className="text-2xl font-bold mb-2">Overall Proficiency</h2>
-                            <p className="text-indigo-100 max-w-md">
+                            <p className="text-slate-100 max-w-md">
                                 Based on your Reading, Listening, and Extempore performance.
                                 {overallScore > 80 ? " Excellent command of the language!" : overallScore > 60 ? " Good proficiency with room for polish." : " Needs consistent practice."}
                             </p>
@@ -42,7 +42,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
 
                         {(scores as any).some((s: any) => s.data?.communicationPersona || (Array.isArray(s.data) && s.data[0]?.communicationPersona)) && (
                             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
-                                <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-200">AI Persona</span>
+                                <span className="text-[10px] uppercase font-bold tracking-widest text-slate-200">AI Persona</span>
                                 <span className="text-sm font-semibold italic text-white">
                                     "{(scores as any).find((s: any) => s.data?.communicationPersona)?.data?.communicationPersona ||
                                         (scores as any).find((s: any) => Array.isArray(s.data) && s.data[0]?.communicationPersona)?.data?.[0]?.communicationPersona || 'Professional'}"
@@ -61,9 +61,9 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
 
             {/* AI Coaching Plan (Global) */}
             {(scores as any).some((s: any) => (Array.isArray(s.data) && s.data.some((d: any) => d.actionableCoaching)) || (s.data?.actionableCoaching)) && (
-                <Card className="p-6 border-2 border-indigo-100 bg-indigo-50/30 rounded-2xl shadow-sm">
+                <Card className="p-6 border-2 border-slate-200 bg-slate-50/30 rounded-2xl shadow-sm">
                     <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                        <RefreshCw className="w-5 h-5 text-indigo-600 animate-spin-slow" />
+                        <RefreshCw className="w-5 h-5 text-slate-800 animate-spin-slow" />
                         Professional Improvement Plan
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -71,8 +71,8 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                             if (Array.isArray(s.data)) return s.data.flatMap((d: any) => d.actionableCoaching || []);
                             return (s.data as any)?.actionableCoaching || [];
                         }))).slice(0, 4).map((coach, i) => (
-                            <div key={i} className="flex gap-3 bg-white p-3 rounded-xl border border-indigo-50">
-                                <span className="flex-shrink-0 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                            <div key={i} className="flex gap-3 bg-white p-3 rounded-xl border border-slate-50">
+                                <span className="flex-shrink-0 w-6 h-6 bg-slate-800 text-white rounded-full flex items-center justify-center text-xs font-bold">{i + 1}</span>
                                 <p className="text-xs text-slate-700 font-medium leading-relaxed">{coach}</p>
                             </div>
                         ))}
@@ -82,7 +82,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
 
             <div className="grid grid-cols-1 gap-6">
                 {scores.map((section, idx) => (
-                    <Card key={idx} className="p-6 border-l-4 border-l-indigo-500 shadow-md">
+                    <Card key={idx} className="p-6 border-l-4 border-l-slate-500 shadow-md">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl font-bold text-slate-800">{section.section}</h3>
                             <span className={`px-3 py-1 rounded-full text-sm font-bold ${section.score >= 80 ? 'bg-emerald-100 text-emerald-700' :
@@ -94,8 +94,8 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
 
                         {/* Audio Playback for the section */}
                         {section.data && (
-                            <div className="mb-4 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
-                                <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">Section Recording</p>
+                            <div className="mb-4 p-4 bg-slate-50/50 rounded-xl border border-slate-200">
+                                <p className="text-xs font-semibold text-slate-800 uppercase tracking-wider mb-2">Section Recording</p>
                                 {Array.isArray(section.data) ? (
                                     <div className="space-y-2">
                                         {section.data.map((item: any, i: number) => {
@@ -128,7 +128,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                         {/* Content Comparison (if available in history/live analysis data) */}
                         {section.data && Array.isArray(section.data) && section.data[0]?.transcript && (
                             <div className="mb-6 space-y-4">
-                                <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Content Comparison</p>
+                                <p className="text-xs font-semibold text-slate-800 uppercase tracking-wider">Content Comparison</p>
                                 <div className="space-y-3">
                                     {section.data.map((item: any, i: number) => (
                                         <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
@@ -137,8 +137,8 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                                                 <p className="text-xs text-slate-700 leading-relaxed italic">"{item.targetText || item.targetTopic || '---'}"</p>
                                             </div>
                                             <div className="space-y-1 border-t md:border-t-0 md:border-l border-slate-100 pt-2 md:pt-0 md:pl-3">
-                                                <p className="text-[10px] uppercase font-bold text-indigo-400">Your Transcription</p>
-                                                <p className="text-xs text-indigo-900 leading-relaxed">"{item.transcript || '---'}"</p>
+                                                <p className="text-[10px] uppercase font-bold text-slate-400">Your Transcription</p>
+                                                <p className="text-xs text-slate-900 leading-relaxed">"{item.transcript || '---'}"</p>
                                             </div>
                                         </div>
                                     ))}
@@ -188,7 +188,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                                             <div key={i} className="space-y-1.5 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
                                                 <div className="flex justify-between items-center group relative">
                                                     <span className="text-xs font-bold text-slate-700">{metric.label}</span>
-                                                    <span className="text-xs font-black text-indigo-600">{metric.value}%</span>
+                                                    <span className="text-xs font-black text-slate-800">{metric.value}%</span>
                                                     {metric.reason && (
                                                         <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-20 w-48 p-2 bg-slate-900 text-white text-[10px] rounded shadow-xl">
                                                             {metric.reason}
@@ -201,7 +201,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                                                         animate={{ width: `${metric.value}%` }}
                                                         transition={{ duration: 1, delay: 0.5 }}
                                                         className={`h-full rounded-full ${metric.value >= 80 ? 'bg-emerald-500' :
-                                                            metric.value >= 60 ? 'bg-indigo-500' : 'bg-rose-500'
+                                                            metric.value >= 60 ? 'bg-slate-500' : 'bg-rose-500'
                                                             }`}
                                                     />
                                                 </div>
@@ -226,7 +226,7 @@ export default function ResultReport({ scores, onRestart, onBack }: ResultReport
                 <Button variant="outline" className="gap-2">
                     <Download size={16} /> Download PDF
                 </Button>
-                <Button onClick={onRestart} className="bg-indigo-600 hover:bg-indigo-700 gap-2 shadow-lg">
+                <Button onClick={onRestart} className="bg-slate-800 hover:bg-slate-900 gap-2 shadow-lg">
                     <RefreshCw size={16} /> Take New Assessment
                 </Button>
             </div>

@@ -126,7 +126,7 @@ export default function CompanyMockTestsPage() {
 
                     <div className="max-w-3xl flex items-center gap-6">
                         {companyDetails?.logoUrl && (
-                            <img src={companyDetails.logoUrl} alt={companyDetails.name} className="w-24 h-24 object-contain" />
+                            <img loading="lazy" decoding="async" src={companyDetails.logoUrl} alt={companyDetails.name} className="w-24 h-24 object-contain" />
                         )}
                         <div>
                             <div className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-orange-100">

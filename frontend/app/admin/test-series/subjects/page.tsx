@@ -381,7 +381,7 @@ export default function AdminSubjectBuilder() {
                 {view === 'select_subject' ? (
                     <div className="space-y-6">
                         {isSubjectsLoading && subjects.length === 0 ? (
-                            <div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>
+                            <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-700" size={32} /></div>
                         ) : subjects.length === 0 ? (
                             <div className="bg-white p-12 rounded-2xl shadow-sm border border-slate-200 text-center">
                                 <BookOpen className="mx-auto text-slate-300 mb-4" size={48} />
@@ -392,23 +392,23 @@ export default function AdminSubjectBuilder() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {subjects.map((subject) => {
                                     const borderHoverClass = {
-                                        indigo: 'hover:border-indigo-200',
+                                        indigo: 'hover:border-slate-200',
                                         blue: 'hover:border-blue-200',
-                                        purple: 'hover:border-purple-200',
+                                        purple: 'hover:border-slate-200',
                                         emerald: 'hover:border-emerald-200',
                                         amber: 'hover:border-amber-200',
                                         rose: 'hover:border-rose-200',
                                         cyan: 'hover:border-cyan-200',
-                                    }[subject.color] || 'hover:border-indigo-200';
+                                    }[subject.color] || 'hover:border-slate-200';
                                     const iconClass = {
-                                        indigo: 'bg-indigo-50 text-indigo-600',
+                                        indigo: 'bg-slate-50 text-slate-800',
                                         blue: 'bg-blue-50 text-blue-600',
-                                        purple: 'bg-purple-50 text-purple-600',
+                                        purple: 'bg-slate-50 text-slate-800',
                                         emerald: 'bg-emerald-50 text-emerald-600',
                                         amber: 'bg-amber-50 text-amber-600',
                                         rose: 'bg-rose-50 text-rose-600',
                                         cyan: 'bg-cyan-50 text-cyan-600',
-                                    }[subject.color] || 'bg-indigo-50 text-indigo-600';
+                                    }[subject.color] || 'bg-slate-50 text-slate-800';
 
                                     return (
                                     <div
@@ -427,7 +427,7 @@ export default function AdminSubjectBuilder() {
                                             {subject.icon}
                                         </div>
                                         <h3 className="text-xl font-bold text-slate-800 pr-8">{subject.name}</h3>
-                                        <p className="text-sm text-slate-500 mt-1 font-medium flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                                        <p className="text-sm text-slate-500 mt-1 font-medium flex items-center gap-1 group-hover:text-slate-800 transition-colors">
                                             Manage Modules <ChevronRight size={14} />
                                         </p>
                                     </div>
@@ -438,7 +438,7 @@ export default function AdminSubjectBuilder() {
                         {/* Add Subject Block */}
                         <div className="max-w-md">
                             {isAddingSubject ? (
-                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-indigo-200">
+                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                                     <h4 className="font-bold text-slate-800 mb-3">New Subject Name</h4>
                                     <input 
                                         type="text" 
@@ -446,15 +446,15 @@ export default function AdminSubjectBuilder() {
                                         value={newSubjectName} 
                                         onChange={e => setNewSubjectName(e.target.value)} 
                                         placeholder="e.g., Biology, Physics, Literature" 
-                                        className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm outline-none focus:border-indigo-500 mb-4" 
+                                        className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm outline-none focus:border-slate-400 mb-4" 
                                     />
                                     <div className="flex gap-2">
-                                        <button onClick={handleCreateFakeSubject} disabled={!newSubjectName.trim()} className="px-5 py-2 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700">Create</button>
+                                        <button onClick={handleCreateFakeSubject} disabled={!newSubjectName.trim()} className="px-5 py-2 bg-slate-800 text-white font-bold text-sm rounded-xl hover:bg-slate-900">Create</button>
                                         <button onClick={() => setIsAddingSubject(false)} className="px-5 py-2 bg-slate-100 text-slate-700 font-bold text-sm rounded-xl hover:bg-slate-200">Cancel</button>
                                     </div>
                                 </div>
                             ) : (
-                                <button onClick={() => setIsAddingSubject(true)} className="w-full py-4 border-2 border-dashed border-slate-300 hover:border-indigo-400 rounded-2xl text-slate-500 font-bold hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-2 transition">
+                                <button onClick={() => setIsAddingSubject(true)} className="w-full py-4 border-2 border-dashed border-slate-300 hover:border-slate-400 rounded-2xl text-slate-500 font-bold hover:text-slate-800 hover:bg-slate-50 flex items-center justify-center gap-2 transition">
                                     <Plus size={20} /> Add Custom Subject
                                 </button>
                             )}
@@ -463,7 +463,7 @@ export default function AdminSubjectBuilder() {
                 ) : (
                     <div className="space-y-6 max-w-4xl mx-auto">
                         {isLoading && !modules.length ? (
-                            <div className="flex justify-center p-12"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>
+                            <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-700" size={32} /></div>
                         ) : (
                             <>
                                 {modules.length === 0 ? (
@@ -494,7 +494,7 @@ export default function AdminSubjectBuilder() {
                                                     }} className="px-4 py-2 bg-amber-50 text-amber-700 font-bold text-sm rounded-xl hover:bg-amber-100 transition">
                                                         ⏱️ Timer
                                                     </button>
-                                                    <button onClick={() => setImportingToModule(importingToModule === mod.key ? null : mod.key)} className="px-4 py-2 bg-indigo-50 text-indigo-700 font-bold text-sm rounded-xl hover:bg-indigo-100 transition">
+                                                    <button onClick={() => setImportingToModule(importingToModule === mod.key ? null : mod.key)} className="px-4 py-2 bg-slate-50 text-slate-900 font-bold text-sm rounded-xl hover:bg-slate-100 transition">
                                                         Bulk Import
                                                     </button>
                                                     <button onClick={() => setAddingQuestionToModule(addingQuestionToModule === mod.key ? null : mod.key)} className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-sm rounded-xl hover:bg-slate-200 transition">
@@ -510,16 +510,16 @@ export default function AdminSubjectBuilder() {
                                             </div>
 
                                             {importingToModule === mod.key && (
-                                                <div className="p-5 bg-indigo-50/50 border-t border-indigo-100">
-                                                    <h4 className="font-bold text-indigo-900 mb-2">Import JSON directly into {mod.label}</h4>
+                                                <div className="p-5 bg-slate-50/50 border-t border-slate-200">
+                                                    <h4 className="font-bold text-slate-900 mb-2">Import JSON directly into {mod.label}</h4>
                                                     <textarea 
                                                         value={jsonInput} 
                                                         onChange={e => setJsonInput(e.target.value)} 
-                                                        className="w-full h-40 p-3 rounded-xl border border-indigo-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20" 
+                                                        className="w-full h-40 p-3 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-slate-200" 
                                                         placeholder='[{"questionText": "What is JS?", "optionsJson": ["A","B","C"], "correctOptionIndex": 0}]'
                                                     />
                                                     <div className="mt-3 flex gap-2">
-                                                        <button onClick={() => handleBulkImport(mod.key)} disabled={isSaving} className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700">Import Questions</button>
+                                                        <button onClick={() => handleBulkImport(mod.key)} disabled={isSaving} className="px-5 py-2.5 bg-slate-800 text-white font-bold rounded-xl text-sm hover:bg-slate-900">Import Questions</button>
                                                         <button onClick={() => setImportingToModule(null)} className="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50">Cancel</button>
                                                     </div>
                                                 </div>
@@ -538,7 +538,7 @@ export default function AdminSubjectBuilder() {
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                             {questionForm.options.map((opt, idx) => (
                                                                 <div key={idx} className="flex items-center gap-2">
-                                                                    <input type="radio" checked={questionForm.correctOptionIndex === idx} onChange={() => setQuestionForm({...questionForm, correctOptionIndex: idx})} className="w-4 h-4 text-indigo-600 cursor-pointer" />
+                                                                    <input type="radio" checked={questionForm.correctOptionIndex === idx} onChange={() => setQuestionForm({...questionForm, correctOptionIndex: idx})} className="w-4 h-4 text-slate-800 cursor-pointer" />
                                                                     <input type="text" value={opt} onChange={e => {
                                                                         const opts = [...questionForm.options];
                                                                         opts[idx] = e.target.value;
@@ -559,7 +559,7 @@ export default function AdminSubjectBuilder() {
                                                                 checked={questionForm.isNew}
                                                                 onChange={(e) => setQuestionForm((prev) => ({ ...prev, isNew: e.target.checked }))}
                                                                 id={`isNew-${mod.key}`}
-                                                                className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-600 cursor-pointer"
+                                                                className="w-4 h-4 text-slate-800 rounded border-slate-300 focus:ring-slate-200 cursor-pointer"
                                                             />
                                                             <label htmlFor={`isNew-${mod.key}`} className="text-sm font-bold text-slate-700 cursor-pointer">Mark question as 'New'</label>
                                                         </div>
@@ -610,7 +610,7 @@ export default function AdminSubjectBuilder() {
                                                                         <div className="flex items-center gap-2 mb-1">
                                                                             <p className="font-semibold text-slate-800 text-sm whitespace-pre-wrap leading-relaxed">{q.question}</p>
                                                                             {q.isNew && (
-                                                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-indigo-100 text-indigo-700">New</span>
+                                                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-slate-100 text-slate-900">New</span>
                                                                             )}
                                                                         </div>
                                                                     </div>
@@ -629,7 +629,7 @@ export default function AdminSubjectBuilder() {
 
                                 {/* Add Module Block */}
                                 {isAddingModule ? (
-                                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-indigo-200">
+                                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                                         <h4 className="font-bold text-slate-800 mb-3">New Module Name</h4>
                                         <input 
                                             type="text" 
@@ -637,15 +637,15 @@ export default function AdminSubjectBuilder() {
                                             value={newModuleName} 
                                             onChange={e => setNewModuleName(e.target.value)} 
                                             placeholder="e.g., Number Systems, Variables, Module 1" 
-                                            className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm outline-none focus:border-indigo-500 mb-4" 
+                                            className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm outline-none focus:border-slate-400 mb-4" 
                                         />
                                         <div className="flex gap-2">
-                                            <button onClick={handleCreateFakeModule} disabled={!newModuleName.trim()} className="px-5 py-2 bg-indigo-600 text-white font-bold text-sm rounded-xl">Create</button>
+                                            <button onClick={handleCreateFakeModule} disabled={!newModuleName.trim()} className="px-5 py-2 bg-slate-800 text-white font-bold text-sm rounded-xl">Create</button>
                                             <button onClick={() => setIsAddingModule(false)} className="px-5 py-2 bg-slate-100 text-slate-700 font-bold text-sm rounded-xl">Cancel</button>
                                         </div>
                                     </div>
                                 ) : (
-                                    <button onClick={() => setIsAddingModule(true)} className="w-full py-4 border-2 border-dashed border-slate-300 hover:border-indigo-400 rounded-2xl text-slate-500 font-bold hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center gap-2 transition">
+                                    <button onClick={() => setIsAddingModule(true)} className="w-full py-4 border-2 border-dashed border-slate-300 hover:border-slate-400 rounded-2xl text-slate-500 font-bold hover:text-slate-800 hover:bg-slate-50 flex items-center justify-center gap-2 transition">
                                         <Plus size={20} /> Create New Module
                                     </button>
                                 )}

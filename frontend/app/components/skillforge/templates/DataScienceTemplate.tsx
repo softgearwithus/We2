@@ -77,7 +77,7 @@ export default function DataScienceTemplate() {
             <header className="h-16 bg-slate-900 border-b border-white/5 flex items-center justify-between px-6 shrink-0 z-20">
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                        <div className="w-8 h-8 bg-slate-500 rounded-lg flex items-center justify-center text-white shadow-lg shadow-slate-200">
                             <Activity size={18} />
                         </div>
                         <h1 className="text-white font-black tracking-tighter text-lg uppercase">Analyzer Lab</h1>
@@ -109,7 +109,7 @@ export default function DataScienceTemplate() {
                     <button
                         onClick={handleRun}
                         disabled={isExecuting}
-                        className={`flex items-center gap-2 px-6 py-2.5 bg-indigo-500 hover:bg-indigo-400 text-white font-black text-sm rounded-xl transition-all active:scale-95 shadow-lg shadow-indigo-500/20 ${isExecuting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center gap-2 px-6 py-2.5 bg-slate-500 hover:bg-slate-400 text-white font-black text-sm rounded-xl transition-all active:scale-95 shadow-lg shadow-slate-200 ${isExecuting ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {isExecuting ? <TrendingUp size={16} className="animate-bounce" /> : <Play size={16} fill="currentColor" />}
                         {activeTab === 'sql' ? 'EXECUTE SQL' : 'RUN CELL'}
@@ -128,7 +128,7 @@ export default function DataScienceTemplate() {
                         </h2>
                         <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm group">
                             <div className="flex items-center gap-2 text-slate-700 font-bold text-sm mb-1">
-                                <TableIcon size={14} className="text-indigo-500" /> {schema.tableName}
+                                <TableIcon size={14} className="text-slate-700" /> {schema.tableName}
                             </div>
                             <p className="text-[10px] text-slate-400 font-medium">PostgreSQL Relational Table</p>
                         </div>
@@ -136,12 +136,12 @@ export default function DataScienceTemplate() {
 
                     <div className="flex-1 overflow-auto p-4 space-y-2">
                         {schema.columns.map(col => (
-                            <div key={col.name} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-indigo-200 transition-colors cursor-default group">
+                            <div key={col.name} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-slate-200 transition-colors cursor-default group">
                                 <div className="flex items-center gap-2">
                                     <div className="text-xs font-bold text-slate-700">{col.name}</div>
                                     {col.primary && <span className="text-[9px] bg-amber-100 text-amber-700 px-1 rounded font-black">PK</span>}
                                 </div>
-                                <div className="text-[10px] font-mono text-slate-400 group-hover:text-indigo-500 transition-colors">{col.type}</div>
+                                <div className="text-[10px] font-mono text-slate-400 group-hover:text-slate-700 transition-colors">{col.type}</div>
                             </div>
                         ))}
                     </div>
@@ -159,7 +159,7 @@ export default function DataScienceTemplate() {
                     <div className="h-1/2 flex flex-col border-b border-white/5">
                         <div className="px-4 py-2 bg-white/5 flex justify-between items-center text-[10px]">
                             <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                <span className="w-2 h-2 rounded-full bg-slate-500"></span>
                                 <span className="font-black text-slate-500 uppercase tracking-widest">Query Buffer</span>
                             </div>
                             <span className="text-slate-600 font-mono">UTF-8 • SQL MODE</span>
@@ -167,7 +167,7 @@ export default function DataScienceTemplate() {
                         <textarea
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            className="flex-1 bg-transparent p-8 text-indigo-300 font-mono text-base leading-relaxed outline-none resize-none selection:bg-indigo-500/30"
+                            className="flex-1 bg-transparent p-8 text-slate-300 font-mono text-base leading-relaxed outline-none resize-none selection:bg-slate-500/30"
                             spellCheck={false}
                         />
                     </div>
@@ -178,13 +178,13 @@ export default function DataScienceTemplate() {
                             <div className="flex gap-4">
                                 <button
                                     onClick={() => setChartType('bar')}
-                                    className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors ${chartType === 'bar' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                    className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors ${chartType === 'bar' ? 'text-slate-800' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
                                     <TableIcon size={14} /> Grid
                                 </button>
                                 <button
                                     onClick={() => setChartType('line')}
-                                    className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors ${chartType === 'line' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                                    className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors ${chartType === 'line' ? 'text-slate-800' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
                                     <BarChart size={14} /> Analytics
                                 </button>
@@ -215,7 +215,7 @@ export default function DataScienceTemplate() {
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 text-slate-700">
                                             {output.map((row: Row) => (
-                                                <tr key={row.id} className="hover:bg-indigo-50/30 transition-colors group">
+                                                <tr key={row.id} className="hover:bg-slate-50/30 transition-colors group">
                                                     <td className="px-6 py-4 font-mono text-xs text-slate-400">{row.id}</td>
                                                     <td className="px-6 py-4">
                                                         <div className="font-black text-sm text-slate-800">{row.name}</div>
@@ -224,7 +224,7 @@ export default function DataScienceTemplate() {
                                                     <td className="px-6 py-4">
                                                         <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">{row.department}</span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-right font-mono font-bold text-indigo-600 tabular-nums">
+                                                    <td className="px-6 py-4 text-right font-mono font-bold text-slate-800 tabular-nums">
                                                         ${row.salary.toLocaleString()}
                                                     </td>
                                                 </tr>
@@ -237,7 +237,7 @@ export default function DataScienceTemplate() {
                                     {/* Stats HUD */}
                                     <div className="grid grid-cols-4 gap-4">
                                         {[
-                                            { label: 'Avg Salary', val: stats?.avg, color: 'text-indigo-600' },
+                                            { label: 'Avg Salary', val: stats?.avg, color: 'text-slate-800' },
                                             { label: 'Max Salary', val: stats?.max, color: 'text-emerald-600' },
                                             { label: 'Min Salary', val: stats?.min, color: 'text-rose-600' },
                                             { label: 'Sample Population', val: stats?.count, color: 'text-slate-800' }
@@ -259,7 +259,7 @@ export default function DataScienceTemplate() {
                                                     initial={{ height: 0 }}
                                                     animate={{ height: `${(row.salary / (stats?.max || 1)) * 100}%` }}
                                                     transition={{ delay: i * 0.05, type: 'spring' }}
-                                                    className="w-full max-w-[60px] bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-2xl shadow-lg relative cursor-help"
+                                                    className="w-full max-w-[60px] bg-gradient-to-t from-slate-700 to-slate-400 rounded-2xl shadow-lg relative cursor-help"
                                                 >
                                                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                                         ${row.salary / 1000}k

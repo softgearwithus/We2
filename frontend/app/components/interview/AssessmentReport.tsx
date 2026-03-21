@@ -98,9 +98,9 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                         className="md:col-span-1"
                     >
                         <Card className="h-full p-8 bg-slate-900 text-white flex flex-col items-center justify-center rounded-3xl shadow-2xl relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 opacity-50" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-slate-600/20 to-slate-600/20 opacity-50" />
                             <div className="relative z-10 text-center">
-                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-300 block mb-4">Overall Performance</span>
+                                <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300 block mb-4">Overall Performance</span>
                                 <div className="text-7xl font-[900] tracking-tighter mb-2 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400">
                                     {overallScore}
                                 </div>
@@ -116,7 +116,7 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                             <div className="grid grid-cols-1 gap-4 h-full">
                                 {data.scores.map((s, i) => (
                                     <motion.div key={i} initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }}>
-                                        <Card className="p-5 flex items-center justify-between border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+                                        <Card className="p-5 flex items-center justify-between border-l-4 border-l-slate-500 shadow-sm hover:shadow-md transition-all">
                                             <div>
                                                 <h3 className="font-bold text-slate-800">{s.section}</h3>
                                                 <p className="text-xs text-slate-500 line-clamp-1">{s.feedback.substring(0, 60)}...</p>
@@ -132,7 +132,7 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                                 {Object.entries(data.metrics)
                                     .filter(([key, val]) => key !== 'overall' && typeof val === 'number')
                                     .map(([key, val], i) => (
-                                        <Card key={key} className="p-6 flex flex-col items-center justify-center border-slate-200 shadow-sm hover:border-indigo-200 transition-colors">
+                                        <Card key={key} className="p-6 flex flex-col items-center justify-center border-slate-200 shadow-sm hover:border-slate-200 transition-colors">
                                             <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center font-black text-slate-900 mb-3 border border-slate-100">
                                                 {val as number}
                                             </div>
@@ -150,7 +150,7 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                     <div className="lg:col-span-2 space-y-8">
                         <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            <BarChart3 className="text-indigo-600" /> Analysis & Feedback
+                            <BarChart3 className="text-slate-800" /> Analysis & Feedback
                         </h3>
 
                         {data.type === 'audio' ? (
@@ -185,12 +185,12 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
 
                     {/* Sidebar Actions / Upsell */}
                     <div className="space-y-6">
-                        <Card className="p-6 bg-indigo-600 text-white rounded-2xl shadow-xl shadow-indigo-600/20 border-none">
+                        <Card className="p-6 bg-slate-800 text-white rounded-2xl shadow-xl shadow-slate-200 border-none">
                             <h3 className="font-bold text-lg mb-2">Mock Analysis Report</h3>
-                            <p className="text-indigo-100 text-sm mb-6">
+                            <p className="text-slate-100 text-sm mb-6">
                                 Your personalized AI report is ready below. Review strengths, gaps, and next steps.
                             </p>
-                            <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-bold border-none">
+                            <Button className="w-full bg-white text-slate-800 hover:bg-slate-50 font-bold border-none">
                                 Download Summary
                             </Button>
                         </Card>
@@ -200,7 +200,7 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                 {data.type === 'video' && (data.metrics.summary || data.metrics.transcript || data.metrics.logs || data.metrics.logUrl) && (
                     <div className="space-y-6 mb-12">
                         <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            <BarChart3 className="text-indigo-600" /> Session Intelligence
+                            <BarChart3 className="text-slate-800" /> Session Intelligence
                         </h3>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -217,11 +217,11 @@ export default function AssessmentReport({ data, onRetry, onHome }: AssessmentRe
                                 <Card className="p-6 border border-slate-200 rounded-2xl bg-white shadow-sm">
                                     <div className="flex items-center justify-between mb-3">
                                         <h4 className="text-sm font-bold text-slate-700">Diagnostics</h4>
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-full">Emble AI</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-800 bg-slate-50 border border-slate-200 px-2 py-1 rounded-full">Emble AI</span>
                                     </div>
                                     <p className="text-xs text-slate-500 mb-4">Open the raw simulation log stream for full telemetry.</p>
                                     <a
-                                        className="text-sm text-indigo-600 hover:text-indigo-700 underline break-all"
+                                        className="text-sm text-slate-800 hover:text-slate-900 underline break-all"
                                         href={data.metrics.logUrl}
                                         target="_blank"
                                         rel="noreferrer"

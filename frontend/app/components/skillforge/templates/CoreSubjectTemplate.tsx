@@ -24,7 +24,7 @@ export default function CoreSubjectTemplate({
     const [activeTab, setActiveTab] = useState<'learn' | 'whiteboard' | 'exam'>('learn');
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-6 lg:p-10 max-w-[1920px] mx-auto space-y-8 flex flex-col">
+        <div className="min-h-screen bg-slate-50/50 p-6 lg:p-10 max-w-full max-w-[1920px] mx-auto space-y-8 flex flex-col">
 
             {/* 1. Glassmorphic Header */}
             <motion.header
@@ -178,14 +178,14 @@ export default function CoreSubjectTemplate({
                                 exit={{ opacity: 0, y: -10 }}
                                 className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-slate-50/50 h-full"
                             >
-                                <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-100 mb-8 text-indigo-500 transform rotate-6 border border-indigo-50">
+                                <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-slate-200 mb-8 text-slate-700 transform rotate-6 border border-slate-50">
                                     <FileText size={48} />
                                 </div>
                                 <h2 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">End Semester Simulation</h2>
                                 <p className="text-slate-500 max-w-md mb-10 text-lg leading-relaxed">
                                     Experience a real-time exam environment with timed questions, AI-proctoring simulation, and instant grading.
                                 </p>
-                                <button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-10 py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-indigo-500/30 hover:scale-105 transition-all text-lg active:scale-95">
+                                <button className="bg-gradient-to-r from-slate-600 to-violet-600 text-white px-10 py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-slate-200 hover:scale-105 transition-all text-lg active:scale-95">
                                     Start Mock Exam (3 Hours)
                                 </button>
                             </motion.div>
@@ -194,7 +194,7 @@ export default function CoreSubjectTemplate({
                 </motion.div>
 
                 {/* Right Panel: Professor AI Chat */}
-                <div className="w-full lg:w-[380px] bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col overflow-hidden shrink-0">
+                <div className="w-full lg:w-full max-w-full max-w-[380px] bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col overflow-hidden shrink-0">
                     <div className="p-6 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white flex items-center gap-4">
                         <div className="relative">
                             <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-300">
@@ -212,7 +212,7 @@ export default function CoreSubjectTemplate({
 
                     <div className="flex-1 p-6 overflow-y-auto space-y-6 bg-slate-50/50">
                         <div className="flex gap-4">
-                            <div className="w-10 h-10 rounded-2xl bg-indigo-100 flex items-center justify-center shrink-0 text-indigo-600">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center shrink-0 text-slate-800">
                                 <Bot size={20} />
                             </div>
                             <div className="bg-white p-5 rounded-[1.5rem] rounded-tl-none border border-slate-100 text-[15px] text-slate-600 shadow-sm leading-relaxed">
@@ -226,9 +226,9 @@ export default function CoreSubjectTemplate({
                             <input
                                 type="text"
                                 placeholder="Ask Prof. Turing..."
-                                className="w-full bg-slate-100 hover:bg-slate-100/80 border-none rounded-2xl py-4 pl-5 pr-12 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-100 focus:bg-white transition-all outline-none"
+                                className="w-full bg-slate-100 hover:bg-slate-100/80 border-none rounded-2xl py-4 pl-5 pr-12 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-slate-200 focus:bg-white transition-all outline-none"
                             />
-                            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-200 hover:scale-110 transition-transform">
+                            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-800 text-white p-2 rounded-xl shadow-lg shadow-slate-200 hover:scale-110 transition-transform">
                                 <MessageCircle size={18} />
                             </button>
                         </div>

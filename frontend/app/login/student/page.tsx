@@ -6,11 +6,13 @@ import { CheckCircle2, TrendingUp } from 'lucide-react';
 
 export default function StudentLoginPage() {
     return (
-        <AuthLayout
+        <>
+            <h1 className="sr-only">Student Login - Emble: Access India's First Integrated AI Placement Ecosystem Hub for DSA, SQL, and Industrial Projects</h1>
+            <AuthLayout
             role="student"
             title="Student Portal"
             subtitle="Master real-world workflows. Your AI mentor has prepared new challenges for today's sprint."
-            themeColor="bg-indigo-600"
+            themeColor="bg-slate-800"
             visual={
                 <div className="space-y-6">
                     <div className="flex items-center gap-4 mb-2">
@@ -25,7 +27,7 @@ export default function StudentLoginPage() {
 
                     <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">Daily Streak</span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-slate-300">Daily Streak</span>
                             <span className="text-white font-bold">12 Days 🔥</span>
                         </div>
                         <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
@@ -42,5 +44,6 @@ export default function StudentLoginPage() {
         >
             <LoginForm role="student" redirectPath="/dashboard" />
         </AuthLayout>
+        </>
     );
 }

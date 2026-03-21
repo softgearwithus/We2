@@ -321,7 +321,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                             <div className="absolute inset-0 bg-violet-100 rounded-full animate-ping opacity-60" />
                             {/* Inner spinning segmented ring */}
                             <div className="absolute inset-2 rounded-full border-[6px] border-t-violet-600 border-r-fuchsia-600 border-b-transparent border-l-transparent animate-spin" style={{ animationDuration: '3s' }} />
-                            <div className="absolute inset-6 rounded-full border-[4px] border-t-transparent border-r-transparent border-b-indigo-400 border-l-emerald-400 animate-spin flex items-center justify-center" style={{ animationDuration: '2s', animationDirection: 'reverse' }}>
+                            <div className="absolute inset-6 rounded-full border-[4px] border-t-transparent border-r-transparent border-b-slate-400 border-l-emerald-400 animate-spin flex items-center justify-center" style={{ animationDuration: '2s', animationDirection: 'reverse' }}>
                             </div>
                             {/* Center circle */}
                             <div className="absolute inset-8 bg-white rounded-full flex items-center justify-center shadow-xl shadow-violet-200">

@@ -289,8 +289,8 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                 <div className="w-64 xl:w-80 border-r border-slate-200 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-30 flex flex-col h-full shrink-0">
                     <div className="p-8 border-b border-slate-100 space-y-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse ring-4 ring-indigo-50" />
-                            <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest leading-none">Active Drill</span>
+                            <div className="w-2.5 h-2.5 rounded-full bg-slate-500 animate-pulse ring-4 ring-slate-200" />
+                            <span className="text-[10px] font-bold text-slate-800 uppercase tracking-widest leading-none">Active Drill</span>
                         </div>
                         <h2 className="text-xl font-black text-slate-900 leading-tight">{typeof window !== 'undefined' ? drillContent.theme : 'Processing...'}</h2>
                     </div>
@@ -311,13 +311,13 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                         )}
 
                                         <div className="relative z-10 shrink-0 mt-0.5">
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-indigo-600 text-white ring-8 ring-indigo-50' : 'bg-slate-100 text-slate-400 border-2 border-slate-200'}`}>
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-slate-800 text-white ring-8 ring-slate-200' : 'bg-slate-100 text-slate-400 border-2 border-slate-200'}`}>
                                                 {isCompleted ? '✓' : idx + 1}
                                             </div>
                                         </div>
 
                                         <div className="flex flex-col">
-                                            <span className={`text-sm tracking-widest uppercase font-bold transition-colors ${isCurrent ? 'text-indigo-600' : isCompleted ? 'text-slate-900' : 'text-slate-400'}`}>
+                                            <span className={`text-sm tracking-widest uppercase font-bold transition-colors ${isCurrent ? 'text-slate-800' : isCompleted ? 'text-slate-900' : 'text-slate-400'}`}>
                                                 {step}
                                             </span>
                                             {isCurrent && (
@@ -346,8 +346,8 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                     <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 p-6 xl:px-12 flex items-center justify-between">
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                                <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">Active Drill</span>
+                                <div className="w-2 h-2 rounded-full bg-slate-500 animate-pulse" />
+                                <span className="text-xs font-bold text-slate-800 uppercase tracking-widest">Active Drill</span>
                             </div>
                             <h2 className="text-xl font-bold text-slate-900">{typeof window !== 'undefined' ? drillContent.theme : 'Processing...'}</h2>
                         </div>
@@ -373,13 +373,13 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                     className="space-y-12"
                                 >
                                     <div className="space-y-6">
-                                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-2">
-                                            <Sparkles size={14} className="text-indigo-600" />
-                                            <span className="text-xs font-bold text-indigo-700 uppercase tracking-widest">Powered By EMBLE AI</span>
+                                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-200 mb-2">
+                                            <Sparkles size={14} className="text-slate-800" />
+                                            <span className="text-xs font-bold text-slate-900 uppercase tracking-widest">Powered By EMBLE AI</span>
                                         </div>
                                         <h1 className="text-4xl xl:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
                                             Advanced <br />
-                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500">
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 via-slate-600 to-rose-500">
                                                 Mock Interview
                                             </span>
                                         </h1>
@@ -435,7 +435,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                         if (onStart) onStart();
                                                         setCurrentSection('reading');
                                                     }}
-                                                    className="w-full md:w-auto h-16 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-lg rounded-2xl px-12 shadow-xl shadow-indigo-200 transition-all font-bold group"
+                                                    className="w-full md:w-auto h-16 bg-gradient-to-r from-slate-600 to-violet-600 hover:from-slate-700 hover:to-violet-700 text-white text-lg rounded-2xl px-12 shadow-xl shadow-slate-200 transition-all font-bold group"
                                                 >
                                                     Start Interview <ArrowRight size={20} className="ml-3 group-hover:translate-x-1.5 transition-transform" />
                                                 </Button>
@@ -490,7 +490,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                 <div className="w-full">
                                     {isSubmitting ? (
                                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-[500px] space-y-6 text-center">
-                                            <Loader2 className="w-16 h-16 text-indigo-500 animate-spin" />
+                                            <Loader2 className="w-16 h-16 text-slate-700 animate-spin" />
                                             <h2 className="text-3xl font-black text-slate-900">Uploading Drill...</h2>
                                             <p className="text-slate-500 text-lg max-w-sm">Sending your recordings to EMBLE's AI engine for precise communication analysis.</p>
                                         </motion.div>
@@ -501,8 +501,8 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                             className="flex flex-col items-center justify-center min-h-[500px] space-y-8 bg-white p-12 text-center"
                                         >
                                             <div className="relative">
-                                                <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 animate-pulse rounded-full" />
-                                                <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 relative z-10 shadow-xl shadow-indigo-100/50">
+                                                <div className="absolute inset-0 bg-slate-500 blur-3xl opacity-20 animate-pulse rounded-full" />
+                                                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-800 relative z-10 shadow-xl shadow-slate-200">
                                                     <Sparkles size={48} />
                                                 </div>
                                             </div>
@@ -511,8 +511,8 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                 <p className="text-slate-500 text-lg">
                                                     Your recordings are now being analyzed. This usually takes about 30-45 seconds.
                                                 </p>
-                                                <div className="inline-flex items-center justify-center gap-2 text-indigo-700 font-bold bg-indigo-50 px-5 py-2.5 rounded-full border border-indigo-100 shadow-sm">
-                                                    <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-ping" />
+                                                <div className="inline-flex items-center justify-center gap-2 text-slate-900 font-bold bg-slate-50 px-5 py-2.5 rounded-full border border-slate-200 shadow-sm">
+                                                    <div className="w-2.5 h-2.5 bg-slate-800 rounded-full animate-ping" />
                                                     Live Analysis in Progress
                                                 </div>
                                             </div>
@@ -536,7 +536,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
                                                         }
                                                     }}
                                                     size="lg"
-                                                    className="bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl px-8 h-14 shadow-xl hover:shadow-indigo-200 transition-all font-bold flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
+                                                    className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-8 h-14 shadow-xl hover:shadow-slate-200 transition-all font-bold flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                                                 >
                                                     {isCheckingReport ? <><Loader2 size={20} className="animate-spin" /> Checking...</> : <>View Detailed Report <ArrowRight size={20} /></>}
                                                 </Button>

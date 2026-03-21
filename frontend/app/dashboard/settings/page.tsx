@@ -65,7 +65,7 @@ export default function SettingsPage() {
 
     return (
         <div className="min-h-screen bg-[#fafafa] font-sans text-slate-900 pb-20">
-            <div className="max-w-[1000px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8">
+            <div className="max-w-full max-w-[1000px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8">
 
                 {/* Left Sidebar Nav */}
                 <div className="w-full md:w-64 shrink-0">
@@ -76,11 +76,11 @@ export default function SettingsPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as Tab)}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-indigo-50 text-indigo-700'
+                                    ? 'bg-slate-50 text-slate-900'
                                     : 'text-slate-500 hover:bg-slate-100'
                                     }`}
                             >
-                                <span className={activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400'}>{tab.icon}</span>
+                                <span className={activeTab === tab.id ? 'text-slate-800' : 'text-slate-400'}>{tab.icon}</span>
                                 {tab.label}
                                 {activeTab === tab.id && <ChevronRight size={16} className="ml-auto opacity-50 hidden md:block" />}
                             </button>
@@ -115,7 +115,7 @@ export default function SettingsPage() {
                                                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Verified
                                                 </p>
                                             </div>
-                                            <button className="text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-lg transition-colors">
+                                            <button className="text-sm font-bold text-slate-800 hover:text-slate-900 bg-slate-50 px-4 py-2 rounded-lg transition-colors">
                                                 Change
                                             </button>
                                         </div>
@@ -160,7 +160,7 @@ export default function SettingsPage() {
                                             </h2>
                                             <p className="text-sm text-slate-500 mt-1">Review your active subscription details and billing cycle.</p>
                                         </div>
-                                        <Link href="/pricing" className="text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                                        <Link href="/pricing" className="text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 px-5 py-2.5 rounded-xl shadow-lg shadow-slate-200 transition-all flex items-center gap-2">
                                             <Sparkles size={16} /> Upgrade Plan
                                         </Link>
                                     </div>
@@ -168,8 +168,8 @@ export default function SettingsPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                                             {/* Plan Details */}
-                                            <div className="p-5 rounded-xl border border-indigo-100 bg-indigo-50/50 flex flex-col gap-1">
-                                                <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1.5 focus:outline-none mb-1">
+                                            <div className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col gap-1">
+                                                <span className="text-xs font-bold text-slate-700 uppercase tracking-widest flex items-center gap-1.5 focus:outline-none mb-1">
                                                     <CreditCard size={14} /> Active Plan
                                                 </span>
                                                 <span className="text-2xl font-black text-slate-900">
@@ -233,7 +233,7 @@ export default function SettingsPage() {
                                 <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                                     <div className="p-6 border-b border-slate-100">
                                         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                            <Key className="text-indigo-500" size={20} /> Change Password
+                                            <Key className="text-slate-700" size={20} /> Change Password
                                         </h2>
                                         <p className="text-sm text-slate-500 mt-1">Ensure your account is using a long, random password to stay secure.</p>
                                     </div>
@@ -245,7 +245,7 @@ export default function SettingsPage() {
                                                 name="currentPassword"
                                                 value={passwordData.currentPassword}
                                                 onChange={handlePasswordChange}
-                                                className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                 required
                                             />
                                         </div>
@@ -256,7 +256,7 @@ export default function SettingsPage() {
                                                 name="newPassword"
                                                 value={passwordData.newPassword}
                                                 onChange={handlePasswordChange}
-                                                className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                 required
                                             />
                                         </div>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
                                                 name="confirmPassword"
                                                 value={passwordData.confirmPassword}
                                                 onChange={handlePasswordChange}
-                                                className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                                className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all font-medium"
                                                 required
                                             />
                                         </div>
@@ -275,7 +275,7 @@ export default function SettingsPage() {
                                             <button
                                                 type="submit"
                                                 disabled={isSaving || !passwordData.currentPassword || !passwordData.newPassword}
-                                                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-all disabled:opacity-50"
+                                                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-all disabled:opacity-50"
                                             >
                                                 <Save size={16} />
                                                 {isSaving ? 'Updating...' : 'Update Password'}

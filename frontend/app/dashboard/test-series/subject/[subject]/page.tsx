@@ -149,17 +149,17 @@ export default function SubjectModulesPage() {
     };
 
     return (
-        <div className="min-h-screen font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 bg-[#F8FAFC] pb-24 relative">
+        <div className="min-h-screen font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900 bg-[#F8FAFC] pb-24 relative">
             <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-6 py-10 relative z-10">
-                <Link href="/dashboard/test-series/subject" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-medium mb-8 transition-all group px-5 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md active:scale-95">
+                <Link href="/dashboard/test-series/subject" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-medium mb-8 transition-all group px-5 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm hover:shadow-md active:scale-95">
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Subjects
                 </Link>
 
                 <motion.header initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-14">
                     <div className="max-w-3xl">
-                        <div className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-indigo-100">
+                        <div className="bg-slate-50 text-slate-800 px-3 py-1 rounded-full text-xs font-bold tracking-wide mb-4 inline-flex items-center gap-2 border border-slate-200">
                             <Sparkles size={14} /> Subject Breakdown
                         </div>
                         <h1 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 mb-4">{label} Modules</h1>
@@ -191,15 +191,15 @@ export default function SubjectModulesPage() {
                             <motion.div variants={item} key={idx}>
                                 <Link
                                     href={`/dashboard/test-series/subject/${subject}/${mod.key}`}
-                                    className={`group flex items-center justify-between bg-white rounded-3xl p-6 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-indigo-100'}`}
+                                    className={`group flex items-center justify-between bg-white rounded-3xl p-6 border border-slate-100 shadow-sm transition-all duration-300 relative overflow-hidden ${isLimited ? 'opacity-60 pointer-events-none' : 'hover:shadow-xl hover:border-slate-200'}`}
                                 >
                                     <div className="flex items-center gap-5">
-                                        <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                                        <div className="w-12 h-12 bg-slate-50 text-slate-800 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-slate-800 group-hover:text-white transition-all duration-300">
                                             <Layers size={20} strokeWidth={2.5} />
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2">
-                                                <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">{mod.label}</h3>
+                                                <h3 className="text-lg font-bold text-slate-900 group-hover:text-slate-800 transition-colors tracking-tight">{mod.label}</h3>
                                                 {isModuleNew(mod.createdAt) && (
                                                     <span className="bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm animate-pulse shrink-0">
                                                         New
@@ -209,7 +209,7 @@ export default function SubjectModulesPage() {
                                             <p className="text-xs font-bold text-slate-400 mt-0.5 uppercase tracking-widest">{mod.count} questions</p>
                                         </div>
                                     </div>
-                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-slate-50 group-hover:text-slate-800 transition-colors">
                                         <ChevronRight size={18} />
                                     </div>
                                 </Link>

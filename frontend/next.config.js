@@ -2,6 +2,13 @@
 const nextConfig = {
     compress: true,
     reactStrictMode: true,
+    swcMinify: true,
+    compiler: {
+        removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+    },
+    experimental: {
+        optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
+    },
     images: {
         remotePatterns: [
             {
@@ -15,6 +22,10 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'api.dicebear.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
             },
         ],
     },

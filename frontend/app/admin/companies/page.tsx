@@ -268,7 +268,7 @@ export default function CompaniesPage() {
                 </button>
                 <button
                     onClick={() => setActiveTab('campaigns')}
-                    className={`pb-3 px-1 text-sm font-bold border-b-2 transition-colors ${activeTab === 'campaigns' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                    className={`pb-3 px-1 text-sm font-bold border-b-2 transition-colors ${activeTab === 'campaigns' ? 'border-slate-800 text-slate-800' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
                 >
                     <div className="flex items-center gap-2">
                         <Briefcase size={16} /> Campaign Moderation
@@ -496,7 +496,7 @@ export default function CompaniesPage() {
                                 {isCampaignsLoading ? (
                                     <tr>
                                         <td colSpan={5} className="p-8 text-center text-slate-500">
-                                            <Loader2 size={24} className="animate-spin mx-auto text-indigo-500" />
+                                            <Loader2 size={24} className="animate-spin mx-auto text-slate-700" />
                                         </td>
                                     </tr>
                                 ) : campaigns.length === 0 ? (
@@ -541,7 +541,7 @@ export default function CompaniesPage() {
                                             <div className="flex justify-end items-center gap-2">
                                                 <button
                                                     onClick={() => setViewDrive(drive)}
-                                                    className="px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1.5"
+                                                    className="px-3 py-1.5 text-xs font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"
                                                 >
                                                     <Eye size={14} /> View
                                                 </button>
@@ -617,7 +617,7 @@ export default function CompaniesPage() {
                                     {viewDrive.verificationStatus === 'rejected' && <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest bg-red-100 text-red-700 border border-red-200">Rejected</span>}
                                 </div>
                                 <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-500">
-                                    <span className="flex items-center gap-1.5 text-slate-700"><Building2 size={16} className="text-indigo-600" /> {viewDrive.companyName}</span>
+                                    <span className="flex items-center gap-1.5 text-slate-700"><Building2 size={16} className="text-slate-800" /> {viewDrive.companyName}</span>
                                     {viewDrive.location && <span className="flex items-center gap-1.5"><MapPin size={16} /> {viewDrive.location}</span>}
                                     <span className="flex items-center gap-1.5"><Briefcase size={16} /> {viewDrive.type}</span>
                                     {viewDrive.salary && <span className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"><IndianRupee size={14} /> {viewDrive.salary}</span>}
@@ -678,7 +678,7 @@ export default function CompaniesPage() {
                             {/* Job Description */}
                             <div>
                                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
-                                    <FileText size={16} className="text-indigo-500" /> About the Role
+                                    <FileText size={16} className="text-slate-700" /> About the Role
                                 </h3>
                                 <div className="prose prose-sm max-w-none text-slate-600 prose-p:leading-relaxed whitespace-pre-wrap">
                                     {viewDrive.description}

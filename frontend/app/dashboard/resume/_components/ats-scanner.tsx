@@ -168,7 +168,7 @@ export default function ATSScanner() {
                             className="flex items-center justify-between max-w-md mx-auto bg-white p-4 rounded-xl border border-slate-200 shadow-sm"
                         >
                             <div className="flex items-center gap-4 relative z-10">
-                                <div className="p-3 bg-indigo-50 rounded-lg text-indigo-600">
+                                <div className="p-3 bg-slate-50 rounded-lg text-slate-800">
                                     <FileText size={20} />
                                 </div>
                                 <div className="text-left">
@@ -324,17 +324,17 @@ export default function ATSScanner() {
                         </div>
                     </div>
 
-                    <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-8 lg:p-10">
-                        <h3 className="text-indigo-900 font-bold mb-6 flex items-center gap-2">
-                            <div className="p-1.5 bg-indigo-100 rounded-lg">
-                                <Sparkles size={18} className="text-indigo-600" />
+                    <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 lg:p-10">
+                        <h3 className="text-slate-900 font-bold mb-6 flex items-center gap-2">
+                            <div className="p-1.5 bg-slate-100 rounded-lg">
+                                <Sparkles size={18} className="text-slate-800" />
                             </div>
                             Actionable Suggestions
                         </h3>
                         <ul className="space-y-4">
                             {result.suggestions.map((item, i) => (
-                                <li key={i} className="flex gap-3 text-sm text-indigo-900/80 font-medium items-start">
-                                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 text-[10px] font-bold mt-0.5 shrink-0">
+                                <li key={i} className="flex gap-3 text-sm text-slate-900/80 font-medium items-start">
+                                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-800 text-[10px] font-bold mt-0.5 shrink-0">
                                         {i + 1}
                                     </span>
                                     {item}

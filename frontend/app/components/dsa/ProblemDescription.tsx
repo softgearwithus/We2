@@ -55,7 +55,7 @@ export default function ProblemDescription({ problem }: { problem: Problem }) {
                         href={externalUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 mb-4"
+                        className="inline-flex items-center gap-2 text-xs font-bold text-slate-800 hover:text-slate-900 mb-4"
                     >
                         Solve on {platformLabel(problem.platform)} <span className="material-symbols-outlined text-sm">open_in_new</span>
                     </a>

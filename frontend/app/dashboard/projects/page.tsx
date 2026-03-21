@@ -156,7 +156,7 @@ export default function DevGenesisPage() {
                         )}
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                                <Layers className="text-indigo-600" size={24} />
+                                <Layers className="text-slate-800" size={24} />
                                 Project Labs
                             </h1>
                             <p className="text-slate-500 text-sm">Build real-world applications and boost your portfolio.</p>

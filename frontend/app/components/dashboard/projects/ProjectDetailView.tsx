@@ -117,7 +117,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                     </div>
                                 )}
                             </div>
-                            <div className="p-4 bg-indigo-50/50 rounded-2xl text-indigo-400 border border-indigo-100/50 shadow-sm shrink-0">
+                            <div className="p-4 bg-slate-50/50 rounded-2xl text-slate-400 border border-slate-200/50 shadow-sm shrink-0">
                                 <Code2 size={28} />
                             </div>
                         </div>
@@ -143,9 +143,9 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                         {/* Technical Specs Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                             {project.details.frontend && (
-                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-indigo-100 transition-colors">
+                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-slate-200 transition-colors">
                                     <div className="p-2 bg-slate-50 rounded-xl shrink-0">
-                                        <Layout size={20} className="text-indigo-500" />
+                                        <Layout size={20} className="text-slate-700" />
                                     </div>
                                     <div>
                                         <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Frontend</div>
@@ -154,7 +154,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                 </div>
                             )}
                             {project.details.backend && (
-                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-indigo-100 transition-colors">
+                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-slate-200 transition-colors">
                                     <div className="p-2 bg-slate-50 rounded-xl shrink-0">
                                         <Server size={20} className="text-slate-500" />
                                     </div>
@@ -165,7 +165,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                 </div>
                             )}
                             {project.details.database && (
-                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-indigo-100 transition-colors">
+                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-slate-200 transition-colors">
                                     <div className="p-2 bg-slate-50 rounded-xl shrink-0">
                                         <Database size={20} className="text-slate-500" />
                                     </div>
@@ -176,7 +176,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                 </div>
                             )}
                             {project.details.architecture && (
-                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-indigo-100 transition-colors">
+                                <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-start gap-4 hover:border-slate-200 transition-colors">
                                     <div className="p-2 bg-slate-50 rounded-xl shrink-0">
                                         <Layers size={20} className="text-slate-600" />
                                     </div>
@@ -204,15 +204,15 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
 
                             <section>
                                 <h3 className="text-sm font-bold text-slate-800 tracking-wide mb-3 flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
-                                        <ListChecks size={16} className="text-indigo-500" />
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                        <ListChecks size={16} className="text-slate-700" />
                                     </div>
                                     Implementation Roadmap
                                 </h3>
                                 <div className="space-y-3 pl-2">
                                     {project.tasks.map((task, idx) => (
-                                        <div key={task.id} className="flex items-center gap-4 p-4 bg-white border border-slate-100/80 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-indigo-50 transition-all">
-                                            <div className="w-7 h-7 shrink-0 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-500 border border-indigo-100/50">
+                                        <div key={task.id} className="flex items-center gap-4 p-4 bg-white border border-slate-100/80 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-slate-50 transition-all">
+                                            <div className="w-7 h-7 shrink-0 rounded-full bg-slate-50 flex items-center justify-center text-xs font-bold text-slate-700 border border-slate-200/50">
                                                 {idx + 1}
                                             </div>
                                             <span className="text-sm font-medium text-slate-700 leading-tight">{task.title}</span>
@@ -249,7 +249,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                     {/* Tools & Prerequisites Card */}
                     <div className="bg-white border border-slate-100/60 rounded-[2rem] p-7 shadow-sm">
                         <h4 className="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
-                            <Wrench size={16} className="text-indigo-400" />
+                            <Wrench size={16} className="text-slate-400" />
                             Required Tools
                         </h4>
                         <div className="flex flex-wrap gap-2 mb-8">
@@ -264,7 +264,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                         <ul className="space-y-3">
                             {project.details.prerequisites.map((req, idx) => (
                                 <li key={idx} className="text-xs font-bold text-slate-600 flex items-center gap-3 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/80">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                                     {req}
                                 </li>
                             ))}
@@ -290,7 +290,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                     <div className="bg-white border border-slate-100/80 rounded-[2rem] p-7 shadow-md relative overflow-hidden group">
                         {!submitted ? (
                             <>
-                                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-slate-700 via-slate-500 to-pink-500"></div>
                                 <h4 className="font-bold text-slate-900 text-sm mb-5">Submit Your Work</h4>
                                 <div className="space-y-5">
                                     <div>
@@ -303,7 +303,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                                 onChange={(e) => setRepoUrl(e.target.value)}
                                                 placeholder="https://github.com/..."
                                                 disabled={isLimited}
-                                                className={`w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500'}`}
+                                                className={`w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400'}`}
                                             />
                                         </div>
                                     </div>
@@ -314,14 +314,14 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                             <input
                                                 type="text"
                                                 placeholder="https://my-project.vercel.app"
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal"
                                             />
                                         </div>
                                     </div>
                                     <button
                                         onClick={handleSubmit}
                                         disabled={isSubmitting || (!repoUrl && !submitted) || isLimited}
-                                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 group-hover:scale-[1.02]"
+                                        className="w-full py-3 bg-slate-800 hover:bg-slate-900 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-2 group-hover:scale-[1.02]"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -354,21 +354,21 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                         )}
                     </div>
 
-                    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 rounded-[2rem] p-7 text-white shadow-xl shadow-slate-900/10">
+                    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-[2rem] p-7 text-white shadow-xl shadow-slate-900/10">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-indigo-500/20 rounded-lg">
-                                <BookOpen size={20} className="text-indigo-300" />
+                            <div className="p-2 bg-slate-500/20 rounded-lg">
+                                <BookOpen size={20} className="text-slate-300" />
                             </div>
                             <h4 className="font-bold text-base">Suggested Resources</h4>
                         </div>
                         <ul className="space-y-4">
                             {project.details.resources.map((res, idx) => (
                                 <li key={idx} className="group flex items-start gap-3.5 text-sm text-slate-300 hover:text-white cursor-pointer transition-colors">
-                                    <div className="mt-0.5 text-indigo-400 group-hover:text-indigo-300 transition-colors bg-indigo-500/10 p-1.5 rounded-md">
+                                    <div className="mt-0.5 text-slate-400 group-hover:text-slate-300 transition-colors bg-slate-500/10 p-1.5 rounded-md">
                                         <ResourceIcon type={res.type} />
                                     </div>
                                     <div>
-                                        <div className="font-medium group-hover:underline decoration-2 underline-offset-4 decoration-indigo-400/50 mb-0.5">{res.title}</div>
+                                        <div className="font-medium group-hover:underline decoration-2 underline-offset-4 decoration-slate-400/50 mb-0.5">{res.title}</div>
                                         {res.url !== '#' && <div className="text-[11px] text-slate-500 truncate max-w-[200px] font-mono">{res.url}</div>}
                                     </div>
                                 </li>

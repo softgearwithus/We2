@@ -153,7 +153,7 @@ export default function Navbar() {
                             >
                                 <div className="relative w-8 h-8 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm shrink-0">
                                     {avatarSrc ? (
-                                        <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                                        <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                                     ) : (
                                         user.email[0].toUpperCase()
                                     )}
@@ -232,7 +232,7 @@ export default function Navbar() {
                 {/* Mobile Menu Toggle */}
                 <button
                     className={cn(
-                        "md:hidden transition-colors",
+                        "md:hidden transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2",
                         isDarkBg ? "text-white" : "text-gray-600"
                     )}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -248,7 +248,7 @@ export default function Navbar() {
                         <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
                             <div className="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold shrink-0">
                                 {avatarSrc ? (
-                                    <img src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                                    <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                                 ) : (
                                     user.email[0].toUpperCase()
                                 )}
@@ -264,7 +264,7 @@ export default function Navbar() {
                         <Link
                             key={item.label}
                             href={item.href}
-                            className="text-lg font-medium text-gray-600 hover:text-brand-orange flex items-center gap-3"
+                            className="text-lg font-medium text-gray-600 hover:text-brand-orange flex items-center gap-3 py-3 w-full"
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             {/* @ts-ignore */}
@@ -276,10 +276,10 @@ export default function Navbar() {
 
                     {user ? (
                         <>
-                            <Link href="/dashboard/profile" className="flex items-center gap-3 py-2 text-gray-600" onClick={() => setMobileMenuOpen(false)}>
+                            <Link href="/dashboard/profile" className="flex items-center gap-3 py-3 w-full text-gray-600" onClick={() => setMobileMenuOpen(false)}>
                                 <User size={20} /> Profile
                             </Link>
-                            <Link href="/dashboard/settings" className="flex items-center gap-3 py-2 text-gray-600" onClick={() => setMobileMenuOpen(false)}>
+                            <Link href="/dashboard/settings" className="flex items-center gap-3 py-3 w-full text-gray-600" onClick={() => setMobileMenuOpen(false)}>
                                 <Settings size={20} /> Settings
                             </Link>
                             <button
@@ -287,17 +287,17 @@ export default function Navbar() {
                                     logout();
                                     setMobileMenuOpen(false);
                                 }}
-                                className="flex items-center gap-3 py-2 text-red-600 font-medium text-left"
+                                className="flex items-center gap-3 py-3 w-full text-red-600 font-medium text-left"
                             >
                                 <LogOut size={20} /> Sign out
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link href="/login" className="text-center py-2 font-medium text-gray-600">
+                            <Link href="/login" className="text-center py-3 w-full font-medium text-gray-600">
                                 Sign in
                             </Link>
-                            <Link href="/register" className="bg-brand-orange text-white py-3 rounded-lg text-center font-bold">
+                            <Link href="/register" className="bg-brand-orange text-white py-4 w-full rounded-lg text-center font-bold">
                                 Create Account
                             </Link>
                         </>

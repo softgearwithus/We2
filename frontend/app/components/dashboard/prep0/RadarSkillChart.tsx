@@ -30,7 +30,7 @@ export default function RadarSkillChart({ data = fallbackData }: { data?: SkillD
     return (
         <div className="w-full h-[380px] bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden group">
             {/* Glow Effect */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-50 rounded-full blur-2xl -mr-20 -mt-20 transition-all duration-700 group-hover:bg-indigo-100/60"></div>
+            <div className="absolute top-0 right-0 w-40 h-40 bg-slate-50 rounded-full blur-2xl -mr-20 -mt-20 transition-all duration-700 group-hover:bg-slate-100/60"></div>
 
             <div className="flex items-center justify-between mb-2 relative z-10">
                 <div>
@@ -54,7 +54,7 @@ export default function RadarSkillChart({ data = fallbackData }: { data?: SkillD
                         <Radar
                             name="My Skills"
                             dataKey="A"
-                            stroke="#4F46E5" // Indigo-600
+                            stroke="#FF5722" // Brand-orange
                             strokeWidth={3}
                             fill="#4F46E5"
                             fillOpacity={0.2}

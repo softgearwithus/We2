@@ -220,7 +220,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                         <p className="text-slate-500 text-lg">Question {currentQIndex + 1} completed.</p>
 
                         <div className="pt-8 flex justify-center">
-                            <Button onClick={handleNextQuestion} className="bg-slate-900 hover:bg-indigo-600 h-14 text-base font-bold rounded-full shadow-lg transition-all text-white flex items-center justify-center gap-2 px-10 w-auto">
+                            <Button onClick={handleNextQuestion} className="bg-slate-900 hover:bg-slate-800 h-14 text-base font-bold rounded-full shadow-lg transition-all text-white flex items-center justify-center gap-2 px-10 w-auto">
                                 Next Technical Question <ArrowRight size={18} />
                             </Button>
                         </div>
@@ -234,7 +234,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                         animate={{ opacity: 1, scale: 1 }}
                         className="w-full text-center space-y-8 pt-10"
                     >
-                        <div className="bg-indigo-50 border border-indigo-100 p-6 rounded-3xl w-24 h-24 mx-auto flex items-center justify-center text-indigo-500 shadow-xl shadow-indigo-50">
+                        <div className="bg-slate-50 border border-slate-200 p-6 rounded-3xl w-24 h-24 mx-auto flex items-center justify-center text-slate-700 shadow-xl shadow-slate-200">
                             <Code2 size={48} />
                         </div>
 
@@ -247,7 +247,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                         <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto mt-6">
                             {allRecordings.map((rec, i) => (
                                 <div key={i} className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-left">
-                                    <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                    <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-800 flex items-center justify-center shrink-0">
                                         <Mic size={14} />
                                     </div>
                                     <div className="text-xs font-medium text-slate-700 truncate w-full">
@@ -258,7 +258,7 @@ export default function TechnicalSection({ onComplete, topicContent, globalStrea
                         </div>
 
                         <div className="pt-8 flex justify-center">
-                            <Button onClick={handleSubmit} className="bg-slate-900 hover:bg-indigo-600 h-14 text-base font-bold rounded-full shadow-xl transition-all flex items-center justify-center gap-2 px-10 text-white w-auto">
+                            <Button onClick={handleSubmit} className="bg-slate-900 hover:bg-slate-800 h-14 text-base font-bold rounded-full shadow-xl transition-all flex items-center justify-center gap-2 px-10 text-white w-auto">
                                 Submit For Deep Analysis <ArrowRight size={18} />
                             </Button>
                         </div>

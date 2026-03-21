@@ -72,7 +72,7 @@ export default function CreateDrivePage() {
             </Link>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white flex justify-between items-center">
+                <div className="bg-gradient-to-r from-blue-600 to-slate-700 p-8 text-white flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl justify-start items-center gap-3 font-bold flex">
                             <Briefcase size={28} />

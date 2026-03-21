@@ -49,7 +49,7 @@ export default function StudentAnalytics() {
                     { icon: Trophy, label: 'Total XP', value: '1,250', color: 'text-yellow-500', bg: 'bg-yellow-50' },
                     { icon: Zap, label: 'Current Streak', value: '12 Days', color: 'text-orange-500', bg: 'bg-orange-50' },
                     { icon: Target, label: 'Projects Done', value: '4/12', color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                    { icon: Award, label: 'Class Rank', value: 'Top 5%', color: 'text-purple-500', bg: 'bg-purple-50' }
+                    { icon: Award, label: 'Class Rank', value: 'Top 5%', color: 'text-slate-500', bg: 'bg-slate-50' }
                 ].map((stat, idx) => (
                     <div key={idx} className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
                         <div>
@@ -67,7 +67,7 @@ export default function StudentAnalytics() {
                 {/* Skill Radar */}
                 <div className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
                     <h3 className="text-base font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <TrendingUp size={18} className="text-indigo-600" />
+                        <TrendingUp size={18} className="text-slate-800" />
                         Skill Proficiency
                     </h3>
                     <div className="h-[300px] w-full">

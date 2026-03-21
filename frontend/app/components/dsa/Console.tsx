@@ -61,7 +61,7 @@ export default function Console({ onRun, onSubmit, isRunning, isSubmitting = fal
 
                 {isRunning && (
                     <div className="h-full flex flex-col items-center justify-center gap-3">
-                        <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-500 rounded-full animate-spin"></div>
                         <p className="text-slate-500 text-xs font-bold animate-pulse">Running Test Cases...</p>
                     </div>
                 )}

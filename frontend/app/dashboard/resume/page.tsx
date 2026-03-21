@@ -125,18 +125,18 @@ export default function ResumeBuilderPage() {
     };
 
     return (
-        <div className="h-[calc(100vh-7rem)] flex flex-col bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 rounded-2xl border border-slate-200 relative">
+        <div className="h-[calc(100vh-7rem)] flex flex-col bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900 rounded-2xl border border-slate-200 relative">
             {isLimited && (
                 <UsageUpgradeGate message="Upgrade to continue your resume tools." />
             )}
             {/* Header */}
             <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20 shrink-0 sticky top-0">
                 <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('landing')}>
-                    <div className="p-2 bg-indigo-50 rounded-xl group-hover:bg-indigo-100 transition-colors">
-                        <Layout className="text-indigo-600" size={20} />
+                    <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-slate-100 transition-colors">
+                        <Layout className="text-slate-800" size={20} />
                     </div>
                     <div>
-                        <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">Resume<span className="text-indigo-600">Center</span></h1>
+                        <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">Resume<span className="text-slate-800">Center</span></h1>
                     </div>
                 </div>
 
@@ -164,7 +164,7 @@ export default function ResumeBuilderPage() {
                             <button
                                 onClick={saveResume}
                                 disabled={isSaving || isLimited}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-60"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-slate-800 text-white hover:bg-slate-500 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-95 disabled:opacity-60"
                             >
                                 {isSaving ? 'Saving...' : 'Save'}
                             </button>
@@ -194,12 +194,12 @@ export default function ResumeBuilderPage() {
                     >
                         {/* Hero Section */}
                         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider border border-indigo-100">
+                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 text-slate-800 text-xs font-bold uppercase tracking-wider border border-slate-200">
                                 <Sparkles size={12} /> Career Acceleration
                             </span>
                             <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
                                 Build Your Future,<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">One Resume at a Time.</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-600">One Resume at a Time.</span>
                             </h2>
                             <p className="text-lg text-slate-600 max-w-lg mx-auto leading-relaxed">
                                 Create a ATS-optimized resume in minutes or analyze your existing one to get hired faster.
@@ -217,13 +217,13 @@ export default function ResumeBuilderPage() {
                             <motion.div
                                 whileHover={{ y: -4 }}
                                 onClick={() => !isLimited && setView('templates')}
-                                className={`group bg-white border border-slate-200 p-8 rounded-3xl transition-all shadow-sm relative overflow-hidden ${isLimited ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-100'}`}
+                                className={`group bg-white border border-slate-200 p-8 rounded-3xl transition-all shadow-sm relative overflow-hidden ${isLimited ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200'}`}
                             >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
 
                                 <div className="relative z-10 flex flex-col h-full">
-                                    <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors duration-300">
-                                        <FileText className="text-indigo-600 group-hover:text-white transition-colors" size={28} />
+                                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-slate-800 transition-colors duration-300">
+                                        <FileText className="text-slate-800 group-hover:text-white transition-colors" size={28} />
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 mb-2">Resume Builder</h3>
                                     <p className="text-slate-500 text-sm mb-8 leading-relaxed">
@@ -238,7 +238,7 @@ export default function ResumeBuilderPage() {
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm group-hover:gap-3 transition-all">
+                                        <div className="flex items-center gap-2 text-slate-800 font-bold text-sm group-hover:gap-3 transition-all">
                                             Choose Template <ArrowRight size={16} />
                                         </div>
                                     </div>
@@ -294,7 +294,7 @@ export default function ResumeBuilderPage() {
                                     onClick={() => startNewBuilder('google-standard')}
                                     className="group cursor-pointer"
                                 >
-                                    <div className="aspect-[1/1.4] bg-white border border-slate-200 rounded-xl mb-4 p-4 shadow-sm group-hover:shadow-xl group-hover:border-indigo-400 transition-all flex flex-col relative overflow-hidden">
+                                    <div className="aspect-[1/1.4] bg-white border border-slate-200 rounded-xl mb-4 p-4 shadow-sm group-hover:shadow-xl group-hover:border-slate-400 transition-all flex flex-col relative overflow-hidden">
                                         <div className="text-center mb-3">
                                             <div className="font-serif text-[12px] font-bold text-slate-800">ALEXANDER REED</div>
                                             <div className="text-[5px] text-slate-500 mt-1">San Francisco, CA • (555) 123-4567 • alex@example.com</div>
@@ -346,7 +346,7 @@ export default function ResumeBuilderPage() {
                                             <span className="font-bold text-slate-900">Tools:</span> Git, Webpack, Figma, Jira
                                         </div>
                                     </div>
-                                    <h3 className="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors">Google Standard</h3>
+                                    <h3 className="font-bold text-slate-900 text-lg group-hover:text-slate-800 transition-colors">Google Standard</h3>
                                     <p className="text-sm text-slate-500">Clean, professional, and strictly formatted for maximum ATS readability.</p>
                                 </div>
 
@@ -355,12 +355,12 @@ export default function ResumeBuilderPage() {
                                     onClick={() => startNewBuilder('startup-clean')}
                                     className="group cursor-pointer"
                                 >
-                                    <div className="aspect-[1/1.4] bg-white border border-slate-200 rounded-xl mb-4 shadow-sm group-hover:shadow-xl group-hover:border-indigo-400 transition-all flex relative overflow-hidden">
-                                        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
+                                    <div className="aspect-[1/1.4] bg-white border border-slate-200 rounded-xl mb-4 shadow-sm group-hover:shadow-xl group-hover:border-slate-400 transition-all flex relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-1.5 h-full bg-slate-500"></div>
                                         <div className="p-4 pl-5 w-full flex flex-col">
                                             <div className="mb-4">
                                                 <div className="text-[14px] font-black text-slate-900 tracking-tight leading-none">ALEX REED</div>
-                                                <div className="text-[6px] font-bold text-indigo-600 mt-1 uppercase tracking-wider">Full Stack Developer</div>
+                                                <div className="text-[6px] font-bold text-slate-800 mt-1 uppercase tracking-wider">Full Stack Developer</div>
                                                 <div className="text-[5px] text-slate-500 mt-1 flex gap-1 font-medium">
                                                     <span>alex@example.com</span>•<span>github.com/alex</span>
                                                 </div>
@@ -368,11 +368,11 @@ export default function ResumeBuilderPage() {
                                             
                                             <div className="mb-3">
                                                 <div className="text-[6px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-                                                    <div className="w-1 h-1 bg-indigo-500 rounded-full"></div> Experience
+                                                    <div className="w-1 h-1 bg-slate-500 rounded-full"></div> Experience
                                                 </div>
                                                 <div className="mb-2 border-l border-slate-200 pl-2 ml-0.5">
                                                     <div className="text-[7px] font-bold text-slate-800">Senior Frontend Engineer</div>
-                                                    <div className="text-[5px] text-slate-500 mb-1 font-medium"><span className="text-indigo-600">TechCorp</span> • 2021 - Present</div>
+                                                    <div className="text-[5px] text-slate-500 mb-1 font-medium"><span className="text-slate-800">TechCorp</span> • 2021 - Present</div>
                                                     <div className="text-[5.5px] text-slate-600 leading-tight">
                                                         • Architected modern React application using Next.js.<br/>
                                                         • Improved Core Web Vitals score by 40 points.<br/>
@@ -381,7 +381,7 @@ export default function ResumeBuilderPage() {
                                                 </div>
                                                 <div className="border-l border-slate-200 pl-2 ml-0.5 pb-2">
                                                     <div className="text-[7px] font-bold text-slate-800">Web Developer</div>
-                                                    <div className="text-[5px] text-slate-500 mb-1 font-medium"><span className="text-indigo-600">WebStudio</span> • 2019 - 2021</div>
+                                                    <div className="text-[5px] text-slate-500 mb-1 font-medium"><span className="text-slate-800">WebStudio</span> • 2019 - 2021</div>
                                                     <div className="text-[5.5px] text-slate-600 leading-tight">
                                                         • Built scalable e-commerce frontend platforms.
                                                     </div>
@@ -390,7 +390,7 @@ export default function ResumeBuilderPage() {
 
                                             <div>
                                                 <div className="text-[6px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-                                                    <div className="w-1 h-1 bg-indigo-500 rounded-full"></div> Skills
+                                                    <div className="w-1 h-1 bg-slate-500 rounded-full"></div> Skills
                                                 </div>
                                                 <div className="flex flex-wrap gap-1 mt-1">
                                                     <span className="px-1.5 py-0.5 bg-slate-100/80 border border-slate-200 text-slate-700 text-[4.5px] font-bold rounded-full uppercase tracking-wider">React</span>
@@ -403,7 +403,7 @@ export default function ResumeBuilderPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 className="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors">Startup Clean</h3>
+                                    <h3 className="font-bold text-slate-900 text-lg group-hover:text-slate-800 transition-colors">Startup Clean</h3>
                                     <p className="text-sm text-slate-500">Modern SaaS vibe with distinct accent sections and subtle badge designs.</p>
                                 </div>
 
@@ -412,9 +412,9 @@ export default function ResumeBuilderPage() {
                                     onClick={() => startNewBuilder('creative-pro')}
                                     className="group cursor-pointer"
                                 >
-                                    <div className="aspect-[1/1.4] bg-white border border-slate-200 rounded-xl mb-4 shadow-sm group-hover:shadow-xl group-hover:border-indigo-400 transition-all flex overflow-hidden">
+                                    <div className="aspect-[1/1.4] bg-white border border-slate-200 rounded-xl mb-4 shadow-sm group-hover:shadow-xl group-hover:border-slate-400 transition-all flex overflow-hidden">
                                         <div className="w-[38%] h-full bg-slate-900 p-3 flex flex-col text-slate-300">
-                                            <div className="w-8 h-8 rounded-full bg-indigo-500 mb-3 mx-auto flex items-center justify-center text-white font-bold text-[12px]">AR</div>
+                                            <div className="w-8 h-8 rounded-full bg-slate-500 mb-3 mx-auto flex items-center justify-center text-white font-bold text-[12px]">AR</div>
                                             
                                             <div className="mb-4">
                                                 <div className="text-[5.5px] font-bold text-white uppercase tracking-wider mb-1.5 border-b border-slate-700 pb-1">Contact</div>
@@ -447,7 +447,7 @@ export default function ResumeBuilderPage() {
                                         <div className="w-[62%] h-full bg-slate-50 p-3 flex flex-col">
                                             <div className="mb-3">
                                                 <div className="text-[12px] font-black text-slate-900 leading-none tracking-tighter">ALEX REED</div>
-                                                <div className="text-[5.5px] font-extrabold text-indigo-600 mt-1 uppercase tracking-widest">Creative Developer</div>
+                                                <div className="text-[5.5px] font-extrabold text-slate-800 mt-1 uppercase tracking-widest">Creative Developer</div>
                                             </div>
                                             
                                             <div className="mb-4">
@@ -462,9 +462,9 @@ export default function ResumeBuilderPage() {
                                                     Experience <span className="h-[1px] flex-1 bg-slate-200 ml-1"></span>
                                                 </div>
                                                 <div className="mb-2 relative">
-                                                    <div className="absolute left-[-5px] top-1 w-[2px] h-[15px] bg-indigo-500/30"></div>
+                                                    <div className="absolute left-[-5px] top-1 w-[2px] h-[15px] bg-slate-500/30"></div>
                                                     <div className="text-[6px] font-bold text-slate-800 leading-tight">Lead Designer</div>
-                                                    <div className="text-[4.5px] text-indigo-600 font-bold mb-0.5 flex justify-between">
+                                                    <div className="text-[4.5px] text-slate-800 font-bold mb-0.5 flex justify-between">
                                                         <span>StudioX</span>
                                                         <span className="text-slate-400 bg-slate-200/50 px-1 rounded">2021 - Present</span>
                                                     </div>
@@ -474,9 +474,9 @@ export default function ResumeBuilderPage() {
                                                     </div>
                                                 </div>
                                                 <div className="relative">
-                                                    <div className="absolute left-[-5px] top-1 w-[2px] h-[10px] bg-indigo-500/30"></div>
+                                                    <div className="absolute left-[-5px] top-1 w-[2px] h-[10px] bg-slate-500/30"></div>
                                                     <div className="text-[6px] font-bold text-slate-800 leading-tight">UI Developer</div>
-                                                    <div className="text-[4.5px] text-indigo-600 font-bold mb-0.5 flex justify-between">
+                                                    <div className="text-[4.5px] text-slate-800 font-bold mb-0.5 flex justify-between">
                                                         <span>Creativ</span>
                                                         <span className="text-slate-400 bg-slate-200/50 px-1 rounded">2018 - 2021</span>
                                                     </div>
@@ -487,7 +487,7 @@ export default function ResumeBuilderPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 className="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors">Creative Pro</h3>
+                                    <h3 className="font-bold text-slate-900 text-lg group-hover:text-slate-800 transition-colors">Creative Pro</h3>
                                     <p className="text-sm text-slate-500">Dual-column highly stylized layout for a bold, elegant statement.</p>
                                 </div>
                             </div>
@@ -511,7 +511,7 @@ export default function ResumeBuilderPage() {
                                 </div>
                                 <button
                                     onClick={() => setView('templates')}
-                                    className="flex items-center gap-2 px-6 py-3 font-bold bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95"
+                                    className="flex items-center gap-2 px-6 py-3 font-bold bg-slate-800 text-white hover:bg-slate-500 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-95"
                                 >
                                     <Plus size={18} /> Create New
                                 </button>
@@ -526,7 +526,7 @@ export default function ResumeBuilderPage() {
                                     <p className="text-slate-500 mb-6">You haven't created any resumes yet. Get started by picking a template.</p>
                                     <button
                                         onClick={() => setView('templates')}
-                                        className="inline-flex items-center gap-2 px-6 py-3 font-bold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-all"
+                                        className="inline-flex items-center gap-2 px-6 py-3 font-bold bg-slate-50 text-slate-800 hover:bg-slate-100 rounded-xl transition-all"
                                     >
                                         Browse Templates
                                     </button>
@@ -536,7 +536,7 @@ export default function ResumeBuilderPage() {
                                     {resumes.map(resume => (
                                         <div key={resume.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col">
                                             <div className="flex items-start justify-between mb-4">
-                                                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                                                <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-800">
                                                     <FileText size={24} />
                                                 </div>
                                                 <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md uppercase tracking-wider">

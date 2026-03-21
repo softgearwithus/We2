@@ -106,11 +106,11 @@ export default function AdminStudentsPage() {
     };
 
     const getSubscriptionBadge = (sub: string) => {
-        if (sub === 'placement_plus' || sub.includes('standard')) return <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg w-fit">EMBLE Standard</span>;
+        if (sub === 'placement_plus' || sub.includes('standard')) return <span className="px-2.5 py-1 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg w-fit">EMBLE Standard</span>;
         const label = sub.replace(/_/g, ' ').replace(/\w/g, (c) => c.toUpperCase());
         if (sub === 'free') return <span className="px-2.5 py-1 text-xs font-bold text-slate-500 bg-slate-100 rounded-lg">Free Tier</span>;
         if (sub === 'we2_max' || sub.includes('pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> {label}</span>;
-        return <span className="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg w-fit">{label}</span>;
+        return <span className="px-2.5 py-1 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg w-fit">{label}</span>;
     };
 
     if (isLoading || !data) {
@@ -125,7 +125,7 @@ export default function AdminStudentsPage() {
     }
 
     return (
-        <div className="max-w-[1400px] mx-auto space-y-8 pb-12">
+        <div className="max-w-full max-w-[1400px] mx-auto space-y-8 pb-12">
             {/* Header & Stats */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/60">
                 <div>
@@ -224,7 +224,7 @@ export default function AdminStudentsPage() {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-4">
                                                         <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
-                                                            <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${student.avatarBase}`} alt={student.name} />
+                                                            <img loading="lazy" decoding="async" src={`https://api.dicebear.com/7.x/notionists/svg?seed=${student.avatarBase}`} alt={student.name} />
                                                         </div>
                                                         <div>
                                                             <p className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors cursor-pointer">{student.name}</p>

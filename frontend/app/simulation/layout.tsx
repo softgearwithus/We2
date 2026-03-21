@@ -71,8 +71,8 @@ export default function SimulationLayout({
                         <span className="material-symbols-outlined text-2xl">settings</span>
                     </button>
                     <div className="w-10 h-10 mx-auto rounded-full bg-gray-600 border-2 border-green-500 overflow-hidden" title={user?.email}>
-                        {/* <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" /> */}
-                        <div className="w-full h-full flex items-center justify-center bg-indigo-500 text-white font-bold">
+                        {/* <img loading="lazy" decoding="async" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" /> */}
+                        <div className="w-full h-full flex items-center justify-center bg-slate-500 text-white font-bold">
                             {user?.email?.charAt(0).toUpperCase()}
                         </div>
                     </div>

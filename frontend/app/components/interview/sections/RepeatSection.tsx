@@ -102,7 +102,7 @@ export default function RepeatSection({ onComplete, sentences, globalStream }: R
                     className="w-full space-y-8"
                 >
                     <div className="text-center space-y-4 mb-8">
-                        <div className="bg-purple-50 border border-purple-100 p-4 rounded-3xl w-20 h-20 mx-auto flex items-center justify-center text-purple-600 shadow-xl shadow-purple-50 mb-6">
+                        <div className="bg-slate-50 border border-slate-100 p-4 rounded-3xl w-20 h-20 mx-auto flex items-center justify-center text-slate-800 shadow-xl shadow-slate-50 mb-6">
                             <Volume2 size={40} />
                         </div>
                         <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Active Listening</h2>
@@ -116,13 +116,13 @@ export default function RepeatSection({ onComplete, sentences, globalStream }: R
 
                         {/* Audio Playback Controls */}
                         <div className="relative group">
-                            <div className={`absolute -inset-4 bg-purple-500 rounded-full blur-xl opacity-0 transition-opacity duration-500 ${isPlaying ? 'opacity-20 animate-pulse' : 'group-hover:opacity-10'}`} />
+                            <div className={`absolute -inset-4 bg-slate-500 rounded-full blur-xl opacity-0 transition-opacity duration-500 ${isPlaying ? 'opacity-20 animate-pulse' : 'group-hover:opacity-10'}`} />
                             <Button
                                 onClick={playSentence}
                                 disabled={isPlaying || isRecording}
                                 className={`relative h-24 w-24 rounded-full border-[6px] shadow-2xl transition-all duration-300 flex items-center justify-center ${isPlaying
-                                    ? 'bg-purple-50 border-purple-200 text-purple-600'
-                                    : 'bg-slate-900 border-slate-800 text-white hover:bg-purple-600 hover:border-purple-500 hover:scale-105'
+                                    ? 'bg-slate-50 border-slate-200 text-slate-800'
+                                    : 'bg-slate-900 border-slate-800 text-white hover:bg-slate-800 hover:border-slate-500 hover:scale-105'
                                     }`}
                             >
                                 {isPlaying ? <Volume2 size={36} className="animate-bounce" /> : <Play size={36} fill="currentColor" className="ml-2" />}
@@ -177,7 +177,7 @@ export default function RepeatSection({ onComplete, sentences, globalStream }: R
                                         <Button variant="outline" onClick={() => setAudioBlob(null)} className="rounded-full h-14 w-full sm:w-auto px-10 font-bold text-slate-600 border-slate-200">
                                             Retry
                                         </Button>
-                                        <Button onClick={handleNext} className="bg-slate-900 hover:bg-indigo-600 rounded-full h-14 w-full sm:w-auto px-10 font-bold text-base shadow-lg hover:shadow-indigo-200 transition-all text-white flex items-center justify-center gap-2">
+                                        <Button onClick={handleNext} className="bg-slate-900 hover:bg-slate-800 rounded-full h-14 w-full sm:w-auto px-10 font-bold text-base shadow-lg hover:shadow-slate-200 transition-all text-white flex items-center justify-center gap-2">
                                             {step < sentences.length - 1 ? 'Next Phrase' : 'Submit Listening Section'} <ArrowRight size={18} />
                                         </Button>
                                     </div>

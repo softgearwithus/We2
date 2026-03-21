@@ -72,13 +72,13 @@ export default function DsaAllProblemsPage() {
             <div className="border-b border-slate-200 bg-white">
                 <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3 text-sm text-slate-500">
-                        <Link href="/dashboard/dsa" className="flex items-center hover:text-indigo-600 transition-colors">
+                        <Link href="/dashboard/dsa" className="flex items-center hover:text-slate-800 transition-colors">
                             <ArrowLeft size={16} /> <span className="ml-1">Training</span>
                         </Link>
                         <span className="text-slate-300">/</span>
                         <span className="font-bold text-slate-700">All Questions</span>
                         {platform && (
-                            <span className="text-[10px] font-bold uppercase bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                            <span className="text-[10px] font-bold uppercase bg-slate-50 text-slate-800 px-2 py-0.5 rounded-full">
                                 {platformLabel}
                             </span>
                         )}

@@ -228,7 +228,7 @@ export default function DsaProblemPage() {
         return (
             <div className="h-screen flex flex-col items-center justify-center text-slate-500 font-medium gap-4">
                 <div className="text-xl text-slate-800 font-bold">Problem not found</div>
-                <Link href="/dashboard/dsa/all" className="text-indigo-600 font-semibold">Browse all questions</Link>
+                <Link href="/dashboard/dsa/all" className="text-slate-800 font-semibold">Browse all questions</Link>
             </div>
         );
     }
@@ -239,7 +239,7 @@ export default function DsaProblemPage() {
             {/* Top Bar - Breadcrumbs & Meta */}
             <div className="h-10 shrink-0 flex items-center justify-between px-4 border-b border-slate-200 bg-white shadow-sm z-20">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <Link href="/dashboard/dsa" className="flex items-center hover:text-indigo-600 transition-colors">
+                    <Link href="/dashboard/dsa" className="flex items-center hover:text-slate-800 transition-colors">
                         <ArrowLeft size={16} /> <span className="ml-1">Problems</span>
                     </Link>
                     <span className="text-slate-300">/</span>
@@ -272,7 +272,7 @@ export default function DsaProblemPage() {
                             <button
                                 onClick={() => setLeftTab('description')}
                                 className={`flex items-center gap-2 text-sm font-medium h-full border-b-2 transition-all px-1 ${leftTab === 'description'
-                                    ? 'text-indigo-600 border-indigo-600'
+                                    ? 'text-slate-800 border-slate-800'
                                     : 'text-slate-500 border-transparent hover:text-slate-700'
                                     }`}
                             >
@@ -281,7 +281,7 @@ export default function DsaProblemPage() {
                             <button
                                 onClick={() => setLeftTab('submissions')}
                                 className={`flex items-center gap-2 text-sm font-medium h-full border-b-2 transition-all px-1 ${leftTab === 'submissions'
-                                    ? 'text-indigo-600 border-indigo-600'
+                                    ? 'text-slate-800 border-slate-800'
                                     : 'text-slate-500 border-transparent hover:text-slate-700'
                                     }`}
                             >
@@ -304,7 +304,7 @@ export default function DsaProblemPage() {
                     </Panel>
 
                     {/* DRAG HANDLE */}
-                    <Separator className="w-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
+                    <Separator className="w-1.5 bg-slate-100 hover:bg-slate-400 transition-colors cursor-col-resize flex items-center justify-center group z-10" />
 
                     {/* RIGHT PANEL: Code & Console */}
                     <Panel defaultSize={60} minSize={30} className="h-full flex flex-col">
@@ -316,28 +316,28 @@ export default function DsaProblemPage() {
                                     {/* Editor Toolbar Content */}
                                     <div className="flex items-center gap-2">
                                         <div className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700 shadow-sm">
-                                            <Code2 size={14} className="text-indigo-600" /> Code
+                                            <Code2 size={14} className="text-slate-800" /> Code
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="flex items-center bg-white border border-slate-200 rounded-md shadow-sm mr-2">
                                             <button
                                                 onClick={() => setShowMinimap(!showMinimap)}
-                                                className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showMinimap ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showMinimap ? 'bg-slate-50 text-slate-800' : 'hover:bg-slate-50'}`}
                                                 title="Toggle Minimap"
                                             >
                                                 <MapIcon size={12} />
                                             </button>
                                             <button
                                                 onClick={() => setShowLineNumbers(!showLineNumbers)}
-                                                className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showLineNumbers ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showLineNumbers ? 'bg-slate-50 text-slate-800' : 'hover:bg-slate-50'}`}
                                                 title="Toggle Line Numbers"
                                             >
                                                 <Hash size={12} />
                                             </button>
                                             <button
                                                 onClick={() => setVimModeEnabled(!vimModeEnabled)}
-                                                className={`p-1.5 text-slate-500 transition-colors ${vimModeEnabled ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                className={`p-1.5 text-slate-500 transition-colors ${vimModeEnabled ? 'bg-slate-50 text-slate-800' : 'hover:bg-slate-50'}`}
                                                 title={`Toggle VIM Mode ${vimModeEnabled ? '(On)' : '(Off)'}`}
                                             >
                                                 <Keyboard size={12} />
@@ -376,7 +376,7 @@ export default function DsaProblemPage() {
                                         <select
                                             value={language}
                                             onChange={(e) => handleLanguageChange(e.target.value)}
-                                            className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
+                                            className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-200 shadow-sm"
                                         >
                                             {(problem.languageMeta || [
                                                 { lang: 'C++', langSlug: 'cpp' },
@@ -390,7 +390,7 @@ export default function DsaProblemPage() {
                                         <button
                                             onClick={handleRun}
                                             disabled={isRunning}
-                                            className="ml-2 flex items-center gap-1.5 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-xs font-bold transition-all shadow-sm hover:shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed group"
+                                            className="ml-2 flex items-center gap-1.5 px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-md text-xs font-bold transition-all shadow-sm hover:shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed group"
                                         >
                                             {isRunning ? (
                                                 <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -434,7 +434,7 @@ export default function DsaProblemPage() {
                             </Panel>
 
                             {/* DRAG HANDLE */}
-                            <Separator className="h-1.5 bg-slate-100 hover:bg-indigo-400 transition-colors cursor-row-resize flex items-center justify-center group z-10" />
+                            <Separator className="h-1.5 bg-slate-100 hover:bg-slate-400 transition-colors cursor-row-resize flex items-center justify-center group z-10" />
 
                             {/* BOTTOM: Console / Test Cases */}
                             <Panel defaultSize={40} minSize={10} className="bg-white flex flex-col h-full">
@@ -443,7 +443,7 @@ export default function DsaProblemPage() {
                                     <button
                                         onClick={() => setRightBottomTab('testcases')}
                                         className={`flex items-center gap-2 text-xs font-bold h-full border-b-2 transition-all px-1 ${rightBottomTab === 'testcases'
-                                            ? 'text-indigo-600 border-indigo-600'
+                                            ? 'text-slate-800 border-slate-800'
                                             : 'text-slate-500 border-transparent hover:text-slate-700'
                                             }`}
                                     >
@@ -452,7 +452,7 @@ export default function DsaProblemPage() {
                                     <button
                                         onClick={() => setRightBottomTab('console')}
                                         className={`flex items-center gap-2 text-xs font-bold h-full border-b-2 transition-all px-1 ${rightBottomTab === 'console'
-                                            ? 'text-indigo-600 border-indigo-600'
+                                            ? 'text-slate-800 border-slate-800'
                                             : 'text-slate-500 border-transparent hover:text-slate-700'
                                             }`}
                                     >
@@ -461,7 +461,7 @@ export default function DsaProblemPage() {
                                     <button
                                         onClick={() => setRightBottomTab('ai_assist')}
                                         className={`flex items-center gap-2 text-xs font-bold h-full border-b-2 transition-all px-1 ${rightBottomTab === 'ai_assist'
-                                            ? 'text-indigo-600 border-indigo-600'
+                                            ? 'text-slate-800 border-slate-800'
                                             : 'text-slate-500 border-transparent hover:text-slate-700'
                                             }`}
                                     >
@@ -485,7 +485,7 @@ export default function DsaProblemPage() {
                                             {/* Test Cases List */}
                                             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                                                 {testCases.map((testCase, index) => (
-                                                    <div key={testCase.id} className="group relative bg-slate-50 border border-slate-200 rounded-lg overflow-hidden transition-all hover:border-indigo-200 hover:shadow-sm">
+                                                    <div key={testCase.id} className="group relative bg-slate-50 border border-slate-200 rounded-lg overflow-hidden transition-all hover:border-slate-200 hover:shadow-sm">
                                                         <div className="flex items-center justify-between px-3 py-2 bg-slate-100/50 border-b border-slate-200">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-xs font-bold text-slate-600">Case {index + 1}</span>
@@ -520,7 +520,7 @@ export default function DsaProblemPage() {
                                                                     <textarea
                                                                         value={testCase.input}
                                                                         onChange={(e) => handleTestCaseChange(testCase.id, 'input', e.target.value)}
-                                                                        className="w-full bg-white border border-slate-200 rounded text-sm font-mono text-slate-700 p-2 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 transition-shadow resize-none"
+                                                                        className="w-full bg-white border border-slate-200 rounded text-sm font-mono text-slate-700 p-2 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-200 transition-shadow resize-none"
                                                                         rows={1}
                                                                         spellCheck={false}
                                                                     />
@@ -533,7 +533,7 @@ export default function DsaProblemPage() {
                                                                         type="text"
                                                                         value={testCase.expected}
                                                                         onChange={(e) => handleTestCaseChange(testCase.id, 'expected', e.target.value)}
-                                                                        className="w-full bg-white border border-slate-200 rounded text-sm font-mono text-slate-700 p-2 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 transition-shadow"
+                                                                        className="w-full bg-white border border-slate-200 rounded text-sm font-mono text-slate-700 p-2 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-200 transition-shadow"
                                                                         spellCheck={false}
                                                                     />
                                                                 </div>
@@ -553,7 +553,7 @@ export default function DsaProblemPage() {
                                             <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
                                                 <button
                                                     onClick={handleAddTestCase}
-                                                    className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-2 rounded hover:bg-indigo-100 transition-colors border border-indigo-200"
+                                                    className="flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-50 px-3 py-2 rounded hover:bg-slate-100 transition-colors border border-slate-200"
                                                 >
                                                     <Plus size={14} /> Add Case
                                                 </button>
@@ -602,7 +602,7 @@ export default function DsaProblemPage() {
                                         <span>Ln 1, Col 1</span>
                                         <span>UTF-8</span>
                                         <span>{language}</span>
-                                        {vimModeEnabled && <span className="text-indigo-600 font-bold">VIM</span>}
+                                        {vimModeEnabled && <span className="text-slate-800 font-bold">VIM</span>}
                                     </div>
                                 </div>
                             </Panel>

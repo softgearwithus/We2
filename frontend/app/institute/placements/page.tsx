@@ -77,7 +77,7 @@ export default function PlacementPage() {
                     <h1 className="text-3xl font-bold text-white tracking-tight">Placement Readiness</h1>
                     <p className="text-slate-400 mt-2">Monitor batch-wise preparedness and skill distribution.</p>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
+                <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-slate-200">
                     <FileDown className="w-4 h-4" />
                     Download Report
                 </button>

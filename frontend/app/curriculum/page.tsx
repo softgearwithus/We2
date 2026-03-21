@@ -136,7 +136,7 @@ export default function CurriculumPage() {
                     backgroundImage: `radial-gradient(circle at 1.5px 1.5px, white 1.5px, transparent 0)`,
                     backgroundSize: '40px 40px'
                 }} />
-                <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(255,87,34,0.15)_0%,rgba(255,255,255,0)_70%)] blur-[80px] pointer-events-none"></div>
+                <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-full max-w-full max-w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(255,87,34,0.15)_0%,rgba(255,255,255,0)_70%)] blur-[80px] pointer-events-none"></div>
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center text-center">
                     <motion.div
@@ -246,7 +246,7 @@ export default function CurriculumPage() {
                                     ${item.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : ''}
                                     ${item.color === 'blue' ? 'bg-blue-50 text-blue-600 border-blue-100' : ''}
                                     ${item.color === 'orange' ? 'bg-orange-50 text-orange-600 border-orange-100' : ''}
-                                    ${item.color === 'purple' ? 'bg-purple-50 text-purple-600 border-purple-100' : ''}
+                                    ${item.color === 'purple' ? 'bg-slate-50 text-slate-800 border-slate-100' : ''}
                                     ${item.color === 'pink' ? 'bg-pink-50 text-pink-600 border-pink-100' : ''}
                                 `}>
                                     <item.icon size={24} strokeWidth={2.5} />

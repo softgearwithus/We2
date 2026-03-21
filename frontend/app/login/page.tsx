@@ -11,11 +11,11 @@ export default function LoginSelectionPage() {
             icon: <GraduationCap size={32} className="text-white" />,
             description: 'Access simulations, track progress, and build your verified portfolio.',
             link: '/login/student',
-            gradient: 'from-indigo-600 to-violet-600',
-            border: 'hover:border-indigo-300',
-            shadow: 'hover:shadow-indigo-500/20',
+            gradient: 'from-slate-600 to-violet-600',
+            border: 'hover:border-slate-300',
+            shadow: 'hover:shadow-slate-200',
             badge: 'Login Portal',
-            badgeColor: 'bg-indigo-600',
+            badgeColor: 'bg-slate-800',
             cta: 'Student Login'
         },
         {
@@ -48,8 +48,8 @@ export default function LoginSelectionPage() {
         <div className="min-h-screen bg-white selection:bg-brand-orange selection:text-white relative overflow-hidden flex flex-col">
             {/* Background Decoration - Static for Performance */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64" />
-                <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-3xl -ml-64 -mb-64" />
+                <div className="absolute top-0 right-0 w-full max-w-full max-w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64" />
+                <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[800px] h-[800px] bg-slate-500/5 rounded-full blur-3xl -ml-64 -mb-64" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{
                     backgroundImage: `radial-gradient(#000 1px, transparent 1px)`,
                     backgroundSize: '32px 32px'

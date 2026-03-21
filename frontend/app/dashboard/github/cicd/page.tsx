@@ -5,9 +5,9 @@ import { Workflow, CheckCircle2 } from 'lucide-react';
 
 export default function CICDPage() {
     return (
-        <div className="max-w-[1400px] mx-auto min-h-[calc(100vh-8rem)] flex flex-col pt-6 font-sans">
+        <div className="max-w-full max-w-[1400px] mx-auto min-h-[calc(100vh-8rem)] flex flex-col pt-6 font-sans">
             <header className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <div className="w-12 h-12 bg-slate-500 rounded-xl flex items-center justify-center shadow-lg shadow-slate-200">
                     <Workflow className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -17,8 +17,8 @@ export default function CICDPage() {
             </header>
 
             <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-12 flex flex-col items-center justify-center text-center">
-                <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
-                    <Workflow className="w-12 h-12 text-indigo-500" />
+                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                    <Workflow className="w-12 h-12 text-slate-700" />
                 </div>
                 <h2 className="text-2xl font-black text-slate-900 mb-4">Automation Bootcamp Coming Soon</h2>
                 <p className="text-slate-500 max-w-lg mb-8 leading-relaxed">

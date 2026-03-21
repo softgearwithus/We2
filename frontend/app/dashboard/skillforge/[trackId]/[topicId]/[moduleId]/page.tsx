@@ -81,7 +81,7 @@ export default function GenericModulePage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="animate-spin text-indigo-600" size={48} />
+                <Loader2 className="animate-spin text-slate-800" size={48} />
             </div>
         );
     }
@@ -94,7 +94,7 @@ export default function GenericModulePage() {
                 <p className="text-slate-500 mb-8 max-w-md">
                     We couldn't load the content for <strong>{moduleId}</strong>.
                 </p>
-                <Link href={`/dashboard/skillforge/${trackId}/${topicId}`} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
+                <Link href={`/dashboard/skillforge/${trackId}/${topicId}`} className="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 transition">
                     Back to Syllabus
                 </Link>
             </div>
@@ -106,7 +106,7 @@ export default function GenericModulePage() {
 
             {/* Left Sidebar (Desktop) */}
             <div className="hidden lg:flex flex-col w-80 border-r border-slate-200 h-screen sticky top-0 bg-slate-50/50 backdrop-blur-sm p-6 overflow-y-auto">
-                <Link href={`/dashboard/skillforge/${trackId}/${topicId}`} className="text-sm font-bold text-slate-500 hover:text-indigo-600 mb-8 inline-flex items-center gap-2 transition-colors">
+                <Link href={`/dashboard/skillforge/${trackId}/${topicId}`} className="text-sm font-bold text-slate-500 hover:text-slate-800 mb-8 inline-flex items-center gap-2 transition-colors">
                     <ArrowLeft size={14} /> Back to Syllabus
                 </Link>
 
@@ -132,19 +132,19 @@ export default function GenericModulePage() {
                     <div className="flex items-center gap-8">
                         <button
                             onClick={() => setActiveTab('theory')}
-                            className={`pb-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'theory' ? 'text-indigo-600 border-indigo-600' : 'text-slate-500 border-transparent hover:text-slate-800'}`}
+                            className={`pb-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'theory' ? 'text-slate-800 border-slate-800' : 'text-slate-500 border-transparent hover:text-slate-800'}`}
                         >
                             Deep Dive
                         </button>
                         <button
                             onClick={() => setActiveTab('mindmap')}
-                            className={`pb-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'mindmap' ? 'text-indigo-600 border-indigo-600' : 'text-slate-500 border-transparent hover:text-slate-800'}`}
+                            className={`pb-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'mindmap' ? 'text-slate-800 border-slate-800' : 'text-slate-500 border-transparent hover:text-slate-800'}`}
                         >
                             Mind Map
                         </button>
                         <button
                             onClick={() => setActiveTab('revision')}
-                            className={`pb-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'revision' ? 'text-indigo-600 border-indigo-600' : 'text-slate-500 border-transparent hover:text-slate-800'}`}
+                            className={`pb-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'revision' ? 'text-slate-800 border-slate-800' : 'text-slate-500 border-transparent hover:text-slate-800'}`}
                         >
                             Quick Revision
                         </button>
@@ -162,9 +162,9 @@ export default function GenericModulePage() {
                             <div className="prose prose-slate prose-lg max-w-none 
                             prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
                             prose-p:text-slate-600 prose-p:leading-relaxed
-                            prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
+                            prose-a:text-slate-800 prose-a:no-underline hover:prose-a:underline
                             prose-strong:text-slate-800 prose-strong:font-bold
-                            prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+                            prose-code:text-slate-800 prose-code:bg-slate-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
                             prose-pre:bg-slate-900 prose-pre:text-slate-50 prose-pre:rounded-2xl prose-pre:p-0
                             ">
                                 <ReactMarkdown
@@ -230,8 +230,8 @@ export default function GenericModulePage() {
                                     <div className="prose prose-slate prose-lg max-w-none 
                                     prose-ul:list-disc prose-ul:pl-6 
                                     prose-li:text-slate-700 prose-li:font-medium prose-li:mb-2
-                                    prose-strong:text-indigo-600
-                                    bg-indigo-50/50 p-8 rounded-3xl border border-indigo-100
+                                    prose-strong:text-slate-800
+                                    bg-slate-50/50 p-8 rounded-3xl border border-slate-200
                                     ">
                                         <ReactMarkdown>{parsedGenerata.revision}</ReactMarkdown>
                                     </div>
@@ -252,7 +252,7 @@ export default function GenericModulePage() {
                             <ChevronLeft size={16} /> Previous
                         </button>
 
-                        <button className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                        <button className="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-200 transition-all active:scale-95">
                             Next Module <ChevronRight size={16} />
                         </button>
                     </div>

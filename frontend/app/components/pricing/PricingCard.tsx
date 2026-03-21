@@ -235,17 +235,17 @@ export default function PricingCard({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: delay * 0.1 }}
             className={cn(
-                "relative flex flex-col p-8 rounded-3xl transition-all duration-300 group h-full bg-white",
+                "relative flex flex-col p-8 premium-card hover:-translate-y-1 group h-full bg-white",
                 (isPopular || isPremium) && "scale-105 z-10 shadow-2xl ring-1 ring-black/5",
-                isPopular && "border-2 border-indigo-600 shadow-indigo-100",
+                isPopular && "border-2 border-brand-black shadow-slate-200",
                 isPremium && "border-2 border-brand-orange shadow-orange-100 bg-gradient-to-b from-white to-orange-50/20",
-                variant === 'default' && "border border-slate-200 hover:border-slate-300 hover:shadow-xl hover:-translate-y-1"
+                variant === 'default' && "border border-slate-200 hover:border-slate-300 hover:shadow-xl"
             )}
         >
             {(isPopular || isPremium) && (
                 <div className={cn(
                     "absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-1",
-                    isPremium ? "bg-gradient-to-r from-brand-orange to-amber-500 text-white ring-4 ring-white" : "bg-indigo-600 text-white"
+                    isPremium ? "bg-gradient-to-r from-brand-orange to-amber-500 text-white ring-4 ring-white" : "bg-brand-black text-white"
                 )}>
                     {isPremium ? <Crown size={12} className="fill-current" /> : <Sparkles size={12} className="fill-current" />}
                     {badgeText || (isPremium ? "Best Choice" : "Most Popular")}
@@ -256,7 +256,7 @@ export default function PricingCard({
                 <div className="flex items-center gap-3 mb-4">
                     <div className={cn(
                         "p-3 rounded-xl",
-                        isPremium ? "bg-orange-100 text-brand-orange" : (isPopular ? "bg-indigo-50 text-indigo-600" : "bg-slate-50 text-slate-600")
+                        isPremium ? "bg-orange-100 text-brand-orange" : (isPopular ? "bg-slate-100 text-brand-black" : "bg-slate-50 text-slate-600")
                     )}>
                         {icon || <Zap size={24} />}
                     </div>
@@ -270,10 +270,17 @@ export default function PricingCard({
 
                 <div className="flex flex-col mt-4">
                     {originalPrice && (
-                        <span className="text-slate-400 font-bold line-through text-lg decoration-slate-300 decoration-2 -mb-1">{originalPrice}</span>
+                        <span className="text-slate-400 font-bold font-mono line-through text-lg decoration-slate-300 decoration-2 -mb-1">{originalPrice}</span>
                     )}
                     <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">{price}</span>
+                        <span className="text-4xl md:text-5xl font-mono font-extrabold text-slate-900 tracking-tight">
+                            {price.match(/^([^0-9\.]+)(.+)$/) ? (
+                                <>
+                                    <span className="text-xl md:text-2xl font-sans opacity-50 font-semibold mr-0.5 tracking-normal relative -top-1 md:-top-1.5">{price.match(/^([^0-9\.]+)(.+)$/)?.[1]}</span>
+                                    {price.match(/^([^0-9\.]+)(.+)$/)?.[2]}
+                                </>
+                            ) : price}
+                        </span>
                         <span className={cn("font-bold", period === 'month' || period === 'year' ? "text-slate-500" : "text-slate-600 tracking-tight")}>
                             /{period}
                         </span>
@@ -283,7 +290,7 @@ export default function PricingCard({
                     )}
                     {savings && (
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
+                            <span className="text-xs font-bold font-mono tracking-tight text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">
                                 {savings}
                             </span>
                         </div>
@@ -297,7 +304,7 @@ export default function PricingCard({
                         <div className={cn(
                             "mt-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full shrink-0",
                             feature.included
-                                ? (isPremium ? "bg-orange-100 text-brand-orange" : "bg-indigo-50 text-indigo-600")
+                                ? (isPremium ? "bg-orange-100 text-brand-orange" : "bg-slate-100 text-brand-black")
                                 : "bg-slate-100 text-slate-400"
                         )}>
                             {feature.included ? <Check size={12} strokeWidth={3} /> : <div className="w-1.5 h-1.5 bg-slate-300 rounded-full" />}
@@ -316,11 +323,11 @@ export default function PricingCard({
                 onClick={handleUpgrade}
                 disabled={isLoading || computedIsLocked}
                 className={cn(
-                    "w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2",
+                    "w-full py-4 rounded-xl font-bold font-display text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2",
                     isPremium
                         ? "bg-gradient-to-r from-brand-orange to-amber-600 text-white shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]"
                         : (isPopular
-                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 hover:-translate-y-0.5"
+                            ? "bg-brand-black text-white shadow-lg shadow-slate-200 hover:bg-slate-800 hover:shadow-slate-300 hover:-translate-y-0.5"
                             : "bg-white text-slate-700 border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50"),
                     isLoading && "opacity-70 cursor-wait",
                     computedIsLocked && "opacity-60 cursor-not-allowed"

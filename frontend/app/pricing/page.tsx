@@ -204,7 +204,7 @@ export default function PricingPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-white font-sans text-brand-black relative selection:bg-brand-orange-hover selection:text-white">
+        <div className="min-h-screen bg-white font-sans text-brand-black relative selection:bg-brand-orange-hover selection:text-white overflow-x-hidden">
             <Navbar />
 
             <main className="relative z-10 pt-20 pb-20 px-6">
@@ -457,7 +457,7 @@ export default function PricingPage() {
                                             <span className="text-brand-black font-bold">Priority Placement Connect</span>
                                         </div>
                                         <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all">
-                                            <HelpCircle size={18} className="text-indigo-500" />
+                                            <HelpCircle size={18} className="text-slate-700" />
                                             <span>Cancel Anytime Control</span>
                                         </div>
                                     </div>

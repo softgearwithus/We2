@@ -434,7 +434,7 @@ export default function ExamSimulatorPage() {
     });
 
     return (
-        <div className="fixed inset-0 z-[100] bg-white flex flex-col font-sans text-sm selection:bg-orange-100 selection:text-orange-900 border-t-[6px] border-indigo-600">
+        <div className="fixed inset-0 z-[100] bg-white flex flex-col font-sans text-sm selection:bg-orange-100 selection:text-orange-900 border-t-[6px] border-slate-800">
             {/* Top Navigation / Header */}
             <header className="h-14 bg-slate-50 border-b border-slate-200 flex items-center justify-between px-6 shadow-sm z-10 shrink-0">
                 <div className="flex flex-col">
@@ -448,14 +448,14 @@ export default function ExamSimulatorPage() {
                             <span className="text-base tracking-widest">REVIEW MODE</span>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 font-bold px-4 py-1.5 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 text-slate-900 font-bold px-4 py-1.5 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
                             <Clock size={16} />
                             <span className="text-base tracking-widest tabular-nums">{formatTime(timeLeftSeconds)}</span>
                         </div>
                     )}
                     <button
                         onClick={() => setShowCalculator(!showCalculator)}
-                        className={`flex items-center gap-2 px-4 py-1.5 font-bold rounded-lg transition border ${showCalculator ? 'bg-indigo-100 text-indigo-700 border-indigo-200 shadow-inner' : 'text-slate-600 hover:bg-slate-100 border-transparent hover:border-slate-200'}`}
+                        className={`flex items-center gap-2 px-4 py-1.5 font-bold rounded-lg transition border ${showCalculator ? 'bg-slate-100 text-slate-900 border-slate-200 shadow-inner' : 'text-slate-600 hover:bg-slate-100 border-transparent hover:border-slate-200'}`}
                         title="Toggle Calculator"
                     >
                         <Hash size={16} /> Calculator
@@ -489,11 +489,11 @@ export default function ExamSimulatorPage() {
                         <div
                             key={section.id}
                             onClick={() => navigateToQuestion(idx, 0)}
-                            className={`px-8 py-2.5 cursor-pointer font-bold relative transition-colors ${isActive ? 'bg-indigo-600 text-white shadow-md z-10' : 'text-[#495057] hover:bg-[#dee2e6]'
+                            className={`px-8 py-2.5 cursor-pointer font-bold relative transition-colors ${isActive ? 'bg-slate-800 text-white shadow-md z-10' : 'text-[#495057] hover:bg-[#dee2e6]'
                                 }`}
                         >
                             {section.title}
-                            {isActive && <div className="absolute top-0 right-[-10px] w-0 h-0 border-t-[20px] border-b-[20px] border-l-[10px] border-l-indigo-600 border-t-transparent border-b-transparent z-20" />}
+                            {isActive && <div className="absolute top-0 right-[-10px] w-0 h-0 border-t-[20px] border-b-[20px] border-l-[10px] border-l-slate-600 border-t-transparent border-b-transparent z-20" />}
                         </div>
                     );
                 })}
@@ -526,12 +526,12 @@ export default function ExamSimulatorPage() {
 
                                 {activeQuestion?.imageUrl && (
                                     <div className="mb-8 relative inline-block">
-                                        <img src={activeQuestion.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-2xl h-auto max-h-96 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
+                                        <img loading="lazy" decoding="async" src={activeQuestion.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-2xl h-auto max-h-96 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />
                                     </div>
                                 )}
 
                                 {activeQuestion?.questionType === 'SINGLE_CORRECT' && (
-                                    <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
+                                    <div className="space-y-3 pl-4 border-l-2 border-slate-200">
                                         {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
                                             const isChecked = currentResponse === String(idx);
                                             return (
@@ -541,15 +541,15 @@ export default function ExamSimulatorPage() {
                                                         if (isReviewMode) { e.preventDefault(); return; }
                                                         setResponse(String(idx));
                                                     }}
-                                                    className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
+                                                    className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-slate-400 bg-slate-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
                                                 >
                                                     <div className="flex shrink-0 items-center justify-center border-2 border-slate-300 w-6 h-6 rounded-full bg-white relative">
-                                                        {isChecked && <div className="w-3 h-3 bg-indigo-600 rounded-full" />}
+                                                        {isChecked && <div className="w-3 h-3 bg-slate-800 rounded-full" />}
                                                         {isReviewMode && activeQuestion?.correctAnswer === String(idx) && (
                                                             <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
                                                         )}
                                                     </div>
-                                                    <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
+                                                    <span className={`font-medium ${isChecked ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</span>
                                                 </label>
                                             );
                                         })}
@@ -557,7 +557,7 @@ export default function ExamSimulatorPage() {
                                 )}
 
                                 {activeQuestion?.questionType === 'MULTI_CORRECT' && (
-                                    <div className="space-y-3 pl-4 border-l-2 border-indigo-100">
+                                    <div className="space-y-3 pl-4 border-l-2 border-slate-200">
                                         {activeQuestion?.optionsJson?.map((opt: string, idx: number) => {
                                             const checkedIndices = currentResponse ? currentResponse.split(',') : [];
                                             const isChecked = checkedIndices.includes(String(idx));
@@ -572,15 +572,15 @@ export default function ExamSimulatorPage() {
                                                         else newArr = newArr.filter(i => i !== String(idx));
                                                         setResponse(newArr.join(','));
                                                     }}
-                                                    className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-indigo-500 bg-indigo-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
+                                                    className={`flex items-center gap-4 cursor-pointer p-3 rounded-lg border-2 transition-all select-none ${isReviewMode ? '' : 'hover:bg-slate-50'} ${isChecked ? 'border-slate-400 bg-slate-50/30' : 'border-transparent'} ${isReviewMode ? 'pointer-events-none' : ''}`}
                                                 >
-                                                    <div className={`flex shrink-0 items-center justify-center border-2 w-6 h-6 rounded bg-white relative ${isChecked ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300'}`}>
+                                                    <div className={`flex shrink-0 items-center justify-center border-2 w-6 h-6 rounded bg-white relative ${isChecked ? 'border-slate-800 bg-slate-800' : 'border-slate-300'}`}>
                                                         {isChecked && <Check size={16} className="text-white absolute" strokeWidth={3} />}
                                                         {isReviewMode && (activeQuestion?.correctAnswer || '').split(',').includes(String(idx)) && (
                                                             <div className="absolute -right-8 text-emerald-600 font-bold"><CheckCircle2 size={20} /></div>
                                                         )}
                                                     </div>
-                                                    <span className={`font-medium ${isChecked ? 'text-indigo-900' : 'text-slate-700'}`}>{opt}</span>
+                                                    <span className={`font-medium ${isChecked ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</span>
                                                 </label>
                                             );
                                         })}
@@ -590,7 +590,7 @@ export default function ExamSimulatorPage() {
                                 {activeQuestion?.questionType === 'TEXT' && (
                                     <div className="mt-4">
                                         <textarea
-                                            className={`w-full h-48 p-4 border border-slate-300 rounded-xl outline-none resize-none font-mono text-sm leading-relaxed ${isReviewMode ? 'bg-slate-50 text-slate-600 cursor-not-allowed' : 'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                                            className={`w-full h-48 p-4 border border-slate-300 rounded-xl outline-none resize-none font-mono text-sm leading-relaxed ${isReviewMode ? 'bg-slate-50 text-slate-600 cursor-not-allowed' : 'focus:ring-2 focus:ring-slate-200 focus:border-slate-400'}`}
                                             placeholder="Write your answer here..."
                                             value={currentResponse}
                                             readOnly={isReviewMode}
@@ -605,28 +605,28 @@ export default function ExamSimulatorPage() {
                                         <div className="h-10 border-b border-slate-200 bg-slate-50 flex items-center justify-between px-3 shrink-0">
                                             <div className="flex items-center gap-2">
                                                 <div className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-slate-700 shadow-sm">
-                                                    <Code2 size={14} className="text-indigo-600" /> Code
+                                                    <Code2 size={14} className="text-slate-800" /> Code
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="flex items-center bg-white border border-slate-200 rounded-md shadow-sm mr-2">
                                                     <button
                                                         onClick={() => setShowMinimap(!showMinimap)}
-                                                        className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showMinimap ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                        className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showMinimap ? 'bg-slate-50 text-slate-800' : 'hover:bg-slate-50'}`}
                                                         title="Toggle Minimap"
                                                     >
                                                         <MapIcon size={12} />
                                                     </button>
                                                     <button
                                                         onClick={() => setShowLineNumbers(!showLineNumbers)}
-                                                        className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showLineNumbers ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                        className={`p-1.5 text-slate-500 border-r border-slate-100 transition-colors ${showLineNumbers ? 'bg-slate-50 text-slate-800' : 'hover:bg-slate-50'}`}
                                                         title="Toggle Line Numbers"
                                                     >
                                                         <Hash size={12} />
                                                     </button>
                                                     <button
                                                         onClick={() => setVimModeEnabled(!vimModeEnabled)}
-                                                        className={`p-1.5 text-slate-500 transition-colors ${vimModeEnabled ? 'bg-indigo-50 text-indigo-600' : 'hover:bg-slate-50'}`}
+                                                        className={`p-1.5 text-slate-500 transition-colors ${vimModeEnabled ? 'bg-slate-50 text-slate-800' : 'hover:bg-slate-50'}`}
                                                         title={`Toggle VIM Mode ${vimModeEnabled ? '(On)' : '(Off)'}`}
                                                     >
                                                         <Keyboard size={12} />
@@ -665,7 +665,7 @@ export default function ExamSimulatorPage() {
                                                 <select
                                                     value={language}
                                                     onChange={(e) => setLanguage(e.target.value)}
-                                                    className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 shadow-sm"
+                                                    className="bg-white border border-slate-200 text-xs font-medium text-slate-700 rounded-md px-2 py-1 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-200 shadow-sm"
                                                 >
                                                     <option value="javascript">JavaScript</option>
                                                     <option value="python">Python</option>
@@ -756,7 +756,7 @@ export default function ExamSimulatorPage() {
                 {/* Right Palette Panel */}
                 <div className="w-80 border-l border-slate-200 bg-slate-50 flex flex-col shrink-0 text-xs shadow-[-4px_0_15px_rgba(0,0,0,0.02)] z-10">
                     <div className="p-4 bg-[#E9ECEF] border-b border-slate-200 font-bold text-slate-700 flex items-center justify-center shrink-0">
-                        {testData?.company?.logoUrl ? <img src={testData.company.logoUrl} className="h-8 object-contain" /> : testData?.company?.name || 'Company'} Profile
+                        {testData?.company?.logoUrl ? <img loading="lazy" decoding="async" src={testData.company.logoUrl} className="h-8 object-contain" /> : testData?.company?.name || 'Company'} Profile
                     </div>
 
                     {/* Palette Legend */}

@@ -138,16 +138,16 @@ export default function ReadingSection({ onComplete, passages, globalStream }: R
                         exit={{ opacity: 0, y: -20, filter: 'blur(4px)' }}
                         className="text-center space-y-8 w-full"
                     >
-                        <div className="bg-indigo-50 border border-indigo-100 p-6 rounded-[2rem] w-28 h-28 mx-auto flex items-center justify-center text-indigo-600 shadow-xl shadow-indigo-100">
+                        <div className="bg-slate-50 border border-slate-200 p-6 rounded-[2rem] w-28 h-28 mx-auto flex items-center justify-center text-slate-800 shadow-xl shadow-slate-200">
                             <BookOpen size={48} />
                         </div>
                         <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Reading Comprehension</h2>
                         <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 text-slate-600 max-w-lg mx-auto text-left space-y-3">
-                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" /><span>Read the following passages clearly and naturally.</span></div>
-                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" /><span>You have 10 seconds to prepare before recording starts.</span></div>
-                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" /><span>Maintain good posture and eye contact with the camera.</span></div>
+                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-2 shrink-0" /><span>Read the following passages clearly and naturally.</span></div>
+                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-2 shrink-0" /><span>You have 10 seconds to prepare before recording starts.</span></div>
+                            <div className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-2 shrink-0" /><span>Maintain good posture and eye contact with the camera.</span></div>
                         </div>
-                        <Button onClick={startPrep} className="bg-slate-900 hover:bg-indigo-600 text-white text-lg px-10 h-16 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-indigo-200 transition-all font-bold group">
+                        <Button onClick={startPrep} className="bg-slate-900 hover:bg-slate-800 text-white text-lg px-10 h-16 rounded-2xl shadow-xl shadow-slate-200 hover:shadow-slate-200 transition-all font-bold group">
                             Start Level {currentLevel + 1} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </motion.div>
@@ -161,15 +161,15 @@ export default function ReadingSection({ onComplete, passages, globalStream }: R
                         className="w-full space-y-8"
                     >
                         <div className="flex justify-between items-center text-slate-500 font-bold tracking-wider uppercase text-xs">
-                            <span className="bg-slate-100 px-4 py-2 rounded-xl text-slate-700">Level {currentLevel + 1}: <span className="text-indigo-600">{currentPassage.level}</span></span>
+                            <span className="bg-slate-100 px-4 py-2 rounded-xl text-slate-700">Level {currentLevel + 1}: <span className="text-slate-800">{currentPassage.level}</span></span>
                             <span>Passage {currentLevel + 1} of {passages.length}</span>
                         </div>
 
-                        <Card className={`relative overflow-hidden transition-all duration-500 border-none rounded-[2.5rem] bg-slate-50 ${phase === 'read' ? 'shadow-2xl shadow-indigo-100 ring-4 ring-indigo-50' : 'shadow-sm ring-1 ring-slate-200'}`}>
+                        <Card className={`relative overflow-hidden transition-all duration-500 border-none rounded-[2.5rem] bg-slate-50 ${phase === 'read' ? 'shadow-2xl shadow-slate-200 ring-4 ring-slate-200' : 'shadow-sm ring-1 ring-slate-200'}`}>
                             {phase === 'prep' && (
                                 <div className="absolute inset-0 bg-white/80 backdrop-blur-md z-10 flex flex-col items-center justify-center">
-                                    <div className="w-24 h-24 rounded-full border-4 border-indigo-100 flex items-center justify-center mb-4">
-                                        <span className="text-5xl font-black text-indigo-600 animate-pulse">{timeLeft}</span>
+                                    <div className="w-24 h-24 rounded-full border-4 border-slate-200 flex items-center justify-center mb-4">
+                                        <span className="text-5xl font-black text-slate-800 animate-pulse">{timeLeft}</span>
                                     </div>
                                     <span className="text-slate-600 text-lg font-medium">Read silently. Recording starts soon.</span>
                                 </div>
@@ -182,9 +182,9 @@ export default function ReadingSection({ onComplete, passages, globalStream }: R
                             </div>
 
                             {phase === 'read' && (
-                                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-indigo-50">
+                                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-50">
                                     <motion.div
-                                        className="h-full bg-indigo-500"
+                                        className="h-full bg-slate-500"
                                         initial={{ width: "0%" }}
                                         animate={{ width: "100%" }}
                                         transition={{ duration: currentPassage.text.split(' ').length * 0.4, ease: "linear" }}
@@ -226,7 +226,7 @@ export default function ReadingSection({ onComplete, passages, globalStream }: R
 
                         <div className="pt-8 flex justify-center gap-4">
                             {currentLevel < passages.length - 1 ? (
-                                <Button onClick={handleNextLevel} className="bg-slate-900 hover:bg-indigo-600 h-14 text-base font-bold rounded-full shadow-lg transition-all flex items-center justify-center gap-2 px-10 w-auto text-white">
+                                <Button onClick={handleNextLevel} className="bg-slate-900 hover:bg-slate-800 h-14 text-base font-bold rounded-full shadow-lg transition-all flex items-center justify-center gap-2 px-10 w-auto text-white">
                                     Next Passage <ArrowRight size={18} />
                                 </Button>
                             ) : (

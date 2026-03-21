@@ -14,11 +14,11 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children, title, subtitle, role, visual, themeColor }: AuthLayoutProps) {
     const getThemeGradient = () => {
         switch (role) {
-            case 'student': return 'from-indigo-900 to-violet-900';
+            case 'student': return 'from-slate-900 to-violet-900';
             case 'college': return 'from-slate-800 to-slate-900';
             case 'industry': return 'from-gray-900 to-black';
             case 'admin': return 'from-green-900 to-black font-mono';
-            default: return 'from-indigo-900 to-violet-900';
+            default: return 'from-slate-900 to-violet-900';
         }
     };
 
@@ -31,8 +31,8 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                     backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
                     backgroundSize: '40px 40px'
                 }} />
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[100px] -mr-32 -mt-32" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-orange/20 rounded-full blur-[80px] -ml-20 -mb-20" />
+                <div className="absolute top-0 right-0 w-full max-w-full max-w-[600px] h-[600px] bg-white/10 rounded-full blur-[100px] -mr-32 -mt-32" />
+                <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[400px] h-[400px] bg-brand-orange/20 rounded-full blur-[80px] -ml-20 -mb-20" />
 
                 <div className="relative z-10 max-w-xl">
                     <Link href="/" className="inline-flex items-center gap-3 mb-12 group">
@@ -69,7 +69,7 @@ export default function AuthLayout({ children, title, subtitle, role, visual, th
                     </Link>
                 </div>
 
-                <div className="max-w-[420px] w-full mx-auto space-y-8">
+                <div className="max-w-full max-w-[420px] mx-auto space-y-8">
                     {children}
 
                     <div className="pt-8 border-t border-slate-100 text-center">

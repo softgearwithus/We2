@@ -77,9 +77,9 @@ export default function SkillsPage() {
                 </motion.div>
             </div>
 
-            <motion.div variants={item} className="bg-gradient-to-r from-indigo-900/20 to-purple-900/20 border border-indigo-500/20 p-6 rounded-2xl flex items-start gap-4">
-                <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                    <Lightbulb className="w-6 h-6 text-indigo-400" />
+            <motion.div variants={item} className="bg-gradient-to-r from-slate-900/20 to-slate-900/20 border border-slate-400/20 p-6 rounded-2xl flex items-start gap-4">
+                <div className="p-3 bg-slate-500/10 rounded-xl border border-slate-400/20">
+                    <Lightbulb className="w-6 h-6 text-slate-400" />
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-white mb-2">AI Recommendation</h3>
@@ -89,7 +89,7 @@ export default function SkillsPage() {
                                 Based on the current heatmap, <span className="text-white font-semibold">Mechanical Engineering</span> students are lagging significantly in <span className="text-white font-semibold">Coding Proficiency</span>.
                                 Consider a targeted workshop to close the gap ahead of placements.
                             </p>
-                            <button className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
+                            <button className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-slate-200">
                                 Apply Curriculum Change
                             </button>
                         </>

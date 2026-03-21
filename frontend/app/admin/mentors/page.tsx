@@ -361,7 +361,7 @@ export default function AdminMentorsPage() {
                     </button>
                     <button
                         onClick={() => setActiveTab('sessions')}
-                        className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'sessions' ? 'border-purple-600 text-purple-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                        className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'sessions' ? 'border-slate-600 text-slate-800 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                             }`}
                     >
                         Session Logs
@@ -436,7 +436,7 @@ export default function AdminMentorsPage() {
                                         <tr key={mentor.id} className={`hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0 relative ${mentor.status === 'Disabled' ? 'grayscale opacity-60 bg-slate-50' : ''}`}>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <img src={mentor.avatar} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
+                                                    <img loading="lazy" decoding="async" src={mentor.avatar} alt="" className="w-10 h-10 rounded-full border border-slate-200" />
                                                     <div>
                                                         <div className={`text-sm font-bold ${mentor.status === 'Disabled' ? 'text-slate-500 line-through' : 'text-slate-900'}`}>
                                                             {mentor.name}
@@ -518,7 +518,7 @@ export default function AdminMentorsPage() {
                                 {applications.map(app => (
                                     <div key={app.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-50/50 transition-colors">
                                         <div className="flex items-start gap-4 flex-1">
-                                            <img src={app.avatar} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
+                                            <img loading="lazy" decoding="async" src={app.avatar} alt="" className="w-12 h-12 rounded-full border border-slate-200" />
                                             <div>
                                                 <h3 className="text-base font-bold text-slate-900 mb-1">{app.name}</h3>
                                                 <p className="text-sm text-slate-600 mb-1"><span className="font-semibold text-slate-800">Expertise:</span> {app.expertise} • {app.experience} Exp</p>
@@ -749,7 +749,7 @@ export default function AdminMentorsPage() {
                                     placeholder="Search by Mentor ID (UUID)..."
                                     value={sessionSearchId}
                                     onChange={(e) => setSessionSearchId(e.target.value)}
-                                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
                                 />
                             </div>
                         </div>
@@ -769,7 +769,7 @@ export default function AdminMentorsPage() {
                                             <th className="px-6 py-4">Status</th>
                                             <th className="px-6 py-4 text-right">Gross (₹)</th>
                                             <th className="px-6 py-4 text-right">Cuts (₹)</th>
-                                            <th className="px-6 py-4 text-right text-purple-600">Net To Mentor</th>
+                                            <th className="px-6 py-4 text-right text-slate-800">Net To Mentor</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
@@ -794,7 +794,7 @@ export default function AdminMentorsPage() {
                                                     <td className="px-6 py-4 text-right font-mono text-orange-600">
                                                         -₹{Math.round(session.priceInr * 0.22)}
                                                     </td>
-                                                    <td className="px-6 py-4 text-right font-mono font-black tracking-tight text-purple-600">
+                                                    <td className="px-6 py-4 text-right font-mono font-black tracking-tight text-slate-800">
                                                         ₹{Math.round(session.priceInr * 0.78)}
                                                     </td>
                                                 </tr>
@@ -901,7 +901,7 @@ export default function AdminMentorsPage() {
                         {/* Modal Body */}
                         <div className="p-6 overflow-y-auto">
                             <div className="flex items-start gap-4 mb-6">
-                                <img src={viewingProfile.avatar} alt="Profile" className="w-20 h-20 rounded-full border border-slate-200" />
+                                <img loading="lazy" decoding="async" src={viewingProfile.avatar} alt="Profile" className="w-20 h-20 rounded-full border border-slate-200" />
                                 <div>
                                     <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3">
                                         {viewingProfile.name}

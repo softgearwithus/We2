@@ -13,7 +13,7 @@ interface PlaceholderPageProps {
 
 export default function PlaceholderPage({ title, description, children }: PlaceholderPageProps) {
     return (
-        <div className="min-h-screen bg-white font-sans text-slate-900 relative selection:bg-indigo-100 selection:text-indigo-900">
+        <div className="min-h-screen bg-white font-sans text-slate-900 relative selection:bg-slate-100 selection:text-slate-900">
             <DotBackground />
             <Navbar />
 
