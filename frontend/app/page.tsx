@@ -34,7 +34,7 @@ export default function Home() {
 
             {/* Headline - Balanced & Vibrant */}
             <h1 className="text-5xl md:text-7xl lg:text-[85px] font-[900] tracking-tight text-brand-black mb-2 mt-2 leading-[1.05] text-balance">
-              Crack Your Dream <br className="hidden md:block"/>
+              Crack Your Dream <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-orange-600 to-purple-600 pb-2">
                 Companies.
               </span>
@@ -42,7 +42,7 @@ export default function Home() {
 
             {/* Subtext - Optimized for Readability */}
             <p className="text-lg md:text-[20px] text-gray-500 font-medium leading-[1.6] max-w-2xl mx-auto text-balance mt-4 mb-6">
-              From intelligent DSA training and AI mock interviews to ATS-optimized resumes and targeted company mock tests. Your complete placement preparation ecosystem.
+              Train and prepare to unlock your dream opportunity with our complete ecosystem before facing the real recruiter.
             </p>
 
             {/* CTAs - Polished & Tactile */}
@@ -76,9 +76,9 @@ export default function Home() {
                     <span>★</span>
                     <span>★</span>
                     <span>★</span>
-                    <span style={{ 
-                      background: 'linear-gradient(90deg, #F3C522 30%, #E5E7EB 30%)', 
-                      WebkitBackgroundClip: 'text', 
+                    <span style={{
+                      background: 'linear-gradient(90deg, #F3C522 30%, #E5E7EB 30%)',
+                      WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       display: 'inline-block'
                     }}>★</span>
@@ -95,10 +95,10 @@ export default function Home() {
           <div className="w-full max-w-5xl mx-auto relative perspective-[2000px] animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <div className="relative rounded-[32px] bg-white/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-2 md:p-4 border border-black/5 group transform rotate-x-[8deg] hover:rotate-x-[0deg] transition-transform duration-1000 ease-out origin-bottom">
               <div className="absolute -inset-2 bg-gradient-to-r from-brand-orange/20 to-purple-600/20 rounded-[40px] opacity-10 blur-xl group-hover:opacity-30 transition duration-500 pointer-events-none"></div>
-              
-              <img 
-                src="/images/dsa-training-simulator.png" 
-                alt="Emble DSA Training Simulator" 
+
+              <img
+                src="/images/dsa-training-simulator.png"
+                alt="Emble DSA Training Simulator"
                 className="w-full h-auto rounded-[24px] shadow-2xl shadow-black/20 object-cover border border-white"
               />
 
@@ -114,9 +114,9 @@ export default function Home() {
               </div>
 
               {/* Second Floating Badge */}
-               <div className="absolute -top-6 -right-6 glass p-4 rounded-3xl shadow-xl border border-white/60 hidden md:flex items-center gap-4 bg-white/90 backdrop-blur-2xl z-20 hover:-translate-y-2 transition-transform duration-300">
+              <div className="absolute -top-6 -right-6 glass p-4 rounded-3xl shadow-xl border border-white/60 hidden md:flex items-center gap-4 bg-white/90 backdrop-blur-2xl z-20 hover:-translate-y-2 transition-transform duration-300">
                 <div className="w-12 h-12 rounded-2xl bg-green-500 flex items-center justify-center text-white shadow-lg shadow-green-500/30">
-                   <span className="material-symbols-outlined font-black text-2xl">check_circle</span>
+                  <span className="material-symbols-outlined font-black text-2xl">check_circle</span>
                 </div>
                 <div>
                   <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">Runtime</div>
