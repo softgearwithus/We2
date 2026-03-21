@@ -53,15 +53,15 @@ const steps = [
 
 export default function ProcessTimeline() {
     return (
-        <section className="pt-24 pb-32 relative overflow-hidden bg-slate-50/50">
-            {/* Ambient Halo Background */}
+        <section className="py-10 md:py-24 relative bg-gray-50 overflow-hidden">
+            {/* Background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none transform-gpu hidden md:block">
                 <div className="absolute top-[20%] left-[50%] -translate-x-1/2 w-[1200px] h-[600px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-100/10 via-purple-100/5 to-transparent opacity-30 transform-gpu"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-100 inline-block mb-8 shadow-sm">
+                <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
+                    <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-orange-100 inline-block mb-4 md:mb-8 shadow-sm">
                         The Emble journey
                     </span>
                     <h2 className="text-5xl md:text-7xl font-[1000] text-brand-black tracking-tighter mb-8 leading-[0.95] drop-shadow-sm">
@@ -83,9 +83,9 @@ export default function ProcessTimeline() {
                             <div key={i}>
                                 <div className="flex flex-col items-center group h-full">
                                     {/* Icon Container with Halo */}
-                                    <div className="relative mb-8 transform-gpu will-change-transform">
+                                    <div className="relative mb-4 md:mb-8 transform-gpu will-change-transform">
                                         <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${step.gradient} opacity-20 group-hover:opacity-40 transition-opacity duration-500 transform-gpu will-change-opacity`} style={{ filter: 'blur(15px)' }}></div>
-                                        <div className={`relative w-24 h-24 rounded-3xl bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2 transform-gpu`}>
+                                        <div className={`relative w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-white border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2 transform-gpu`}>
                                             <div className={`p-4 rounded-2xl ${step.bg}`}>
                                                 <step.icon size={32} className={step.color} strokeWidth={2.5} />
                                             </div>
@@ -97,10 +97,10 @@ export default function ProcessTimeline() {
 
                                     {/* Glass Card */}
                                     <div className={`
-                                        flex-1 w-full bg-white/60 backdrop-blur-xl border border-white/60 p-8 rounded-[2rem]
+                                        flex-1 w-full bg-white/60 backdrop-blur-xl border border-white/60 p-6 md:p-8 rounded-[2rem]
                                         hover:bg-white/80 hover:border-white hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] 
                                         transition-all duration-500 flex flex-col items-start text-left relative overflow-hidden group/card
-                                        min-h-[380px]
+                                        md:min-h-[380px]
                                     `}>
                                         <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${step.gradient} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}></div>
 
@@ -124,8 +124,8 @@ export default function ProcessTimeline() {
 
                                 {/* Mobile Connector */}
                                 {i !== steps.length - 1 && (
-                                    <div className="md:hidden flex flex-col items-center py-6">
-                                        <div className="w-0.5 h-12 bg-gradient-to-b from-slate-200 to-transparent"></div>
+                                    <div className="md:hidden flex flex-col items-center py-2">
+                                        <div className="w-0.5 h-6 bg-gradient-to-b from-slate-200 to-transparent"></div>
                                     </div>
                                 )}
                             </div>
@@ -133,8 +133,8 @@ export default function ProcessTimeline() {
                     </div>
                 </div>
 
-                <div className="mt-20 flex justify-center">
-                    <Link href="/curriculum" className="group flex items-center gap-3 px-10 py-5 bg-brand-black text-white rounded-full font-bold text-lg transition-all hover:pr-12 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 active:scale-95">
+                <div className="mt-10 md:mt-20 flex justify-center">
+                    <Link href="/curriculum" className="group flex items-center gap-3 px-8 py-4 md:px-10 md:py-5 bg-brand-black text-white rounded-full font-bold text-base md:text-lg transition-all md:hover:pr-12 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:-translate-y-1 active:scale-95">
                         Explore Full Curriculum
                         <ChevronRight className="transition-transform group-hover:translate-x-2" size={20} strokeWidth={3} />
                     </Link>

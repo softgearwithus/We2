@@ -34,6 +34,7 @@ interface PricingCardProps {
     savings?: string;
     planId?: string; // e.g., 'placement_plus', 'industry_plus', 'we2_max'
     isUpgradeLocked?: boolean;
+    currency?: string;
 }
 
 export default function PricingCard({
@@ -51,7 +52,8 @@ export default function PricingCard({
     delay = 0,
     savings,
     planId,
-    isUpgradeLocked = false
+    isUpgradeLocked = false,
+    currency = 'INR'
 }: PricingCardProps) {
     const isPopular = variant === 'popular';
     const isPremium = variant === 'premium';
@@ -276,6 +278,9 @@ export default function PricingCard({
                             /{period}
                         </span>
                     </div>
+                    {currency !== 'INR' && (
+                        <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-1">Billed in INR equivalent</div>
+                    )}
                     {savings && (
                         <div className="flex items-center gap-2 mt-2">
                             <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md w-fit">

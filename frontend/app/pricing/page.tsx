@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, ShieldCheck, HelpCircle, Code2, Building, School, ArrowRight, X, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, HelpCircle, Code2, Building, School, ArrowRight, X, Check, ChevronDown, ChevronUp, Globe } from 'lucide-react';
 import { cn } from '@/app/lib/utils';
 import PricingCard from '@/app/components/pricing/PricingCard';
 import LeadForm from '@/app/components/pricing/LeadForm';
@@ -101,14 +101,70 @@ const ALL_FEATURES = [
     { category: 'Support', name: '24/7 Priority AI Support', std: false, pro: true },
 ];
 
+const POPULAR_CURRENCIES = [
+    { code: 'INR', symbol: '₹', label: 'Indian Rupee' },
+    { code: 'USD', symbol: '$', label: 'US Dollar' },
+    { code: 'EUR', symbol: '€', label: 'Euro' },
+    { code: 'GBP', symbol: '£', label: 'British Pound' },
+    { code: 'AUD', symbol: 'A$', label: 'Australian Dollar' },
+    { code: 'CAD', symbol: 'C$', label: 'Canadian Dollar' },
+    { code: 'SGD', symbol: 'S$', label: 'Singapore Dollar' },
+    { code: 'AED', symbol: 'د.إ', label: 'UAE Dirham' },
+];
+
+const BASE_USD_PRICES = {
+    standard: {
+        '1m': { price: 9, savings: 0.3 },
+        '3m': { price: 27, savings: 0.3 },
+        '6m': { price: 49, savings: 0.2 },
+        '12m': { price: 79, savings: 0.2 }
+    },
+    pro: {
+        '1m': { price: 19, savings: 0.6 },
+        '3m': { price: 49, savings: 0.5 },
+        '6m': { price: 89, savings: 0.4 },
+        '12m': { price: 149, savings: 0.4 }
+    }
+};
+
 export default function PricingPage() {
     const [activeTab, setActiveTab] = useState('students');
     const [duration, setDuration] = useState<DurationType>('3m');
     const [showComparison, setShowComparison] = useState(false);
     const [upgradesLocked, setUpgradesLocked] = useState(true); // Default to locked
     const [dynamicPlans, setDynamicPlans] = useState<PlanType[]>(PLANS);
+    const [currency, setCurrency] = useState<string>('INR');
+    const [exchangeRates, setExchangeRates] = useState<Record<string, number> | null>(null);
 
     React.useEffect(() => {
+        // Fetch exchange rates
+        fetch('https://open.er-api.com/v6/latest/USD')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.rates) setExchangeRates(data.rates);
+            })
+            .catch(err => console.error("Failed to fetch exchange rates", err));
+
+        // Auto-detect currency via IP
+        fetch('https://ipapi.co/currency/')
+            .then(res => res.text())
+            .then(curr => {
+                const cleanCurr = curr.trim().toUpperCase();
+                // Check if it's a valid 3-letter currency code (e.g. 'EUR', 'CAD')
+                if (cleanCurr && cleanCurr.length === 3 && cleanCurr !== 'UNDEFINED' && cleanCurr !== 'NULL') {
+                    setCurrency(cleanCurr);
+                }
+            })
+            .catch(() => {
+                // Heuristic fallback if API fails
+                try {
+                    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    if (tz && !tz.toLowerCase().includes('asia/calcutta') && !tz.toLowerCase().includes('asia/kolkata')) {
+                        setCurrency('USD');
+                    }
+                } catch (e) { }
+            });
+
         const loadSettings = async () => {
             try {
                 const settings = await fetchPublicPlatformSettings();
@@ -202,8 +258,35 @@ export default function PricingPage() {
                         >
                             {activeTab === 'students' && (
                                 <div className="space-y-6">
-                                    {/* Duration Selector */}
-                                    <div className="flex justify-center mb-8">
+                                    {/* Currency & Duration Selectors */}
+                                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+
+                                        {/* Dynamic Currency Selector */}
+                                        <div className="bg-gray-50 p-1 rounded-[20px] inline-flex items-center border border-gray-200 shadow-sm relative">
+                                            <div className="absolute left-4 text-gray-500 pointer-events-none">
+                                                <Globe size={16} className={currency !== 'INR' ? "text-brand-orange" : ""} />
+                                            </div>
+                                            <select
+                                                value={currency}
+                                                onChange={(e) => setCurrency(e.target.value)}
+                                                className="appearance-none bg-transparent pl-10 pr-10 py-2.5 font-bold text-sm text-gray-700 outline-none cursor-pointer w-full rounded-[16px] hover:bg-gray-100 transition-colors"
+                                            >
+                                                {!POPULAR_CURRENCIES.find(c => c.code === currency) && (
+                                                    <option value={currency}>{currency} (Local)</option>
+                                                )}
+                                                {POPULAR_CURRENCIES.map(curr => (
+                                                    <option key={curr.code} value={curr.code}>
+                                                        {curr.symbol} {curr.code} - {curr.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <div className="absolute right-4 text-gray-400 pointer-events-none">
+                                                <ChevronDown size={14} />
+                                            </div>
+                                        </div>
+
+                                        <div className="hidden sm:block w-px h-8 bg-gray-200"></div>
+
                                         <div className="bg-gray-50 p-1.5 rounded-[20px] inline-flex items-center gap-1 border border-gray-200">
                                             {DURATION_OPTIONS.map((opt) => (
                                                 <button
@@ -237,17 +320,49 @@ export default function PricingPage() {
                                     {/* Pricing Cards */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch pt-2 max-w-5xl mx-auto">
                                         {dynamicPlans.map((plan, idx) => {
+                                            let displayPrice = plan.pricing[duration].price;
+                                            let displaySavings = plan.pricing[duration].savings;
+                                            let displayOriginalPrice = undefined;
                                             const activePricing = plan.pricing[duration];
 
-                                            // Provide pseudo-original prices purely for cross-card anchoring psychology if desired
-                                            let displayOriginalPrice = undefined;
-                                            if (duration === '3m' && plan.title.includes('Standard')) displayOriginalPrice = '₹1,347';
-                                            if (duration === '6m' && plan.title.includes('Standard')) displayOriginalPrice = '₹2,694';
-                                            if (duration === '12m' && plan.title.includes('Standard')) displayOriginalPrice = '₹5,388';
+                                            if (currency === 'INR') {
+                                                // Hardcoded original prices for INR cross-card anchoring
+                                                if (duration === '3m' && plan.title.includes('Standard')) displayOriginalPrice = '₹1,347';
+                                                if (duration === '6m' && plan.title.includes('Standard')) displayOriginalPrice = '₹2,694';
+                                                if (duration === '12m' && plan.title.includes('Standard')) displayOriginalPrice = '₹5,388';
 
-                                            if (duration === '3m' && plan.title.includes('Pro')) displayOriginalPrice = '₹2,397';
-                                            if (duration === '6m' && plan.title.includes('Pro')) displayOriginalPrice = '₹4,794';
-                                            if (duration === '12m' && plan.title.includes('Pro')) displayOriginalPrice = '₹9,588';
+                                                if (duration === '3m' && plan.title.includes('Pro')) displayOriginalPrice = '₹2,397';
+                                                if (duration === '6m' && plan.title.includes('Pro')) displayOriginalPrice = '₹4,794';
+                                                if (duration === '12m' && plan.title.includes('Pro')) displayOriginalPrice = '₹9,588';
+                                            } else {
+                                                // Dynamic Currency Conversion via Exchange Rate API
+                                                const rate = exchangeRates ? exchangeRates[currency] : (currency === 'USD' ? 1 : null);
+                                                const usdPlan = BASE_USD_PRICES[plan.internalName as keyof typeof BASE_USD_PRICES];
+
+                                                if (usdPlan && usdPlan[duration]) {
+                                                    const basePrice = usdPlan[duration].price;
+                                                    const baseSavings = usdPlan[duration].savings;
+
+                                                    if (rate) {
+                                                        const convertedPrice = Math.ceil(basePrice * rate);
+                                                        const convertedSavings = (baseSavings * rate).toFixed(2);
+
+                                                        // Fallback formatter (works locally without extra libraries)
+                                                        const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, maximumFractionDigits: 0 });
+
+                                                        displayPrice = formatter.format(convertedPrice);
+                                                        displaySavings = `Effective: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(Number(convertedSavings))}/day`;
+
+                                                        // Calculate original price (approximate markup)
+                                                        if (duration === '3m') displayOriginalPrice = formatter.format(Math.ceil(basePrice * 1.5 * rate));
+                                                        if (duration === '6m') displayOriginalPrice = formatter.format(Math.ceil(basePrice * 1.3 * rate));
+                                                        if (duration === '12m') displayOriginalPrice = formatter.format(Math.ceil(basePrice * 1.8 * rate));
+                                                    } else {
+                                                        // Fallback if rate not loaded yet
+                                                        displayPrice = 'Loading...';
+                                                    }
+                                                }
+                                            }
 
                                             return (
                                                 <PricingCard
@@ -258,11 +373,12 @@ export default function PricingPage() {
                                                     variant={plan.variant}
                                                     badgeText={plan.badgeText}
                                                     ctaText={plan.ctaText}
-                                                    price={activePricing.price}
+                                                    price={displayPrice}
                                                     period={activePricing.period}
                                                     originalPrice={displayOriginalPrice}
-                                                    savings={activePricing.savings}
+                                                    savings={displaySavings}
                                                     planId={activePricing.id}
+                                                    currency={currency}
                                                     delay={idx}
                                                     onCtaClick={() => console.log('Clicked', plan.title)}
                                                     isUpgradeLocked={upgradesLocked}
