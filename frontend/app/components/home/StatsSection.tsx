@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Users, Star, Zap, Layers } from 'lucide-react';
 
 const stats = [
-    { icon: Users, label: 'Active Students', value: 200, suffix: '+', color: 'orange' },
+    { icon: Users, label: 'Active Students', value: 400, suffix: '+', color: 'orange' },
     { icon: Star, label: 'Impact Rating', text: '4.3/5', color: 'blue' },
     { icon: Layers, label: 'Stable Release', text: 'v1.8.2', color: 'purple' },
     { icon: Zap, label: 'Platform Feature', text: 'AI-powered', color: 'emerald' },
