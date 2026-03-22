@@ -49,6 +49,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
 
     const template = data.templateId || 'google-standard';
     const accent = data.accentColor || 'slate';
+    const layout = data.layoutSize || 'standard';
 
     const accentText = colorMap[accent] || colorMap['slate'];
     const accentBorder = borderMap[accent] || borderMap['slate'];
@@ -59,22 +60,45 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
     // --- TEMPLATE: GOOGLE STANDARD ---
     // Strict, high whitespace, no icons, classic hierarchy
     const renderGoogleStandard = () => {
+        const isCompact = layout === 'compact';
+        const isSpacious = layout === 'spacious';
+
+        const spacing = {
+            masterPadding: isCompact ? 'pt-[25px] pb-[30px] px-[35px]' : isSpacious ? 'pt-[45px] pb-[50px] px-[55px]' : 'pt-[35px] pb-[40px] px-[45px]',
+            leading: isCompact ? 'leading-[1.2]' : isSpacious ? 'leading-[1.5]' : 'leading-[1.3]',
+            textBase: isCompact ? 'text-[11px]' : isSpacious ? 'text-[13px]' : 'text-[12px]',
+            textName: isCompact ? 'text-[28px]' : isSpacious ? 'text-[36px]' : 'text-[32px]',
+            textHeaderInfo: isCompact ? 'text-[10.5px]' : isSpacious ? 'text-[12.5px]' : 'text-[11.5px]',
+            textHeading: isCompact ? 'text-[12.5px]' : isSpacious ? 'text-[14.5px]' : 'text-[13.5px]',
+            textSubheading: isCompact ? 'text-[12px]' : isSpacious ? 'text-[14px]' : 'text-[13px]',
+            textSmall: isCompact ? 'text-[10px]' : isSpacious ? 'text-[12px]' : 'text-[11px]',
+            textSubtext: isCompact ? 'text-[10.5px]' : isSpacious ? 'text-[12.5px]' : 'text-[11.5px]',
+            spaceY: isCompact ? 'space-y-2' : isSpacious ? 'space-y-4' : 'space-y-3',
+            spaceYList: isCompact ? 'space-y-[1px]' : isSpacious ? 'space-y-[4px]' : 'space-y-[2px]',
+            mbHeader: isCompact ? 'mb-4' : isSpacious ? 'mb-6' : 'mb-5',
+            mbSection: isCompact ? 'mb-3' : isSpacious ? 'mb-5' : 'mb-4',
+            mbHeading: isCompact ? 'mb-1.5' : isSpacious ? 'mb-3' : 'mb-2',
+            mbItem: isCompact ? 'mb-[1px]' : isSpacious ? 'mb-[3px]' : 'mb-[2px]',
+            mbSubItem: isCompact ? 'mb-0.5' : isSpacious ? 'mb-1.5' : 'mb-1',
+            mtList: isCompact ? 'mt-0.5' : isSpacious ? 'mt-1.5' : 'mt-1',
+        };
+
         const sections: Record<string, React.ReactNode> = {
             experience: hasExperience && (
-                <section key="experience" className="mb-5">
-                    <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Professional Experience</h2>
-                    <div className="space-y-4">
+                <section key="experience" className={spacing.mbSection}>
+                    <h2 className={`${spacing.textHeading} font-bold uppercase tracking-widest text-black border-b-[1.5px] border-black pb-0.5 ${spacing.mbHeading}`}>Professional Experience</h2>
+                    <div className={spacing.spaceY}>
                         {data.experience.map(exp => (
                             <div key={exp.id}>
-                                <div className="flex justify-between items-baseline mb-[2px]">
-                                    <h3 className="font-bold text-[14px] text-black">{exp.position}</h3>
-                                    <span className="font-bold text-[12px] text-black">{exp.startDate} - {exp.endDate}</span>
+                                <div className={`flex justify-between items-baseline ${spacing.mbItem}`}>
+                                    <h3 className={`font-bold ${spacing.textSubheading} text-black`}>{exp.position}</h3>
+                                    <span className={`font-bold ${spacing.textSmall} text-black`}>{exp.startDate} - {exp.endDate}</span>
                                 </div>
-                                <div className="flex justify-between mb-2">
-                                    <span className="italic text-gray-800">{exp.company}</span>
-                                    <span className="italic text-gray-600 text-[12px]">{exp.location}</span>
+                                <div className={`flex justify-between ${spacing.mbSubItem}`}>
+                                    <span className={`italic text-gray-800 ${spacing.textSubtext}`}>{exp.company}</span>
+                                    <span className={`italic text-gray-600 ${spacing.textSubtext}`}>{exp.location}</span>
                                 </div>
-                                <ul className="list-disc list-outside ml-4 space-y-1 text-gray-800">
+                                <ul className={`list-disc list-outside ml-4 ${spacing.spaceYList} text-gray-800 ${spacing.textSubtext}`}>
                                     {exp.description.map((desc, i) => desc && <li key={i} className="pl-1">{desc}</li>)}
                                 </ul>
                             </div>
@@ -83,22 +107,22 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                 </section>
             ),
             projects: hasProjects && (
-                <section key="projects" className="mb-5">
-                    <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Projects</h2>
-                    <div className="space-y-4">
+                <section key="projects" className={spacing.mbSection}>
+                    <h2 className={`${spacing.textHeading} font-bold uppercase tracking-widest text-black border-b-[1.5px] border-black pb-0.5 ${spacing.mbHeading}`}>Projects</h2>
+                    <div className={spacing.spaceY}>
                         {data.projects.map(proj => (
                             <div key={proj.id}>
-                                <div className="flex justify-between items-baseline mb-[2px]">
-                                    <h3 className="font-bold text-[14px] text-black">
+                                <div className={`flex justify-between items-baseline ${spacing.mbItem}`}>
+                                    <h3 className={`font-bold ${spacing.textSubheading} text-black`}>
                                         {proj.name}
                                         {proj.technologies?.filter(t => t.trim()).length > 0 && <span className="font-normal italic text-gray-600 ml-2">({proj.technologies.map(t=>t.trim()).filter(Boolean).join(', ')})</span>}
                                     </h3>
-                                    <div className="text-right italic text-gray-600 flex gap-2 text-[12px]">
-                                        {proj.liveLink && <a href={proj.liveLink.startsWith('http') ? proj.liveLink : `https://${proj.liveLink}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">Live</a>}
-                                        {proj.repoLink && <span>{proj.liveLink ? ' | ' : ''}<a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">Repo</a></span>}
+                                    <div className={`text-right italic flex gap-2 ${spacing.textSmall}`}>
+                                        {proj.liveLink && <a href={proj.liveLink.startsWith('http') ? proj.liveLink : `https://${proj.liveLink}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">Live</a>}
+                                        {proj.repoLink && <span className="text-gray-600">{proj.liveLink ? ' | ' : ''}<a href={proj.repoLink.startsWith('http') ? proj.repoLink : `https://${proj.repoLink}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">Repo</a></span>}
                                     </div>
                                 </div>
-                                <ul className="list-disc list-outside ml-4 space-y-1 text-gray-800 mt-1">
+                                <ul className={`list-disc list-outside ml-4 ${spacing.spaceYList} text-gray-800 ${spacing.mtList} ${spacing.textSubtext}`}>
                                     {proj.description.map((desc, i) => desc && <li key={i} className="pl-1">{desc}</li>)}
                                 </ul>
                             </div>
@@ -107,18 +131,18 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                 </section>
             ),
             education: hasEducation && (
-                <section key="education" className="mb-5">
-                    <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Education</h2>
-                    <div className="space-y-3">
+                <section key="education" className={spacing.mbSection}>
+                    <h2 className={`${spacing.textHeading} font-bold uppercase tracking-widest text-black border-b-[1.5px] border-black pb-0.5 ${spacing.mbHeading}`}>Education</h2>
+                    <div className={isCompact ? 'space-y-1' : (isSpacious ? 'space-y-3' : 'space-y-2')}>
                         {data.education.map(edu => (
                             <div key={edu.id}>
                                 <div className="flex justify-between items-baseline">
-                                    <h3 className="font-bold text-[14px] text-black">{edu.institution}</h3>
-                                    <span className="font-bold text-[12px] text-black">{edu.startDate} - {edu.endDate}</span>
+                                    <h3 className={`font-bold ${spacing.textSubheading} text-black`}>{edu.institution}</h3>
+                                    <span className={`font-bold ${spacing.textSmall} text-black`}>{edu.startDate} - {edu.endDate}</span>
                                 </div>
-                                <div className="flex justify-between">
+                                <div className={`flex justify-between ${spacing.textSubtext}`}>
                                     <span className="italic text-gray-800">{edu.degree} {edu.fieldOfStudy ? `in ${edu.fieldOfStudy}` : ''}</span>
-                                    {edu.gpa && <span className="font-bold text-gray-600 text-[12px]">{edu.scoreType || 'GPA'}: {edu.gpa}</span>}
+                                    {edu.gpa && <span className="font-bold text-gray-600">{edu.scoreType || 'GPA'}: {edu.gpa}</span>}
                                 </div>
                             </div>
                         ))}
@@ -126,9 +150,9 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                 </section>
             ),
             skills: hasSkills && (
-                <section key="skills" className="mb-5">
-                    <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">Technical Skills</h2>
-                    <div className="grid grid-cols-[140px_1fr] gap-y-1">
+                <section key="skills" className={spacing.mbSection}>
+                    <h2 className={`${spacing.textHeading} font-bold uppercase tracking-widest text-black border-b-[1.5px] border-black pb-0.5 ${spacing.mbHeading}`}>Technical Skills</h2>
+                    <div className={`grid grid-cols-[140px_1fr] gap-y-1 ${spacing.textSubtext}`}>
                         {data.skills.languages?.filter(s => s.trim()).length > 0 && (
                             <>
                                 <div className="font-bold text-black">Languages:</div>
@@ -151,23 +175,23 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
                 </section>
             ),
             custom: hasCustom && (
-                <section key="custom" className="mb-5">
-                    <h2 className="text-[14px] font-bold uppercase tracking-widest text-black border-b-2 border-black pb-1 mb-3">{data.customSection?.title || 'Certifications & Awards'}</h2>
-                    <div className="space-y-4">
+                <section key="custom" className={spacing.mbSection}>
+                    <h2 className={`${spacing.textHeading} font-bold uppercase tracking-widest text-black border-b-[1.5px] border-black pb-0.5 ${spacing.mbHeading}`}>{data.customSection?.title || 'Certifications & Awards'}</h2>
+                    <div className={spacing.spaceY}>
                         {data.customSection?.items.map(item => (
                             <div key={item.id}>
-                                <div className="flex justify-between items-baseline mb-[2px]">
-                                    <h3 className="font-bold text-[14px] text-black">{item.title}</h3>
-                                    {item.date && <span className="font-bold text-[12px] text-black">{item.date}</span>}
+                                <div className={`flex justify-between items-baseline ${spacing.mbItem}`}>
+                                    <h3 className={`font-bold ${spacing.textSubheading} text-black`}>{item.title}</h3>
+                                    {item.date && <span className={`font-bold ${spacing.textSmall} text-black`}>{item.date}</span>}
                                 </div>
                                 {(item.subtitle || item.location) && (
-                                    <div className="flex justify-between mb-2">
-                                        <span className="italic text-gray-800">{item.subtitle}</span>
-                                        <span className="italic text-gray-600 text-[12px]">{item.location}</span>
+                                    <div className={`flex justify-between ${spacing.mbSubItem}`}>
+                                        <span className={`italic text-gray-800 ${spacing.textSubtext}`}>{item.subtitle}</span>
+                                        <span className={`italic text-gray-600 ${spacing.textSubtext}`}>{item.location}</span>
                                     </div>
                                 )}
                                 {item.description && item.description.some(d => d.trim()) && (
-                                    <ul className="list-disc list-outside ml-4 space-y-1 text-gray-800 mt-1">
+                                    <ul className={`list-disc list-outside ml-4 ${spacing.spaceYList} text-gray-800 ${spacing.mtList} ${spacing.textSubtext}`}>
                                         {item.description.map((desc, i) => desc.trim() && <li key={i} className="pl-1">{desc}</li>)}
                                     </ul>
                                 )}
@@ -179,22 +203,22 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
         };
 
         return (
-            <div className="mx-auto bg-white p-[50px] w-[210mm] min-h-[297mm] leading-[1.4] font-sans text-[13.5px] text-gray-800 shadow-sm relative">
-                <header className="text-center mb-6">
-                    <h1 className="text-4xl font-black mb-2 text-black tracking-tight">{data.personalInfo.fullName}</h1>
-                    <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 text-[12px] text-gray-600">
+            <div className={`mx-auto bg-white ${spacing.masterPadding} w-[210mm] min-h-[297mm] ${spacing.leading} font-sans ${spacing.textBase} text-gray-800 shadow-sm relative`}>
+                <header className={`text-center ${spacing.mbHeader}`}>
+                    <h1 className={`${spacing.textName} font-black mb-1.5 text-black tracking-tight`}>{data.personalInfo.fullName}</h1>
+                    <div className={`flex flex-wrap justify-center items-center gap-x-2 gap-y-1 ${spacing.textHeaderInfo} text-gray-600`}>
                         {data.personalInfo.phone && <span>{data.personalInfo.phone}</span>}
                         {data.personalInfo.phone && <span className="text-gray-400">•</span>}
-                        {data.personalInfo.email && <a href={`mailto:${data.personalInfo.email}`} className="hover:underline text-slate-800">{data.personalInfo.email}</a>}
-                        {data.personalInfo.linkedin && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">{data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}</a></>}
-                        {data.personalInfo.github && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.github.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">{data.personalInfo.github.replace('https://', '').replace('www.', '')}</a></>}
-                        {data.personalInfo.portfolio && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="hover:underline text-slate-800">{data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.email && <a href={`mailto:${data.personalInfo.email}`} className="text-blue-600 hover:underline">{data.personalInfo.email}</a>}
+                        {data.personalInfo.linkedin && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{data.personalInfo.linkedin.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.github && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.github.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{data.personalInfo.github.replace('https://', '').replace('www.', '')}</a></>}
+                        {data.personalInfo.portfolio && <><span className="text-gray-400">•</span><a href={`https://${data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{data.personalInfo.portfolio.replace('https://', '').replace('www.', '')}</a></>}
                         {data.personalInfo.location && <><span className="text-gray-400">•</span><span>{data.personalInfo.location}</span></>}
                     </div>
                 </header>
 
                 {data.personalInfo.summary && (
-                    <div className="mb-5">
+                    <div className={spacing.mbSection}>
                         <p className="text-slate-700">{data.personalInfo.summary}</p>
                     </div>
                 )}
@@ -203,6 +227,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
             </div>
         );
     };
+
 
     // --- TEMPLATE: STARTUP CLEAN ---
     // Modern SaaS vibe, accent colored headers, left aligned, subtle badges
@@ -524,7 +549,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data }, 
 
 
     return (
-        <div id="resume-preview-container" ref={ref} className="origin-top flex justify-center w-full shadow-2xl overflow-hidden rounded-sm">
+        <div id="resume-preview-container" ref={ref} className="origin-top flex justify-center w-full shadow-2xl rounded-sm">
             {template === 'google-standard' && renderGoogleStandard()}
             {template === 'startup-clean' && renderStartupClean()}
             {template === 'creative-pro' && renderCreativePro()}

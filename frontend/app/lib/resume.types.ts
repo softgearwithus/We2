@@ -20,6 +20,7 @@ export interface ResumeData {
     projects: ProjectItem[];
     templateId: 'google-standard' | 'startup-clean' | 'creative-pro';
     accentColor?: string;
+    layoutSize?: 'compact' | 'standard' | 'spacious';
     sectionOrder?: string[];
     customSection?: {
         title: string;
@@ -122,6 +123,7 @@ export const initialResumeState: ResumeData = {
     ],
     templateId: 'google-standard',
     accentColor: 'indigo',
+    layoutSize: 'standard',
     sectionOrder: ['experience', 'projects', 'education', 'skills', 'custom'],
     customSection: {
         title: 'Certifications & Awards',

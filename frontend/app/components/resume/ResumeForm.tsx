@@ -108,6 +108,34 @@ export default function ResumeForm({ data, onChange }: ResumeFormProps) {
                         </div>
                     </div>
 
+                    {/* Layout Size Selector */}
+                    <div>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                             Spacing & Text Size
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {[
+                                { id: 'compact', name: 'Compact', desc: 'Smaller text, tighter spacing' },
+                                { id: 'standard', name: 'Standard', desc: 'Balanced default layout' },
+                                { id: 'spacious', name: 'Spacious', desc: 'Larger text, more breathing room' }
+                            ].map((sz) => (
+                                <button
+                                    key={sz.id}
+                                    onClick={() => onChange({ ...data, layoutSize: sz.id as any })}
+                                    className={clsx(
+                                        "p-3 rounded-xl border text-center transition-all active:scale-[0.98]",
+                                        (data.layoutSize || 'standard') === sz.id
+                                            ? "bg-slate-50 border-slate-400 shadow-sm shadow-slate-200 ring-1 ring-slate-200 text-slate-900"
+                                            : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm text-slate-600 hover:text-slate-900"
+                                    )}
+                                >
+                                    <div className={clsx("font-bold mb-0.5 text-sm", (data.layoutSize || 'standard') === sz.id && "text-slate-900")}>{sz.name}</div>
+                                    <div className="text-[10.5px] leading-tight opacity-80">{sz.desc}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Accent Color Picker */}
                     {data.templateId !== 'google-standard' && (
                         <div>
