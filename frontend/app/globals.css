@@ -3,14 +3,50 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 47 33% 96%; /* #f4f1e1 approximate paper texture */
+    --foreground: 120 15% 15%; /* #202b20 dark green text */
+
+    --card: 47 33% 96%;
+    --card-foreground: 120 15% 15%;
+
+    --popover: 47 33% 96%;
+    --popover-foreground: 120 15% 15%;
+
+    --primary: 120 20% 30%; /* #3d5c3d olive green */
+    --primary-foreground: 47 33% 96%;
+
+    --secondary: 110 20% 85%; /* #d1e0d1 light pastel green */
+    --secondary-foreground: 120 20% 30%;
+
+    --muted: 50 15% 90%;
+    --muted-foreground: 120 10% 40%;
+
+    --accent: 110 20% 85%;
+    --accent-foreground: 120 20% 30%;
+
+    --destructive: 0 40% 60%; /* muted red for end session */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 50 15% 85%;
+    --input: 50 15% 85%;
+    --ring: 120 20% 30%;
+
+    --radius: 1rem;
+  }
+
   html {
     @apply scroll-smooth;
   }
 
   body {
-    @apply bg-white antialiased;
-    color: #1e1e1e;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    @apply antialiased;
     scroll-behavior: smooth;
+    /* Dotted pattern background */
+    background-image: radial-gradient(hsl(120 10% 60%) 1px, transparent 1px);
+    background-size: 30px 30px;
   }
 
   h1 {
@@ -78,16 +114,16 @@
   }
 
   .premium-card:hover {
-    @apply border-brand-orange/20 -translate-y-2;
+    @apply border-primary/20 -translate-y-2;
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
   }
 
   .text-gradient {
-    @apply text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500;
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80;
   }
 
   .bg-moving-glow {
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 161, 22, 0.06), transparent 40%);
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(200, 200, 200, 0.06), transparent 40%);
   }
 
   /* Scroll Utilities */

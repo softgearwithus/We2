@@ -43,9 +43,9 @@ function Counter({ value, suffix }: { value: number, suffix: string }) {
 
 export default function StatsSection() {
     return (
-        <section className="py-16 bg-gray-50/50 border-y border-gray-100 relative overflow-hidden">
+        <section className="py-12 bg-transparent border-y border-border/30 relative overflow-hidden">
             {/* Minimal Grid Pattern */}
-            <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] [background-size:40px_40px]"></div>
+            <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,hsl(var(--primary))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary))_1px,transparent_1px)] [background-size:40px_40px]"></div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -56,34 +56,34 @@ export default function StatsSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1, duration: 0.5, ease: "easeOut" }}
-                            className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 group"
+                            className="bg-card p-8 rounded-2xl border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 group relative"
                         >
-                            <div className="absolute top-6 right-8">
-                                <span className="text-[9px] font-black text-brand-orange/40 bg-brand-orange/5 px-2 py-0.5 rounded-full border border-brand-orange/10 uppercase tracking-widest leading-none">
+                            <div className="absolute top-6 right-6">
+                                <span className="text-[9px] font-black text-primary/70 bg-secondary px-2 py-0.5 rounded-full border border-border uppercase tracking-widest leading-none">
                                     Emble Official
                                 </span>
                             </div>
                             <div className="flex items-start justify-between mb-6">
-                                <div className={`p-3 rounded-xl bg-orange-50 text-brand-orange group-hover:scale-110 transition-transform duration-300`}>
+                                <div className={`p-3 rounded-xl bg-secondary text-primary group-hover:scale-110 transition-transform duration-300 shadow-sm border border-border`}>
                                     <stat.icon className="w-6 h-6" />
                                 </div>
                             </div>
 
                             <div className="space-y-1">
-                                <div className="text-3xl font-black text-gray-900 tracking-tight">
+                                <div className="text-3xl font-black text-foreground tracking-tight">
                                     {stat.text ? (
                                         stat.text
                                     ) : (
                                         <Counter value={stat.value || 0} suffix={stat.suffix || ''} />
                                     )}
                                 </div>
-                                <div className="text-sm font-medium text-gray-500 tracking-wide uppercase">
+                                <div className="text-sm font-medium text-foreground/70 tracking-wide uppercase">
                                     {stat.label}
                                 </div>
                             </div>
 
                             {/* Decorative line */}
-                            <div className="mt-6 h-1 w-8 bg-brand-orange/10 rounded-full group-hover:w-full transition-all duration-500"></div>
+                            <div className="mt-6 h-1 w-8 bg-primary/20 rounded-full group-hover:w-full group-hover:bg-primary/50 transition-all duration-500"></div>
                         </motion.div>
                     ))}
                 </div>

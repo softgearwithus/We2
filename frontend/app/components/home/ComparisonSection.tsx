@@ -13,34 +13,34 @@ const comparisonData = [
 
 export default function ComparisonSection() {
     return (
-        <section className="py-10 md:py-16 bg-white relative overflow-hidden">
+        <section className="py-12 md:py-16 relative overflow-hidden">
             <div className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-14">
-                    <h2 className="text-4xl font-bold text-brand-black tracking-tight mb-4">
-                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600 font-black">EMBLE Edge</span>
+                    <h2 className="text-4xl font-bold text-foreground tracking-tight mb-4">
+                        The <span className="text-primary font-black">EMBLE Edge</span>
                     </h2>
-                    <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+                    <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
                         Why traditional courses leave you "job-unready" and how we solve it.
                     </p>
                 </div>
 
-                <div className="rounded-3xl border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.03)] overflow-x-auto w-full">
+                <div className="rounded-3xl border border-border shadow-md bg-card overflow-x-auto w-full">
                     <table className="w-full text-left border-collapse min-w-full max-w-full max-w-[600px]">
                         <thead>
-                            <tr className="bg-gray-50/50">
-                                <th className="p-6 text-sm font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Feature</th>
-                                <th className="p-6 text-sm font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">Typical Course</th>
-                                <th className="p-6 text-sm font-bold text-brand-orange uppercase tracking-widest border-b border-gray-100 bg-orange-50/20">EMBLE Platform</th>
+                            <tr className="bg-secondary/50">
+                                <th className="p-6 text-sm font-bold text-foreground/60 uppercase tracking-widest border-b border-border">Feature</th>
+                                <th className="p-6 text-sm font-bold text-foreground/60 uppercase tracking-widest border-b border-border">Typical Course</th>
+                                <th className="p-6 text-sm font-bold text-primary uppercase tracking-widest border-b border-border bg-secondary">EMBLE Platform</th>
                             </tr>
                         </thead>
                         <tbody>
                             {comparisonData.map((row, i) => (
-                                <tr key={i} className="group hover:bg-gray-50/30 transition-colors">
-                                    <td className="p-6 font-bold text-brand-black border-b border-gray-50">{row.feature}</td>
-                                    <td className="p-6 text-gray-400 border-b border-gray-50 italic">{row.typical}</td>
-                                    <td className="p-6 font-bold text-brand-black border-b border-gray-50 bg-orange-50/10">
+                                <tr key={i} className="group hover:bg-secondary/20 transition-colors">
+                                    <td className="p-6 font-bold text-foreground border-b border-border text-sm md:text-base">{row.feature}</td>
+                                    <td className="p-6 text-foreground/60 border-b border-border italic text-sm md:text-base">{row.typical}</td>
+                                    <td className="p-6 font-bold text-foreground border-b border-border bg-secondary/10 text-sm md:text-base">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
                                                 <Check size={12} strokeWidth={3} />
                                             </div>
                                             {row.we2}
@@ -52,11 +52,11 @@ export default function ComparisonSection() {
                     </table>
                 </div>
 
-                <div className="mt-8 md:mt-12 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <div className="text-slate-900 font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
-                        Students using EMBLE are <strong>3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Placement ecosystem.
+                <div className="mt-8 md:mt-12 p-6 bg-secondary rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="text-foreground font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
+                        Students using EMBLE are <strong className="text-primary font-bold">3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Placement ecosystem.
                     </div>
-                    <Link href="/register" className="whitespace-nowrap px-6 py-2.5 bg-brand-black text-white rounded-xl font-bold text-sm hover:bg-gray-900 transition-all">
+                    <Link href="/register" className="whitespace-nowrap px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-sm">
                         The EMBLE Edge
                     </Link>
                 </div>

@@ -58,11 +58,11 @@ export default function PrivacyPage() {
     if (!mounted) return null;
 
     return (
-        <main className="min-h-screen bg-white selection:bg-brand-orange selection:text-white">
+        <main className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 overflow-hidden bg-brand-black text-white">
+            <section className="relative pt-32 pb-20 overflow-hidden bg-background text-foreground border-b border-border">
                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
                     backgroundImage: `radial-gradient(circle at 1.5px 1.5px, white 1.5px, transparent 0)`,
                     backgroundSize: '40px 40px'
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-orange text-[11px] font-bold uppercase tracking-widest mb-6 border border-white/10"
+                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-widest mb-6 border border-primary/20"
                         >
                             <Lock size={12} />
                             Data Sovereignty
@@ -84,14 +84,14 @@ export default function PrivacyPage() {
                             animate={{ opacity: 1, y: 0 }}
                             className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8"
                         >
-                            Privacy at <span className="text-brand-orange underline decoration-white/20 underline-offset-8">EMBLE.</span>
+                            Privacy at <span className="text-primary underline decoration-primary/20 underline-offset-8">EMBLE.</span>
                         </motion.h1>
 
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-xl text-gray-400 max-w-2xl font-medium"
+                            className="text-xl text-foreground/70 max-w-2xl font-medium"
                         >
                             Transparency is the core of our platform. Learn how we protect your data while powering your industrial learning journey.
                         </motion.p>
@@ -100,14 +100,14 @@ export default function PrivacyPage() {
             </section>
 
             {/* Content Section */}
-            <section className="py-24 bg-white relative">
+            <section className="py-24 bg-background relative">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
 
                         {/* Left Sidebar Navigation */}
                         <div className="lg:col-span-4 sticky top-32 hidden lg:block">
-                            <div className="p-8 rounded-[40px] bg-gray-50 border border-gray-100">
-                                <h5 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-8 ml-2">Data Sections</h5>
+                            <div className="p-8 rounded-[40px] bg-card border border-border">
+                                <h5 className="text-[10px] font-black uppercase tracking-widest text-foreground/50 mb-8 ml-2">Data Sections</h5>
                                 <nav className="space-y-2">
                                     {sections.map((s) => (
                                         <button
@@ -119,23 +119,23 @@ export default function PrivacyPage() {
                                             className={cn(
                                                 "w-full flex items-center justify-between p-4 rounded-2xl text-sm font-bold transition-all group",
                                                 activeSection === s.id
-                                                    ? "bg-brand-black text-white shadow-xl"
-                                                    : "text-gray-400 hover:text-brand-black hover:bg-white"
+                                                    ? "bg-foreground text-background shadow-xl"
+                                                    : "text-foreground/60 hover:text-foreground hover:bg-secondary"
                                             )}
                                         >
                                             {s.title.split('. ')[1]}
                                             <ChevronRight size={14} className={cn(
                                                 "transition-transform",
-                                                activeSection === s.id ? "rotate-90 text-brand-orange" : "group-hover:translate-x-1"
+                                                activeSection === s.id ? "rotate-90 text-background" : "group-hover:translate-x-1"
                                             )} />
                                         </button>
                                     ))}
                                 </nav>
 
-                                <div className="mt-12 p-6 rounded-3xl bg-brand-orange/5 border border-brand-orange/10">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-brand-orange mb-2">GDPR Compliant</p>
-                                    <p className="text-sm font-bold text-brand-black flex items-center gap-2">
-                                        <Shield size={16} className="text-brand-orange" />
+                                <div className="mt-12 p-6 rounded-3xl bg-secondary border border-border">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">GDPR Compliant</p>
+                                    <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                                        <Shield size={16} className="text-primary" />
                                         Verified Security
                                     </p>
                                 </div>
@@ -152,15 +152,15 @@ export default function PrivacyPage() {
                                     whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="pb-12 border-b border-gray-100 last:border-0"
+                                    className="pb-12 border-b border-border last:border-0"
                                 >
-                                    <h2 className="text-3xl font-black text-brand-black mb-6 flex items-center gap-4">
-                                        <span className="w-10 h-10 rounded-xl bg-gray-50 text-brand-orange flex items-center justify-center text-sm font-black border border-gray-100">
+                                    <h2 className="text-3xl font-black text-foreground mb-6 flex items-center gap-4">
+                                        <span className="w-10 h-10 rounded-xl bg-secondary text-primary flex items-center justify-center text-sm font-black border border-border">
                                             {idx + 1}
                                         </span>
                                         {s.title.split('. ')[1]}
                                     </h2>
-                                    <p className="text-lg text-gray-500 leading-relaxed font-medium">
+                                    <p className="text-lg text-foreground/70 leading-relaxed font-medium">
                                         {s.content}
                                     </p>
 
@@ -172,23 +172,23 @@ export default function PrivacyPage() {
                                                 { icon: Database, label: "Academic Data", desc: "DSA Progress, Scores" },
                                                 { icon: HardDrive, label: "Technical Data", desc: "Simulation Logs" }
                                             ].map((item, i) => (
-                                                <div key={i} className="p-6 rounded-3xl bg-gray-50 border border-gray-100">
-                                                    <item.icon className="text-brand-orange mb-4" size={20} />
-                                                    <h4 className="font-bold text-brand-black text-sm mb-1">{item.label}</h4>
-                                                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-black">{item.desc}</p>
+                                                <div key={i} className="p-6 rounded-3xl bg-card border border-border">
+                                                    <item.icon className="text-primary mb-4" size={20} />
+                                                    <h4 className="font-bold text-foreground text-sm mb-1">{item.label}</h4>
+                                                    <p className="text-[10px] text-foreground/50 uppercase tracking-wider font-black">{item.desc}</p>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
 
                                     {idx === 5 && (
-                                        <div className="mt-8 p-6 rounded-3xl bg-brand-black text-white flex items-center gap-6">
-                                            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-                                                <Cookie className="text-brand-orange" size={24} />
+                                        <div className="mt-8 p-6 rounded-3xl bg-foreground text-background flex items-center gap-6">
+                                            <div className="w-12 h-12 rounded-2xl bg-background/10 flex items-center justify-center shrink-0">
+                                                <Cookie className="text-background" size={24} />
                                             </div>
                                             <div>
                                                 <h4 className="font-bold mb-1">Essential Cookies Only</h4>
-                                                <p className="text-sm text-gray-400">We prioritize your performance and security over marketing trackers.</p>
+                                                <p className="text-sm text-background/80">We prioritize your performance and security over marketing trackers.</p>
                                             </div>
                                         </div>
                                     )}
@@ -200,18 +200,18 @@ export default function PrivacyPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="p-12 rounded-[40px] bg-brand-orange text-white relative overflow-hidden group"
+                                className="p-12 rounded-[40px] bg-secondary border border-border text-foreground relative overflow-hidden group"
                             >
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl" />
                                 <h3 className="text-3xl font-black mb-6">Manage Your Data</h3>
-                                <p className="text-white/80 mb-10 text-lg font-medium leading-relaxed">
+                                <p className="text-foreground/80 mb-10 text-lg font-medium leading-relaxed">
                                     Want to export your learning history or delete your account? You can do it all from your dashboard settings, or reach out to our team.
                                 </p>
                                 <div className="flex flex-wrap gap-4">
-                                    <a href="/dashboard/settings" className="h-14 px-10 bg-brand-black text-white font-black rounded-2xl inline-flex items-center gap-3 hover:scale-105 transition-all">
+                                    <a href="/dashboard/settings" className="h-14 px-10 bg-foreground text-background font-black rounded-2xl inline-flex items-center gap-3 hover:scale-105 transition-all shadow-sm">
                                         Go to Settings <ChevronRight size={20} />
                                     </a>
-                                    <a href="/contact" className="h-14 px-10 bg-white/10 text-white font-black rounded-2xl inline-flex items-center gap-3 border border-white/20 hover:bg-white/20 transition-all">
+                                    <a href="/contact" className="h-14 px-10 bg-card text-foreground font-black rounded-2xl inline-flex items-center gap-3 border border-border hover:bg-secondary transition-all">
                                         Contact Privacy Team
                                     </a>
                                 </div>

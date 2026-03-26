@@ -58,9 +58,9 @@ export default function Navbar() {
     }, []);
 
     const guestNavItems = [
-        { label: 'Bootcamp Curriculum', href: '/curriculum' },
-        { label: 'How it Works', href: '/how-it-works' },
-        { label: 'Pricing', href: '/pricing' }
+        { label: 'Features', href: '#features' },
+        { label: 'Pricing', href: '/pricing' },
+        { label: 'FAQ', href: '#faq' }
     ];
 
     const authNavItems = [
@@ -87,27 +87,24 @@ export default function Navbar() {
     return (
         <nav className={cn(
             "fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b",
-            isScrolled || mobileMenuOpen ? "bg-white/90 backdrop-blur-md border-gray-200 shadow-sm" : "bg-transparent border-transparent"
+            isScrolled || mobileMenuOpen ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-border/50 shadow-sm" : "bg-transparent border-transparent"
         )}>
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
                 {/* Brand */}
                 <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
-                    <div className="w-8 h-8 bg-brand-orange rounded flex items-center justify-center transition-transform group-hover:rotate-12">
-                        <Terminal size={18} className="text-white" strokeWidth={3} />
-                    </div>
                     <span className={cn(
-                        "text-lg font-bold tracking-tight transition-colors",
-                        isDarkBg ? "text-white" : "text-brand-black"
+                        "text-2xl font-[900] tracking-tighter transition-colors",
+                        isDarkBg ? "text-white" : "text-foreground"
                     )}>
-                        EMBLE
+                        EMBLE<span className="text-primary">.</span>
                     </span>
                 </Link>
 
                 {/* Desktop Nav */}
                 <div className={cn(
                     "hidden md:flex items-center gap-8 text-sm font-medium transition-colors",
-                    isDarkBg ? "text-white/80" : "text-gray-500"
+                    isDarkBg ? "text-white/80" : "text-muted-foreground"
                 )}>
                     {isDashboardLayout ? (
                         // Dashboard Mode Items
@@ -115,7 +112,7 @@ export default function Navbar() {
                             <Link
                                 key={item.label}
                                 href={item.href!}
-                                className="hover:text-brand-orange transition-colors py-2 flex items-center gap-1.5"
+                                className="hover:text-primary transition-colors py-2 flex items-center gap-1.5"
                             >
                                 {/* @ts-ignore */}
                                 {item.icon && <item.icon size={16} />}
@@ -129,9 +126,9 @@ export default function Navbar() {
                                 key={item.label}
                                 href={item.href}
                                 className={cn(
-                                    "hover:text-brand-orange transition-colors py-2 flex items-center gap-1.5",
+                                    "hover:text-primary transition-colors py-2 flex items-center gap-1.5",
                                     pathname === item.href
-                                        ? (isDarkBg ? "text-white font-bold" : "text-brand-black font-semibold")
+                                        ? (isDarkBg ? "text-white font-bold" : "text-foreground font-semibold")
                                         : ""
                                 )}
                             >
@@ -149,9 +146,9 @@ export default function Navbar() {
                         <div className="relative" ref={userMenuRef}>
                             <button
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                className="flex items-center gap-2 hover:bg-gray-100 p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-gray-200"
+                                className="flex items-center gap-2 hover:bg-muted p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-border"
                             >
-                                <div className="relative w-8 h-8 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm shrink-0">
+                                <div className="relative w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
                                     {avatarSrc ? (
                                         <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                                     ) : (
@@ -159,13 +156,13 @@ export default function Navbar() {
                                     )}
                                     {profileIncomplete && (
                                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border-2 border-white"></span>
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive/75"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive border-2 border-background"></span>
                                         </span>
                                     )}
                                 </div>
-                                <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">{user.email.split('@')[0]}</span>
-                                <ChevronDown size={14} className="text-gray-400" />
+                                <span className="text-sm font-medium text-foreground/80 max-w-[100px] truncate">{user.email.split('@')[0]}</span>
+                                <ChevronDown size={14} className="text-muted-foreground" />
                             </button>
 
                             <AnimatePresence>
@@ -175,36 +172,36 @@ export default function Navbar() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-1"
+                                        className="absolute right-0 top-full mt-2 w-56 bg-background rounded-xl shadow-xl border border-border overflow-hidden py-1"
                                     >
-                                        <div className="px-4 py-3 border-b border-gray-50">
-                                            <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Signed in as</p>
-                                            <p className="text-sm font-bold text-brand-black truncate">{user.email}</p>
-                                            <p className="text-xs text-brand-orange mt-1 font-medium capitalize">{getDisplayPlan(user.subscriptionPlan)} Plan</p>
+                                <div className="px-4 py-3 border-b border-border/50">
+                                            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Signed in as</p>
+                                            <p className="text-sm font-bold text-foreground truncate">{user.email}</p>
+                                            <p className="text-xs text-primary mt-1 font-medium capitalize">{getDisplayPlan(user.subscriptionPlan)} Plan</p>
                                         </div>
 
-                                        <Link href="/dashboard/profile" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                        <Link href="/dashboard/profile" className="flex items-center justify-between px-4 py-2.5 text-sm text-foreground/70 hover:bg-muted/50 hover:text-foreground transition-colors" onClick={() => setUserMenuOpen(false)}>
                                             <div className="flex items-center gap-2">
                                                 <User size={16} />
                                                 Profile
                                             </div>
-                                            {profileIncomplete && <span className="text-[10px] font-bold bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full">Incomplete</span>}
+                                            {profileIncomplete && <span className="text-[10px] font-bold bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">Incomplete</span>}
                                         </Link>
-                                        <Link href="/dashboard/settings" className="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-black transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                        <Link href="/dashboard/settings" className="flex items-center justify-between px-4 py-2.5 text-sm text-foreground/70 hover:bg-muted/50 hover:text-foreground transition-colors" onClick={() => setUserMenuOpen(false)}>
                                             <div className="flex items-center gap-2">
                                                 <Settings size={16} />
                                                 Settings
                                             </div>
-                                            {profileIncomplete && <span className="w-2 h-2 rounded-full bg-rose-500"></span>}
+                                            {profileIncomplete && <span className="w-2 h-2 rounded-full bg-destructive"></span>}
                                         </Link>
 
-                                        <div className="border-t border-gray-50 mt-1">
+                                        <div className="border-t border-border/50 mt-1">
                                             <button
                                                 onClick={() => {
                                                     logout();
                                                     setUserMenuOpen(false);
                                                 }}
-                                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors text-left"
                                             >
                                                 <LogOut size={16} />
                                                 Sign out
@@ -218,11 +215,11 @@ export default function Navbar() {
                         <>
                             <Link href="/login" className={cn(
                                 "text-sm font-medium transition-colors px-3 py-2",
-                                isDarkBg ? "text-white hover:text-white/80" : "text-gray-500 hover:text-brand-black"
+                                isDarkBg ? "text-white hover:text-white/80" : "text-foreground/70 hover:text-foreground"
                             )}>
                                 Sign in
                             </Link>
-                            <Link href="/register" className="bg-brand-orange hover:bg-brand-orange-hover text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-subtle hover:shadow-md">
+                            <Link href="/register" className="bg-foreground hover:bg-foreground/90 text-background px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95">
                                 Get Started
                             </Link>
                         </>
@@ -233,7 +230,7 @@ export default function Navbar() {
                 <button
                     className={cn(
                         "md:hidden transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2",
-                        isDarkBg ? "text-white" : "text-gray-600"
+                        isDarkBg ? "text-white" : "text-foreground"
                     )}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
@@ -243,10 +240,10 @@ export default function Navbar() {
 
             {/* Mobile Menu */}
             {mobileMenuOpen && (
-                <div className="absolute top-16 left-0 right-0 bg-white border-b border-gray-100 p-6 flex flex-col gap-4 md:hidden shadow-xl animate-fade-in-up max-h-[calc(100vh-4rem)] overflow-y-auto">
+                <div className="absolute top-16 left-0 right-0 bg-background border-b border-border p-6 flex flex-col gap-4 md:hidden shadow-xl animate-fade-in-up max-h-[calc(100vh-4rem)] overflow-y-auto">
                     {user && (
-                        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
-                            <div className="w-10 h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold shrink-0">
+                        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/50">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
                                 {avatarSrc ? (
                                     <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                                 ) : (
@@ -254,8 +251,8 @@ export default function Navbar() {
                                 )}
                             </div>
                             <div>
-                                <div className="font-bold text-brand-black">{user.email.split('@')[0]}</div>
-                                <div className="text-xs text-gray-500">{user.email}</div>
+                                <div className="font-bold text-foreground">{user.email.split('@')[0]}</div>
+                                <div className="text-xs text-muted-foreground">{user.email}</div>
                             </div>
                         </div>
                     )}
@@ -264,7 +261,7 @@ export default function Navbar() {
                         <Link
                             key={item.label}
                             href={item.href}
-                            className="text-lg font-medium text-gray-600 hover:text-brand-orange flex items-center gap-3 py-3 w-full"
+                            className="text-lg font-medium text-foreground/80 hover:text-primary flex items-center gap-3 py-3 w-full"
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             {/* @ts-ignore */}
@@ -272,14 +269,14 @@ export default function Navbar() {
                             {item.label}
                         </Link>
                     ))}
-                    <hr className="border-gray-100" />
+                    <hr className="border-border/50" />
 
                     {user ? (
                         <>
-                            <Link href="/dashboard/profile" className="flex items-center gap-3 py-3 w-full text-gray-600" onClick={() => setMobileMenuOpen(false)}>
+                            <Link href="/dashboard/profile" className="flex items-center gap-3 py-3 w-full text-foreground/80" onClick={() => setMobileMenuOpen(false)}>
                                 <User size={20} /> Profile
                             </Link>
-                            <Link href="/dashboard/settings" className="flex items-center gap-3 py-3 w-full text-gray-600" onClick={() => setMobileMenuOpen(false)}>
+                            <Link href="/dashboard/settings" className="flex items-center gap-3 py-3 w-full text-foreground/80" onClick={() => setMobileMenuOpen(false)}>
                                 <Settings size={20} /> Settings
                             </Link>
                             <button
@@ -287,18 +284,18 @@ export default function Navbar() {
                                     logout();
                                     setMobileMenuOpen(false);
                                 }}
-                                className="flex items-center gap-3 py-3 w-full text-red-600 font-medium text-left"
+                                className="flex items-center gap-3 py-3 w-full text-destructive font-medium text-left"
                             >
                                 <LogOut size={20} /> Sign out
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link href="/login" className="text-center py-3 w-full font-medium text-gray-600">
+                            <Link href="/login" className="text-center py-3 w-full font-medium text-foreground/80">
                                 Sign in
                             </Link>
-                            <Link href="/register" className="bg-brand-orange text-white py-4 w-full rounded-lg text-center font-bold">
-                                Create Account
+                            <Link href="/register" className="bg-foreground text-background py-4 w-full rounded-xl text-center font-bold">
+                                Get Started
                             </Link>
                         </>
                     )}

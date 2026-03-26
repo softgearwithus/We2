@@ -258,7 +258,7 @@ const testimonials = [
 
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
     <div className="group relative w-full h-full transform-gpu will-change-transform">
-        <div className="relative h-full bg-white rounded-[1.8rem] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between">
+        <div className="relative h-full bg-card rounded-[1.8rem] p-8 border border-border/50 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 flex flex-col justify-between">
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -266,28 +266,28 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                             {t.initials}
                         </div>
                         <div>
-                            <h4 className="font-bold text-brand-black text-sm">{t.name}</h4>
-                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t.role}</p>
+                            <h4 className="font-bold text-foreground text-sm">{t.name}</h4>
+                            <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-wider">{t.role}</p>
                         </div>
                     </div>
-                    {t.verified && <CheckCircle2 size={18} className="text-blue-500 fill-blue-50" />}
+                    {t.verified && <CheckCircle2 size={18} className="text-primary fill-primary/10" />}
                 </div>
 
-                <p className="text-gray-700 text-[15px] leading-relaxed font-medium">"{t.text}"</p>
+                <p className="text-foreground/80 text-[15px] leading-relaxed font-medium">"{t.text}"</p>
             </div>
 
-            <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
+            <div className="pt-4 border-t border-border/30 flex items-center justify-between mt-auto">
                 <div className="flex gap-0.5 items-center">
                     <div className="flex gap-0.5 mr-2">
                         {[...Array(5)].map((_, i) => (
                             <Star
                                 key={i}
                                 size={12}
-                                className={`${i < Math.floor(t.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`}
+                                className={`${i < Math.floor(t.rating) ? 'text-[#FFD700] fill-[#FFD700]' : 'text-border'}`}
                             />
                         ))}
                     </div>
-                    <span className="text-[11px] font-bold text-gray-500">{t.rating}</span>
+                    <span className="text-[11px] font-bold text-foreground/60">{t.rating}</span>
                 </div>
             </div>
         </div>
@@ -299,16 +299,14 @@ export default function Testimonials() {
     const displayedTestimonials = showAll ? testimonials : testimonials.slice(0, 9);
 
     return (
-        <section className="py-20 md:py-32 bg-gray-50/30 relative overflow-hidden border-y border-gray-100">
+        <section className="py-12 md:py-24 bg-transparent relative overflow-hidden border-t border-border/30">
             {/* Header */}
             <div className="max-w-7xl mx-auto px-6 mb-16 relative z-10 text-center">
-                <span className="text-brand-orange font-bold text-[11px] uppercase tracking-[0.2em] bg-orange-50 px-4 py-2 rounded-full border border-orange-100 inline-block mb-6 shadow-sm">
-                    Verified Outcomes
-                </span>
-                <h2 className="text-4xl md:text-6xl font-[1000] text-brand-black tracking-tighter mb-4">
-                    Offers dropped. <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">Lives changed.</span>
+                {/* Removed Verified Outcomes Badge */}
+                <h2 className="text-4xl md:text-6xl font-[1000] text-foreground tracking-tighter mb-4">
+                    Offers dropped. <span className="text-primary">Lives changed.</span>
                 </h2>
-                <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
+                <p className="text-xl text-foreground/70 font-medium max-w-2xl mx-auto leading-relaxed">
                     Stop practicing blindly. See what happens when you train like a senior engineer and finally beat the applicant tracking systems.
                 </p>
             </div>
@@ -322,8 +320,8 @@ export default function Testimonials() {
                         if (!showAll && i === 8) {
                             return (
                                 <div key={uniqueKey} className="group relative w-full h-full transform-gpu will-change-transform cursor-pointer" onClick={() => setShowAll(true)}>
-                                    <div className="absolute inset-0 z-20 bg-white/50 backdrop-blur-[3px] rounded-[1.8rem] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-white/30 border border-gray-100 overflow-hidden">
-                                        <div className="bg-brand-black text-white px-6 py-3 rounded-full font-bold shadow-2xl group-hover:scale-105 transition-transform flex items-center gap-2">
+                                    <div className="absolute inset-0 z-20 bg-background/50 backdrop-blur-[3px] rounded-[1.8rem] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-background/20 border border-border overflow-hidden">
+                                        <div className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-bold shadow-2xl group-hover:scale-105 transition-transform flex items-center gap-2">
                                             View {testimonials.length - 8} More Stories →
                                         </div>
                                     </div>
@@ -341,7 +339,7 @@ export default function Testimonials() {
                     <div className="mt-16 text-center">
                         <button 
                             onClick={() => setShowAll(false)}
-                            className="bg-white border border-gray-200 text-gray-500 hover:text-brand-black hover:border-gray-300 px-8 py-3 rounded-full font-bold text-sm tracking-wider uppercase transition-all shadow-sm"
+                            className="bg-card border border-border text-foreground/70 hover:text-foreground hover:border-primary/50 px-8 py-3 rounded-full font-bold text-sm tracking-wider uppercase transition-all shadow-sm"
                         >
                             Show Less
                         </button>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     // TODO: Actual token validation logic would go here.
     // For now, we rely on client-side checks and backend guards.
     // This middleware is primarily for redirection and basic path protection if needed.

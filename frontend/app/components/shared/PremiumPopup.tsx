@@ -64,7 +64,7 @@ export default function PremiumPopup() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] w-[calc(100%-2rem)] sm:w-full max-w-[380px] bg-white rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100 will-change-transform"
+                        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] w-[calc(100%-2rem)] sm:w-full max-w-[380px] bg-card rounded-[24px] overflow-hidden shadow-2xl border border-border will-change-transform"
                     >
                         {/* Close Button */}
                         <button
@@ -72,23 +72,23 @@ export default function PremiumPopup() {
                                 setShowMainModal(false);
                                 setShowMinimizedBanner(true);
                             }}
-                            className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange"
+                            className="absolute top-4 right-4 p-1.5 text-foreground/50 hover:text-foreground hover:bg-secondary rounded-full transition-colors z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                         >
                             <X size={16} />
                         </button>
 
-                        <div className="p-6 text-left bg-white relative">
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                                    <Sparkles size={18} className="text-brand-orange" />
+                        <div className="p-6 text-left bg-card relative">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                                    <Sparkles size={20} className="text-primary" />
                                 </div>
-                                <h3 className="text-lg font-black text-brand-black tracking-tight leading-tight">
+                                <h3 className="text-xl font-black text-foreground tracking-tight leading-tight">
                                     Unlock Premium <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-slate-600">Placement Mode</span>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">Placement Mode</span>
                                 </h3>
                             </div>
 
-                            <p className="text-gray-500 mb-5 font-medium leading-relaxed text-[13px]">
+                            <p className="text-foreground/70 mb-6 font-medium leading-relaxed text-sm">
                                 Upgrade to experience the complete Full Stack Bootcamp and double your chances of clearing technical rounds with AI mock interviews.
                             </p>
 
@@ -96,7 +96,7 @@ export default function PremiumPopup() {
                                 <Link
                                     href="/pricing"
                                     onClick={() => setShowMainModal(false)}
-                                    className="flex-1 h-10 bg-brand-black hover:bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange focus-visible:ring-offset-2"
+                                    className="flex-1 h-12 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                                 >
                                     Upgrade Now
                                     <ArrowRight size={16} />
@@ -107,7 +107,7 @@ export default function PremiumPopup() {
                                         setShowMainModal(false);
                                         setShowMinimizedBanner(true);
                                     }}
-                                    className="px-4 h-10 text-sm font-bold text-gray-500 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+                                    className="px-5 h-12 text-sm font-bold text-foreground/50 hover:text-foreground hover:bg-secondary bg-transparent rounded-xl transition-colors"
                                 >
                                     Later
                                 </button>
@@ -129,22 +129,22 @@ export default function PremiumPopup() {
                     >
                         {/* Hidden CTA that expands on hover */}
                         <Link href="/pricing" className="absolute right-0 pr-16 opacity-0 group-hover:opacity-100 group-hover:-translate-x-4 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-                            <div className="bg-white px-4 py-2.5 rounded-l-xl shadow-lg border border-gray-100 border-r-0 flex items-center gap-2 text-sm font-bold text-brand-black whitespace-nowrap">
+                            <div className="bg-card px-5 py-3 rounded-l-2xl shadow-xl border border-border border-r-0 flex items-center gap-2 text-sm font-bold text-foreground whitespace-nowrap">
                                 Subscribe Now
-                                <ArrowRight size={14} className="text-brand-orange" />
+                                <ArrowRight size={14} className="text-primary" />
                             </div>
                         </Link>
 
                         {/* Core Circular Badge */}
                         <Link
                             href="/pricing"
-                            className="relative w-14 h-14 bg-brand-black rounded-full flex items-center justify-center shadow-2xl border-4 border-white z-10 hover:scale-110 transition-transform duration-300"
+                            className="relative w-14 h-14 bg-card rounded-[18px] flex items-center justify-center shadow-2xl border border-border z-10 hover:scale-110 transition-transform duration-300"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange to-slate-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-md -z-10"></div>
-                            <ShieldCheck size={24} className="text-white relative z-10" />
+                            <div className="absolute inset-0 bg-primary/20 rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity blur-md -z-10"></div>
+                            <ShieldCheck size={24} className="text-primary relative z-10" />
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-orange"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
                             </span>
                         </Link>
                     </motion.div>

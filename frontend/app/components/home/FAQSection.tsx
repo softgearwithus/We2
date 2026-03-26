@@ -1,141 +1,175 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronDown, Mail } from 'lucide-react';
+import Link from 'next/link';
 
-const faqs = [
+const faqsData = {
+  "General": [
     {
-        q: "Does India's First Integrated AI Placement Ecosystem Hub really prepare me for top-tier MNC rounds?",
-        a: "Mastering technical logic is about pattern recognition - not just memorization. We provide 200+ curated patterns frequently asked in high-stakes interviews at top product companies, ensuring you master the logic recruiters actually look for."
+      q: "What is Emble?",
+      a: "Emble is an integrated AI placement ecosystem designed to help you master real-time technical interviews and access industrial-grade preparation tools."
     },
     {
-        q: "How does the 21-day Industrial Sprint simulate a real engineering job?",
-        a: "This is a high-intensity simulation of a modern engineering team. You'll work with real microservices, submit Pull Requests, and undergo rigorous AI code reviews - it's designed to transform you from a student into a production-ready engineer."
+      q: "Is it completely free?",
+      a: "Yes! Our core tools, including the extensive company-wise Test Series, Project Labs, and predictive Market Alerts, are 100% free for lifetime access."
     },
     {
-        q: "I've practiced on traditional coding platforms - why do I need this AI-Integrated environment?",
-        a: "Standard platforms are great for isolated logic, but real jobs happen in large systems. As India's First Integrated AI Placement Ecosystem Hub, we simulate production realities like Docker, AWS, and system-wide debugging - bridging the gap between a simple solution and a real feature."
+      q: "Does it work on all job boards?",
+      a: "Our predictive Market Radar monitors thousands of job boards, insider pipelines, and company career pages to bring you the most relevant alerts instantly."
     },
     {
-        q: "Can I practice the Industry SQL 50 questions for real-world data rounds?",
-        a: "Yes. Our 'Industry SQL 50' is a vetted dataset of complex database modeling and query optimization challenges - precisely what's required for full-stack and data engineering roles in top product companies today."
+      q: "Is my data secure?",
+      a: "Absolutely. We employ enterprise-grade encryption to ensure your resume data, performance metrics, and personal information are completely secure and private."
     },
     {
-        q: "What if I get stuck on a logic bug - does the AI Mentor help 24/7?",
-        a: "Our AI Mentor is available around the clock. Instead of just giving you the code, it identifies your logical blind spots and provides progressive hints - helping you learn the 'Why' behind every piece of code you write."
-    },
-    {
-        q: "How do recruiters verify the 'Proof of Work' I build during the simulation?",
-        a: "Every industrial project you complete is scored and added to your verified Job Hub profile. Recruiters see your actual engineering capability through production projects - making your profile stand out as someone who is ready to contribute."
-    },
-    {
-        q: "Is the tech stack (Docker, AWS, NestJS) actually used in modern engineering teams?",
-        a: "Absolutely. We exclusively focus on the high-demand stack - React, NestJS, PostgreSQL, Docker, and AWS. Mastering these ensures you are competent in the technologies used by the fastest-growing tech companies today."
-    },
-    {
-        q: "How do I prove my 'Placement Readiness' with the Skill Scorecard?",
-        a: "Your Scorecard provides a data-driven view of your logic, coding, and communication skills. It's a holistic metric used by our placement partners to identify top talent who are ready for immediate industrial contribution."
-    },
-    {
-        q: "Is India's First Integrated AI Placement Ecosystem Hub designed only for beginners or experienced engineers?",
-        a: "Emble is built for anyone looking to reach the next tier of engineering. Whether you're a student learning patterns or a dev wanting to master industrial-scale systems - the platform adapts to push your technical boundaries."
+      q: "What platforms is it available on?",
+      a: "Emble is a cloud-based web application accessible directly from your browser on any desktop or tablet device, ensuring you can prepare anywhere."
     }
-];
+  ],
+  "AI Interview": [
+    {
+      q: "How does the AI evaluate my interview?",
+      a: "Our agent uses advanced models to analyze your technical accuracy, communication clarity, and confidence in real-time, providing immediate actionable feedback."
+    },
+    {
+      q: "Are the interview questions realistic?",
+      a: "Yes, we source our questions dynamically from real, recent MNC interviews to ensure you're practicing exactly what you'll face in the actual tech loops."
+    },
+    {
+      q: "Can I choose the difficulty level?",
+      a: "Absolutely. You can customize the AI agent to act as a friendly technical recruiter, or scale it up to a rigorous, stress-testing senior engineer."
+    },
+    {
+      q: "Does the AI support system design rounds?",
+      a: "Yes! The AI can conduct both coding and system design interviews, evaluating your architectural choices, trade-offs, and scalability considerations."
+    },
+    {
+      q: "Will I get hints if I get stuck?",
+      a: "During the interview, the AI acts just like a real interviewer. It won't give you the answer directly but will offer progressive hints to guide your logic."
+    },
+    {
+      q: "What if I lose connection during an interview?",
+      a: "Your interview progress is auto-saved in real-time. You can seamlessly resume from where you left off once your connection is restored."
+    }
+  ]
+};
 
-function FAQItem({ q, a, i }: { q: string, a: string, i: number }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.05 }}
-            className="border-b border-gray-100 last:border-0"
-        >
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full py-6 flex items-center justify-between text-left group transition-all"
-            >
-                <span className={`text-lg font-bold transition-colors duration-300 ${isOpen ? 'text-brand-orange' : 'text-gray-900 group-hover:text-brand-orange'}`}>
-                    {q}
-                </span>
-                <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    className={`p-2 rounded-full transition-colors ${isOpen ? 'bg-orange-50 text-brand-orange' : 'bg-gray-50 text-gray-400'}`}
-                >
-                    <ChevronDown size={18} />
-                </motion.div>
-            </button>
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
-                        className="overflow-hidden"
-                    >
-                        <p className="pb-8 text-gray-500 leading-relaxed max-w-3xl font-medium">
-                            {a}
-                        </p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </motion.div>
-    );
-}
+type Category = keyof typeof faqsData;
+const categories = Object.keys(faqsData) as Category[];
 
 export default function FAQSection() {
-    // Generate JSON-LD Schema
-    const faqSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqs.map(faq => ({
-            "@type": "Question",
-            "name": faq.q,
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.a
-            }
-        }))
-    };
+  const [activeTab, setActiveTab] = useState<Category>("General");
+  const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
 
-    return (
-        <section className="py-24 bg-white relative overflow-hidden">
-            {/* JSON-LD injection */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-            />
+  return (
+    <section className="py-24 md:py-32 bg-background relative overflow-hidden" id="faq">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+          
+          {/* Left Side: Headings & CTA */}
+          <div className="lg:col-span-5 flex flex-col items-start pt-4">
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-primary/20 text-primary mb-6 bg-primary/5">
+              FAQs
+            </span>
+            <h2 className="text-4xl md:text-5xl lg:text-5xl font-medium text-foreground tracking-tight mb-6 leading-tight">
+              Everything you need to know
+            </h2>
+            <p className="text-lg text-foreground/70 leading-relaxed mb-16 max-w-md">
+              Explore helpful information about our AI interviews, practice drills, and the free tools available to supercharge your hiring potential.
+            </p>
 
-            <div className="max-w-4xl mx-auto px-6 relative z-10">
-                <div className="text-center mb-20">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 text-brand-orange text-[10px] font-black uppercase tracking-widest mb-4 border border-orange-100">
-                        <HelpCircle size={14} />
-                        Platform Knowledge
-                    </div>
-                    <h2 className="text-4xl md:text-5xl font-[1000] text-gray-900 tracking-tighter mb-4">
-                        Everything you need to <span className="text-brand-orange">succeed.</span>
-                    </h2>
-                    <p className="text-gray-500 font-medium text-lg">
-                        Deep dive into how Emble transforms your career from Preparation to Industrial Mastery.
-                    </p>
-                </div>
-
-                <div className="bg-gray-50/50 rounded-3xl p-4 md:p-10 border border-gray-100 shadow-sm">
-                    {faqs.map((faq, i) => (
-                        <FAQItem key={i} q={faq.q} a={faq.a} i={i} />
-                    ))}
-                </div>
-
-                <div className="mt-16 text-center">
-                    <p className="text-gray-400 font-bold text-xs uppercase tracking-widest leading-loose">
-                        Still have questions? Our AI Mentor is available 24/7 in the platform workspace.
-                    </p>
-                </div>
+            <div className="bg-secondary/50 p-8 border border-border rounded-2xl w-full max-w-sm">
+              <h3 className="text-xl font-medium text-foreground mb-6">
+                Still have questions? Our team is ready to assist.
+              </h3>
+              <Link 
+                href="/contact"
+                className="flex items-center justify-center gap-2 w-full h-12 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <Mail className="w-5 h-5" />
+                Get in Touch
+              </Link>
             </div>
-        </section>
-    );
+          </div>
+
+          {/* Right Side: Tabs & Accordion */}
+          <div className="lg:col-span-7">
+            
+            {/* Tabs */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-secondary/50 border border-border rounded-xl w-max max-w-full overflow-x-auto">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setActiveTab(cat);
+                    setOpenIndex(0); // Reset accordion on tab change
+                  }}
+                  className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    activeTab === cat 
+                      ? 'bg-background border border-border text-foreground shadow-sm' 
+                      : 'text-foreground/60 hover:text-foreground hover:bg-secondary'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Accordion */}
+            <div className="space-y-4">
+              <AnimatePresence mode="popLayout">
+                {faqsData[activeTab].map((faq, index) => {
+                  const isOpen = openIndex === index;
+                  
+                  return (
+                    <motion.div
+                      key={faq.q}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                      className={`border rounded-2xl transition-colors duration-300 ${isOpen ? 'bg-secondary/30 border-primary/20 shadow-sm' : 'bg-transparent border-border hover:border-foreground/20'}`}
+                    >
+                      <button
+                        onClick={() => setOpenIndex(isOpen ? null : index)}
+                        className="w-full text-left px-6 py-5 flex items-center justify-between group"
+                      >
+                        <span className={`text-lg font-medium pr-8 transition-colors ${isOpen ? 'text-primary' : 'text-foreground/80 group-hover:text-foreground'}`}>
+                          {faq.q}
+                        </span>
+                        <div className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${isOpen ? 'bg-primary/10 text-primary' : 'text-foreground/40 group-hover:bg-secondary group-hover:text-foreground/80'}`}>
+                          <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                            <ChevronDown className="w-5 h-5" />
+                          </motion.div>
+                        </div>
+                      </button>
+                      
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-6 pb-6 text-foreground/70 leading-relaxed pt-2 border-t border-border mt-2">
+                              {faq.a}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

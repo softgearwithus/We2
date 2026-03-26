@@ -1,109 +1,106 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { Terminal, Github, Twitter, Linkedin, Instagram } from 'lucide-react';
-import { fetchPublicPlatformSettings } from '@/app/lib/admin-settings';
+import { Terminal, Linkedin, Twitter, MessageCircle, Mail } from 'lucide-react';
 
 export default function Footer() {
-    const [supportEmail, setSupportEmail] = useState('support@emble.in');
-
-    useEffect(() => {
-        fetchPublicPlatformSettings()
-            .then((data) => {
-                if (data.supportEmail) {
-                    setSupportEmail(data.supportEmail);
-                }
-            })
-            .catch(() => null);
-    }, []);
-
     return (
-        <footer className="relative z-10 py-16 bg-white text-brand-black border-t border-gray-100">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-10">
-                    <div className="space-y-6 lg:col-span-2">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <div className="w-8 h-8 bg-brand-black rounded flex items-center justify-center group-hover:bg-brand-orange transition-colors duration-300">
-                                <Terminal size={18} className="text-white" strokeWidth={3} />
-                            </div>
-                            <span className="text-xl font-bold tracking-tight text-brand-black">
-                                EMBLE
-                            </span>
-                        </Link>
-                        <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
-                            The complete <strong className="text-brand-black">Full-Stack Bootcamp</strong>. Bridge the gap between academic learning and industry expectations in one unified platform.
-                        </p>
-                    </div>
+        <footer className="w-full bg-[#0F2317] text-white pt-24 pb-8 flex flex-col items-center relative overflow-hidden font-sans mt-auto">
+            {/* Background Grid */}
+            <div 
+                className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                style={{ 
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', 
+                    backgroundSize: '32px 32px' 
+                }} 
+            />
 
-                    {/* Footer Links */}
-                    {[
-                        {
-                            title: 'Product',
-                            links: [
-                                { label: 'Bootcamp Curriculum', href: '/curriculum' },
-                                { label: 'How it Works', href: '/how-it-works' },
-                                { label: 'Pricing', href: '/pricing' },
-                                { label: 'AI Mentors', href: '/ai-mentors' }
-                            ]
-                        },
-                        {
-                            title: 'Company',
-                            links: [
-                                { label: 'Our Mission', href: '/about' },
-                                { label: 'Careers', href: '/careers' },
-                                { label: 'Contact', href: '/contact' }
-                            ]
-                        },
-                        {
-                            title: 'Resources',
-                            links: [
-                                { label: 'Documentation', href: '/docs' },
-                                { label: 'Terms of Service', href: '/terms' },
-                                { label: 'Privacy Policy', href: '/privacy' },
-                                { label: 'Refund Policy', href: '/refund' },
-                                { label: 'System Status', href: '/status' }
-                            ]
-                        }
-                    ].map((col) => (
-                        <div key={col.title}>
-                            <h6 className="text-brand-black font-bold mb-6 text-sm uppercase tracking-wider">{col.title}</h6>
-                            <ul className="space-y-4 text-sm text-gray-500">
-                                {col.links.map((link) => (
-                                    <li key={link.label}>
-                                        <Link href={link.href} className="hover:text-brand-orange transition-colors">
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-
-                    {/* Contact Info Column */}
-                    <div>
-                        <h6 className="text-brand-black font-bold mb-6 text-sm uppercase tracking-wider">Contact Us</h6>
-                        <ul className="space-y-4 text-sm text-gray-500">
-                            <li>
-                                <a href={`mailto:${supportEmail}`} className="hover:text-brand-orange transition-colors">
-                                    {supportEmail}
-                                </a>
-                            </li>
-                        </ul>
+            {/* Top Centered CTA / Newsletter Block */}
+            <div className="w-full max-w-4xl mx-auto px-6 flex flex-col items-center text-center relative z-10 mb-20 space-y-8">
+                <div className="space-y-4">
+                    <div className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-white/80 mb-4 tracking-wide">
+                        Unlock what's hidden ✨
                     </div>
+                    <h2 className="text-4xl md:text-5xl lg:text-[56px] font-bold tracking-tight text-white leading-[1.1]">
+                        Master placements with AI.<br />
+                        <span className="text-white/80">No black boxes.</span>
+                    </h2>
+                    <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mt-6">
+                        Get early access to exclusive placement resources, AI mock interview scenarios, and resume tips. Stay updated with industry hiring trends.
+                    </p>
                 </div>
 
-                <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-medium text-gray-400 uppercase tracking-widest">
-                    <Link href="/copyright" className="hover:text-brand-orange transition-colors group">
-                        © 2026 EMBLE Technologies. <span className="group-hover:underline normal-case tracking-normal ml-2">View Copyright & Policies</span>
+                {/* Newsletter Input */}
+                <form className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md mt-4" onSubmit={(e) => e.preventDefault()}>
+                    <input 
+                        type="email" 
+                        placeholder="Enter your email" 
+                        required
+                        className="w-full h-14 px-6 rounded-full border border-white/20 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 text-base shadow-sm backdrop-blur-sm transition-all"
+                    />
+                    <button 
+                        type="submit" 
+                        className="w-full sm:w-auto h-14 px-8 rounded-full bg-white text-[#0F2317] font-bold hover:bg-white/90 transition-transform active:scale-95 flex items-center justify-center shrink-0"
+                    >
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full max-w-[1400px] border-t border-white/10" />
+
+            {/* Middle Section: Branding & Links */}
+            <div className="w-full max-w-[1400px] mx-auto px-6 py-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 lg:gap-6 relative z-10">
+                {/* Left: Branding */}
+                <div className="flex flex-col justify-start max-w-xs">
+                    <Link href="/" className="inline-flex items-center group mb-3">
+                        <span className="text-xl font-bold tracking-tight text-white">
+                            emble
+                        </span>
                     </Link>
-                    <div className="flex gap-8">
-                        <a href="https://www.linkedin.com/company/joinemble/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors"><Linkedin size={18} /></a>
-                        <a href="https://x.com/joinEmble" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors"><Twitter size={18} /></a>
-                        <a href="https://www.instagram.com/emble.in/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors"><Instagram size={18} /></a>
+                    <p className="text-white/50 text-sm leading-relaxed">
+                        The most human AI interviews with free core tools for placement mastery.
+                    </p>
+                </div>
+
+                {/* Right: Horizontal Links & Socials */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:gap-12">
+                    <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-white/70">
+                        <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+                        <Link href="/practice" className="hover:text-white transition-colors">Practice</Link>
+                        <Link href="/about" className="hover:text-white transition-colors">Company</Link>
+                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+                        <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+                    </nav>
+
+                    {/* Socials */}
+                    <div className="flex items-center gap-4 text-white/50">
+                        <Link href="https://linkedin.com" target="_blank" className="hover:text-white transition-colors" aria-label="LinkedIn">
+                            <Linkedin className="w-5 h-5" />
+                        </Link>
+                        <Link href="https://twitter.com" target="_blank" className="hover:text-white transition-colors" aria-label="Twitter">
+                            <Twitter className="w-5 h-5" />
+                        </Link>
+                        <Link href="https://discord.com" target="_blank" className="hover:text-white transition-colors" aria-label="Discord">
+                            <MessageCircle className="w-5 h-5" />
+                        </Link>
+                        <Link href="mailto:hello@emble.com" className="hover:text-white transition-colors" aria-label="Email">
+                            <Mail className="w-5 h-5" />
+                        </Link>
                     </div>
                 </div>
             </div>
-        </footer >
+
+            {/* Bottom Row */}
+            <div className="w-full max-w-[1400px] border-t border-white/5 mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center text-xs text-white/40 relative z-10 gap-4">
+                <p>© 2026 Emble. All rights reserved.</p>
+                <div className="flex items-center gap-4">
+                    <p className="flex items-center gap-1">Made with <span className="text-red-500">♥</span> for placements</p>
+                </div>
+            </div>
+        </footer>
     );
 }
