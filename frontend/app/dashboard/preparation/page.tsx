@@ -119,11 +119,11 @@ export default function PreparationPage() {
                             {
                                 phase: 'Phase 1',
                                 title: 'The Foundation',
-                                desc: 'Before writing complex scalable code, you need to master logic and data handling. This is where 90% of technical screening rounds focus.',
+                                desc: 'Before writing complex scalable code, you need consistent execution speed and clean coding habits in a production-like editor.',
                                 icon: Code, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100',
                                 actions: [
-                                    { name: 'DSA Logic Building', route: '/dashboard/dsa', target: 'Core Patterns' },
-                                    { name: 'SQL Architecture', route: '/dashboard/sql', target: 'Master 5 Query Patterns' }
+                                    { name: 'IDE Workspace', route: '/dashboard/ide', target: 'Ship 1 coding sprint' },
+                                    { name: 'Technical Test Simulation', route: '/dashboard/test-series', target: 'Attempt 1 full section' }
                                 ]
                             },
                             {

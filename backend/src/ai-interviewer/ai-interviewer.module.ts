@@ -12,20 +12,20 @@ import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
 import { InterviewsModule } from '../interviews/interviews.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([
-            AiInterviewSession,
-            AiInterviewReport,
-            AiInterviewModerationEvent,
-            ResumeDocument,
-            InterviewSession,
-        ]),
-        ConfigModule,
-        AdminSettingsModule,
-        InterviewsModule,
-    ],
-    controllers: [AiInterviewerController],
-    providers: [AiInterviewerService],
-    exports: [AiInterviewerService],
+  imports: [
+    TypeOrmModule.forFeature([
+      AiInterviewSession,
+      AiInterviewReport,
+      AiInterviewModerationEvent,
+      ResumeDocument,
+      InterviewSession,
+    ]),
+    ConfigModule,
+    AdminSettingsModule,
+    InterviewsModule,
+  ],
+  controllers: [AiInterviewerController],
+  providers: [AiInterviewerService],
+  exports: [AiInterviewerService],
 })
-export class AiInterviewerModule { }
+export class AiInterviewerModule {}

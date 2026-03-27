@@ -1,31 +1,37 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('queries')
 export class Query {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    email: string;
+  @Column()
+  email: string;
 
-    @Column()
-    subject: string;
+  @Column()
+  subject: string;
 
-    @Column({ nullable: true })
-    companyName?: string;
+  @Column({ nullable: true })
+  companyName?: string;
 
-    @Column('text')
-    message: string;
+  @Column('text')
+  message: string;
 
-    @Column({ default: 'pending' })
-    status: string; // 'pending' | 'resolved'
+  @Column({ default: 'pending' })
+  status: string; // 'pending' | 'resolved'
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedDate: Date;
+  @UpdateDateColumn()
+  updatedDate: Date;
 }

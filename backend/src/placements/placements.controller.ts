@@ -1,9 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { PlacementsService } from './placements.service';
 import { CreatePlacementDto } from './dto/create-placement.dto';
 import { UpdatePlacementDto } from './dto/update-placement.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { PlacementType, PlacementStatus, DriveVerificationStatus } from './entities/placement.entity';
+import {
+  PlacementType,
+  PlacementStatus,
+  DriveVerificationStatus,
+} from './entities/placement.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
@@ -11,7 +26,7 @@ import { UserRole } from '../users/user.entity';
 @UseGuards(JwtAuthGuard)
 @Controller('placements')
 export class PlacementsController {
-  constructor(private readonly placementsService: PlacementsService) { }
+  constructor(private readonly placementsService: PlacementsService) {}
 
   @Post()
   @UseGuards(RolesGuard)
@@ -34,7 +49,7 @@ export class PlacementsController {
   findAll(
     @Request() req: any,
     @Query('type') type?: PlacementType,
-    @Query('status') status?: PlacementStatus
+    @Query('status') status?: PlacementStatus,
   ) {
     const isSuperAdmin = req.user.role === UserRole.SUPER_ADMIN;
     return this.placementsService.findAll(type, status, isSuperAdmin);
@@ -48,7 +63,10 @@ export class PlacementsController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN)
-  update(@Param('id') id: string, @Body() updatePlacementDto: UpdatePlacementDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePlacementDto: UpdatePlacementDto,
+  ) {
     return this.placementsService.update(id, updatePlacementDto);
   }
 
@@ -58,9 +76,13 @@ export class PlacementsController {
   verifyDrive(
     @Param('id') id: string,
     @Body('verificationStatus') verificationStatus: DriveVerificationStatus,
-    @Body('rejectionReason') rejectionReason?: string
+    @Body('rejectionReason') rejectionReason?: string,
   ) {
-    return this.placementsService.verifyDrive(id, verificationStatus, rejectionReason);
+    return this.placementsService.verifyDrive(
+      id,
+      verificationStatus,
+      rejectionReason,
+    );
   }
 
   @Delete(':id')

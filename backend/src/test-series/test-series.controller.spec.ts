@@ -18,10 +18,10 @@ describe('TestSeriesController', () => {
             submitTest: jest.fn(),
             submitSubjectPractice: jest.fn(),
             getResultFull: jest.fn(),
-            getStudentResults: jest.fn()
-          }
-        }
-      ]
+            getStudentResults: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<TestSeriesController>(TestSeriesController);

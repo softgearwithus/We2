@@ -10,9 +10,17 @@ import { LastActiveInterceptor } from './interceptors/last-active.interceptor';
 import { UploadLimitInterceptor } from './interceptors/upload-limit.interceptor';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([AdminUpdateFlag, PlatformSettings]), forwardRef(() => UsersModule)],
-    controllers: [AdminSettingsController],
-    providers: [AdminSettingsService, PlatformGuard, LastActiveInterceptor, UploadLimitInterceptor],
-    exports: [AdminSettingsService],
+  imports: [
+    TypeOrmModule.forFeature([AdminUpdateFlag, PlatformSettings]),
+    forwardRef(() => UsersModule),
+  ],
+  controllers: [AdminSettingsController],
+  providers: [
+    AdminSettingsService,
+    PlatformGuard,
+    LastActiveInterceptor,
+    UploadLimitInterceptor,
+  ],
+  exports: [AdminSettingsService],
 })
-export class AdminSettingsModule { }
+export class AdminSettingsModule {}

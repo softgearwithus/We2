@@ -6,8 +6,8 @@ import { McqsController } from './mcqs.controller';
 import { McqsService } from './mcqs.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([McqQuestion]), AdminModule],
-    controllers: [McqsController],
-    providers: [McqsService],
+  imports: [TypeOrmModule.forFeature([McqQuestion]), AdminModule],
+  controllers: [McqsController],
+  providers: [McqsService],
 })
-export class McqsModule { }
+export class McqsModule {}

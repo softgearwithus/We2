@@ -10,8 +10,17 @@ import { MentorPaymentOrder } from './entities/mentor-payment-order.entity';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([MentorProfile, MentorApplication, MentorSession, MentorPayout, MentorPaymentOrder]), UsersModule],
-    controllers: [MentorsController],
-    providers: [MentorsService],
+  imports: [
+    TypeOrmModule.forFeature([
+      MentorProfile,
+      MentorApplication,
+      MentorSession,
+      MentorPayout,
+      MentorPaymentOrder,
+    ]),
+    UsersModule,
+  ],
+  controllers: [MentorsController],
+  providers: [MentorsService],
 })
 export class MentorsModule {}

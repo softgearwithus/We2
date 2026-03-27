@@ -17,7 +17,6 @@ import { InterviewsModule } from './interviews/interviews.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { ProjectsModule } from './projects/projects.module';
 import { ProjectLabsModule } from './project-labs/project-labs.module';
-import { DsaModule } from './dsa/dsa.module';
 import { User } from './users/user.entity';
 import { Simulation } from './simulations/entities/simulation.entity';
 import { Task } from './tasks/entities/task.entity';
@@ -30,17 +29,6 @@ import { Project } from './projects/entities/project.entity';
 import { ProjectLab } from './project-labs/entities/project-lab.entity';
 import { ProjectLabSubmission } from './project-labs/entities/project-lab-submission.entity';
 import { InterviewSession } from './interviews/entities/interview-session.entity';
-import { DsaProblem } from './dsa/entities/dsa-problem.entity';
-import { Submission } from './dsa/entities/submission.entity';
-import { DsaUserState } from './dsa/entities/dsa-user-state.entity';
-import { DsaTrainingSession } from './dsa/entities/dsa-training-session.entity';
-import { DsaProblemInsight } from './dsa/entities/dsa-problem-insight.entity';
-import { SqlModule } from './sql/sql.module';
-import { SqlProblem } from './sql/entities/sql-problem.entity';
-import { SqlSubmission } from './sql/entities/sql-submission.entity';
-import { SqlUserState } from './sql/entities/sql-user-state.entity';
-import { SqlTrainingSession } from './sql/entities/sql-training-session.entity';
-import { SqlProblemInsight } from './sql/entities/sql-problem-insight.entity';
 import { Interview } from './interview/entities/interview.entity';
 import { CollegesModule } from './colleges/colleges.module';
 import { College } from './colleges/entities/college.entity';
@@ -75,8 +63,6 @@ import { McqsModule } from './mcqs/mcqs.module';
 import { McqQuestion } from './mcqs/entities/mcq-question.entity';
 import { WriteXModule } from './writex/writex.module';
 import { WriteXQuestion } from './writex/entities/writex-question.entity';
-import { UsageModule } from './usage/usage.module';
-import { UserSectionUsage } from './usage/entities/user-section-usage.entity';
 import { PreparationModule } from './preparation/preparation.module';
 import { PreparationProgress } from './preparation/entities/preparation-progress.entity';
 import { resolveDbConfig } from './common/db-config';
@@ -192,16 +178,6 @@ import { Query } from './queries/entities/query.entity';
             ProjectLabSubmission,
             InterviewSession,
             Interview,
-            DsaProblem,
-            Submission,
-            DsaUserState,
-            DsaTrainingSession,
-            DsaProblemInsight,
-            SqlProblem,
-            SqlSubmission,
-            SqlUserState,
-            SqlTrainingSession,
-            SqlProblemInsight,
             CourseContent,
             UserGamification,
             Badge,
@@ -209,7 +185,6 @@ import { Query } from './queries/entities/query.entity';
             Resume,
             McqQuestion,
             WriteXQuestion,
-            UserSectionUsage,
             PreparationProgress,
             College,
             CollegeStaff,
@@ -264,8 +239,6 @@ import { Query } from './queries/entities/query.entity';
     CertificationsModule,
     ProjectsModule,
     ProjectLabsModule,
-    DsaModule,
-    SqlModule,
     InterviewModule,
     CourseContentModule,
     AiModule,
@@ -280,7 +253,6 @@ import { Query } from './queries/entities/query.entity';
     ResumeModule,
     McqsModule,
     WriteXModule,
-    UsageModule,
     PreparationModule,
     CareersModule,
     PlacementsModule,
@@ -293,4 +265,4 @@ import { Query } from './queries/entities/query.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

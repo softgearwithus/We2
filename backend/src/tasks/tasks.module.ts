@@ -6,9 +6,9 @@ import { Task } from './entities/task.entity';
 import { Simulation } from '../simulations/entities/simulation.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Task, Simulation])],
-    controllers: [TasksController],
-    providers: [TasksService],
-    exports: [TasksService],
+  imports: [TypeOrmModule.forFeature([Task, Simulation])],
+  controllers: [TasksController],
+  providers: [TasksService],
+  exports: [TasksService],
 })
-export class TasksModule { }
+export class TasksModule {}

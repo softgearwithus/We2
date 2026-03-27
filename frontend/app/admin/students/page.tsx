@@ -106,10 +106,10 @@ export default function AdminStudentsPage() {
     };
 
     const getSubscriptionBadge = (sub: string) => {
-        if (sub === 'placement_plus' || sub.includes('standard')) return <span className="px-2.5 py-1 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg w-fit">EMBLE Standard</span>;
+        if (sub === 'placement_plus' || sub === 'standard' || sub.includes('standard')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> EMBLE Pro Member</span>;
         const label = sub.replace(/_/g, ' ').replace(/\w/g, (c) => c.toUpperCase());
         if (sub === 'free') return <span className="px-2.5 py-1 text-xs font-bold text-slate-500 bg-slate-100 rounded-lg">Free Tier</span>;
-        if (sub === 'we2_max' || sub.includes('pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> {label}</span>;
+        if (sub === 'we2_max' || sub === 'pro' || sub.includes('pro')) return <span className="px-2.5 py-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-1 w-fit"><Crown size={12} /> EMBLE Pro Member</span>;
         return <span className="px-2.5 py-1 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg w-fit">{label}</span>;
     };
 

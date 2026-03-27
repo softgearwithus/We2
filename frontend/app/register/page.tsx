@@ -1,16 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Sparkles, GraduationCap, Building2, Code2, CheckCircle2, Loader2 } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterPageContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isNavigating, setIsNavigating] = useState(false);
     const [selection, setSelection] = useState<'student' | 'partner' | null>(null);
     const [registrationsAllowed, setRegistrationsAllowed] = useState(true);
+
+    const nextParam = searchParams.get('next');
+    const safeNext =
+        nextParam &&
+            nextParam.startsWith('/') &&
+            !nextParam.startsWith('//')
+            ? nextParam
+            : null;
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
@@ -126,7 +136,7 @@ export default function RegisterPage() {
                         <div className="space-y-4">
                             {/* Student Option */}
                             <motion.div
-                                onClick={() => registrationsAllowed && handleNavigation('/register/student', 'student')}
+                                onClick={() => registrationsAllowed && handleNavigation(safeNext ? `/register/student?next=${encodeURIComponent(safeNext)}` : '/register/student', 'student')}
                                 whileHover={!isNavigating ? { scale: 1.02 } : {}}
                                 whileTap={!isNavigating ? { scale: 0.98 } : {}}
                                 animate={isNavigating && selection !== 'student' ? { opacity: 0.5, scale: 0.95 } : {}}
@@ -209,7 +219,7 @@ export default function RegisterPage() {
                         >
                             <p className="text-sm text-slate-500">
                                 Already have an account?{' '}
-                                <Link href="/login" className="font-bold text-brand-black hover:underline hover:text-brand-orange transition-colors">
+                                <Link href={safeNext ? `/login?next=${encodeURIComponent(safeNext)}` : '/login'} className="font-bold text-brand-black hover:underline hover:text-brand-orange transition-colors">
                                     Sign In
                                 </Link>
                             </p>
@@ -218,5 +228,13 @@ export default function RegisterPage() {
                 </AnimatePresence>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+            <RegisterPageContent />
+        </Suspense>
     );
 }

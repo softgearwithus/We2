@@ -6,9 +6,9 @@ import { Team } from './entities/team.entity';
 import { TeamMember } from './entities/team-member.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Team, TeamMember])],
-    controllers: [TeamsController],
-    providers: [TeamsService],
-    exports: [TeamsService],
+  imports: [TypeOrmModule.forFeature([Team, TeamMember])],
+  controllers: [TeamsController],
+  providers: [TeamsService],
+  exports: [TeamsService],
 })
-export class TeamsModule { }
+export class TeamsModule {}

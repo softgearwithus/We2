@@ -10,9 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { InterviewsService } from '@/app/services/InterviewsService';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 import { useCredits } from '@/app/hooks/useCredits';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface InterviewLandingProps {
     initialMode?: Mode;
@@ -29,9 +27,9 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     const interviewsService = useRef(new InterviewsService());
     const { credits, isLoading: creditsLoading, refetch } = useCredits();
 
-    const isAudioLimited = !creditsLoading && (credits?.audioDrills.remaining === 0);
-    const isVideoLimited = !creditsLoading && (credits?.videoSimulations.remaining === 0);
-    const isFreePlan = credits?.plan === 'free';
+    const isAudioLimited = false;
+    const isVideoLimited = false;
+    const isFreePlan = false;
 
     // Sync mode when initialMode prop changes (e.g. navigation)
     useEffect(() => {
@@ -121,24 +119,10 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     }
 
     if (mode === 'instructions') {
-        if (isVideoLimited) {
-            return (
-                <div className="relative min-h-screen">
-                    <UsageUpgradeGate message="Upgrade to continue your video interview sessions." />
-                </div>
-            );
-        }
         return <PreInterviewInstructions onStart={startVideoSession} onBack={() => setMode('landing')} />;
     }
 
     if (mode === 'video_session') {
-        if (isVideoLimited) {
-            return (
-                <div className="relative min-h-screen">
-                    <UsageUpgradeGate message="Upgrade to continue your video interview sessions." />
-                </div>
-            );
-        }
         return (
             <InterviewSession
                 onEnd={handleVideoComplete}
@@ -236,7 +220,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                             <div className="mt-6 pt-6 border-t border-slate-100">
                                 <Button
                                     onClick={handleStartAudioFlow}
-                                    disabled={isAudioLimited || creditsLoading}
+                                    disabled={creditsLoading}
                                     className="w-full bg-slate-900 hover:bg-violet-600 text-white rounded-xl py-6 text-base font-bold shadow-lg shadow-slate-200 hover:shadow-violet-200 transition-all duration-300 flex justify-between items-center px-6 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     Start Drill <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -286,7 +270,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                             <div className="mt-6 pt-6 border-t border-slate-800">
                                 <Button
                                     onClick={handleStartVideoFlow}
-                                    disabled={isVideoLimited || creditsLoading}
+                                    disabled={creditsLoading}
                                     className="w-full bg-white text-slate-900 hover:bg-emerald-400 hover:text-emerald-950 rounded-xl py-6 text-base font-bold shadow-xl hover:shadow-emerald-500/20 transition-all duration-300 flex justify-between items-center px-6 disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? <Loader2 className="animate-spin" /> : (

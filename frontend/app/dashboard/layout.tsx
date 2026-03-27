@@ -87,8 +87,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Mock Analysis', href: '/dashboard/test-series/mock-analysis', icon: 'analytics' }
             ]
         },
-        { icon: 'code', label: 'DSA Training', href: '/dashboard/dsa', hasUpdate: updateIndicators['/dashboard/dsa'] },
-        { icon: 'database', label: 'SQL Training', href: '/dashboard/sql', hasUpdate: updateIndicators['/dashboard/sql'] },
+        { icon: 'terminal', label: 'IDE Workspace', href: '/dashboard/ide', hasUpdate: updateIndicators['/dashboard/ide'] },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },
         {
             icon: 'mic',

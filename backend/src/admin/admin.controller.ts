@@ -1,4 +1,12 @@
-import { Controller, Get, UseGuards, Query, Patch, Delete, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Query,
+  Patch,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -11,33 +19,42 @@ import { AdminService } from './admin.service';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('admin')
 export class AdminController {
-    constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService) {}
 
-    @Get('analytics')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Admin analytics summary' })
-    async getAnalytics(@Query('range') range?: string) {
-        return this.adminService.getAnalytics(range);
-    }
+  @Get('analytics')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Admin analytics summary' })
+  async getAnalytics(@Query('range') range?: string) {
+    return this.adminService.getAnalytics(range);
+  }
 
-    @Get('students')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Admin students listing' })
-    async getStudents() {
-        return this.adminService.getStudents();
-    }
+  @Get('students')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Admin students listing' })
+  async getStudents() {
+    return this.adminService.getStudents();
+  }
 
-    @Patch('students/:id/disable')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Disable a student account' })
-    async disableStudent(@Param('id') id: string) {
-        return this.adminService.disableStudent(id);
-    }
+  @Get('subscriptions/payments')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Admin recent subscription payment records' })
+  async getRecentSubscriptionPayments(@Query('limit') limit?: string) {
+    return this.adminService.getRecentSubscriptionPayments(
+      limit ? Number(limit) : 50,
+    );
+  }
 
-    @Delete('students/:id')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Delete a student account' })
-    async deleteStudent(@Param('id') id: string) {
-        return this.adminService.deleteStudent(id);
-    }
+  @Patch('students/:id/disable')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Disable a student account' })
+  async disableStudent(@Param('id') id: string) {
+    return this.adminService.disableStudent(id);
+  }
+
+  @Delete('students/:id')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Delete a student account' })
+  async deleteStudent(@Param('id') id: string) {
+    return this.adminService.deleteStudent(id);
+  }
 }

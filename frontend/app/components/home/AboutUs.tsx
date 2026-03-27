@@ -47,10 +47,10 @@ export default function AboutUs() {
           className="pt-4"
         >
           <Link 
-            href="/about" 
+            href="/dashboard" 
             className="inline-flex h-[52px] items-center justify-center rounded-[14px] bg-[#1c241d] px-8 font-medium text-background transition-all hover:bg-[#2a3626] active:scale-95 group shadow-sm"
           >
-            Join us for more
+            Practice for free
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </motion.div>

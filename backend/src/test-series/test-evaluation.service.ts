@@ -8,77 +8,85 @@ import { MockQuestionType } from './entities/mock-test-question.entity';
 
 @Injectable()
 export class TestEvaluationService {
-    private readonly logger = new Logger(TestEvaluationService.name);
-    private ai: GoogleGenAI;
+  private readonly logger = new Logger(TestEvaluationService.name);
+  private ai: GoogleGenAI;
 
-    constructor(
-        @InjectRepository(MockTestResult)
-        private resultRepository: Repository<MockTestResult>,
-        @InjectRepository(MockTestStudentResponse)
-        private responseRepository: Repository<MockTestStudentResponse>,
-    ) {
-        // Initialize Gemini SDK
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            this.logger.warn('GEMINI_API_KEY is not set. AI evaluation will be bypassed.');
-        } else {
-            this.ai = new GoogleGenAI({ apiKey });
-        }
+  constructor(
+    @InjectRepository(MockTestResult)
+    private resultRepository: Repository<MockTestResult>,
+    @InjectRepository(MockTestStudentResponse)
+    private responseRepository: Repository<MockTestStudentResponse>,
+  ) {
+    // Initialize Gemini SDK
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      this.logger.warn(
+        'GEMINI_API_KEY is not set. AI evaluation will be bypassed.',
+      );
+    } else {
+      this.ai = new GoogleGenAI({ apiKey });
+    }
+  }
+
+  /**
+   * Non-blocking background method to evaluate pending subjective questions
+   */
+  async evaluatePendingResponses(resultId: string) {
+    if (!this.ai) {
+      this.logger.warn(
+        'Cannot evaluate Result ID ' + resultId + ' - No API Key.',
+      );
+      await this.markResultEvaluated(resultId);
+      return;
     }
 
-    /**
-     * Non-blocking background method to evaluate pending subjective questions
-     */
-    async evaluatePendingResponses(resultId: string) {
-        if (!this.ai) {
-            this.logger.warn('Cannot evaluate Result ID ' + resultId + ' - No API Key.');
-            await this.markResultEvaluated(resultId);
-            return;
-        }
+    try {
+      const result = await this.resultRepository.findOne({
+        where: { id: resultId },
+        relations: ['responses', 'responses.question'],
+      });
 
-        try {
-            const result = await this.resultRepository.findOne({
-                where: { id: resultId },
-                relations: ['responses', 'responses.question']
-            });
+      if (!result || result.isEvaluated) return;
 
-            if (!result || result.isEvaluated) return;
+      const pendingResponses = result.responses.filter(
+        (r) =>
+          r.isCorrect === null &&
+          (r.question.questionType === MockQuestionType.TEXT ||
+            r.question.questionType === MockQuestionType.CODE),
+      );
 
-            const pendingResponses = result.responses.filter(r =>
-                r.isCorrect === null &&
-                (r.question.questionType === MockQuestionType.TEXT || r.question.questionType === MockQuestionType.CODE)
-            );
+      if (pendingResponses.length === 0) {
+        await this.markResultEvaluated(result.id);
+        return;
+      }
 
-            if (pendingResponses.length === 0) {
-                await this.markResultEvaluated(result.id);
-                return;
-            }
+      for (const r of pendingResponses) {
+        await this.evaluateSingleResponse(r);
+      }
 
-            for (const r of pendingResponses) {
-                await this.evaluateSingleResponse(r);
-            }
+      // Recalculate Totals
+      await this.recalculateResultTotals(result.id);
+    } catch (error) {
+      this.logger.error(
+        `Error during AI Evaluation for Result ${resultId}:`,
+        error,
+      );
+    }
+  }
 
-            // Recalculate Totals
-            await this.recalculateResultTotals(result.id);
+  private async evaluateSingleResponse(response: MockTestStudentResponse) {
+    const question = response.question;
+    const studentAnswer = response.responseValue;
 
-        } catch (error) {
-            this.logger.error(`Error during AI Evaluation for Result ${resultId}:`, error);
-        }
+    if (!studentAnswer || studentAnswer.trim() === '') {
+      response.isCorrect = false;
+      response.marksAwarded = 0;
+      response.aiFeedback = 'No answer provided.';
+      await this.responseRepository.save(response);
+      return;
     }
 
-    private async evaluateSingleResponse(response: MockTestStudentResponse) {
-        const question = response.question;
-        const studentAnswer = response.responseValue;
-
-        if (!studentAnswer || studentAnswer.trim() === '') {
-            response.isCorrect = false;
-            response.marksAwarded = 0;
-            response.aiFeedback = 'No answer provided.';
-            await this.responseRepository.save(response);
-            return;
-        }
-
-        const prompt = `
+    const prompt = `
  You are an expert technical evaluator grading a student's test submission for an exam.
  Analyze the student's answer based on the following question:
 
@@ -104,72 +112,76 @@ export class TestEvaluationService {
  }
  `;
 
-        try {
-            const aiResponse = await this.ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                }
-            });
+    try {
+      const aiResponse = await this.ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+        },
+      });
 
-            const text = aiResponse.text;
-            if (text) {
-                // Safely parse JSON that might be wrapped in ```json
-                let cleanText = text.trim();
-                if (cleanText.startsWith('```json')) {
-                    cleanText = cleanText.replace(/```json/g, '').replace(/```/g, '').trim();
-                }
-
-                const parsed = JSON.parse(cleanText);
-                const isCorrect = !!parsed.isCorrect;
-                let awarded = Number(parsed.marksAwarded);
-                if (!Number.isFinite(awarded)) awarded = 0;
-                if (!isCorrect) awarded = 0;
-
-                response.isCorrect = isCorrect;
-                response.marksAwarded = awarded;
-
-                // Clamp Marks
-                if (response.marksAwarded > question.marks) response.marksAwarded = question.marks;
-                if (response.marksAwarded < 0) response.marksAwarded = 0;
-
-                response.aiFeedback = parsed.feedback || 'Evaluated successfully.';
-            } else {
-                this.fallbackEval(response);
-            }
-        } catch (error) {
-            this.logger.error(`Failed to evaluate response via Gemini:`, error);
-            this.fallbackEval(response);
+      const text = aiResponse.text;
+      if (text) {
+        // Safely parse JSON that might be wrapped in ```json
+        let cleanText = text.trim();
+        if (cleanText.startsWith('```json')) {
+          cleanText = cleanText
+            .replace(/```json/g, '')
+            .replace(/```/g, '')
+            .trim();
         }
 
-        await this.responseRepository.save(response);
+        const parsed = JSON.parse(cleanText);
+        const isCorrect = !!parsed.isCorrect;
+        let awarded = Number(parsed.marksAwarded);
+        if (!Number.isFinite(awarded)) awarded = 0;
+        if (!isCorrect) awarded = 0;
+
+        response.isCorrect = isCorrect;
+        response.marksAwarded = awarded;
+
+        // Clamp Marks
+        if (response.marksAwarded > question.marks)
+          response.marksAwarded = question.marks;
+        if (response.marksAwarded < 0) response.marksAwarded = 0;
+
+        response.aiFeedback = parsed.feedback || 'Evaluated successfully.';
+      } else {
+        this.fallbackEval(response);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to evaluate response via Gemini:`, error);
+      this.fallbackEval(response);
     }
 
-    private fallbackEval(response: MockTestStudentResponse) {
-        response.isCorrect = false;
-        response.marksAwarded = 0;
-        response.aiFeedback = "AI Evaluation Failed due to an internal error.";
+    await this.responseRepository.save(response);
+  }
+
+  private fallbackEval(response: MockTestStudentResponse) {
+    response.isCorrect = false;
+    response.marksAwarded = 0;
+    response.aiFeedback = 'AI Evaluation Failed due to an internal error.';
+  }
+
+  private async recalculateResultTotals(resultId: string) {
+    const result = await this.resultRepository.findOne({
+      where: { id: resultId },
+      relations: ['responses', 'responses.question'],
+    });
+    if (!result) return;
+
+    let obtained = 0;
+    for (const r of result.responses) {
+      obtained += Number(r.marksAwarded || 0);
     }
 
-    private async recalculateResultTotals(resultId: string) {
-        const result = await this.resultRepository.findOne({
-            where: { id: resultId },
-            relations: ['responses', 'responses.question']
-        });
-        if (!result) return;
+    result.marksObtained = obtained;
+    result.isEvaluated = true;
+    await this.resultRepository.save(result);
+  }
 
-        let obtained = 0;
-        for (const r of result.responses) {
-            obtained += Number(r.marksAwarded || 0);
-        }
-
-        result.marksObtained = obtained;
-        result.isEvaluated = true;
-        await this.resultRepository.save(result);
-    }
-
-    private async markResultEvaluated(resultId: string) {
-        await this.resultRepository.update(resultId, { isEvaluated: true });
-    }
+  private async markResultEvaluated(resultId: string) {
+    await this.resultRepository.update(resultId, { isEvaluated: true });
+  }
 }

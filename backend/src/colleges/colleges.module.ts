@@ -11,9 +11,19 @@ import { UsersModule } from '../users/users.module';
 import { User } from '../users/user.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([College, CollegeStaff, StudentCohort, CollegeStudent, AdminActivityLog, User]), UsersModule],
-    controllers: [CollegesController],
-    providers: [CollegesService],
-    exports: [CollegesService],
+  imports: [
+    TypeOrmModule.forFeature([
+      College,
+      CollegeStaff,
+      StudentCohort,
+      CollegeStudent,
+      AdminActivityLog,
+      User,
+    ]),
+    UsersModule,
+  ],
+  controllers: [CollegesController],
+  providers: [CollegesService],
+  exports: [CollegesService],
 })
 export class CollegesModule {}

@@ -5,8 +5,8 @@ import { PreparationService } from './preparation.service';
 import { PreparationProgress } from './entities/preparation-progress.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([PreparationProgress])],
-    controllers: [PreparationController],
-    providers: [PreparationService],
+  imports: [TypeOrmModule.forFeature([PreparationProgress])],
+  controllers: [PreparationController],
+  providers: [PreparationService],
 })
-export class PreparationModule { }
+export class PreparationModule {}

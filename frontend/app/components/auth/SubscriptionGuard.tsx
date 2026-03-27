@@ -7,19 +7,17 @@ import { useAuth } from '@/app/context/AuthContext';
 
 interface SubscriptionGuardProps {
     children: React.ReactNode;
-    requiredPlan: 'standard' | 'pro';
+    requiredPlan: 'pro';
     featureName?: string;
 }
 
 const PLAN_HIERARCHY = {
     'free': 0,
-    'standard': 1,
-    'pro': 2,
+    'pro': 1,
 };
 
 const PLAN_NAMES: Record<string, string> = {
-    'standard': 'Standard',
-    'pro': 'Pro',
+    'pro': 'Pro Member',
 };
 
 export default function SubscriptionGuard({ children, requiredPlan, featureName = 'Premium Feature' }: SubscriptionGuardProps) {
@@ -30,7 +28,7 @@ export default function SubscriptionGuard({ children, requiredPlan, featureName 
     }
 
     let userPlan = user?.subscriptionPlan || 'free';
-    if (userPlan === 'placement_plus' || userPlan.includes('standard')) userPlan = 'standard';
+    if (userPlan === 'placement_plus' || userPlan === 'standard' || userPlan.includes('standard')) userPlan = 'pro';
     if (userPlan === 'we2_max' || userPlan.includes('pro')) userPlan = 'pro';
 
     const userLevel = PLAN_HIERARCHY[userPlan as keyof typeof PLAN_HIERARCHY] || 0;

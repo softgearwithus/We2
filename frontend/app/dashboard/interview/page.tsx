@@ -10,7 +10,7 @@ function InterviewContent() {
     const mode = searchParams.get('mode') === 'analysis' ? 'analysis' : 'landing';
 
     return (
-        <SubscriptionGuard requiredPlan="standard" featureName="Mock AI Interview">
+        <SubscriptionGuard requiredPlan="pro" featureName="Mock AI Interview">
             <InterviewLanding initialMode={mode} />
         </SubscriptionGuard>
     );

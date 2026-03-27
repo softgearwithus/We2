@@ -32,7 +32,7 @@ interface PricingCardProps {
     icon?: React.ReactNode;
     delay?: number;
     savings?: string;
-    planId?: string; // e.g., 'placement_plus', 'industry_plus', 'we2_max'
+    planId?: string;
     isUpgradeLocked?: boolean;
     currency?: string;
 }
@@ -130,7 +130,8 @@ export default function PricingCard({
             const token = getActiveToken();
             if (!token) {
                 // Redirect to register with plan param if not authenticated
-                window.location.href = `/register/student?plan=${planId}`;
+                const normalizedPlanId = planId === 'pro' ? 'pro_1m' : planId;
+                window.location.href = `/register/student?plan=${normalizedPlanId}`;
                 return;
             }
 

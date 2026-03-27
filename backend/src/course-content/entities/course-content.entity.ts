@@ -1,19 +1,24 @@
-import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class CourseContent {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column({ unique: true })
-    topicId: string;
+  @Column({ unique: true })
+  topicId: string;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column('text')
-    content: string;
+  @Column('text')
+  content: string;
 
-    @UpdateDateColumn()
-    lastUpdated: Date;
+  @UpdateDateColumn()
+  lastUpdated: Date;
 }

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Pricing Plans | Standard & Pro Memberships',
-    description: 'Compare EMBLE Standard and Pro plans. Find the perfect path for your career goals, whether you need light practice or intense interview preparation with our MNC hiring network.',
+    title: 'Pricing Plans | EMBLE Pro Membership',
+    description: 'Upgrade from the free plan to EMBLE Pro Membership for full interview simulations, deeper analytics, and premium placement preparation.',
 };
 
 export default function PricingLayout({

@@ -12,7 +12,10 @@ import { AdminSettingsService } from '../admin-settings.service';
 export class UploadLimitInterceptor implements NestInterceptor {
   constructor(private readonly adminSettingsService: AdminSettingsService) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const file = request.file;
     const files = request.files;

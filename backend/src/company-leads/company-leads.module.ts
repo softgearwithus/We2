@@ -10,4 +10,4 @@ import { CompanyLead } from './entities/company-lead.entity';
   providers: [CompanyLeadsService],
   exports: [CompanyLeadsService],
 })
-export class CompanyLeadsModule { }
+export class CompanyLeadsModule {}

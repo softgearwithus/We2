@@ -14,7 +14,13 @@ export default function PremiumPopup() {
     const [showMainModal, setShowMainModal] = useState(false);
 
     // Completely hide the component if the user is a premium member or on the pricing page
-    const isPremium = user?.subscriptionPlan === 'standard_tier' || user?.subscriptionPlan === 'pro_tier';
+    const normalizedPlan = (user?.subscriptionPlan || '').toLowerCase();
+    const isPremium =
+        normalizedPlan === 'pro' ||
+        normalizedPlan === 'we2_max' ||
+        normalizedPlan.includes('pro') ||
+        normalizedPlan === 'placement_plus' ||
+        normalizedPlan.includes('standard');
     const isPricingPage = pathname === '/pricing';
     const isHomePage = pathname === '/';
 

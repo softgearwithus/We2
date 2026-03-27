@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Interview } from './entities/interview.entity';
@@ -92,7 +96,11 @@ export class InterviewService {
     return this.interviewRepository.save(interview);
   }
 
-  async processMessage(interviewId: string, userMessage: string, userId?: string) {
+  async processMessage(
+    interviewId: string,
+    userMessage: string,
+    userId?: string,
+  ) {
     const interview = await this.interviewRepository.findOne({
       where: { id: interviewId },
     });
@@ -268,7 +276,11 @@ export class InterviewService {
     }
 
     const uploadForm = new FormData();
-    uploadForm.append('file', new Blob([file.buffer as any], { type: file.mimetype }), file.originalname);
+    uploadForm.append(
+      'file',
+      new Blob([file.buffer as any], { type: file.mimetype }),
+      file.originalname,
+    );
 
     const fileResponse = await fetch(`${vapiBase}/file`, {
       method: 'POST',
@@ -280,7 +292,9 @@ export class InterviewService {
 
     if (!fileResponse.ok) {
       const errText = await fileResponse.text().catch(() => '');
-      throw new Error(`Failed to upload resume to Vapi (${fileResponse.status}): ${errText}`);
+      throw new Error(
+        `Failed to upload resume to Vapi (${fileResponse.status}): ${errText}`,
+      );
     }
 
     const fileData = await fileResponse.json();
@@ -315,7 +329,9 @@ export class InterviewService {
 
     if (!toolResponse.ok) {
       const errText = await toolResponse.text().catch(() => '');
-      throw new Error(`Failed to create Vapi knowledge tool (${toolResponse.status}): ${errText}`);
+      throw new Error(
+        `Failed to create Vapi knowledge tool (${toolResponse.status}): ${errText}`,
+      );
     }
 
     const toolData = await toolResponse.json();
@@ -357,7 +373,9 @@ export class InterviewService {
     let toolId: string | null = null;
     let toolName: string | null = null;
     if (resumeAssetId) {
-      const asset = await this.vapiResumeRepo.findOne({ where: { id: resumeAssetId, userId } });
+      const asset = await this.vapiResumeRepo.findOne({
+        where: { id: resumeAssetId, userId },
+      });
       if (asset) {
         toolId = asset.vapiToolId;
         toolName = asset.vapiToolName;
@@ -405,7 +423,12 @@ export class InterviewService {
                   communication: { type: 'number', minimum: 0, maximum: 100 },
                   problemSolving: { type: 'number', minimum: 0, maximum: 100 },
                 },
-                required: ['overallScore', 'technical', 'communication', 'problemSolving'],
+                required: [
+                  'overallScore',
+                  'technical',
+                  'communication',
+                  'problemSolving',
+                ],
               },
               strengths: { type: 'array', items: { type: 'string' } },
               improvements: { type: 'array', items: { type: 'string' } },
@@ -449,7 +472,9 @@ export class InterviewService {
 
     if (!assistantResponse.ok) {
       const errText = await assistantResponse.text().catch(() => '');
-      throw new Error(`Failed to create Vapi assistant (${assistantResponse.status}): ${errText}`);
+      throw new Error(
+        `Failed to create Vapi assistant (${assistantResponse.status}): ${errText}`,
+      );
     }
 
     const assistant = await assistantResponse.json();
@@ -753,7 +778,9 @@ export class InterviewService {
 
     if (!response.ok) {
       const errText = await response.text().catch(() => '');
-      throw new Error(`Failed to delete Vapi assistant (${response.status}): ${errText}`);
+      throw new Error(
+        `Failed to delete Vapi assistant (${response.status}): ${errText}`,
+      );
     }
   }
 }

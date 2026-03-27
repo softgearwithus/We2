@@ -14,8 +14,8 @@ async function bootstrap() {
   const environment = process.env.NODE_ENV || 'development';
   const dbHost = process.env.PGHOST || process.env.DB_HOST || 'unknown';
   const shouldRunMigrations =
-    environment === 'production'
-    && (process.env.RUN_MIGRATIONS_ON_BOOT || 'true').toLowerCase() === 'true';
+    environment === 'production' &&
+    (process.env.RUN_MIGRATIONS_ON_BOOT || 'true').toLowerCase() === 'true';
   console.log(`[config] env=${environment} dbHost=${dbHost}`);
   const httpAdapter = app.getHttpAdapter();
   const instance = httpAdapter.getInstance();
@@ -53,10 +53,15 @@ async function bootstrap() {
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
-  const allowedOrigins = Array.from(new Set([...defaultOrigins, ...envOrigins]));
+  const allowedOrigins = Array.from(
+    new Set([...defaultOrigins, ...envOrigins]),
+  );
 
   app.enableCors({
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
       // Allow all origins in development, or if the origin is in the allowed list
       if (!origin || isDevelopment || allowedOrigins.includes(origin)) {
         return callback(null, true);
@@ -69,7 +74,9 @@ async function bootstrap() {
   // Swagger API Documentation
   const config = new DocumentBuilder()
     .setTitle('College Prep Platform API')
-    .setDescription('Industry Simulation Career Platform - REST API Documentation')
+    .setDescription(
+      'Industry Simulation Career Platform - REST API Documentation',
+    )
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
     .addTag('users', 'User management')
@@ -100,7 +107,9 @@ async function bootstrap() {
         const hasPending = await dataSource.showMigrations();
         if (hasPending) {
           console.log('[db] Pending migrations detected. Applying...');
-          const applied = await dataSource.runMigrations({ transaction: 'all' });
+          const applied = await dataSource.runMigrations({
+            transaction: 'all',
+          });
           console.log(`[db] Applied ${applied.length} migration(s).`);
         } else {
           console.log('[db] No pending migrations.');
@@ -116,6 +125,5 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
-
 }
 bootstrap();

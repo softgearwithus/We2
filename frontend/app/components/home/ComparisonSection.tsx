@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
+import Link from 'next/link';
 
 const comparisonData = [
     { feature: "Learning Model", typical: "Passive Video Lectures", we2: "Interactive Full-Stack Practice" },
@@ -64,5 +64,3 @@ export default function ComparisonSection() {
         </section>
     );
 }
-
-import Link from 'next/link';

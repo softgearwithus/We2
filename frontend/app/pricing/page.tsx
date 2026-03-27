@@ -1,13 +1,47 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense } from "react";
+import { Check, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { cn } from "@/app/lib/utils";
 import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
+import { useAuth } from "@/app/context/AuthContext";
 
-export default function PricingPage() {
+const PRO_PLAN_ID = "pro_1m";
+const SUBSCRIBE_INTENT_PATH = `/pricing?intent=subscribe&plan=${PRO_PLAN_ID}`;
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+type PricingContext = {
+  countryCode: string | null;
+  isIndia: boolean;
+  currency: "INR" | "USD";
+  checkoutCurrency: "INR";
+  upgradesEnabled: boolean;
+  pro: {
+    monthly: {
+      inr: number;
+      usd: number;
+    };
+  };
+};
+
+function PricingPageContent() {
+  const { user, isLoading: authLoading, updateUser } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [pricingContext, setPricingContext] = useState<PricingContext | null>(null);
+  const [isPricingLoading, setIsPricingLoading] = useState(true);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const autoTriggeredCheckoutRef = useRef(false);
+
   const freeFeatures = [
     "Test series (Company and Subject wise)",
     "Resume building (Unlimited)",
@@ -22,6 +56,237 @@ export default function PricingPage() {
     "24/7 Priority Support & Onboarding",
     "Advanced Mock Interview Analytics",
   ];
+
+  useEffect(() => {
+    const loadPricingContext = async () => {
+      try {
+        setIsPricingLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/pricing-context`, {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch pricing context");
+        }
+        const data = await response.json();
+        setPricingContext(data);
+      } catch {
+        setPricingContext(null);
+      } finally {
+        setIsPricingLoading(false);
+      }
+    };
+
+    void loadPricingContext();
+  }, []);
+
+  const normalizedPlan = (user?.subscriptionPlan || "").toLowerCase();
+  const isProMember =
+    normalizedPlan === "pro" ||
+    normalizedPlan === "we2_max" ||
+    normalizedPlan.includes("pro");
+  const hasActiveSubscription =
+    user?.subscriptionStatus === "active" &&
+    (!user.subscriptionEndDate || new Date(user.subscriptionEndDate).getTime() > Date.now());
+  const isActiveProMember = isProMember && hasActiveSubscription;
+
+  const displayedPrice = useMemo(() => {
+    if (!pricingContext) {
+      return { amount: "799", symbol: "₹", period: "/month" };
+    }
+
+    if (pricingContext.currency === "INR") {
+      return {
+        amount: String(pricingContext.pro.monthly.inr),
+        symbol: "₹",
+        period: "/month",
+      };
+    }
+
+    return {
+      amount: pricingContext.pro.monthly.usd.toFixed(2),
+      symbol: "$",
+      period: "/month",
+    };
+  }, [pricingContext]);
+
+  const subscribeCtaLabel = useMemo(() => {
+    if (authLoading || isPricingLoading) return "Checking...";
+    if (isActiveProMember) return "Pro Member Active";
+    if (!pricingContext?.upgradesEnabled) return "Temporarily Unavailable";
+    if (!user) return "Sign in to Subscribe";
+    return "Subscribe Pro";
+  }, [authLoading, isPricingLoading, isActiveProMember, pricingContext?.upgradesEnabled, user]);
+
+  const canSubscribe =
+    !authLoading &&
+    !isPricingLoading &&
+    !isActiveProMember &&
+    !isCheckoutLoading;
+
+  const loadRazorpayScript = useCallback(async () => {
+    if (typeof window !== "undefined" && window.Razorpay) {
+      return true;
+    }
+
+    return new Promise<boolean>((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }, []);
+
+  const redirectToAuthForCheckout = useCallback(() => {
+    router.push(`/login/student?next=${encodeURIComponent(SUBSCRIBE_INTENT_PATH)}`);
+  }, [router]);
+
+  const handleSubscribe = useCallback(async () => {
+    if (authLoading || isPricingLoading) {
+      return;
+    }
+
+    if (isActiveProMember) {
+      return;
+    }
+
+    if (!pricingContext?.upgradesEnabled) {
+      alert("Subscriptions are temporarily disabled. Please try again shortly.");
+      return;
+    }
+
+    const { getActiveToken } = await import("@/app/lib/auth-storage");
+    const token = getActiveToken();
+
+    if (!user || !token) {
+      redirectToAuthForCheckout();
+      return;
+    }
+
+    setIsCheckoutLoading(true);
+    try {
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert("Unable to load payment gateway. Please check your network and try again.");
+        return;
+      }
+
+      const orderResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ plan: PRO_PLAN_ID }),
+      });
+
+      if (!orderResponse.ok) {
+        if (orderResponse.status === 401) {
+          redirectToAuthForCheckout();
+          return;
+        }
+        const message = await orderResponse.text();
+        throw new Error(message || "Failed to initialize checkout.");
+      }
+
+      const orderData = await orderResponse.json();
+
+      const payment = new window.Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency || "INR",
+        name: "EMBLE",
+        description: "EMBLE Pro Membership",
+        order_id: orderData.orderId,
+        prefill: {
+          name: user.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}` : "Student",
+          email: user.email || "",
+        },
+        theme: {
+          color: "#111827",
+        },
+        modal: {
+          ondismiss: () => {
+            setIsCheckoutLoading(false);
+          },
+        },
+        handler: async (response: any) => {
+          try {
+            const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                plan: PRO_PLAN_ID,
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                signature: response.razorpay_signature,
+              }),
+            });
+
+            if (!upgradeResponse.ok) {
+              const errorText = await upgradeResponse.text();
+              throw new Error(errorText || "Payment succeeded but subscription update failed.");
+            }
+
+            const updatedUser = await upgradeResponse.json();
+            updateUser(updatedUser);
+            alert("Welcome to EMBLE Pro Member!");
+            router.push("/dashboard/settings");
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "Subscription update failed.";
+            alert(message);
+          } finally {
+            setIsCheckoutLoading(false);
+          }
+        },
+      });
+
+      payment.open();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Checkout failed.";
+      alert(message);
+      setIsCheckoutLoading(false);
+    }
+  }, [
+    authLoading,
+    isPricingLoading,
+    isActiveProMember,
+    pricingContext?.upgradesEnabled,
+    user,
+    redirectToAuthForCheckout,
+    loadRazorpayScript,
+    updateUser,
+    router,
+  ]);
+
+  useEffect(() => {
+    const intent = searchParams.get("intent");
+    const plan = searchParams.get("plan");
+    const shouldAutoCheckout = intent === "subscribe" && plan === PRO_PLAN_ID;
+
+    if (!shouldAutoCheckout || autoTriggeredCheckoutRef.current) {
+      return;
+    }
+
+    if (authLoading || isPricingLoading || !user || isActiveProMember || !pricingContext?.upgradesEnabled) {
+      return;
+    }
+
+    autoTriggeredCheckoutRef.current = true;
+    void handleSubscribe();
+  }, [
+    searchParams,
+    authLoading,
+    isPricingLoading,
+    user,
+    isActiveProMember,
+    pricingContext?.upgradesEnabled,
+    handleSubscribe,
+  ]);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased flex flex-col relative overflow-x-hidden">
@@ -42,9 +307,9 @@ export default function PricingPage() {
           Start Free
         </h1>
         <p className="text-lg text-muted-foreground">
-          Free will remain free for lifetime.
+          One clear upgrade: EMBLE Pro Member.
           <br className="hidden sm:block" />
-          No credit card required.
+          India sees INR, global users see USD.
         </p>
       </div>
 
@@ -83,10 +348,10 @@ export default function PricingPage() {
           </div>
 
           <Link 
-            href="/register" 
+            href={user ? "/dashboard" : "/register/student"}
             className="w-full py-4 px-6 rounded-2xl border-2 border-border text-foreground font-semibold text-center hover:bg-muted/50 transition-colors"
           >
-            Get Started Free
+            {user ? "Go to Dashboard" : "Get Started Free"}
           </Link>
         </motion.div>
 
@@ -108,15 +373,21 @@ export default function PricingPage() {
 
           <div className="mb-8 relative z-10">
             <h3 className="text-sm font-semibold tracking-wider text-primary uppercase mb-4">
-              Pro
+              Pro Member
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-6xl font-bold tracking-tighter text-foreground">$9</span>
-              <span className="text-foreground/50 font-medium">.99 /month</span>
+              <span className="text-6xl font-bold tracking-tighter text-foreground">{displayedPrice.symbol}{displayedPrice.amount}</span>
+              <span className="text-foreground/50 font-medium">{displayedPrice.period}</span>
             </div>
             <p className="text-sm text-muted-foreground mt-4">
-              Everything in Free, plus premium tools.
+              Everything in Free, plus all premium tools.
             </p>
+            {pricingContext?.currency === "USD" && (
+              <p className="text-xs text-muted-foreground mt-2">Displayed in USD for your region. Checkout is processed in INR equivalent via Razorpay.</p>
+            )}
+            {!pricingContext?.upgradesEnabled && !isPricingLoading && (
+              <p className="text-xs text-amber-600 mt-2">Subscriptions are currently paused. Please try again later.</p>
+            )}
           </div>
 
           <div className="flex-1 space-y-4 mb-8 relative z-10">
@@ -138,12 +409,15 @@ export default function PricingPage() {
             ))}
           </div>
 
-          <Link 
-            href="/register?plan=pro" 
-            className="w-full py-4 px-6 rounded-2xl bg-foreground text-background font-semibold text-center hover:bg-foreground/90 transition-colors shadow-lg active:scale-95"
+          <button
+            type="button"
+            onClick={() => void handleSubscribe()}
+            disabled={!canSubscribe}
+            className="w-full py-4 px-6 rounded-2xl bg-foreground text-background font-semibold text-center hover:bg-foreground/90 transition-colors shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Get Started
-          </Link>
+            {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
+          </button>
         </motion.div>
 
       </div>
@@ -151,5 +425,13 @@ export default function PricingPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground font-semibold">Loading pricing...</div>}>
+      <PricingPageContent />
+    </Suspense>
   );
 }

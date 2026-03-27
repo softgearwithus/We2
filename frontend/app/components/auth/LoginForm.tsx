@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AuthNotice from './AuthNotice';
 
 interface LoginFormProps {
@@ -16,10 +16,20 @@ interface LoginFormProps {
 export default function LoginForm({ role, redirectPath }: LoginFormProps) {
     const { login } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+
+    const nextParam = searchParams.get('next');
+    const safeNext =
+        nextParam &&
+            nextParam.startsWith('/') &&
+            !nextParam.startsWith('//')
+            ? nextParam
+            : null;
+    const resolvedRedirectPath = safeNext || redirectPath;
 
     const onSubmit = async (data: any) => {
         setIsLoading(true);
@@ -48,17 +58,17 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             if (!response.ok) {
                 if (isDev && role === 'admin' && data.email === 'admin@emble.in' && data.password === 'admin') {
                     login('MOCK_TOKEN_ADMIN', { email: 'admin@emble.in', role: 'super_admin', name: 'Super Admin' } as any, rememberMe, 'admin');
-                    router.push(redirectPath);
+                    router.push(resolvedRedirectPath);
                     return;
                 }
                 if (isDev && role === 'college' && data.email === 'college@emble.in' && data.password === 'college') {
                     login('MOCK_TOKEN_COLLEGE', { email: 'college@emble.in', role: 'college_admin', name: 'Mock College' } as any, rememberMe, 'user');
-                    router.push(redirectPath);
+                    router.push(resolvedRedirectPath);
                     return;
                 }
                 if (isDev && role === 'industry' && data.email === 'company@emble.in' && data.password === 'company') {
                     login('MOCK_TOKEN_INDUSTRY', { email: 'company@emble.in', role: 'company_admin', name: 'Mock Company' } as any, rememberMe, 'user');
-                    router.push(redirectPath);
+                    router.push(resolvedRedirectPath);
                     return;
                 }
             }
@@ -76,7 +86,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
                 const scope = role === 'admin' ? 'admin' : 'user';
                 login(result.accessToken, result.user, rememberMe, scope);
-                router.push(redirectPath);
+                router.push(resolvedRedirectPath);
             } else {
                 alert('Login failed. Please check your credentials.');
             }
@@ -167,7 +177,10 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             {role !== 'admin' && (
                 <p className="text-center text-sm text-slate-500">
                     Don't have an account?{' '}
-                    <Link href="/register" className={`font-bold hover:underline ${role === 'student' ? 'text-slate-800' : 'text-slate-900'}`}>
+                    <Link
+                        href={safeNext ? `/register?next=${encodeURIComponent(safeNext)}` : '/register'}
+                        className={`font-bold hover:underline ${role === 'student' ? 'text-slate-800' : 'text-slate-900'}`}
+                    >
                         Get Started
                     </Link>
                 </p>

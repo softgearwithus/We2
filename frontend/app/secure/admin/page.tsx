@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import AuthLayout from '../../components/auth/AuthLayout';
 import LoginForm from '../../components/auth/LoginForm';
 
-export default function SecureAdminLoginPage() {
+function SecureAdminLoginPageContent() {
     return (
         <AuthLayout
             role="admin"
@@ -21,5 +22,13 @@ export default function SecureAdminLoginPage() {
         >
             <LoginForm role="admin" redirectPath="/admin/students" />
         </AuthLayout>
+    );
+}
+
+export default function SecureAdminLoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+            <SecureAdminLoginPageContent />
+        </Suspense>
     );
 }

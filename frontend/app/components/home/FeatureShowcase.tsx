@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mic, Video, Users, FileText, CheckCircle2, Play, UploadCloud } from "lucide-react";
-import { cn } from "@/app/lib/utils";
+import { Mic, Video, CheckCircle2, Play, UploadCloud } from "lucide-react";
 
 export default function FeatureShowcase() {
   return (

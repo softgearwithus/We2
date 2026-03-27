@@ -9,8 +9,6 @@ import DomainSelector, { ProjectLabDomainOption } from '@/app/components/dashboa
 import SkillRoadmap from '@/app/components/dashboard/projects/SkillRoadmap';
 import ProjectDetailView from '@/app/components/dashboard/projects/ProjectDetailView';
 import { fetchProjectLabDomains, fetchProjectLabProgress, fetchProjectLabs } from '@/app/lib/project-labs';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function DevGenesisPage() {
     const [stage, setStage] = useState<'domain' | 'projects'>('domain');
@@ -21,7 +19,6 @@ export default function DevGenesisPage() {
     const [completedProjectIds, setCompletedProjectIds] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('project_labs');
 
     const domainLookup = useMemo(() => {
         const map = new Map<string, DomainType>();
@@ -160,11 +157,6 @@ export default function DevGenesisPage() {
                                 Project Labs
                             </h1>
                             <p className="text-slate-500 text-sm">Build real-world applications and boost your portfolio.</p>
-                            {isFreePlan && (
-                                <div className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
-                                    Free plan time left in Project Labs: {remainingLabel}
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -173,14 +165,7 @@ export default function DevGenesisPage() {
                 <div className="flex-1 min-h-[500px]">
                     <AnimatePresence mode="wait">
                         {selectedProject ? (
-                            <div className="relative">
-                                {isLimited && (
-                                    <UsageUpgradeGate
-                                        message="Upgrade to continue your Project Labs work."
-                                    />
-                                )}
-                                <ProjectDetailView key="project" project={selectedProject} onBack={() => setSelectedProject(null)} />
-                            </div>
+                            <ProjectDetailView key="project" project={selectedProject} onBack={() => setSelectedProject(null)} />
                         ) : stage === 'domain' ? (
                             <>
                                 {loadError && (
@@ -190,10 +175,7 @@ export default function DevGenesisPage() {
                                 )}
                                 <DomainSelector
                                     key="domain"
-                                    domains={domainOptions.map((option) => ({
-                                        ...option,
-                                        disabled: option.disabled || isLimited,
-                                    }))}
+                                    domains={domainOptions}
                                     onSelect={(domain) => {
                                         const selected = domainLookup.get(domain.id);
                                         if (selected) {

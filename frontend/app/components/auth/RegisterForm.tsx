@@ -17,7 +17,18 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
     const { login } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const plan = searchParams.get('plan');
+    const rawPlan = searchParams.get('plan');
+    const plan = rawPlan === 'pro_1m' ? rawPlan : undefined;
+    const nextParam = searchParams.get('next');
+
+    const safeNext =
+        nextParam &&
+            nextParam.startsWith('/') &&
+            !nextParam.startsWith('//')
+            ? nextParam
+            : null;
+
+    const resolvedRedirectPath = safeNext || redirectPath;
 
     // UI State
     const [step, setStep] = useState<1 | 2>(1);
@@ -82,9 +93,12 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
                 if (loginResponse.ok) {
                     const loginData = await loginResponse.json();
                     login(loginData.accessToken, loginData.user, false, 'user');
-                    router.push(redirectPath);
+                    router.push(resolvedRedirectPath);
                 } else {
-                    router.push(`/login/${role}`);
+                    const fallbackLogin = safeNext
+                        ? `/login/${role}?next=${encodeURIComponent(safeNext)}`
+                        : `/login/${role}`;
+                    router.push(fallbackLogin);
                 }
             } else {
                 const errorData = await response.json();
@@ -318,7 +332,10 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
 
             <p className="text-center text-sm text-slate-500 mt-8 font-medium">
                 Already have an account?{' '}
-                <Link href={`/login/${role}`} className={`font-bold hover:underline ${role === 'student' ? 'text-slate-800' : 'text-slate-900'}`}>
+                <Link
+                    href={safeNext ? `/login/${role}?next=${encodeURIComponent(safeNext)}` : `/login/${role}`}
+                    className={`font-bold hover:underline ${role === 'student' ? 'text-slate-800' : 'text-slate-900'}`}
+                >
                     Sign in
                 </Link>
             </p>

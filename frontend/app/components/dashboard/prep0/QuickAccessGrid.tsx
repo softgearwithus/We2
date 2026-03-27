@@ -2,24 +2,15 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Database, Video, FileText, ChevronRight, Layers } from 'lucide-react';
+import { Code2, Video, FileText, ChevronRight, Layers } from 'lucide-react';
 import Link from 'next/link';
 
 const modules = [
     {
-        title: 'DSA Training',
-        desc: 'Sharpen logic until hard problems feel familiar.',
-        icon: Database,
-        href: '/dashboard/dsa',
-        color: 'text-blue-400',
-        bg: 'bg-blue-500/10',
-        border: 'border-blue-500/20'
-    },
-    {
-        title: 'SQL Training',
-        desc: 'Turn data into clear, confident decisions.',
+        title: 'IDE Workspace',
+        desc: 'Practice and prototype in a fast coding space.',
         icon: Code2,
-        href: '/dashboard/sql',
+        href: '/dashboard/ide',
         color: 'text-sky-500',
         bg: 'bg-sky-500/10',
         border: 'border-sky-500/20'

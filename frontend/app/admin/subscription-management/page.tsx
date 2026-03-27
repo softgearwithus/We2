@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { CreditCard, Save, AlertCircle, RefreshCcw } from 'lucide-react';
 import { getStoredToken } from '@/app/lib/auth-storage';
 import { fetchPlatformSettings, refreshFreeTier, updatePlatformSettings } from '../../lib/admin-settings';
+import { fetchAdminSubscriptionPayments, type SubscriptionPaymentRecord } from '@/app/lib/admin';
 
 export default function SubscriptionManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -15,19 +16,15 @@ export default function SubscriptionManagementPage() {
     const [freeTierLimitMinutes, setFreeTierLimitMinutes] = useState<number>(10);
     const [upgradesEnabled, setUpgradesEnabled] = useState(false);
     const [prices, setPrices] = useState({
-        standard: {
-            '1m': 0,
-            '3m': 0,
-            '6m': 0,
-            '12m': 0,
-        },
         pro: {
             '1m': 0,
-            '3m': 0,
-            '6m': 0,
-            '12m': 0,
-        }
+        },
+        display: {
+            proMonthlyUsd: 0,
+        },
     });
+    const [payments, setPayments] = useState<SubscriptionPaymentRecord[]>([]);
+    const [isPaymentsLoading, setIsPaymentsLoading] = useState(false);
 
     useEffect(() => {
         fetchSettings();
@@ -41,17 +38,37 @@ export default function SubscriptionManagementPage() {
             setUpgradesEnabled(data.upgradesEnabled || false);
             setFreeTierLimitMinutes(data.freeTierLimitMinutes ?? 10);
             if (data.subscriptionPrices) {
-                // Merge with default structure to prevent undefined errors
                 setPrices(prev => ({
-                    standard: { ...prev.standard, ...(data.subscriptionPrices?.standard || {}) },
-                    pro: { ...prev.pro, ...(data.subscriptionPrices?.pro || {}) }
+                    pro: {
+                        ...prev.pro,
+                        '1m': Number(data.subscriptionPrices?.pro?.['1m']) || prev.pro['1m'],
+                    },
+                    display: {
+                        ...prev.display,
+                        proMonthlyUsd: Number(data.subscriptionPrices?.display?.proMonthlyUsd) || prev.display.proMonthlyUsd,
+                    },
                 }));
             }
+
+            setIsPaymentsLoading(true);
+            const paymentRows = await fetchAdminSubscriptionPayments(token, 50);
+            setPayments(Array.isArray(paymentRows) ? paymentRows : []);
         } catch (err: any) {
             setError(err.message || 'Failed to fetch settings');
+            setPayments([]);
         } finally {
+            setIsPaymentsLoading(false);
             setIsLoading(false);
         }
+    };
+
+    const formatDate = (dateString?: string | null) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
     };
 
     const handleSave = async () => {
@@ -93,14 +110,25 @@ export default function SubscriptionManagementPage() {
         }
     };
 
-    const handlePriceChange = (plan: 'standard' | 'pro', duration: string, value: string) => {
+    const handlePriceChange = (duration: string, value: string) => {
         const numValue = parseInt(value) || 0;
         setPrices(prev => ({
             ...prev,
-            [plan]: {
-                ...prev[plan],
+            pro: {
+                ...prev.pro,
                 [duration]: numValue
             }
+        }));
+    };
+
+    const handleUsdDisplayChange = (value: string) => {
+        const numValue = Number(value) || 0;
+        setPrices(prev => ({
+            ...prev,
+            display: {
+                ...prev.display,
+                proMonthlyUsd: numValue,
+            },
         }));
     };
 
@@ -172,60 +200,58 @@ export default function SubscriptionManagementPage() {
                 {/* Pricing Configuration Card */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="p-6 border-b border-slate-100">
-                        <h2 className="text-lg font-bold text-slate-900">Dynamic Pricing Validation</h2>
-                        <p className="text-sm text-slate-500 mt-1">Configure exact prices in INR for the public pricing page rendering.</p>
+                        <h2 className="text-lg font-bold text-slate-900">Pro Plan Pricing</h2>
+                        <p className="text-sm text-slate-500 mt-1">Configure the single active Pro monthly plan pricing.</p>
                     </div>
 
                     <div className="p-6 grid md:grid-cols-2 gap-8">
-                        {/* Standard Pricing */}
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="h-4 w-1 bg-slate-800 rounded-full" />
-                                <h3 className="font-bold text-slate-800">EMBLE Standard</h3>
-                            </div>
-
-                            <div className="space-y-3">
-                                {['1m', '3m', '6m', '12m'].map((dur) => (
-                                    <div key={`std-${dur}`} className="flex items-center gap-4">
-                                        <label className="w-20 text-sm font-medium text-slate-600 uppercase tracking-wider">{dur.replace('m', ' Months')}</label>
-                                        <div className="relative flex-1">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                value={prices.standard[dur as keyof typeof prices.standard]}
-                                                onChange={(e) => handlePriceChange('standard', dur, e.target.value)}
-                                                className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Pro Pricing */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="h-4 w-1 bg-blue-600 rounded-full" />
-                                <h3 className="font-bold text-slate-800">EMBLE Pro</h3>
+                                <h3 className="font-bold text-slate-800">EMBLE Pro (Monthly)</h3>
                             </div>
 
                             <div className="space-y-3">
-                                {['1m', '3m', '6m', '12m'].map((dur) => (
-                                    <div key={`pro-${dur}`} className="flex items-center gap-4">
-                                        <label className="w-20 text-sm font-medium text-slate-600 uppercase tracking-wider">{dur.replace('m', ' Months')}</label>
-                                        <div className="relative flex-1">
-                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                value={prices.pro[dur as keyof typeof prices.pro]}
-                                                onChange={(e) => handlePriceChange('pro', dur, e.target.value)}
-                                                className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                            />
-                                        </div>
+                                <div className="flex items-center gap-4">
+                                    <label className="w-20 text-sm font-medium text-slate-600 uppercase tracking-wider">1 Month</label>
+                                    <div className="relative flex-1">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={prices.pro['1m']}
+                                            onChange={(e) => handlePriceChange('1m', e.target.value)}
+                                            className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                        />
                                     </div>
-                                ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="h-4 w-1 bg-emerald-600 rounded-full" />
+                                <h3 className="font-bold text-slate-800">Display Price (Non-India)</h3>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-4">
+                                    <label className="w-24 text-sm font-medium text-slate-600 uppercase tracking-wider">USD / Month</label>
+                                    <div className="relative flex-1">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            value={prices.display.proMonthlyUsd}
+                                            onChange={(e) => handleUsdDisplayChange(e.target.value)}
+                                            className="w-full pl-8 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                        />
+                                    </div>
+                                </div>
+                                <p className="text-xs text-slate-500">
+                                    This is display-only pricing for users outside India. Checkout still settles in INR.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -267,6 +293,48 @@ export default function SubscriptionManagementPage() {
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="p-6 border-b border-slate-100">
+                        <h2 className="text-lg font-bold text-slate-900">Recent Subscription Payments</h2>
+                        <p className="text-sm text-slate-500 mt-1">Latest Pro member checkout records from Razorpay.</p>
+                    </div>
+
+                    {isPaymentsLoading ? (
+                        <div className="p-8 flex items-center justify-center">
+                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-slate-700"></div>
+                        </div>
+                    ) : payments.length === 0 ? (
+                        <div className="p-8 text-center text-sm font-semibold text-slate-400">No paid subscriptions yet.</div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[860px] text-sm">
+                                <thead>
+                                    <tr className="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-100">
+                                        <th className="px-6 py-3">Date</th>
+                                        <th className="px-6 py-3">Student</th>
+                                        <th className="px-6 py-3">Email</th>
+                                        <th className="px-6 py-3">Plan</th>
+                                        <th className="px-6 py-3">Amount</th>
+                                        <th className="px-6 py-3">Payment ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {payments.map((row) => (
+                                        <tr key={row.id} className="border-b border-slate-100/80">
+                                            <td className="px-6 py-3 font-medium text-slate-700">{formatDate(row.paidAt || row.createdAt)}</td>
+                                            <td className="px-6 py-3 font-semibold text-slate-800">{row.userName || 'N/A'}</td>
+                                            <td className="px-6 py-3 text-slate-600">{row.userEmail || 'N/A'}</td>
+                                            <td className="px-6 py-3 font-semibold text-slate-800">EMBLE Pro Member</td>
+                                            <td className="px-6 py-3 font-bold text-slate-900">₹{(row.amountInPaise / 100).toFixed(2)}</td>
+                                            <td className="px-6 py-3 font-mono text-xs text-slate-500">{row.paymentId || 'N/A'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

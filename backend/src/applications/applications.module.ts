@@ -6,8 +6,8 @@ import { Application } from './entities/application.entity';
 import { Placement } from '../placements/entities/placement.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Application, Placement])],
-    controllers: [ApplicationsController],
-    providers: [ApplicationsService],
+  imports: [TypeOrmModule.forFeature([Application, Placement])],
+  controllers: [ApplicationsController],
+  providers: [ApplicationsService],
 })
-export class ApplicationsModule { }
+export class ApplicationsModule {}

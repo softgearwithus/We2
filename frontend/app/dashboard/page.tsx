@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { useDashboardMode } from '../context/DashboardModeContext';
 import SimulationDashboard from '../components/dashboard/SimulationDashboard';
@@ -25,9 +24,11 @@ export default function DashboardPage() {
     const { user, isLoading: authLoading } = useAuth();
     const dashboardContext = useDashboardMode();
     const mode = dashboardContext?.mode;
-    const router = useRouter();
     const [stats, setStats] = useState<DashboardStats | null>(null);
-    const isFreeUser = !user?.subscriptionPlan || user?.subscriptionPlan === 'free';
+    const normalizedPlan = (user?.subscriptionPlan || '').toLowerCase();
+    const isProUser =
+        normalizedPlan === 'pro';
+    const isFreeUser = !isProUser;
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

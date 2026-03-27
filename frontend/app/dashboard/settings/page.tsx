@@ -12,6 +12,43 @@ export default function SettingsPage() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<Tab>('account');
     const [isSaving, setIsSaving] = useState(false);
+    const [payments, setPayments] = useState<Array<{
+        id: string;
+        plan: string;
+        amountInPaise: number;
+        currency: string;
+        paidAt: string | null;
+        createdAt: string;
+        paymentId: string | null;
+    }>>([]);
+    const [isPaymentsLoading, setIsPaymentsLoading] = useState(false);
+
+    React.useEffect(() => {
+        const loadPayments = async () => {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken();
+            if (!token || !user?.id) return;
+
+            try {
+                setIsPaymentsLoading(true);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/my/subscription/payments?limit=25`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) {
+                    setPayments([]);
+                    return;
+                }
+                const rows = await response.json();
+                setPayments(Array.isArray(rows) ? rows : []);
+            } catch {
+                setPayments([]);
+            } finally {
+                setIsPaymentsLoading(false);
+            }
+        };
+
+        void loadPayments();
+    }, [user?.id]);
 
     // Date formatter
     const formatDate = (dateString?: string) => {
@@ -26,8 +63,8 @@ export default function SettingsPage() {
     // Plan display formatter
     const getDisplayPlan = (plan?: string) => {
         if (!plan || plan === 'free') return 'Free';
-        if (plan === 'standard' || plan === 'placement_plus' || plan.includes('standard')) return 'EMBLE Standard';
-        if (plan === 'pro' || plan === 'we2_max' || plan.includes('pro')) return 'EMBLE Pro';
+        if (plan === 'standard' || plan === 'placement_plus' || plan.includes('standard')) return 'EMBLE Pro Member';
+        if (plan === 'pro' || plan === 'we2_max' || plan.includes('pro')) return 'EMBLE Pro Member';
         return plan;
     };
 
@@ -209,12 +246,44 @@ export default function SettingsPage() {
                                         <h2 className="text-lg font-bold text-slate-900">Billing History</h2>
                                         <p className="text-sm text-slate-500 mt-1">Recent payments and invoices.</p>
                                     </div>
-                                    <div className="p-8 flex flex-col items-center justify-center text-center">
-                                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-3">
-                                            <CreditCard size={24} className="text-slate-300" />
+                                    {isPaymentsLoading ? (
+                                        <div className="p-8 flex items-center justify-center">
+                                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-slate-600"></div>
                                         </div>
-                                        <p className="text-sm font-bold text-slate-400">No past invoices available.</p>
-                                    </div>
+                                    ) : payments.length === 0 ? (
+                                        <div className="p-8 flex flex-col items-center justify-center text-center">
+                                            <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-3">
+                                                <CreditCard size={24} className="text-slate-300" />
+                                            </div>
+                                            <p className="text-sm font-bold text-slate-400">No past invoices available.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full min-w-[640px] text-sm">
+                                                <thead>
+                                                    <tr className="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-100">
+                                                        <th className="px-6 py-3">Date</th>
+                                                        <th className="px-6 py-3">Plan</th>
+                                                        <th className="px-6 py-3">Amount</th>
+                                                        <th className="px-6 py-3">Payment ID</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {payments.map((row) => {
+                                                        const paidDate = row.paidAt || row.createdAt;
+                                                        return (
+                                                            <tr key={row.id} className="border-b border-slate-100/80">
+                                                                <td className="px-6 py-3 font-medium text-slate-700">{formatDate(paidDate)}</td>
+                                                                <td className="px-6 py-3 font-semibold text-slate-800">EMBLE Pro Member</td>
+                                                                <td className="px-6 py-3 font-bold text-slate-900">₹{(row.amountInPaise / 100).toFixed(2)}</td>
+                                                                <td className="px-6 py-3 font-mono text-xs text-slate-500">{row.paymentId || 'N/A'}</td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
                                 </section>
 
                             </motion.div>

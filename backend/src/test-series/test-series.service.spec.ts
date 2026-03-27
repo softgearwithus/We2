@@ -20,40 +20,40 @@ describe('TestSeriesService', () => {
         TestSeriesService,
         {
           provide: getRepositoryToken(Company),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(MockTest),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(MockTestSection),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(MockTestQuestion),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(MockTestResult),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(MockTestStudentResponse),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(User),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: getRepositoryToken(McqQuestion),
-          useValue: {}
+          useValue: {},
         },
         {
           provide: TestEvaluationService,
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

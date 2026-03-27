@@ -1,8 +1,6 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
 
 type TestSeriesUsageContextValue = {
     remainingLabel: string;
@@ -19,15 +17,14 @@ const TestSeriesUsageContext = createContext<TestSeriesUsageContextValue>({
 export const useTestSeriesUsage = () => useContext(TestSeriesUsageContext);
 
 export default function TestSeriesLayout({ children }: { children: React.ReactNode }) {
-    const usage = useSectionUsage('test_series');
+    const usage = {
+        remainingLabel: 'Unlimited',
+        isLimited: false,
+        isFreePlan: false,
+    };
     return (
         <TestSeriesUsageContext.Provider value={usage}>
-            <div className="relative">
-                {usage.isLimited && (
-                    <UsageUpgradeGate message="Upgrade to continue your test series." />
-                )}
-                {children}
-            </div>
+            <div className="relative">{children}</div>
         </TestSeriesUsageContext.Provider>
     );
 }

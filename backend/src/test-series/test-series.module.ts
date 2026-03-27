@@ -24,11 +24,11 @@ import { User } from '../users/user.entity';
       MockTestStudentResponse,
       User,
       McqQuestion,
-      WriteXQuestion
-    ])
+      WriteXQuestion,
+    ]),
   ],
   controllers: [TestSeriesController],
   providers: [TestSeriesService, TestEvaluationService],
-  exports: [TestSeriesService]
+  exports: [TestSeriesService],
 })
-export class TestSeriesModule { }
+export class TestSeriesModule {}

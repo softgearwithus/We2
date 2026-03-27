@@ -17,10 +17,8 @@ export default function LeetCodeProfile() {
     const [stats, setStats] = useState({
         totalSolved: 0,
         totalAttempted: 0,
-        dsaSolved: 0,
-        dsaTotal: 0,
-        sqlSolved: 0,
-        sqlTotal: 0,
+        ideSolved: 0,
+        ideTotal: 0,
         projectSolved: 0,
         projectTotal: 0,
     });
@@ -31,29 +29,21 @@ export default function LeetCodeProfile() {
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken() || '';
             try {
-                let dsaSolved = 0;
-                let dsaTotal = 0;
-                let sqlSolved = 0;
-                let sqlTotal = 0;
+                let ideSolved = 0;
+                let ideTotal = 0;
                 let projectSolved = 0;
                 let projectTotal = 0;
-                const [dsaStatsRes, sqlStatsRes, projectProgressRes, badgesRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/dsa/stats/me`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch(`${API_BASE_URL}/sql/submissions/me`, { headers: { Authorization: `Bearer ${token}` } }),
+                const [dashboardStatsRes, projectProgressRes, badgesRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/users/dashboard-stats`, { headers: { Authorization: `Bearer ${token}` } }),
                     fetch(`${API_BASE_URL}/project-labs/me/progress`, { headers: { Authorization: `Bearer ${token}` } }),
                     fetch(`${API_BASE_URL}/gamification/badges`, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
 
-                if (dsaStatsRes.ok) {
-                    const dsaStats = await dsaStatsRes.json();
-                    dsaSolved = dsaStats.problemsSolved || 0;
-                    dsaTotal = dsaSolved + Math.max(0, (dsaStats.totalSubmissions || 0) - dsaSolved);
-                }
-
-                if (sqlStatsRes.ok) {
-                    const sqlSubmissions = await sqlStatsRes.json();
-                    sqlSolved = sqlSubmissions.filter((s: any) => s.status === 'accepted').length;
-                    sqlTotal = sqlSubmissions.length || 0;
+                if (dashboardStatsRes.ok) {
+                    const dashboardStats = await dashboardStatsRes.json();
+                    const interviewsCompleted = dashboardStats.interviewsCompleted || 0;
+                    ideSolved = interviewsCompleted;
+                    ideTotal = interviewsCompleted;
                 }
 
                 if (projectProgressRes.ok) {
@@ -69,14 +59,12 @@ export default function LeetCodeProfile() {
                 }
 
                 setStats({
-                    dsaSolved,
-                    dsaTotal,
-                    sqlSolved,
-                    sqlTotal,
+                    ideSolved,
+                    ideTotal,
                     projectSolved,
                     projectTotal,
-                    totalSolved: dsaSolved + sqlSolved + projectSolved,
-                    totalAttempted: dsaTotal + sqlTotal + projectTotal,
+                    totalSolved: ideSolved + projectSolved,
+                    totalAttempted: ideTotal + projectTotal,
                 });
             } catch (error) {
                 console.error('Failed to load profile stats', error);
@@ -106,17 +94,10 @@ export default function LeetCodeProfile() {
     const solvedData = {
         total: stats.totalSolved,
         totalAttempted: stats.totalAttempted,
-        dsa: {
-            label: 'DSA',
-            solved: stats.dsaSolved,
-            total: stats.dsaTotal,
-            color: 'text-emerald-600',
-            bg: 'bg-emerald-500',
-        },
-        sql: {
-            label: 'SQL',
-            solved: stats.sqlSolved,
-            total: stats.sqlTotal,
+        ide: {
+            label: 'Interview',
+            solved: stats.ideSolved,
+            total: stats.ideTotal,
             color: 'text-slate-800',
             bg: 'bg-slate-500',
         },
@@ -229,8 +210,7 @@ export default function LeetCodeProfile() {
                             {/* Linear Progress Bars */}
                             <div className="flex-1 w-full space-y-4 text-sm font-bold">
                                 {[
-                                    solvedData.dsa,
-                                    solvedData.sql,
+                                    solvedData.ide,
                                     solvedData.projects
                                 ].map((tier) => (
                                     <div key={tier.label}>

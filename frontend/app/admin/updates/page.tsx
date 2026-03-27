@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Save, Bell, Code2, Database, Rocket, Radar, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Save, Bell, Rocket, Radar, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { fetchAdminUpdateFlags, saveAdminUpdateFlags } from '@/app/lib/admin-settings';
 import { getStoredToken } from '@/app/lib/auth-storage';
 
@@ -11,8 +11,7 @@ interface UpdateState {
 
 export default function AdminUpdatesPage() {
     const [updates, setUpdates] = useState<UpdateState>({
-        '/dashboard/dsa': false,
-        '/dashboard/sql': false,
+        '/dashboard/ide': false,
         '/dashboard/projects': false,
         '/dashboard/market-radar': false,
     });
@@ -68,8 +67,7 @@ export default function AdminUpdatesPage() {
         { id: '/dashboard', label: 'Overview', icon: <div className="text-slate-500 material-symbols-outlined">dashboard</div>, desc: 'Show indicator for general platform announcements.' },
         { id: '/dashboard/preparation', label: 'Placement Preparation', icon: <div className="text-slate-700 material-symbols-outlined">school</div>, desc: 'Show indicator for new preparation roadmaps.' },
         { id: '/dashboard/test-series', label: 'Test Series', icon: <div className="text-red-500 material-symbols-outlined">quiz</div>, desc: 'Show indicator for new or upcoming mock tests.' },
-        { id: '/dashboard/dsa', label: 'DSA Training', icon: <Code2 size={20} className="text-blue-500" />, desc: 'Show indicator for new DSA problems or modules.' },
-        { id: '/dashboard/sql', label: 'SQL Training', icon: <Database size={20} className="text-emerald-500" />, desc: 'Show indicator for new SQL challenges.' },
+        { id: '/dashboard/ide', label: 'IDE Workspace', icon: <div className="text-sky-500 material-symbols-outlined">terminal</div>, desc: 'Show indicator for new IDE workspace capabilities.' },
         { id: '/dashboard/projects', label: 'Project Labs', icon: <Rocket size={20} className="text-slate-500" />, desc: 'Show indicator for newly added full-stack project builds.' },
         { id: '/dashboard/interview', label: 'Mock Interview', icon: <div className="text-amber-500 material-symbols-outlined">mic</div>, desc: 'Show indicator for new interview experiences or slots.' },
         { id: '/dashboard/resume', label: 'Resume', icon: <div className="text-sky-500 material-symbols-outlined">description</div>, desc: 'Show indicator for new resume templates or feedback.' },

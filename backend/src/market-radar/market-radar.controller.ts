@@ -12,26 +12,26 @@ import { PublishMarketRadarDto } from './dto/market-radar.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller()
 export class MarketRadarController {
-    constructor(private readonly marketRadarService: MarketRadarService) {}
+  constructor(private readonly marketRadarService: MarketRadarService) {}
 
-    @Get('market-radar')
-    @Public()
-    @ApiOperation({ summary: 'Get latest market radar data' })
-    async getLatest() {
-        return this.marketRadarService.getLatest();
-    }
+  @Get('market-radar')
+  @Public()
+  @ApiOperation({ summary: 'Get latest market radar data' })
+  async getLatest() {
+    return this.marketRadarService.getLatest();
+  }
 
-    @Get('admin/market-radar')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Get latest market radar data for admin' })
-    async getLatestForAdmin() {
-        return this.marketRadarService.getLatest();
-    }
+  @Get('admin/market-radar')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Get latest market radar data for admin' })
+  async getLatestForAdmin() {
+    return this.marketRadarService.getLatest();
+  }
 
-    @Put('admin/market-radar')
-    @Roles(UserRole.SUPER_ADMIN)
-    @ApiOperation({ summary: 'Publish market radar data' })
-    async publish(@Request() req: any, @Body() payload: PublishMarketRadarDto) {
-        return this.marketRadarService.publish(payload, req.user?.email || null);
-    }
+  @Put('admin/market-radar')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Publish market radar data' })
+  async publish(@Request() req: any, @Body() payload: PublishMarketRadarDto) {
+    return this.marketRadarService.publish(payload, req.user?.email || null);
+  }
 }

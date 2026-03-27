@@ -1,39 +1,41 @@
-
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
 export class GeminiService {
-    private readonly logger = new Logger(GeminiService.name);
-    private genAI: GoogleGenerativeAI | null = null;
-    private model: any;
-    private defaultModelName: string | null = null;
+  private readonly logger = new Logger(GeminiService.name);
+  private genAI: GoogleGenerativeAI | null = null;
+  private model: any;
+  private defaultModelName: string | null = null;
 
-    constructor() {
-        try {
-            const apiKey = process.env.GEMINI_API_KEY;
-            if (!apiKey) {
-                this.logger.warn('GEMINI_API_KEY is not defined. Using fallback mode.');
-            } else {
-                this.genAI = new GoogleGenerativeAI(apiKey);
-                const modelName = (process.env.GEMINI_MODEL && process.env.GEMINI_MODEL !== 'gemini-pro')
-                    ? process.env.GEMINI_MODEL
-                    : 'gemini-2.5-flash';
-                this.defaultModelName = modelName;
-                this.model = this.genAI.getGenerativeModel({ model: modelName });
-            }
-        } catch (error) {
-            this.logger.error('Failed to initialize Gemini AI', error);
-        }
+  constructor() {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        this.logger.warn('GEMINI_API_KEY is not defined. Using fallback mode.');
+      } else {
+        this.genAI = new GoogleGenerativeAI(apiKey);
+        const modelName =
+          process.env.GEMINI_MODEL && process.env.GEMINI_MODEL !== 'gemini-pro'
+            ? process.env.GEMINI_MODEL
+            : 'gemini-2.5-flash';
+        this.defaultModelName = modelName;
+        this.model = this.genAI.getGenerativeModel({ model: modelName });
+      }
+    } catch (error) {
+      this.logger.error('Failed to initialize Gemini AI', error);
     }
+  }
 
-    async generateDrillContent(topic: string, userContext?: any) {
-        if (!this.genAI) {
-            this.logger.warn('Gemini model not initialized. Cannot generate drill content.');
-            throw new Error('Gemini API not configured');
-        }
-        try {
-            const prompt = `
+  async generateDrillContent(topic: string, userContext?: any) {
+    if (!this.genAI) {
+      this.logger.warn(
+        'Gemini model not initialized. Cannot generate drill content.',
+      );
+      throw new Error('Gemini API not configured');
+    }
+    try {
+      const prompt = `
             Generate 5 unique, challenging, and relevant audio drill scenarios for a candidate preparing for: "${topic}".
             
             Context: ${JSON.stringify(userContext || {})}
@@ -47,39 +49,51 @@ export class GeminiService {
             Ensure the content is professional and suitable for interview preparation.
             `;
 
-            const { text } = await this.generateContentWithFallback([prompt]);
-            const parsed = this.parseJSON(text);
-            if (!Array.isArray(parsed)) {
-                throw new Error('Invalid drill content response: expected JSON array');
-            }
-            return parsed;
-        } catch (error) {
-            this.logger.error('Error generating drill content', error);
-            throw error;
-        }
+      const { text } = await this.generateContentWithFallback([prompt]);
+      const parsed = this.parseJSON(text);
+      if (!Array.isArray(parsed)) {
+        throw new Error('Invalid drill content response: expected JSON array');
+      }
+      return parsed;
+    } catch (error) {
+      this.logger.error('Error generating drill content', error);
+      throw error;
+    }
+  }
+
+  async generateCommunicationDrill(topic?: string) {
+    if (!this.genAI) {
+      this.logger.warn(
+        'Gemini model not initialized. Cannot generate communication drill.',
+      );
+      throw new Error('Gemini API not configured');
     }
 
-    async generateCommunicationDrill(topic?: string) {
-        if (!this.genAI) {
-            this.logger.warn('Gemini model not initialized. Cannot generate communication drill.');
-            throw new Error('Gemini API not configured');
-        }
+    try {
+      // Enhanced Topic Variety: If no topic is provided, pick a random domain to force variety
+      let generationTopic = topic;
+      if (!generationTopic) {
+        const domains = [
+          'Quantum Computing & Cybersecurity',
+          'Sustainable Urban Architecture',
+          'Behavioral Economics in Marketing',
+          'Space Exploration Ethics',
+          'Regenerative Medicine & Bio-tech',
+          'Oceanic Preservation Technology',
+          'Agile Leadership in Remote Teams',
+          'The Future of Decentralized Finance (DeFi)',
+          'Cultural Intelligence in Global Business',
+          'Renewable Energy Infrastructure',
+          'Psychology of Consumer Behavior',
+          'Artificial Intelligence in Healthcare Diagnosis',
+          'Supply Chain Resilience & Geopolitics',
+          'The Impact of 5G on Smart Cities',
+          'Philosophy of Workplace Inclusivity',
+        ];
+        generationTopic = domains[Math.floor(Math.random() * domains.length)];
+      }
 
-        try {
-            // Enhanced Topic Variety: If no topic is provided, pick a random domain to force variety
-            let generationTopic = topic;
-            if (!generationTopic) {
-                const domains = [
-                    "Quantum Computing & Cybersecurity", "Sustainable Urban Architecture", "Behavioral Economics in Marketing",
-                    "Space Exploration Ethics", "Regenerative Medicine & Bio-tech", "Oceanic Preservation Technology",
-                    "Agile Leadership in Remote Teams", "The Future of Decentralized Finance (DeFi)", "Cultural Intelligence in Global Business",
-                    "Renewable Energy Infrastructure", "Psychology of Consumer Behavior", "Artificial Intelligence in Healthcare Diagnosis",
-                    "Supply Chain Resilience & Geopolitics", "The Impact of 5G on Smart Cities", "Philosophy of Workplace Inclusivity"
-                ];
-                generationTopic = domains[Math.floor(Math.random() * domains.length)];
-            }
-
-            const prompt = `
+      const prompt = `
             Generate a unique, comprehensive, and thematically cohesive 3-part communication drill for an interview candidate.
             
             Theme: ${generationTopic}
@@ -110,20 +124,22 @@ export class GeminiService {
             Return ONLY the valid JSON.
             `;
 
-            const { text, modelName } = await this.generateContentWithFallback([prompt]);
-            const parsed = this.parseJSON(text);
-            return { ...parsed, metadata: { source: 'Gemini AI', model: modelName } };
-        } catch (error) {
-            this.logger.error('All Gemini models failed', error);
-            throw error;
-        }
+      const { text, modelName } = await this.generateContentWithFallback([
+        prompt,
+      ]);
+      const parsed = this.parseJSON(text);
+      return { ...parsed, metadata: { source: 'Gemini AI', model: modelName } };
+    } catch (error) {
+      this.logger.error('All Gemini models failed', error);
+      throw error;
     }
+  }
 
-    async analyzeAudio(audioBase64: string, context: string): Promise<any> {
-        try {
-            let prompt = '';
+  async analyzeAudio(audioBase64: string, context: string): Promise<any> {
+    try {
+      let prompt = '';
 
-            prompt = `
+      prompt = `
             Analyze this audio response for an interview communication drill.
             Context/Prompt: "${context}"
             
@@ -174,112 +190,123 @@ export class GeminiService {
             }
             `;
 
-            // Note: For real audio processing, we'd use the inlineData part of the Gemini API.
-            // Assuming audioBase64 is the raw data.
-            const part = {
-                inlineData: {
-                    mimeType: "audio/webm", // Adjust based on client recording format
-                    data: audioBase64
-                }
-            };
+      // Note: For real audio processing, we'd use the inlineData part of the Gemini API.
+      // Assuming audioBase64 is the raw data.
+      const part = {
+        inlineData: {
+          mimeType: 'audio/webm', // Adjust based on client recording format
+          data: audioBase64,
+        },
+      };
 
-            const { text } = await this.generateContentWithFallback([prompt, part]);
-            const parsed = this.parseJSON(text);
-            if (!parsed || typeof parsed.overallScore !== 'number') {
-                throw new Error('Invalid analysis response: missing overallScore');
-            }
-            return parsed;
+      const { text } = await this.generateContentWithFallback([prompt, part]);
+      const parsed = this.parseJSON(text);
+      if (!parsed || typeof parsed.overallScore !== 'number') {
+        throw new Error('Invalid analysis response: missing overallScore');
+      }
+      return parsed;
+    } catch (error) {
+      this.logger.error('Error analyzing audio', error);
+      throw error;
+    }
+  }
 
-        } catch (error) {
-            this.logger.error('Error analyzing audio', error);
-            throw error;
-        }
+  private parseJSON(text: string): any {
+    if (!text) {
+      throw new Error('Empty response from AI model');
+    }
+    try {
+      const cleaned = text
+        .replace(/```json/gi, '')
+        .replace(/```/g, '')
+        .trim();
+
+      if (cleaned.startsWith('{') || cleaned.startsWith('[')) {
+        return JSON.parse(cleaned);
+      }
+
+      const firstObject = cleaned.indexOf('{');
+      const firstArray = cleaned.indexOf('[');
+      const start = [firstObject, firstArray]
+        .filter((i) => i >= 0)
+        .sort((a, b) => a - b)[0];
+      if (start === undefined) {
+        throw new Error(
+          `No JSON object found in response: ${cleaned.substring(0, 100)}...`,
+        );
+      }
+
+      const isArray = cleaned[start] === '[';
+      const end = isArray ? cleaned.lastIndexOf(']') : cleaned.lastIndexOf('}');
+      if (end === -1) {
+        throw new Error(
+          `No JSON object found in response: ${cleaned.substring(0, 100)}...`,
+        );
+      }
+
+      const jsonStr = cleaned.substring(start, end + 1);
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      this.logger.error('Failed to parse Gemini JSON response', e);
+      this.logger.error('Raw text received:', text);
+      throw new Error(`Invalid AI response format: ${e.message}`);
+    }
+  }
+
+  private getModelCandidates(): string[] {
+    const candidates = [
+      process.env.GEMINI_MODEL,
+      this.defaultModelName,
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+    ].filter((m): m is string => !!m && m !== 'gemini-pro');
+
+    return Array.from(new Set(candidates));
+  }
+
+  private isQuotaError(error: any): boolean {
+    const message = (error?.message || '').toString();
+    return message.includes('429') || message.toLowerCase().includes('quota');
+  }
+
+  private async generateContentWithFallback(
+    parts: any[],
+  ): Promise<{ text: string; modelName: string }> {
+    if (!this.genAI) {
+      throw new Error('Gemini API not configured');
     }
 
-    private parseJSON(text: string): any {
+    const modelsToTry = this.getModelCandidates();
+    if (modelsToTry.length === 0) {
+      throw new Error('No Gemini models configured');
+    }
+
+    let lastError: any;
+    for (const modelName of modelsToTry) {
+      try {
+        this.logger.log(`Attempting to generate with model: ${modelName}`);
+        const model = this.genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(parts);
+        const response = await result.response;
+        const text = response.text();
         if (!text) {
-            throw new Error('Empty response from AI model');
+          throw new Error('Empty response from Gemini');
         }
-        try {
-            const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-
-            if (cleaned.startsWith('{') || cleaned.startsWith('[')) {
-                return JSON.parse(cleaned);
-            }
-
-            const firstObject = cleaned.indexOf('{');
-            const firstArray = cleaned.indexOf('[');
-            const start = [firstObject, firstArray].filter((i) => i >= 0).sort((a, b) => a - b)[0];
-            if (start === undefined) {
-                throw new Error(`No JSON object found in response: ${cleaned.substring(0, 100)}...`);
-            }
-
-            const isArray = cleaned[start] === '[';
-            const end = isArray ? cleaned.lastIndexOf(']') : cleaned.lastIndexOf('}');
-            if (end === -1) {
-                throw new Error(`No JSON object found in response: ${cleaned.substring(0, 100)}...`);
-            }
-
-            const jsonStr = cleaned.substring(start, end + 1);
-            return JSON.parse(jsonStr);
-        } catch (e) {
-            this.logger.error('Failed to parse Gemini JSON response', e);
-            this.logger.error('Raw text received:', text);
-            throw new Error(`Invalid AI response format: ${e.message}`);
+        this.logger.log(`Successfully generated content using: ${modelName}`);
+        return { text, modelName };
+      } catch (error) {
+        lastError = error;
+        this.logger.warn(`Model ${modelName} failed: ${error.message}`);
+        if (this.isQuotaError(error)) {
+          this.logger.error(
+            `Quota exceeded for ${modelName}. Stopping fallback attempts.`,
+          );
+          break;
         }
+      }
     }
 
-    private getModelCandidates(): string[] {
-        const candidates = [
-            process.env.GEMINI_MODEL,
-            this.defaultModelName,
-            'gemini-2.5-flash',
-            'gemini-2.0-flash',
-            'gemini-1.5-flash',
-        ]
-            .filter((m): m is string => !!m && m !== 'gemini-pro');
-
-        return Array.from(new Set(candidates));
-    }
-
-    private isQuotaError(error: any): boolean {
-        const message = (error?.message || '').toString();
-        return message.includes('429') || message.toLowerCase().includes('quota');
-    }
-
-    private async generateContentWithFallback(parts: any[]): Promise<{ text: string; modelName: string }> {
-        if (!this.genAI) {
-            throw new Error('Gemini API not configured');
-        }
-
-        const modelsToTry = this.getModelCandidates();
-        if (modelsToTry.length === 0) {
-            throw new Error('No Gemini models configured');
-        }
-
-        let lastError: any;
-        for (const modelName of modelsToTry) {
-            try {
-                this.logger.log(`Attempting to generate with model: ${modelName}`);
-                const model = this.genAI.getGenerativeModel({ model: modelName });
-                const result = await model.generateContent(parts);
-                const response = await result.response;
-                const text = response.text();
-                if (!text) {
-                    throw new Error('Empty response from Gemini');
-                }
-                this.logger.log(`Successfully generated content using: ${modelName}`);
-                return { text, modelName };
-            } catch (error) {
-                lastError = error;
-                this.logger.warn(`Model ${modelName} failed: ${error.message}`);
-                if (this.isQuotaError(error)) {
-                    this.logger.error(`Quota exceeded for ${modelName}. Stopping fallback attempts.`);
-                    break;
-                }
-            }
-        }
-
-        throw lastError || new Error('Gemini generation failed');
-    }
+    throw lastError || new Error('Gemini generation failed');
+  }
 }

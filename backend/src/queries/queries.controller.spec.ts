@@ -11,8 +11,8 @@ describe('QueriesController', () => {
       providers: [
         {
           provide: QueriesService,
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

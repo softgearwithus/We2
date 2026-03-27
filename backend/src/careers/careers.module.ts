@@ -5,9 +5,9 @@ import { CareersController } from './careers.controller';
 import { Career } from './entities/career.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Career])],
-    controllers: [CareersController],
-    providers: [CareersService],
-    exports: [CareersService],
+  imports: [TypeOrmModule.forFeature([Career])],
+  controllers: [CareersController],
+  providers: [CareersService],
+  exports: [CareersService],
 })
-export class CareersModule { }
+export class CareersModule {}

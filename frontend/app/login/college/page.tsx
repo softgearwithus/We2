@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import AuthLayout from '../../components/auth/AuthLayout';
 import LoginForm from '../../components/auth/LoginForm';
 
-export default function CollegeLoginPage() {
+function CollegeLoginPageContent() {
     return (
         <AuthLayout
             role="college"
@@ -23,5 +24,13 @@ export default function CollegeLoginPage() {
         >
             <LoginForm role="college" redirectPath="/institute/dashboard" />
         </AuthLayout>
+    );
+}
+
+export default function CollegeLoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+            <CollegeLoginPageContent />
+        </Suspense>
     );
 }

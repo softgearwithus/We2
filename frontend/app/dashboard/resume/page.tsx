@@ -8,8 +8,6 @@ import { useReactToPrint } from 'react-to-print';
 import { Download, Layout, ArrowRight, Sparkles, FileText, CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import ATSScanner from './_components/ats-scanner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 export default function ResumeBuilderPage() {
     const [view, setView] = useState<'landing' | 'templates' | 'builder' | 'scanner' | 'list'>('landing');
@@ -20,7 +18,6 @@ export default function ResumeBuilderPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState<string | null>(null);
     const printRef = useRef<HTMLDivElement>(null);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('resume');
 
     const handlePrint = useReactToPrint({
         contentRef: printRef,
@@ -126,9 +123,6 @@ export default function ResumeBuilderPage() {
 
     return (
         <div className="h-[calc(100vh-7rem)] flex flex-col bg-slate-50 overflow-hidden font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900 rounded-2xl border border-slate-200 relative">
-            {isLimited && (
-                <UsageUpgradeGate message="Upgrade to continue your resume tools." />
-            )}
             {/* Header */}
             <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20 shrink-0 sticky top-0">
                 <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('landing')}>
@@ -163,7 +157,7 @@ export default function ResumeBuilderPage() {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={saveResume}
-                                disabled={isSaving || isLimited}
+                                disabled={isSaving}
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-slate-800 text-white hover:bg-slate-500 rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-95 disabled:opacity-60"
                             >
                                 {isSaving ? 'Saving...' : 'Save'}
@@ -204,11 +198,6 @@ export default function ResumeBuilderPage() {
                             <p className="text-lg text-slate-600 max-w-lg mx-auto leading-relaxed">
                                 Create a ATS-optimized resume in minutes or analyze your existing one to get hired faster.
                             </p>
-                            {isFreePlan && (
-                                <div className={`mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
-                                    Free plan time left in Resume: {remainingLabel}
-                                </div>
-                            )}
                         </div>
 
                         {/* Cards Grid */}
@@ -216,8 +205,8 @@ export default function ResumeBuilderPage() {
                             {/* Builder Card */}
                             <motion.div
                                 whileHover={{ y: -4 }}
-                                onClick={() => !isLimited && setView('templates')}
-                                className={`group bg-white border border-slate-200 p-8 rounded-3xl transition-all shadow-sm relative overflow-hidden ${isLimited ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200'}`}
+                                onClick={() => setView('templates')}
+                                className="group bg-white border border-slate-200 p-8 rounded-3xl transition-all shadow-sm relative overflow-hidden cursor-pointer hover:border-slate-200 hover:shadow-xl hover:shadow-slate-200"
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
 
@@ -248,8 +237,8 @@ export default function ResumeBuilderPage() {
                             {/* Scanner Card */}
                             <motion.div
                                 whileHover={{ y: -4 }}
-                                onClick={() => !isLimited && setView('scanner')}
-                                className={`group bg-white border border-slate-200 p-8 rounded-3xl transition-all shadow-sm relative overflow-hidden ${isLimited ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100'}`}
+                                onClick={() => setView('scanner')}
+                                className="group bg-white border border-slate-200 p-8 rounded-3xl transition-all shadow-sm relative overflow-hidden cursor-pointer hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100"
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110" />
 

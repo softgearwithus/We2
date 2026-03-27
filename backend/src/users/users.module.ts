@@ -3,8 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { User } from './user.entity';
-import { Submission } from '../dsa/entities/submission.entity';
-import { SqlSubmission } from '../sql/entities/sql-submission.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
 import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submission.entity';
 import { Resume } from '../resume/entities/resume.entity';
@@ -18,8 +16,6 @@ import { PendingUpgradeOrder } from './entities/pending-upgrade-order.entity';
   imports: [
     TypeOrmModule.forFeature([
       User,
-      Submission,
-      SqlSubmission,
       InterviewSession,
       ProjectLabSubmission,
       Resume,
@@ -34,4 +30,4 @@ import { PendingUpgradeOrder } from './entities/pending-upgrade-order.entity';
   controllers: [UsersController],
   exports: [UsersService, TypeOrmModule],
 })
-export class UsersModule { }
+export class UsersModule {}

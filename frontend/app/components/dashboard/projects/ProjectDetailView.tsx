@@ -5,8 +5,6 @@ import { ProjectType } from '@/app/lib/ProjectData';
 import { submitProjectLab } from '@/app/lib/project-labs';
 import { ChevronLeft, Code2, Clock, Github, ExternalLink, CheckCircle2, BookOpen, AlertCircle, Database, Layout, Server, Wrench, Layers, ListChecks, FileText, Figma, Video, Briefcase } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
 
 interface ProjectDetailViewProps {
     project: ProjectType;
@@ -28,7 +26,6 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
     const [repoUrl, setRepoUrl] = useState('');
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('project_labs');
 
     useEffect(() => {
         const stored = localStorage.getItem('emble_completed_projects');
@@ -86,9 +83,6 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
             exit={{ opacity: 0, x: 20 }}
             className="w-full h-full flex flex-col relative"
         >
-            {isLimited && (
-                <UsageUpgradeGate message="Upgrade to continue your Project Labs work." />
-            )}
             {/* Header breadcrumb style */}
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-4 text-sm font-medium w-fit border border-transparent hover:border-slate-200 px-3 py-1.5 rounded-lg active:bg-slate-50">
                 <ChevronLeft size={16} /> Back to Roadmap
@@ -111,11 +105,6 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                     </span>
                                 </div>
                                 <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">{project.title}</h1>
-                                {isFreePlan && (
-                                    <div className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${isLimited ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
-                                        Free plan time left: {remainingLabel}
-                                    </div>
-                                )}
                             </div>
                             <div className="p-4 bg-slate-50/50 rounded-2xl text-slate-400 border border-slate-200/50 shadow-sm shrink-0">
                                 <Code2 size={28} />
@@ -302,8 +291,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                                 value={repoUrl}
                                                 onChange={(e) => setRepoUrl(e.target.value)}
                                                 placeholder="https://github.com/..."
-                                                disabled={isLimited}
-                                                className={`w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal ${isLimited ? 'opacity-60 cursor-not-allowed' : 'focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400'}`}
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-11 text-sm text-slate-700 transition-all font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-400"
                                             />
                                         </div>
                                     </div>
@@ -320,7 +308,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
                                     </div>
                                     <button
                                         onClick={handleSubmit}
-                                        disabled={isSubmitting || (!repoUrl && !submitted) || isLimited}
+                                        disabled={isSubmitting || (!repoUrl && !submitted)}
                                         className="w-full py-3 bg-slate-800 hover:bg-slate-900 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-2 group-hover:scale-[1.02]"
                                     >
                                         {isSubmitting ? (

@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AiService {
-    constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService) {}
 
-    async generateContent(topicId: string, topicTitle: string): Promise<string> {
-        const expertContent: Record<string, string> = {
-            'introduction-to-programming': `# 🎯 Foundation: Introduction to Programming (Basic to Pro)
+  async generateContent(topicId: string, topicTitle: string): Promise<string> {
+    const expertContent: Record<string, string> = {
+      'introduction-to-programming': `# 🎯 Foundation: Introduction to Programming (Basic to Pro)
 
 ![Introduction Graphic](https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=1200)
 
@@ -45,7 +45,7 @@ Elite engineers understand the underlying **Memory Layout**:
 **Q: What is a JIT Compiler?**
 *A: Just-In-Time compilers (used in Java/V8) translate bytecode into machine code at runtime for high performance.*`,
 
-            'variables,-data-types-&-i/o': `# 📦 Variables & Memory: Basic to Pro
+      'variables,-data-types-&-i/o': `# 📦 Variables & Memory: Basic to Pro
 
 ![Variables Illustration](https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200)
 
@@ -77,7 +77,7 @@ Professionals use specific types for specific needs:
 **Q: What is Type Casting?**
 *A: Converting one data type to another (e.g., converting a \`double\` to an \`int\`). Implicit is automatic; Explicit requires manual syntax.*`,
 
-            'control-flow-(if/else-&-switch)': `# 🚦 Control Flow: Smarter Decisions
+      'control-flow-(if/else-&-switch)': `# 🚦 Control Flow: Smarter Decisions
 
 ![Control Flow Graphic](https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&q=80&w=1200)
 
@@ -107,7 +107,7 @@ Engines optimize your decisions:
 **Q: What happens if you forget the \`break\` in a switch?**
 *A: Fall-through occurs: the next case's code executes even if its condition isn't met.*`,
 
-            'loops-&-iterations': `# 🔄 Loops: Performance Iteration
+      'loops-&-iterations': `# 🔄 Loops: Performance Iteration
 
 ![Loop Visual](https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&q=80&w=1200)
 
@@ -136,7 +136,7 @@ Nesting loops (\`loop inside loop\`) is powerful but dangerous. A nested loop ov
 **Q: Difference between While and Do-While?**
 *A: While checks the condition **before** execution; Do-While checks it **after**.*`,
 
-            'pattern-printing-(logic-building)': `# 🗺️ Pattern Printing: Logic Blueprints
+      'pattern-printing-(logic-building)': `# 🗺️ Pattern Printing: Logic Blueprints
 
 ![Pattern Logic Graphic](https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=1200)
 
@@ -168,7 +168,7 @@ Pattern logic is the direct precursor to:
 **Q: How to print a Diamond pattern?**
 *A: Combine a standard pyramid and an inverted pyramid, carefully managing the space logic.*`,
 
-            'functions-&-scope': `# 🛠️ Functions: Modular Engineering
+      'functions-&-scope': `# 🛠️ Functions: Modular Engineering
 
 ![Functions Graphic](https://images.unsplash.com/photo-1551033406-611cf9a28f67?auto=format&fit=crop&q=80&w=1200)
 
@@ -194,14 +194,14 @@ Functions are blocks of code that perform a specific task. They take **Input** (
 *A: Defining multiple functions with the same name but different parameters (e.g., \`add(int, int)\` and \`add(double, double)\`).*
 
 **Q: What is Recursion?**
-*A: A function that calls itself. Must have a **Base Case** to prevent infinite execution.*`
-        };
+*A: A function that calls itself. Must have a **Base Case** to prevent infinite execution.*`,
+    };
 
-        if (expertContent[topicId]) {
-            return expertContent[topicId];
-        }
+    if (expertContent[topicId]) {
+      return expertContent[topicId];
+    }
 
-        return `# 🎯 Learning Guide: ${topicTitle} (Basic to Pro)
+    return `# 🎯 Learning Guide: ${topicTitle} (Basic to Pro)
 
 ## 🔰 Basic Level
 Welcome to ${topicTitle}! This topic focuses on...
@@ -217,5 +217,5 @@ In a production environment, elite engineers handle this by...
 **Q: Explain the core mechanism of ${topicTitle}.**
 *A: ...*
 `;
-    }
+  }
 }

@@ -44,8 +44,13 @@ export type PlatformSettings = {
     maxUploadSizeMB: number;
     upgradesEnabled?: boolean;
     subscriptionPrices?: {
-        standard: Record<string, number>;
-        pro: Record<string, number>;
+        pro?: {
+            '1m'?: number;
+        };
+        display?: {
+            proMonthlyUsd?: number;
+        };
+        [key: string]: any;
     };
     freeTierLimitMinutes?: number;
     freeTierResetAt?: string | null;

@@ -1,16 +1,27 @@
 'use client';
 
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 import { User, Building2, Briefcase, ShieldCheck, ArrowRight, Sparkles, GraduationCap } from 'lucide-react';
 
-export default function LoginSelectionPage() {
+function LoginSelectionPageContent() {
+    const searchParams = useSearchParams();
+    const nextParam = searchParams.get('next');
+    const safeNext =
+        nextParam &&
+            nextParam.startsWith('/') &&
+            !nextParam.startsWith('//')
+            ? nextParam
+            : null;
+
     const portals = [
         {
             role: 'Student',
             icon: <GraduationCap size={32} className="text-white" />,
             description: 'Access simulations, track progress, and build your verified portfolio.',
-            link: '/login/student',
+            link: safeNext ? `/login/student?next=${encodeURIComponent(safeNext)}` : '/login/student',
             gradient: 'from-slate-600 to-violet-600',
             border: 'hover:border-slate-300',
             shadow: 'hover:shadow-slate-200',
@@ -22,7 +33,7 @@ export default function LoginSelectionPage() {
             role: 'Institute',
             icon: <Building2 size={32} className="text-white" />,
             description: 'Partner with us to transform your campus into a tech talent hub.',
-            link: '/login/college',
+            link: safeNext ? `/login/college?next=${encodeURIComponent(safeNext)}` : '/login/college',
             gradient: 'from-emerald-600 to-teal-600',
             border: 'hover:border-emerald-300',
             shadow: 'hover:shadow-emerald-500/20',
@@ -34,7 +45,7 @@ export default function LoginSelectionPage() {
             role: 'Industry',
             icon: <Briefcase size={32} className="text-white" />,
             description: 'Hire pre-vetted talent directly from our high-performance cohorts.',
-            link: '/login/industry',
+            link: safeNext ? `/login/industry?next=${encodeURIComponent(safeNext)}` : '/login/industry',
             gradient: 'from-slate-800 to-black',
             border: 'hover:border-slate-400',
             shadow: 'hover:shadow-slate-500/20',
@@ -136,5 +147,13 @@ export default function LoginSelectionPage() {
                 </div>
             </main>
         </div>
+    );
+}
+
+export default function LoginSelectionPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+            <LoginSelectionPageContent />
+        </Suspense>
     );
 }

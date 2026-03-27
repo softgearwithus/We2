@@ -7,8 +7,12 @@ import { WriteXController } from './writex.controller';
 import { WriteXService } from './writex.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([WriteXQuestion]), ConfigModule, AdminModule],
-    controllers: [WriteXController],
-    providers: [WriteXService],
+  imports: [
+    TypeOrmModule.forFeature([WriteXQuestion]),
+    ConfigModule,
+    AdminModule,
+  ],
+  controllers: [WriteXController],
+  providers: [WriteXService],
 })
-export class WriteXModule { }
+export class WriteXModule {}

@@ -20,7 +20,8 @@ export class VapiController {
       const callId = payload.message.call?.id;
       const userId = payload.message.call?.metadata?.userId;
       const assistantId = payload.message.call?.assistantId;
-      const interviewSessionId = payload.message.call?.metadata?.interviewSessionId;
+      const interviewSessionId =
+        payload.message.call?.metadata?.interviewSessionId;
       if (callId && userId) {
         await this.interviewService.linkVapiCallToSession(userId, callId, {
           assistantId,

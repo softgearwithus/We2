@@ -22,14 +22,21 @@ import { EmailOtpService } from './services/email-otp.service';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET') || 'fallback-secret',
         signOptions: {
-          expiresIn: (configService.get<string>('JWT_EXPIRATION') || '3600s') as any,
+          expiresIn: (configService.get<string>('JWT_EXPIRATION') ||
+            '3600s') as any,
         },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, EmailOtpService, JwtStrategy, JwtAuthGuard, RolesGuard],
+  providers: [
+    AuthService,
+    EmailOtpService,
+    JwtStrategy,
+    JwtAuthGuard,
+    RolesGuard,
+  ],
   controllers: [AuthController],
   exports: [JwtAuthGuard, RolesGuard],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -8,9 +8,12 @@ import { GeminiService } from '../common/gemini.service';
 import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([InterviewSession, User]), AdminSettingsModule],
-    controllers: [InterviewsController],
-    providers: [InterviewsService, GeminiService],
-    exports: [InterviewsService],
+  imports: [
+    TypeOrmModule.forFeature([InterviewSession, User]),
+    AdminSettingsModule,
+  ],
+  controllers: [InterviewsController],
+  providers: [InterviewsService, GeminiService],
+  exports: [InterviewsService],
 })
-export class InterviewsModule { }
+export class InterviewsModule {}

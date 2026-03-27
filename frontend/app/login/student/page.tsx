@@ -1,10 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import AuthLayout from '../../components/auth/AuthLayout';
 import LoginForm from '../../components/auth/LoginForm';
 import { CheckCircle2, TrendingUp } from 'lucide-react';
 
-export default function StudentLoginPage() {
+function StudentLoginPageContent() {
     return (
         <>
             <h1 className="sr-only">Student Login - Emble: Access India's First Integrated AI Placement Ecosystem Hub for DSA, SQL, and Industrial Projects</h1>
@@ -45,5 +46,13 @@ export default function StudentLoginPage() {
             <LoginForm role="student" redirectPath="/dashboard" />
         </AuthLayout>
         </>
+    );
+}
+
+export default function StudentLoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+            <StudentLoginPageContent />
+        </Suspense>
     );
 }

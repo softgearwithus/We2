@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import AuthLayout from '../../components/auth/AuthLayout';
 import LoginForm from '../../components/auth/LoginForm';
 
-export default function IndustryLoginPage() {
+function IndustryLoginPageContent() {
     return (
         <AuthLayout
             role="industry"
@@ -25,5 +26,13 @@ export default function IndustryLoginPage() {
         >
             <LoginForm role="industry" redirectPath="/industry/dashboard" />
         </AuthLayout>
+    );
+}
+
+export default function IndustryLoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+            <IndustryLoginPageContent />
+        </Suspense>
     );
 }

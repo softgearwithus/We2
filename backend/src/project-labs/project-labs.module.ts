@@ -6,9 +6,9 @@ import { ProjectLab } from './entities/project-lab.entity';
 import { ProjectLabSubmission } from './entities/project-lab-submission.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ProjectLab, ProjectLabSubmission])],
-    controllers: [ProjectLabsController],
-    providers: [ProjectLabsService],
-    exports: [ProjectLabsService],
+  imports: [TypeOrmModule.forFeature([ProjectLab, ProjectLabSubmission])],
+  controllers: [ProjectLabsController],
+  providers: [ProjectLabsService],
+  exports: [ProjectLabsService],
 })
 export class ProjectLabsModule {}

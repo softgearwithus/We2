@@ -12,8 +12,8 @@ describe('QueriesService', () => {
         QueriesService,
         {
           provide: getRepositoryToken(Query),
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

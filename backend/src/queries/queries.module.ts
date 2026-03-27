@@ -7,6 +7,6 @@ import { Query } from './entities/query.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Query])],
   controllers: [QueriesController],
-  providers: [QueriesService]
+  providers: [QueriesService],
 })
-export class QueriesModule { }
+export class QueriesModule {}

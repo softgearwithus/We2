@@ -67,7 +67,9 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
   }
 
   if (read('DB_TYPE') && read('DB_TYPE') !== 'postgres') {
-    throw new Error('Only Postgres is supported. Remove DB_TYPE or set it to postgres.');
+    throw new Error(
+      'Only Postgres is supported. Remove DB_TYPE or set it to postgres.',
+    );
   }
 
   const host =
@@ -82,7 +84,10 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
     read('DB_USERNAME') ||
     'admin';
   const password =
-    parsedUrl?.password || read('PGPASSWORD') || read('DB_PASSWORD') || 'password';
+    parsedUrl?.password ||
+    read('PGPASSWORD') ||
+    read('DB_PASSWORD') ||
+    'password';
   const database =
     parsedUrl?.database ||
     read('PGDATABASE') ||
@@ -104,7 +109,12 @@ export const resolveDbConfig = (configService?: ConfigService): DbConfig => {
   const ssl = sslEnabled ? { rejectUnauthorized: false } : undefined;
 
   const nodeEnv = read('NODE_ENV') || 'development';
-  const localHosts = new Set(['localhost', '127.0.0.1', 'postgres', 'host.docker.internal']);
+  const localHosts = new Set([
+    'localhost',
+    '127.0.0.1',
+    'postgres',
+    'host.docker.internal',
+  ]);
   if (nodeEnv !== 'production' && !localHosts.has(host)) {
     throw new Error('Development mode requires a local Postgres host.');
   }

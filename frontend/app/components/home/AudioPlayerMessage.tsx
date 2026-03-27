@@ -9,7 +9,6 @@ export default function AudioPlayerMessage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const togglePlay = () => {
@@ -32,10 +31,6 @@ export default function AudioPlayerMessage() {
       setCurrentTime(audio.currentTime);
     };
 
-    const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
-    };
-
     const handleEnded = () => {
       setIsPlaying(false);
       setProgress(0);
@@ -44,11 +39,9 @@ export default function AudioPlayerMessage() {
     };
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
   }, []);

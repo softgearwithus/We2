@@ -9,8 +9,12 @@ import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
 import { User } from '../users/user.entity';
 
 @Module({
-    imports: [ConfigModule, TypeOrmModule.forFeature([Resume, User]), AdminSettingsModule],
-    controllers: [ResumeController],
-    providers: [ResumeService],
+  imports: [
+    ConfigModule,
+    TypeOrmModule.forFeature([Resume, User]),
+    AdminSettingsModule,
+  ],
+  controllers: [ResumeController],
+  providers: [ResumeService],
 })
-export class ResumeModule { }
+export class ResumeModule {}
