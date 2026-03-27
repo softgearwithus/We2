@@ -18,8 +18,7 @@ import {
     CartesianGrid,
     Tooltip
 } from 'recharts';
-import { useSectionUsage } from '@/app/hooks/useSectionUsage';
-import UsageUpgradeGate from '@/app/components/shared/UsageUpgradeGate';
+import { useCredits } from '@/app/hooks/useCredits';
 
 interface CommunicationDrillDashboardProps {
     onBack?: () => void;
@@ -38,7 +37,10 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
     const [isDetailLoading, setIsDetailLoading] = useState(false);
     const [detailError, setDetailError] = useState<string | null>(null);
     const [historyFilter, setHistoryFilter] = useState<'all' | 'audio' | 'video'>('all');
-    const { remainingLabel, isLimited, isFreePlan } = useSectionUsage('interview_audio');
+    const { isLoading: creditsLoading } = useCredits();
+    const isFreePlan = false;
+    const isLimited = false;
+    const remainingLabel = 'Unlimited';
     const drillStartedAtRef = useRef<number | null>(null);
 
     const interviewsService = useRef(new InterviewsService());
@@ -139,21 +141,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
         setError(null);
 
         try {
-            const { getActiveToken } = await import('@/app/lib/auth-storage');
-            const token = getActiveToken();
-            const deductRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/audio/deduct-credit`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!deductRes.ok) {
-                const errData = await deductRes.json().catch(() => null);
-                throw new Error(errData?.message || 'Monthly audio drill limit exhausted.');
-            }
-
-            const { getGeminiService } = await import('@/app/services/GeminiService');
-            const geminiService = await getGeminiService();
-            const drillData = await geminiService.generateInterviewDrill("Computer Science and Software Engineering");
+            const drillData = await interviewsService.current.generateCommunicationDrill("Computer Science and Software Engineering");
 
             setCurrentDrill(drillData);
         } catch (err: any) {
@@ -309,12 +297,12 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                         <AlertCircle className="w-16 h-16 text-rose-500 mx-auto" />
                         <h2 className="text-2xl font-bold text-slate-900">Generation Failed</h2>
                         <p className="text-slate-500">{error}</p>
-                        <div className="flex gap-4 justify-center pt-4">
-                            <Button variant="outline" onClick={onBack} className="rounded-2xl px-6 h-12">Cancel</Button>
-                            <Button onClick={generateDrill} disabled={isLimited} className="rounded-2xl px-6 h-12 bg-violet-600 hover:bg-violet-700 text-white font-bold disabled:opacity-60 disabled:cursor-not-allowed">Retry Generation</Button>
+                            <div className="flex gap-4 justify-center pt-4">
+                                <Button variant="outline" onClick={onBack} className="rounded-2xl px-6 h-12">Cancel</Button>
+                                <Button onClick={generateDrill} className="rounded-2xl px-6 h-12 bg-violet-600 hover:bg-violet-700 text-white font-bold">Retry Generation</Button>
+                            </div>
                         </div>
-                    </div>
-                ) : (
+                    ) : (
                     <div className="text-center space-y-12 max-w-md">
                         <div className="relative w-40 h-40 mx-auto">
                             {/* Outer pulsing ring */}
@@ -329,18 +317,12 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                             </div>
                         </div>
                         <div className="space-y-4">
-                            {isLimited ? (
-                                <div className="relative min-h-[260px]">
-                                    <UsageUpgradeGate message="Upgrade to continue your audio drill sessions." />
-                                </div>
-                            ) : (
-                                <>
-                                    <h2 className="text-4xl font-black text-slate-900 tracking-tight">Designing Drill...</h2>
-                                    <p className="text-slate-500 text-lg leading-relaxed">
-                                        Initializing EMBLE AI to architect a unique Software Engineering assessment module tailored for you.
-                                    </p>
-                                </>
-                            )}
+                            <>
+                                <h2 className="text-4xl font-black text-slate-900 tracking-tight">Designing Drill...</h2>
+                                <p className="text-slate-500 text-lg leading-relaxed">
+                                    Initializing EMBLE AI to architect a unique Software Engineering assessment module tailored for you.
+                                </p>
+                            </>
                         </div>
                     </div>
                 )}

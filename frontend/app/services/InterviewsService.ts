@@ -28,6 +28,17 @@ export interface InterviewSession {
 export class InterviewsService {
     private apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
+    private extractErrorMessage(payload: any, fallback: string): string {
+        const message = payload?.message;
+        if (Array.isArray(message) && message.length > 0) {
+            return String(message[0]);
+        }
+        if (typeof message === 'string' && message.trim().length > 0) {
+            return message;
+        }
+        return fallback;
+    }
+
     private mapStatus(status?: string): 'completed' | 'analyzing' | 'error' {
         if (status === 'completed') return 'completed';
         if (status === 'in_progress') return 'analyzing';
@@ -91,6 +102,34 @@ export class InterviewsService {
             console.error("Failed to fetch sessions", e);
             return [];
         }
+    }
+
+    async generateCommunicationDrill(topic?: string): Promise<any> {
+        if (typeof window === 'undefined') {
+            throw new Error('Communication drill generation is only available in the browser.');
+        }
+
+        const { getActiveToken } = await import('@/app/lib/auth-storage');
+        const token = getActiveToken();
+
+        const response = await fetch(`${this.apiBaseUrl}/interviews/communication/generate`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(topic ? { topic } : {})
+        });
+
+        if (!response.ok) {
+            const payload = await response.json().catch(() => null);
+            if (response.status === 403) {
+                throw new Error(this.extractErrorMessage(payload, 'Pro subscription required for interview features.'));
+            }
+            throw new Error(this.extractErrorMessage(payload, 'Failed to generate communication drill.'));
+        }
+
+        return response.json();
     }
 
     async saveSession(session: InterviewSession): Promise<void> {
