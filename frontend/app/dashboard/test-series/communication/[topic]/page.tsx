@@ -252,3 +252,5 @@ export default function WriteXModuleSimulator({ params }: { params: Promise<{ to
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

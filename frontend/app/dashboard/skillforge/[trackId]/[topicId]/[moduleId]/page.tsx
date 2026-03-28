@@ -263,3 +263,5 @@ export default function GenericModulePage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

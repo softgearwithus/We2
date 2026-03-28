@@ -161,3 +161,5 @@ export default function ChapterPage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

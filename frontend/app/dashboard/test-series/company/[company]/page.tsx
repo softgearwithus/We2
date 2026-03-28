@@ -265,3 +265,5 @@ export default function CompanyMockTestsPage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

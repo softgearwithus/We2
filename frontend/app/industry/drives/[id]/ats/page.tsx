@@ -161,3 +161,5 @@ export default function ATSBoardPage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

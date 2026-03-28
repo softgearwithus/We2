@@ -803,3 +803,5 @@ export default function ExamSimulatorPage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

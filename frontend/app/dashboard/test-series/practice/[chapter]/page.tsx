@@ -219,3 +219,5 @@ export default function PracticeSessionEntry() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

@@ -209,3 +209,5 @@ export default function GenericTopicPage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }

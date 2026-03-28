@@ -422,3 +422,5 @@ export default function TopicPage() {
         </div>
     );
 }
+
+export function generateStaticParams() { return []; }
