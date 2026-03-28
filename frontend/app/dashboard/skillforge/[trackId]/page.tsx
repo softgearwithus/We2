@@ -195,5 +195,3 @@ export default function GenericTrackPage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }

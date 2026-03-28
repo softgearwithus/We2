@@ -169,5 +169,3 @@ export default function LanguageCoursePage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }

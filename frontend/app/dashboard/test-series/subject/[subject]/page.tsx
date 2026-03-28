@@ -229,5 +229,3 @@ export default function SubjectModulesPage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }

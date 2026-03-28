@@ -226,5 +226,3 @@ export default function MockTestAnalysisPage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }

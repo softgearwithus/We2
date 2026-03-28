@@ -644,5 +644,3 @@ export default function SubjectModuleSimulatorPage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }

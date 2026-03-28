@@ -104,5 +104,3 @@ export default function EditProjectLabPage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }

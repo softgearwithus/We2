@@ -176,5 +176,3 @@ export default function CompanyTopicMcqsPage() {
         </div>
     );
 }
-
-export function generateStaticParams() { return []; }
