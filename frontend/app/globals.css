@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 47 33% 96%; /* #f4f1e1 approximate paper texture */
+    --background: 0 0% 99%; /* 99% whitish background */
     --foreground: 120 15% 15%; /* #202b20 dark green text */
 
-    --card: 47 33% 96%;
+    --card: 0 0% 100%;
     --card-foreground: 120 15% 15%;
 
-    --popover: 47 33% 96%;
+    --popover: 0 0% 100%;
     --popover-foreground: 120 15% 15%;
 
     --primary: 120 20% 30%; /* #3d5c3d olive green */
@@ -28,11 +28,27 @@
     --destructive: 0 40% 60%; /* muted red for end session */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 50 15% 85%;
-    --input: 50 15% 85%;
+    --border: 120 25% 82%; /* green-tinted borders and edges */
+    --input: 120 25% 82%;
     --ring: 120 20% 30%;
 
     --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   html {
@@ -44,9 +60,6 @@
     color: hsl(var(--foreground));
     @apply antialiased;
     scroll-behavior: smooth;
-    /* Dotted pattern background */
-    background-image: radial-gradient(hsl(120 10% 60%) 1px, transparent 1px);
-    background-size: 30px 30px;
   }
 
   h1 {
@@ -88,6 +101,16 @@
   ::selection {
     background-color: #ffa116;
     color: white;
+  }
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 

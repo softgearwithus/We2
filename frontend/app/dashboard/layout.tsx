@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { fetchPublicUpdateFlags } from '../lib/admin-settings';
 import { DashboardModeProvider, useDashboardMode } from '../context/DashboardModeContext';
-import Navbar from '../components/layout/Navbar';
+import AppSidebar from '@/components/shadcn-space/blocks/dashboard-shell-01/app-sidebar';
 import CompleteProfileModal from '../components/profile/CompleteProfileModal';
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
@@ -15,8 +14,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({});
     const [updateIndicators, setUpdateIndicators] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
@@ -58,7 +55,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     if (!dashboardContext) {
         throw new Error("DashboardContent must be used within DashboardModeProvider");
     }
-    const { mode, setMode } = dashboardContext;
+    const { mode } = dashboardContext;
 
     useEffect(() => {
         if (!isLoading && !user) {
@@ -67,14 +64,16 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     }, [isLoading, user, router]);
 
     interface MenuItem {
-        icon: string;
+        isSection?: boolean;
+        icon?: string;
         label: string;
-        href: string;
+        href?: string;
         subItems?: { label: string; href: string; icon: string; hasUpdate?: boolean }[];
         hasUpdate?: boolean;
     }
 
     const placementMenu: MenuItem[] = [
+        { isSection: true, label: 'DASHBOARDS' },
         { icon: 'dashboard', label: 'Overview', href: '/dashboard', hasUpdate: updateIndicators['/dashboard'] },
         { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation', hasUpdate: updateIndicators['/dashboard/preparation'] },
         {
@@ -87,6 +86,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Mock Analysis', href: '/dashboard/test-series/mock-analysis', icon: 'analytics' }
             ]
         },
+        
+        { isSection: true, label: 'LABS' },
         { icon: 'terminal', label: 'IDE Workspace', href: '/dashboard/ide', hasUpdate: updateIndicators['/dashboard/ide'] },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },
         {
@@ -99,6 +100,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Mock Analysis', href: '/dashboard/interview?mode=analysis', icon: 'analytics' }
             ]
         },
+        
+        { isSection: true, label: 'CAREER' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume', hasUpdate: updateIndicators['/dashboard/resume'] },
         {
             icon: 'memory',
@@ -112,6 +115,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             ]
         },
         { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar', hasUpdate: updateIndicators['/dashboard/market-radar'] },
+        
+        { isSection: true, label: 'NETWORK' },
         {
             icon: 'group',
             label: 'Mentors',
@@ -128,11 +133,15 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     ];
 
     const simulationMenu: MenuItem[] = [
+        { isSection: true, label: 'DASHBOARDS' },
         { icon: 'dashboard', label: 'Overview', href: '/dashboard' },
         { icon: 'view_kanban', label: 'Sprint Board', href: '/dashboard/sprint' },
+        { isSection: true, label: 'PAGES' },
         { icon: 'folder_data', label: 'Repository', href: '/simulation/repo' },
         { icon: 'rate_review', label: 'Code Reviews', href: '/dashboard/reviews' },
     ];
+
+
 
     const menuItems = mode === 'prep' ? placementMenu : simulationMenu;
 
@@ -156,166 +165,32 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         return pathMatch ? pathMatch.href : null;
     };
 
-    useEffect(() => {
-        setExpandedMenus((prev) => {
-            let changed = false;
-            const next = { ...prev };
-            menuItems.forEach((item) => {
-                if (item.subItems && getActiveSubHref(item.subItems)) {
-                    if (!next[item.label]) {
-                        next[item.label] = true;
-                        changed = true;
-                    }
-                }
-            });
-            return changed ? next : prev;
-        });
-    }, [pathname, searchParams.toString(), mode]);
+    const activeSubHref = getActiveSubHref(menuItems.flatMap(i => i.subItems || []));
 
-    const toggleMenu = (label: string) => {
-        setExpandedMenus((prev) => ({
-            ...prev,
-            [label]: !prev[label],
-        }));
-    };
+    const mappedNavItems = menuItems.map(item => ({
+        isSection: item.isSection,
+        title: item.label,
+        icon: item.icon,
+        href: item.href,
+        isActive: pathname === item.href || (item.subItems ? Boolean(getActiveSubHref(item.subItems)) : false),
+        hasUpdate: item.hasUpdate,
+        children: item.subItems?.map(sub => ({
+            title: sub.label,
+            icon: sub.icon,
+            href: sub.href,
+            isActive: activeSubHref === sub.href,
+            hasUpdate: sub.hasUpdate
+        }))
+    }));
 
     if (isLoading) {
         return <div className="flex h-screen items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
     }
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            {/* Global Navbar */}
-            <Navbar />
-
-            <div className="flex pt-16 h-[calc(100vh)] box-border">
-                {/* Sidebar */}
-                <aside
-                    className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-slate-200 fixed top-16 bottom-0 z-30 transition-all duration-300 flex flex-col`}
-                >
-                    <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 shrink-0">
-                        {/* Mode Indicator / Brand moved here or simplified */}
-                        {/* Mode Indicator / Brand moved here or simplified */}
-                        <div className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ${!sidebarOpen ? 'opacity-0 w-0' : 'opacity-100'}`}>
-                            <div className="min-w-[8px] h-8 rounded-full bg-emerald-500"></div>
-                            <div>
-                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Workspace</p>
-                                <p className="text-sm font-bold text-slate-900 whitespace-nowrap">Placement Prep</p>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 ml-auto"
-                        >
-                            <span className="material-symbols-outlined text-xl">
-                                {sidebarOpen ? 'menu_open' : 'menu'}
-                            </span>
-                        </button>
-                    </div>
-
-                    <nav className="p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar">
-                        {menuItems.map((item) => {
-                            // Logic to determine if parent or any child is active
-                            const activeSubHref = getActiveSubHref(item.subItems);
-                            const isParentActive = pathname === item.href || Boolean(activeSubHref);
-                            const itemActiveClass = mode === 'prep' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-800';
-
-                            // Check if this specific item is the exact active path
-                            const isExactActive = pathname === item.href;
-                            const isExpanded = expandedMenus[item.label] ?? false;
-                            const isItemActive = item.subItems ? isParentActive : isExactActive;
-
-                            return (
-                                <div key={item.href}>
-                                    {item.subItems ? (
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleMenu(item.label)}
-                                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group ${isItemActive
-                                                ? itemActiveClass
-                                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            <span className={`material-symbols-outlined ${isItemActive ? 'text-inherit' : 'text-slate-400 group-hover:text-slate-600'}`}>
-                                                {item.icon}
-                                            </span>
-                                            <span
-                                                className={`font-medium whitespace-nowrap transition-opacity duration-200 flex-1 text-left ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
-                                                    }`}
-                                            >
-                                                {item.label}
-                                            </span>
-                                            {item.hasUpdate && (
-                                                <span className={`w-2 h-2 rounded-full bg-rose-500 animate-pulse ${sidebarOpen ? 'ml-auto' : 'absolute top-3 right-3'}`}></span>
-                                            )}
-                                            <span
-                                                className={`material-symbols-outlined text-base transition-transform ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'} ${isExpanded ? 'rotate-90' : ''}`}
-                                            >
-                                                chevron_right
-                                            </span>
-                                        </button>
-                                    ) : (
-                                        <Link
-                                            href={item.href}
-                                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group ${isItemActive
-                                                ? itemActiveClass
-                                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            <span className={`material-symbols-outlined ${isItemActive ? 'text-inherit' : 'text-slate-400 group-hover:text-slate-600'}`}>
-                                                {item.icon}
-                                            </span>
-                                            <span
-                                                className={`font-medium whitespace-nowrap transition-opacity duration-200 flex-1 ${sidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
-                                                    }`}
-                                            >
-                                                {item.label}
-                                            </span>
-                                            {item.hasUpdate && (
-                                                <span className={`w-2 h-2 rounded-full bg-rose-500 animate-pulse ${sidebarOpen ? 'ml-auto' : 'absolute top-3 right-3'}`}></span>
-                                            )}
-                                        </Link>
-                                    )}
-
-                                    {/* Sub-items rendering - only if sidebar is open and parent has subItems */}
-                                    {sidebarOpen && item.subItems && (
-                                        <div className={`ml-9 mt-1 space-y-1 mb-2 overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                            {item.subItems.map((sub) => {
-                                                const isSubActive = activeSubHref === sub.href;
-                                                return (
-                                                    <Link
-                                                        key={sub.href}
-                                                        href={sub.href}
-                                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${isSubActive
-                                                            ? 'text-slate-800 font-bold bg-slate-50/50'
-                                                            : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
-                                                            }`}
-                                                    >
-                                                        <span className="material-symbols-outlined text-[18px]">{sub.icon}</span>
-                                                        <span className="flex-1">{sub.label}</span>
-                                                        {sub.hasUpdate && (
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse ml-auto"></span>
-                                                        )}
-                                                    </Link>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </nav>
-
-                    <div className="p-4 shrink-0 mt-auto"></div>
-                </aside>
-
-                {/* Main Content Area */}
-                <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} p-8 h-full overflow-y-auto`}>
-                    {children}
-                </main>
-            </div>
-        </div>
+        <AppSidebar navItems={mappedNavItems} mode={mode}>
+            {children}
+        </AppSidebar>
     );
 }
 

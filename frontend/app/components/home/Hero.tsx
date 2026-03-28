@@ -4,8 +4,16 @@ import { useState, useEffect, useRef } from "react";
 import { Instrument_Serif } from "next/font/google";
 import { motion, AnimatePresence } from "motion/react";
 import Link from 'next/link';
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { SpeechInput } from "@/components/ai-elements/speech-input";
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import ParticlesBackground from '../ui/ParticlesBackground';
+
+const waveformHeights = [
+  0.2, 0.4, 0.3, 0.5, 0.8, 1.0, 0.7, 0.4, 0.6, 0.9, 0.8, 0.6, 0.4, 0.3, 0.5, 0.7,
+  0.6, 0.8, 1.0, 0.9, 0.5, 0.3, 0.4, 0.6, 0.8
+];
 
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
@@ -75,33 +83,35 @@ export default function Hero() {
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeInOut" }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] tracking-tight text-foreground"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-foreground"
             >
-              The most expressive human <span className={`${instrumentSerif.className} tracking-tight text-primary`}>interview</span> model.
+              Practice Real Tech Interviews.
             </motion.h1>
             
             <motion.p
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.1, ease: "easeInOut" }}
-              className="text-lg sm:text-[22px] font-normal max-w-xl text-foreground/70 leading-relaxed"
+              className="max-w-[42rem] leading-relaxed text-foreground/80 sm:text-[19px] sm:leading-8 font-medium"
             >
-              <span className="font-semibold text-foreground underline decoration-primary/40 underline-offset-4">Practice</span> <span className="font-semibold text-foreground underline decoration-primary/40 underline-offset-4">real-time interviews</span> with emotionally intelligent AI agents. Additionally utilize our free core tools to conquer your placements before facing the real recruiter.
+              Simulate tech interviews with <span className="font-bold text-[#6b7280] bg-[#eed9db] px-2.5 py-0.5 rounded-md mx-1">eO</span> or book a 1:1 real human interview. Improve your resume score and track placement readiness all in one platform.
             </motion.p>
             
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeInOut" }}
-              className="mt-4 sm:mt-6"
+              className="mt-6 sm:mt-8 flex flex-col items-start gap-3 w-full sm:w-auto"
             >
-              <Link 
-                href="/register" 
-                className="inline-flex items-center justify-center gap-2 bg-foreground text-background hover:bg-foreground/90 px-8 py-4 rounded-xl font-semibold text-base transition-all shadow-xl shadow-foreground/10 active:scale-95"
-              >
-                Try Emble for free
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1"><path d="M8.14645 3.14645C8.34171 2.95118 8.65829 2.95118 8.85355 3.14645L12.8536 7.14645C13.0488 7.34171 13.0488 7.65829 12.8536 7.85355L8.85355 11.8536C8.65829 12.0488 8.34171 12.0488 8.14645 11.8536C7.95118 11.6583 7.95118 11.3417 8.14645 11.1464L11.2929 8H2.5C2.22386 8 2 7.77614 2 7.5C2 7.22386 2.22386 7 2.5 7H11.2929L8.14645 3.85355C7.95118 3.65829 7.95118 3.34171 8.14645 3.14645Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-              </Link>
+              <Button asChild size="lg" className="h-[3.6rem] px-8 sm:px-10 rounded-2xl bg-foreground text-background font-bold text-sm sm:text-base border border-transparent hover:bg-background hover:text-foreground hover:border-primary shadow-[0_0_30px_-5px_var(--color-primary)] transition-all duration-300 hover:scale-[1.02] active:scale-95">
+                <Link href="/dashboard">
+                  Start Practicing Free
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 sm:ml-1" />
+                </Link>
+              </Button>
+              <p className="text-[13px] font-medium text-foreground/60 pl-2">
+                Includes eO <span className="mx-1 opacity-50">•</span> 1:1 real human interview
+              </p>
             </motion.div>
           </div>
 
@@ -131,46 +141,46 @@ export default function Hero() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center w-full h-full gap-8"
+                    className="flex flex-col items-center w-full h-full justify-between py-2"
                   >
-                    <div className="text-center space-y-2 pt-4">
-                      <h3 className="text-xl font-medium text-foreground group-hover:text-primary transition-colors">Preview e0</h3>
-                      <p className="text-sm text-foreground/60">our first most expressive<br/>interview model</p>
-                      <motion.p 
-                        className="text-sm font-semibold text-primary pt-2"
-                        animate={{ opacity: [0.5, 1, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
+                    {/* Header Text */}
+                    <div className="text-center space-y-3 pt-2">
+                      <h3 className="text-[22px] font-medium text-foreground tracking-tight">Preview eO</h3>
+                      <p className={`${instrumentSerif.className} text-[16px] text-foreground/60 leading-snug`}>
+                        our first most expressive<br/>interview model
+                      </p>
+                      <p className="text-[14px] font-bold text-foreground/70 tracking-wide pt-2">
                         I have a voice
-                      </motion.p>
+                      </p>
                     </div>
 
-                    {/* Faux Waveform Image replacing Persona for exact screenshot match */}
-                    <div className="flex-1 flex items-center justify-center w-full py-8">
-                      <div className="flex items-center justify-center gap-1 h-24">
-                        {[0.2, 0.4, 1, 0.6, 0.8, 1.2, 0.8, 0.4, 0.2].map((h, i) => (
-                          <motion.div 
-                            key={i}
-                            className="w-3 bg-foreground rounded-full origin-center"
-                            animate={{ height: `${h * 48}px` }}
-                            transition={{ duration: 0.5 }}
-                          />
-                        ))}
-                      </div>
+                    {/* Precise Soundbar Visual from Image */}
+                    <div className="flex items-center justify-center gap-[6px] h-20 w-full my-auto">
+                       {[8, 16, 40, 24, 48, 24, 40, 16, 8].map((baseHeight, i) => (
+                         <motion.div
+                           key={i}
+                           className="w-[8px] rounded-full bg-[#202b20]"
+                           animate={{
+                              height: [`${baseHeight}px`, `${baseHeight * 1.3}px`, `${baseHeight}px`],
+                           }}
+                           transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              delay: i * 0.1,
+                              ease: "easeInOut"
+                           }}
+                         />
+                       ))}
                     </div>
 
-                    <div className="w-full pb-4">
-                      {/* We hide the speech input visually but use it to trigger interaction, 
-                          or we just style it to look like the pill button! */}
-                      <div className="relative w-full h-12">
-                        <SpeechInput 
-                          onListeningChange={handleSpeechChange}
-                          className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center rounded-full border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition-colors">
-                          <span className="font-medium">Start speaking</span>
-                        </div>
-                      </div>
+                    {/* Button */}
+                    <div className="w-full pb-2 px-2">
+                      <button 
+                        onClick={() => handleSpeechChange(true)}
+                        className="w-full h-[46px] flex items-center justify-center rounded-[24px] border border-foreground/20 bg-transparent text-foreground hover:bg-foreground/5 transition-colors"
+                      >
+                        <span className="font-medium text-[15px]">Start speaking</span>
+                      </button>
                     </div>
                   </motion.div>
                 )}
@@ -233,10 +243,13 @@ export default function Hero() {
                       <p className="text-foreground/60 font-mono text-sm tracking-widest">{formatTime(time)}</p>
                       
                       <div className="flex items-center gap-4">
-                        <SpeechInput 
-                          onListeningChange={handleSpeechChange}
+                        <button 
+                          onClick={() => handleSpeechChange(false)}
                           className="w-12 h-12 rounded-full bg-secondary border border-primary/20 text-primary flex items-center justify-center hover:bg-secondary/80 transition-colors shadow-sm"
-                        />
+                        >
+                          {/* Recording indicator dot */}
+                          <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                        </button>
                         <button 
                           onClick={endSession}
                           className="h-12 px-6 rounded-full bg-destructive/20 text-destructive font-medium hover:bg-destructive/30 border border-destructive/20 transition-colors"

@@ -97,18 +97,10 @@ export default function FAQSection() {
           <div className="lg:col-span-7">
             
             {/* Tabs */}
-            <div
-              role="tablist"
-              aria-label="FAQ categories"
-              className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border border-border rounded-xl w-max max-w-full overflow-x-auto shadow-sm"
-            >
+            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border border-border rounded-xl w-max max-w-full overflow-x-auto shadow-sm">
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  id={`faq-tab-${cat.toLowerCase()}`}
-                  role="tab"
-                  aria-selected={activeTab === cat}
-                  aria-controls={`faq-panel-${cat.toLowerCase()}`}
                   onClick={() => {
                     setActiveTab(cat);
                     setOpenIndex(0); // Reset accordion on tab change
@@ -125,11 +117,10 @@ export default function FAQSection() {
             </div>
 
             {/* Accordion */}
-            <div id={`faq-panel-${activeTab.toLowerCase()}`} role="tabpanel" aria-labelledby={`faq-tab-${activeTab.toLowerCase()}`} className="space-y-4">
+            <div className="space-y-4">
               <AnimatePresence mode="popLayout">
                 {faqsData[activeTab].map((faq, index) => {
                   const isOpen = openIndex === index;
-                  const itemId = `${activeTab.toLowerCase()}-${index}`;
                   
                   return (
                       <motion.div
@@ -141,9 +132,6 @@ export default function FAQSection() {
                       className={`border rounded-2xl transition-colors duration-300 ${isOpen ? 'bg-slate-50 border-primary shadow-sm' : 'bg-transparent border-border hover:border-primary/50'}`}
                     >
                       <button
-                        id={`faq-button-${itemId}`}
-                        aria-expanded={isOpen}
-                        aria-controls={`faq-content-${itemId}`}
                         onClick={() => setOpenIndex(isOpen ? null : index)}
                         className="w-full text-left px-6 py-5 flex items-center justify-between group"
                       >
@@ -160,9 +148,6 @@ export default function FAQSection() {
                       <AnimatePresence>
                         {isOpen && (
                           <motion.div
-                            id={`faq-content-${itemId}`}
-                            role="region"
-                            aria-labelledby={`faq-button-${itemId}`}
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
