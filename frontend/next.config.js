@@ -1,7 +1,15 @@
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const configDir = dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     compress: true,
     reactStrictMode: true,
+    turbopack: {
+        root: configDir,
+    },
     compiler: {
         removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
     },
