@@ -9,9 +9,6 @@ import FAQSection from './components/home/FAQSection';
 import ComparisonSection from './components/home/ComparisonSection';
 import AboutUs from './components/home/AboutUs';
 import CoreToolsShowcase from './components/home/CoreToolsShowcase';
-import ProblemSection from './components/home/ProblemSection';
-import HowItWorks from './components/home/HowItWorks';
-import TargetUsers from './components/home/TargetUsers';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -35,11 +32,9 @@ export default function Home() {
 
       <div className="relative z-10 flex flex-col gap-12 sm:gap-16">
         <Hero />
-        <ProblemSection />
-        <HowItWorks />
+        <AudioPlayerMessage />
         <FeatureShowcase />
         <CoreToolsShowcase />
-        <TargetUsers />
         <ComparisonSection />
         <Testimonials />
         <FAQSection />

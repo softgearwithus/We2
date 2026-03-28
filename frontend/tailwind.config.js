@@ -41,24 +41,14 @@ const config = {
     			},
     			border: 'hsl(var(--border))',
     			input: 'hsl(var(--input))',
-    			ring: 'hsl(var(--ring))',
-    			sidebar: {
-    				DEFAULT: 'hsl(var(--sidebar-background))',
-    				foreground: 'hsl(var(--sidebar-foreground))',
-    				primary: 'hsl(var(--sidebar-primary))',
-    				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-    				accent: 'hsl(var(--sidebar-accent))',
-    				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-    				border: 'hsl(var(--sidebar-border))',
-    				ring: 'hsl(var(--sidebar-ring))'
-    			}
+    			ring: 'hsl(var(--ring))'
     		},
     		backgroundImage: {
     			'prep-gradient': 'linear-gradient(135deg, #050A18 0%, #0A1124 100%)',
     			'glass-gradient': 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)'
     		},
     		fontFamily: {
-    			sans: [
+    			'sans': [
     				'var(--font-inter)',
     				'Inter',
     				'-apple-system',
@@ -69,11 +59,11 @@ const config = {
     				'Arial',
     				'sans-serif'
     			],
-    			display: [
+    			'display': [
     				'var(--font-pjs)',
     				'sans-serif'
     			],
-    			mono: [
+    			'mono': [
     				'var(--font-jetbrains-mono)',
     				'monospace'
     			]
@@ -83,20 +73,20 @@ const config = {
     			'3xl': '1.5rem'
     		},
     		boxShadow: {
-    			subtle: '0 4px 20px rgba(0, 0, 0, 0.08)',
-    			premium: '0 24px 48px -12px rgba(0, 0, 0, 0.15)',
+    			'subtle': '0 4px 20px rgba(0, 0, 0, 0.08)',
+    			'premium': '0 24px 48px -12px rgba(0, 0, 0, 0.15)',
     			glass: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     			neon: '0 0 10px rgba(67, 97, 238, 0.5), 0 0 20px rgba(67, 97, 238, 0.3)'
     		},
-    		animation: {
-    			'accordion-down': 'accordion-down 0.2s ease-out',
-    			'accordion-up': 'accordion-up 0.2s ease-out',
-    			'fade-in': 'fadeIn 0.5s ease-out forwards',
-    			'slide-up': 'slideUp 0.5s ease-out forwards',
-    			'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-    			float: 'float 6s ease-in-out infinite'
-    		},
-    		keyframes: {
+			animation: {
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fadeIn 0.5s ease-out forwards',
+				'slide-up': 'slideUp 0.5s ease-out forwards',
+				'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'float': 'float 6s ease-in-out infinite'
+			},
+			keyframes: {
     			'accordion-down': {
     				from: {
     					height: '0'
@@ -131,16 +121,16 @@ const config = {
     					opacity: '1'
     				}
     			},
-    			float: {
-    				'0%, 100%': {
-    					transform: 'translateY(0)'
-    				},
-    				'50%': {
-    					transform: 'translateY(-10px)'
-    				}
-    			}
-    		}
-    	}
+				float: {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
+				}
+			}
+		}
     },
     plugins: [],
 };

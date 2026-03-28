@@ -2,7 +2,6 @@
 
 import { Check } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
 
 const comparisonData = [
     { feature: "Learning Model", typical: "Passive Video Lectures", we2: "Interactive Full-Stack Practice" },
@@ -57,11 +56,9 @@ export default function ComparisonSection() {
                     <div className="text-foreground font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
                         Students using EMBLE are <strong className="text-primary font-bold">3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Placement ecosystem.
                     </div>
-                    <Button asChild size="lg" className="whitespace-nowrap px-8 py-6 bg-foreground text-background rounded-xl font-bold text-[15px] hover:bg-background hover:text-foreground hover:border-primary border border-transparent transition-all shadow-xl active:scale-95">
-                      <Link href="/register">
-                        Start Now
-                      </Link>
-                    </Button>
+                    <Link href="/register" className="whitespace-nowrap px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-bold text-sm hover:bg-primary/90 transition-all shadow-sm">
+                        The EMBLE Edge
+                    </Link>
                 </div>
             </div>
         </section>
