@@ -105,10 +105,8 @@ const testimonials = [
     }
 ];
 
-import { Message, MessageContent } from "@/components/ai-elements/message";
-
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
-    <Message from="assistant" className="w-full max-w-full bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all duration-300">
+    <div className="w-full max-w-full bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all duration-300">
         <div className="flex gap-4 w-full">
             {/* Avatar */}
             <div className={`shrink-0 w-12 h-12 rounded-full ${t.color} flex items-center justify-center font-bold text-sm shadow-sm border border-slate-200`}>
@@ -127,9 +125,9 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                     </span>
                 </div>
                 
-                <MessageContent className="text-slate-600 text-[14px] leading-relaxed mb-4 group-[.is-assistant]:text-slate-600">
+                <div className="text-slate-600 text-[14px] leading-relaxed mb-4">
                     "{t.text}"
-                </MessageContent>
+                </div>
                 
                 <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
                     <div className="flex gap-0.5">
@@ -154,7 +152,7 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                 </div>
             </div>
         </div>
-    </Message>
+    </div>
 );
 
 export default function Testimonials() {
@@ -173,43 +171,31 @@ export default function Testimonials() {
                 </p>
             </div>
 
-            {/* AI Elements - Conversational Stats */}
+            {/* Platform Stats */}
             <div className="max-w-4xl mx-auto px-6 mb-24 relative z-10">
-                <div className="flex flex-col gap-6">
-                    <Message from="user">
-                        <MessageContent>
-                            What's the latest platform impact for Emble learners?
-                        </MessageContent>
-                    </Message>
-                    
-                    <Message from="assistant" className="bg-white border-slate-200 border shadow-md p-2">
-                        <MessageContent>
-                            <div className="space-y-4 pt-1">
-                                <p className="text-slate-600 font-medium">
-                                    We've been scaling rapidly. Here are the latest numbers generated from our systems:
-                                </p>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-2">
-                                    <div className="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-xl p-4 md:p-5">
-                                        <span className="text-3xl font-black text-slate-800 flex items-center gap-1.5">4.3 <Star className="w-6 h-6 text-amber-400 fill-amber-400" /></span>
-                                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Average Rating</span>
-                                    </div>
-                                    <div className="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-xl p-4 md:p-5">
-                                        <span className="text-3xl font-black text-slate-800">400+</span>
-                                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Active Users</span>
-                                    </div>
-                                    <div className="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-xl p-4 md:p-5">
-                                        <span className="text-3xl font-black text-slate-800">110</span>
-                                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Resumes Analysed</span>
-                                    </div>
-                                    <div className="flex flex-col justify-center bg-white border border-primary rounded-xl p-4 md:p-5 relative overflow-hidden group">
-                                        <div className="absolute inset-0 bg-primary/5 scale-0 group-hover:scale-150 transition-transform duration-500 rounded-full" />
-                                        <span className="text-3xl font-black text-foreground relative z-10">37</span>
-                                        <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1 relative z-10">Interviews Conducted</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </MessageContent>
-                    </Message>
+                <div className="bg-white border-slate-200 border shadow-md p-6 rounded-2xl">
+                    <p className="text-slate-600 font-medium mb-4">
+                        We've been scaling rapidly. Here are the latest numbers generated from our systems:
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div className="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-xl p-4 md:p-5">
+                            <span className="text-3xl font-black text-slate-800 flex items-center gap-1.5">4.3 <Star className="w-6 h-6 text-amber-400 fill-amber-400" /></span>
+                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Average Rating</span>
+                        </div>
+                        <div className="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-xl p-4 md:p-5">
+                            <span className="text-3xl font-black text-slate-800">400+</span>
+                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Active Users</span>
+                        </div>
+                        <div className="flex flex-col justify-center bg-slate-50 border border-slate-100 rounded-xl p-4 md:p-5">
+                            <span className="text-3xl font-black text-slate-800">110</span>
+                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Resumes Analysed</span>
+                        </div>
+                        <div className="flex flex-col justify-center bg-white border border-primary rounded-xl p-4 md:p-5 relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-primary/5 scale-0 group-hover:scale-150 transition-transform duration-500 rounded-full" />
+                            <span className="text-3xl font-black text-foreground relative z-10">37</span>
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1 relative z-10">Interviews Conducted</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
