@@ -10,26 +10,9 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Logo from "@/assets/logo/logo";
 import { NavMain } from "@/components/shadcn-space/blocks/dashboard-shell-01/nav-main";
-import {
-  AlignStartVertical,
-  CreditCard,
-  LayoutPanelTop,
-  ChartPie,
-  BarChart3,
-  CircleUserRound,
-  ClipboardList,
-  Languages,
-  LucideIcon,
-  Notebook,
-  NotepadText,
-  Table,
-  Ticket,
-  Zap,
-} from "lucide-react";
+import { Zap } from "lucide-react";
 import { SiteHeader } from "@/components/shadcn-space/blocks/dashboard-shell-01/site-header";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
@@ -49,7 +32,13 @@ export type NavItem = {
 /*                                   Page                                     */
 /* -------------------------------------------------------------------------- */
 
-const AppSidebar = ({ children, navItems, mode }: { children: React.ReactNode, navItems: NavItem[], mode: string }) => {
+type AppSidebarProps = {
+  children: React.ReactNode;
+  navItems?: NavItem[];
+  mode?: string;
+};
+
+const AppSidebar = ({ children, navItems = [], mode = "prep" }: AppSidebarProps) => {
   const { user } = useAuth();
   const isFreePlan = !user?.subscriptionPlan || user?.subscriptionPlan.toLowerCase() === 'free';
 

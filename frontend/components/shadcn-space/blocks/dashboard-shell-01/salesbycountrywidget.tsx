@@ -14,7 +14,6 @@ import {
   CardTitle,
   CardHeader,
   CardContent,
-  CardAction,
 } from "@/components/ui/card";
 import { motion, useInView } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -109,7 +108,7 @@ const SalesByCountryWidget = ({
         <CardTitle className="text-lg font-medium text-foreground">
           Sales by Countries
         </CardTitle>
-        <CardAction>
+        <div>
           <DropdownMenu>
             <DropdownMenuTrigger className="outline-none">
               <span className="h-9 w-9 flex justify-center items-center rounded-full hover:bg-accent hover:text-accent-foreground cursor-pointer">
@@ -138,7 +137,7 @@ const SalesByCountryWidget = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        </CardAction>
+        </div>
       </CardHeader>
       <CardContent className="px-0">
         <motion.div
