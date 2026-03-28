@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useAuth } from "@/app/context/AuthContext";
 import {
   Sidebar,
   SidebarContent,
@@ -49,6 +50,9 @@ export type NavItem = {
 /* -------------------------------------------------------------------------- */
 
 const AppSidebar = ({ children, navItems, mode }: { children: React.ReactNode, navItems: NavItem[], mode: string }) => {
+  const { user } = useAuth();
+  const isFreePlan = !user?.subscriptionPlan || user?.subscriptionPlan.toLowerCase() === 'free';
+
   return (
     <SidebarProvider>
       <Sidebar className="py-4 px-0 bg-background border-r border-border">
@@ -83,13 +87,14 @@ const AppSidebar = ({ children, navItems, mode }: { children: React.ReactNode, n
           </SidebarContent>
 
           {/* ---------------- Upgrade Footer Card ---------------- */}
+          {isFreePlan && (
           <div className="px-5 pb-5 mt-auto flex-shrink-0">
              <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50/30 flex flex-col items-center text-center p-4 shadow-sm relative overflow-hidden">
                 <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 border border-blue-100">
                    <Zap className="w-4 h-4 text-blue-600 fill-blue-600/20" />
                 </div>
                 <h4 className="text-[14px] font-[800] text-slate-900 mb-1 leading-tight font-sans tracking-tight">Grab Pro Now</h4>
-                <p className="text-[12px] text-slate-500 mb-4 font-medium leading-snug font-sans max-w-[140px]">Customize your admin</p>
+                <p className="text-[12px] text-slate-500 mb-4 font-medium leading-snug font-sans max-w-[140px]">Unlock unlimited mock tests & features</p>
                 <Link href="/pricing" className="w-full">
                    <Button className="w-full bg-[#3b82f6] hover:bg-blue-600 text-white text-[13px] font-[700] rounded-[10px] shadow-sm h-9 transition-all hover:scale-[1.02]">
                       Get Premium
@@ -97,6 +102,7 @@ const AppSidebar = ({ children, navItems, mode }: { children: React.ReactNode, n
                 </Link>
              </div>
           </div>
+          )}
         </div>
       </Sidebar>
 
