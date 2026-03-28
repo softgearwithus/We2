@@ -8,7 +8,6 @@ import { Menu, X, Terminal, User, LogOut, Settings, LayoutDashboard, BookOpen, V
 import { useAuth } from '@/app/context/AuthContext';
 import { useDashboardMode } from '@/app/context/DashboardModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ScrollProgressProvider, ScrollProgress } from '@/components/animate-ui/primitives/animate/scroll-progress';
 
 const getDisplayPlan = (plan?: string) => {
     if (!plan || plan === 'free') return 'Free';
@@ -31,18 +30,6 @@ export default function Navbar() {
     const isDarkBg = !isScrolled && !mobileMenuOpen && pathname === '/curriculum';
 
     useEffect(() => {
-        // Fix for Next.js cross-page hash anchor navigation
-        if (pathname === '/' && window.location.hash) {
-            const id = window.location.hash.substring(1);
-            setTimeout(() => {
-                const el = document.getElementById(id);
-                if (el) {
-                    // Slight offset adjustment if needed, but smooth scrolling to element works well
-                    el.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 150); // Give DOM a moment to paint heavy components
-        }
-
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 0);
         };
@@ -71,9 +58,9 @@ export default function Navbar() {
     }, []);
 
     const guestNavItems = [
-        { label: 'Features', href: '/#features' },
+        { label: 'Features', href: '#features' },
         { label: 'Pricing', href: '/pricing' },
-        { label: 'FAQ', href: '/#faq' }
+        { label: 'FAQ', href: '#faq' }
     ];
 
     const authNavItems = [
@@ -98,16 +85,11 @@ export default function Navbar() {
     const avatarSrc = user ? getAvatarSrc(user.avatarUrl) : null;
 
     return (
-        <ScrollProgressProvider global>
-            <nav className={cn(
-                "fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b",
-                isScrolled || mobileMenuOpen ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-border/50 shadow-sm" : "bg-transparent border-transparent"
-            )}>
-                <ScrollProgress 
-                    className="absolute bottom-0 left-0 h-[2px] bg-primary origin-left z-[60] shadow-[0_0_15px_rgba(16,185,129,0.8)]" 
-                />
-                
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <nav className={cn(
+            "fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b",
+            isScrolled || mobileMenuOpen ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-border/50 shadow-sm" : "bg-transparent border-transparent"
+        )}>
+            <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
                 {/* Brand */}
                 <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
@@ -139,27 +121,22 @@ export default function Navbar() {
                         ))
                     ) : (
                         // Standard Auth/Guest Items
-                        (user ? authNavItems : guestNavItems).map((item) => {
-                            const isAnchor = item.href.includes('#');
-                            const LinkComponent = isAnchor && pathname !== '/' ? 'a' : Link;
-
-                            return (
-                                <LinkComponent
-                                    key={item.label}
-                                    href={item.href}
-                                    className={cn(
-                                        "hover:text-primary transition-colors py-2 flex items-center gap-1.5",
-                                        pathname === item.href
-                                            ? (isDarkBg ? "text-white font-bold" : "text-foreground font-semibold")
-                                            : ""
-                                    )}
-                                >
-                                    {/* @ts-ignore - icon is optional */}
-                                    {user && item.icon && <item.icon size={16} />}
-                                    {item.label}
-                                </LinkComponent>
-                            );
-                        })
+                        (user ? authNavItems : guestNavItems).map((item) => (
+                            <Link
+                                key={item.label}
+                                href={item.href}
+                                className={cn(
+                                    "hover:text-primary transition-colors py-2 flex items-center gap-1.5",
+                                    pathname === item.href
+                                        ? (isDarkBg ? "text-white font-bold" : "text-foreground font-semibold")
+                                        : ""
+                                )}
+                            >
+                                {/* @ts-ignore - icon is optional */}
+                                {user && item.icon && <item.icon size={16} />}
+                                {item.label}
+                            </Link>
+                        ))
                     )}
                 </div>
 
@@ -280,23 +257,18 @@ export default function Navbar() {
                         </div>
                     )}
 
-                    {currentNavItems.map((item) => {
-                        const isAnchor = item.href.includes('#');
-                        const LinkComponent = isAnchor && pathname !== '/' ? 'a' : Link;
-                        
-                        return (
-                            <LinkComponent
-                                key={item.label}
-                                href={item.href}
-                                className="text-lg font-medium text-foreground/80 hover:text-primary flex items-center gap-3 py-3 w-full"
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                {/* @ts-ignore */}
-                                {user && item.icon && <item.icon size={20} />}
-                                {item.label}
-                            </LinkComponent>
-                        );
-                    })}
+                    {currentNavItems.map((item) => (
+                        <Link
+                            key={item.label}
+                            href={item.href}
+                            className="text-lg font-medium text-foreground/80 hover:text-primary flex items-center gap-3 py-3 w-full"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            {/* @ts-ignore */}
+                            {user && item.icon && <item.icon size={20} />}
+                            {item.label}
+                        </Link>
+                    ))}
                     <hr className="border-border/50" />
 
                     {user ? (
@@ -330,6 +302,5 @@ export default function Navbar() {
                 </div>
             )}
         </nav>
-        </ScrollProgressProvider>
     );
 }

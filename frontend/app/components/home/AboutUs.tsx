@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export default function AboutUs() {
@@ -19,51 +18,42 @@ export default function AboutUs() {
           <rect width="100%" height="100%" fill="url(#dot-line-bg)" />
         </svg>
       </div>
-
-      <div className="max-w-4xl mx-auto px-6 space-y-16 flex flex-col items-center">
-
-        {/* Founder Story */}
-        <div className="text-center space-y-6 max-w-3xl border-b border-border/50 pb-16">
-          <span className="font-bold text-primary tracking-widest text-sm uppercase">Our Story</span>
-          <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
-            Built by engineers who were tired of failing interviews.
-          </h2>
-          <p className="text-lg text-foreground/70 font-medium leading-relaxed">
-            We spent months grinding generic coding questions only to freeze when a real technical recruiter asked us to explain our architecture. We realized that coding skill doesn't equal interview skill.
-          </p>
-          <p className="text-lg text-foreground/70 font-medium leading-relaxed">
-            Emble was built to fix this. We replaced the generic text-based practice with a realistic, high-pressure vocal AI simulator. So you can fail in private, and pass the real thing.
-          </p>
-          <div className="pt-6 flex flex-col items-center justify-center">
-            <p className="font-bold text-foreground text-lg tracking-wide">Team Emble</p>
-          </div>
-        </div>
-
-        {/* Final Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+      
+      <div className="relative z-10 max-w-4xl mx-auto px-6 space-y-10 flex flex-col items-center">
+        <motion.h2 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="w-full bg-foreground text-background rounded-3xl p-10 md:p-16 text-center shadow-2xl relative overflow-hidden"
+          className="text-[40px] md:text-5xl lg:text-7xl font-bold text-foreground tracking-[-0.03em] leading-[1.05]"
         >
-          {/* Background Glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+          We built the ultimate ecosystem to get you <span className="text-foreground/50">hired faster by simulating real corporate challenges.</span>
+        </motion.h2>
 
-          <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
-            <h2 className="text-4xl md:text-5xl lg:text-5xl font-[900] tracking-tight mb-6">
-              Your First Interview Practice Takes Just 5 Minutes.
-            </h2>
-            <p className="text-xl text-background/70 font-medium mb-10">
-              No credit card required. Start natively with eO today and see exactly where you stand.
-            </p>
-            <Button asChild size="lg" className="h-16 rounded-2xl bg-background text-foreground border border-primary px-10 text-[17px] font-bold hover:bg-background/90 hover:scale-[1.02] active:scale-95 shadow-xl transition-all">
-              <Link href="/dashboard">
-                Start Practicing Now
-              </Link>
-            </Button>
-          </div>
+        <motion.p 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto font-serif leading-relaxed"
+        >
+          Preparation works best when everything aligns. We connect your resume, coding skills, and interview readiness into a cohesive, free platform.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="pt-4"
+        >
+          <Link 
+            href="/dashboard" 
+            className="inline-flex h-[52px] items-center justify-center rounded-[14px] bg-[#1c241d] px-8 font-medium text-background transition-all hover:bg-[#2a3626] active:scale-95 group shadow-sm"
+          >
+            Practice for free
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </motion.div>
-
       </div>
     </section>
   );
