@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 
 const faqsData = {
   "General": [
@@ -70,7 +71,7 @@ export default function FAQSection() {
           
           {/* Left Side: Headings & CTA */}
           <div className="lg:col-span-5 flex flex-col items-start pt-4">
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-primary/20 text-primary mb-6 bg-primary/5">
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-primary text-foreground mb-6 bg-white shadow-sm">
               FAQs
             </span>
             <h2 className="text-4xl md:text-5xl lg:text-5xl font-medium text-foreground tracking-tight mb-6 leading-tight">
@@ -80,17 +81,15 @@ export default function FAQSection() {
               Explore helpful information about our AI interviews, practice drills, and the free tools available to supercharge your hiring potential.
             </p>
 
-            <div className="bg-secondary/50 p-8 border border-border rounded-2xl w-full max-w-sm">
+            <div className="bg-white p-8 border border-primary rounded-2xl w-full max-w-sm shadow-sm">
               <h3 className="text-xl font-medium text-foreground mb-6">
                 Still have questions? Our team is ready to assist.
               </h3>
-              <Link 
-                href="/contact"
-                className="flex items-center justify-center gap-2 w-full h-12 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-                Get in Touch
-              </Link>
+              <Button asChild className="rounded-xl px-6 py-5 bg-background text-foreground border border-primary font-bold shadow-md hover:scale-105 active:scale-95 transition-transform w-full sm:w-auto">
+                <Link href="/contact">
+                  Contact Support
+                </Link>
+              </Button>
             </div>
           </div>
 
@@ -98,7 +97,7 @@ export default function FAQSection() {
           <div className="lg:col-span-7">
             
             {/* Tabs */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-secondary/50 border border-border rounded-xl w-max max-w-full overflow-x-auto">
+            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border border-border rounded-xl w-max max-w-full overflow-x-auto shadow-sm">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -108,8 +107,8 @@ export default function FAQSection() {
                   }}
                   className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     activeTab === cat 
-                      ? 'bg-background border border-border text-foreground shadow-sm' 
-                      : 'text-foreground/60 hover:text-foreground hover:bg-secondary'
+                      ? 'bg-slate-50 border border-primary text-foreground shadow-sm' 
+                      : 'text-foreground/60 hover:text-foreground hover:bg-slate-50'
                   }`}
                 >
                   {cat}
@@ -124,24 +123,24 @@ export default function FAQSection() {
                   const isOpen = openIndex === index;
                   
                   return (
-                    <motion.div
+                      <motion.div
                       key={faq.q}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
-                      className={`border rounded-2xl transition-colors duration-300 ${isOpen ? 'bg-secondary/30 border-primary/20 shadow-sm' : 'bg-transparent border-border hover:border-foreground/20'}`}
+                      className={`border rounded-2xl transition-colors duration-300 ${isOpen ? 'bg-slate-50 border-primary shadow-sm' : 'bg-transparent border-border hover:border-primary/50'}`}
                     >
                       <button
                         onClick={() => setOpenIndex(isOpen ? null : index)}
                         className="w-full text-left px-6 py-5 flex items-center justify-between group"
                       >
-                        <span className={`text-lg font-medium pr-8 transition-colors ${isOpen ? 'text-primary' : 'text-foreground/80 group-hover:text-foreground'}`}>
+                        <span className={`text-lg font-medium pr-8 transition-colors ${isOpen ? 'text-foreground' : 'text-foreground/80 group-hover:text-foreground'}`}>
                           {faq.q}
                         </span>
-                        <div className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${isOpen ? 'bg-primary/10 text-primary' : 'text-foreground/40 group-hover:bg-secondary group-hover:text-foreground/80'}`}>
+                        <div className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${isOpen ? 'bg-white border border-primary text-foreground' : 'text-foreground/40 group-hover:bg-slate-50 border border-transparent group-hover:text-foreground/80'}`}>
                           <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                            <ChevronDown className="w-5 h-5" />
+                            <ChevronDown className="w-5 h-5 text-primary" />
                           </motion.div>
                         </div>
                       </button>

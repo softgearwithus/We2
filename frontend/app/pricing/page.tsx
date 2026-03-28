@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Suspense } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Calendar, ShieldCheck, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
 import { useAuth } from "@/app/context/AuthContext";
+import { cn } from "@/app/lib/utils";
 
 const PRO_PLAN_ID = "pro_1m";
 const SUBSCRIBE_INTENT_PATH = `/pricing?intent=subscribe&plan=${PRO_PLAN_ID}`;
@@ -41,21 +42,34 @@ function PricingPageContent() {
   const [isPricingLoading, setIsPricingLoading] = useState(true);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const autoTriggeredCheckoutRef = useRef(false);
+  const [selectedCurrency, setSelectedCurrency] = useState<"INR" | "USD">("USD");
 
   const freeFeatures = [
-    "Test series (Company and Subject wise)",
-    "Resume building (Unlimited)",
-    "Market updates (Newsletter)",
-    "Project labs (100+ top projects)",
+    "Limited Company & Subject Test Series",
+    "Limited Resume Builder Templates",
+    "Limited Access to Project Labs",
+    "Basic Email Support",
   ];
 
   const proFeatures = [
-    "Real-World AI Audio & Video Interviews",
-    "Infinite Resume Parsing & Scoring",
-    "1-on-1 Guidance from Industry Leaders",
-    "24/7 Priority Support & Onboarding",
-    "Advanced Mock Interview Analytics",
+    "Everything in Free, Unlocked",
+    "Eo (AI audio and video interview)",
+    "Unlimited Test Series & Mocks",
+    "Unlimited Resume Builder & Analytics",
+    "Unlimited Project Labs",
+    "1-on-1 Industry Leader Guidance",
+    "24/7 Priority Support",
   ];
+
+  useEffect(() => {
+    // Attempt timezone guess to set default currency locally
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (tz.toLowerCase().includes("kolkata") || tz.toLowerCase().includes("calcutta") || tz.toLowerCase().includes("india")) {
+        setSelectedCurrency("INR");
+      }
+    } catch(e) {}
+  }, []);
 
   useEffect(() => {
     const loadPricingContext = async () => {
@@ -91,30 +105,33 @@ function PricingPageContent() {
 
   const displayedPrice = useMemo(() => {
     if (!pricingContext) {
-      return { amount: "799", symbol: "₹", period: "/month" };
+      if (selectedCurrency === "INR") {
+        return { amount: "799", symbol: "₹", period: "/mo" };
+      }
+      return { amount: "10.00", symbol: "$", period: "/mo" };
     }
 
-    if (pricingContext.currency === "INR") {
+    if (selectedCurrency === "INR") {
       return {
         amount: String(pricingContext.pro.monthly.inr),
         symbol: "₹",
-        period: "/month",
+        period: "/mo",
       };
     }
 
     return {
       amount: pricingContext.pro.monthly.usd.toFixed(2),
       symbol: "$",
-      period: "/month",
+      period: "/mo",
     };
-  }, [pricingContext]);
+  }, [pricingContext, selectedCurrency]);
 
   const subscribeCtaLabel = useMemo(() => {
     if (authLoading || isPricingLoading) return "Checking...";
-    if (isActiveProMember) return "Pro Member Active";
+    if (isActiveProMember) return "Pro Member (Active)";
     if (!pricingContext?.upgradesEnabled) return "Temporarily Unavailable";
-    if (!user) return "Sign in to Subscribe";
-    return "Subscribe Pro";
+    if (!user) return "Reserve your spot \u2192";
+    return "Reserve your spot \u2192";
   }, [authLoading, isPricingLoading, isActiveProMember, pricingContext?.upgradesEnabled, user]);
 
   const canSubscribe =
@@ -204,7 +221,7 @@ function PricingPageContent() {
           email: user.email || "",
         },
         theme: {
-          color: "#111827",
+          color: "#3b82f6",
         },
         modal: {
           ondismiss: () => {
@@ -290,137 +307,186 @@ function PricingPageContent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased flex flex-col relative overflow-x-hidden">
-      {/* Absolute Dotted Background Layer */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0 opacity-40"
-        style={{
-          backgroundImage: 'radial-gradient(hsl(var(--primary) / 0.15) 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
-        }}
-      />
       <Navbar />
       
-      <main className="flex-1 flex flex-col items-center pt-32 pb-24 px-6 z-10 w-full">
-      {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-        <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground">
-          Start Free
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          One clear upgrade: EMBLE Pro Member.
-          <br className="hidden sm:block" />
-          India sees INR, global users see USD.
-        </p>
-      </div>
-
-      {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto w-full">
-        
-        {/* FREE PLAN */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col p-8 rounded-[32px] border border-border bg-background shadow-sm hover:shadow-md transition-shadow relative"
-        >
-          <div className="mb-8">
-            <h3 className="text-sm font-semibold tracking-wider text-muted-foreground uppercase mb-4">
-              Free
-            </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-6xl font-bold tracking-tighter text-foreground">$0</span>
-              <span className="text-muted-foreground font-medium">/month</span>
-            </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              Free for lifetime. Keep practicing with core tools.
-            </p>
-          </div>
-
-          <div className="flex-1 space-y-4 mb-8">
-            {freeFeatures.map((feature, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="mt-0.5 w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={3} />
-                </div>
-                <span className="text-sm text-foreground/80">{feature}</span>
-              </div>
-            ))}
-          </div>
-
-          <Link 
-            href={user ? "/dashboard" : "/register/student"}
-            className="w-full py-4 px-6 rounded-2xl border-2 border-border text-foreground font-semibold text-center hover:bg-muted/50 transition-colors"
-          >
-            {user ? "Go to Dashboard" : "Get Started Free"}
-          </Link>
-        </motion.div>
-
-        {/* PRO PLAN */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex flex-col p-8 rounded-[32px] border-2 border-primary/30 bg-background shadow-2xl relative overflow-hidden transform md:-translate-y-4"
-        >
-          {/* Subtle glow / ai-elements style accent */}
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+      <main className="flex-1 flex flex-col items-center pt-28 pb-24 px-6 z-10 w-full">
+        <div className="max-w-[1100px] w-full mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-16 items-center">
           
-          <div className="absolute top-6 right-8">
-            <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
-              Most Popular
-            </span>
-          </div>
-
-          <div className="mb-8 relative z-10">
-            <h3 className="text-sm font-semibold tracking-wider text-primary uppercase mb-4">
-              Pro Member
-            </h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-6xl font-bold tracking-tighter text-foreground">{displayedPrice.symbol}{displayedPrice.amount}</span>
-              <span className="text-foreground/50 font-medium">{displayedPrice.period}</span>
-            </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              Everything in Free, plus all premium tools.
-            </p>
-            {pricingContext?.currency === "USD" && (
-              <p className="text-xs text-muted-foreground mt-2">Displayed in USD for your region. Checkout is processed in INR equivalent via Razorpay.</p>
-            )}
-            {!pricingContext?.upgradesEnabled && !isPricingLoading && (
-              <p className="text-xs text-amber-600 mt-2">Subscriptions are currently paused. Please try again later.</p>
-            )}
-          </div>
-
-          <div className="flex-1 space-y-4 mb-8 relative z-10">
-            {/* Added "Everything in Free" summary marker */}
-            <div className="flex items-start gap-3 pb-2 border-b border-border/50 mb-4">
-              <div className="mt-0.5 w-5 h-5 rounded-full bg-foreground/5 flex items-center justify-center shrink-0">
-                <Check className="w-3.5 h-3.5 text-foreground/50" strokeWidth={3} />
-              </div>
-              <span className="text-sm font-semibold text-foreground/50">Everything in Free, plus:</span>
-            </div>
-
-            {proFeatures.map((feature, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="mt-0.5 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-primary" strokeWidth={3} />
-                </div>
-                <span className="text-sm font-medium text-foreground">{feature}</span>
-              </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => void handleSubscribe()}
-            disabled={!canSubscribe}
-            className="w-full py-4 px-6 rounded-2xl bg-foreground text-background font-semibold text-center hover:bg-foreground/90 transition-colors shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          {/* LEFT SIDE: Copy & Features */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col items-start gap-4 text-left"
           >
-            {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
-          </button>
-        </motion.div>
+            <span className="px-4 py-1.5 rounded-full border border-border/80 text-[13px] font-semibold bg-white shadow-sm tracking-wide text-slate-800">
+              Our Pricing
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-[56px] font-[1000] tracking-tight text-[#1a2b3b] leading-[1.1] mt-2 mb-2">
+              Personalized plans <br className="hidden md:block"/> and pricing
+            </h1>
+            <p className="text-lg text-slate-600 font-medium leading-relaxed max-w-sm">
+              Flexible pricing plans designed to fit your needs and help your career grow.
+            </p>
+            
+            <div className="space-y-4 my-6">
+              {[
+                { icon: <Calendar className="w-[18px] h-[18px]" />, text: "Lifetime free access for core tools" },
+                { icon: <ShieldCheck className="w-[18px] h-[18px]" />, text: "No hidden fees or conditions" },
+                { icon: <RotateCcw className="w-[18px] h-[18px]" />, text: "Cancel anytime securely" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 text-slate-600 font-medium text-[15px]">
+                   <div className="text-slate-400">{item.icon}</div>
+                   <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
 
-      </div>
+            <div className="mt-8 pt-8 w-full border-t border-slate-100">
+               <p className="text-sm text-slate-500 font-medium mb-4">Trusted by secure Payments service</p>
+               <div className="flex items-center gap-6 opacity-80 mix-blend-multiply">
+                  {/* Razorpay Logo Element */}
+                  <div className="flex items-center gap-2 font-[1000] text-[#02042b] tracking-widest text-[17px]">
+                    <svg viewBox="0 0 100 100" className="w-[22px] h-[22px] fill-[#338be2]">
+                       <path d="M0,50 C0,22.3857625 22.3857625,0 50,0 C77.6142375,0 100,22.3857625 100,50 C100,77.6142375 77.6142375,100 50,100 C22.3857625,100 0,77.6142375 0,50 Z" opacity="0.1"/>
+                       <path d="M72.5,35 L42.5,85 L35,85 L47.5,45 L25,45 L40,20 L62.5,20 L55,35 L72.5,35 Z" fill="#3395ff" />
+                    </svg>
+                    RAZORPAY
+                  </div>
+               </div>
+            </div>
+          </motion.div>
+
+          {/* RIGHT SIDE: Cards Wrapper */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end relative w-full lg:max-w-[700px] ml-auto">
+             
+             {/* FREE PLAN */}
+             <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6, delay: 0.1 }}
+               className="rounded-[32px] border-[1.5px] border-border bg-white p-6 lg:p-8 flex flex-col shadow-sm h-full max-h-[96%]"
+             >
+                <div className="mb-6">
+                  <h3 className="text-[17px] font-bold text-[#1a2b3b] mb-4">Free</h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-[44px] md:text-5xl font-black tracking-tighter text-[#1a2b3b]">$0</span>
+                    <span className="text-slate-500 font-medium text-sm">/mo</span>
+                  </div>
+                  <p className="text-[13px] text-slate-500 font-medium mt-2">
+                    Lifetime free access for Core tools.
+                  </p>
+                </div>
+                
+                <div className="h-px w-full bg-slate-100 mb-6" />
+                
+                <div className="mb-4 text-sm font-semibold text-slate-400">What's Included</div>
+                <div className="flex-1 space-y-3 mb-8">
+                  {freeFeatures.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-2.5">
+                      <Check className="w-[14px] h-[14px] text-slate-800 shrink-0 mt-[3px]" strokeWidth={3} />
+                      <span className="text-[13px] text-slate-700 font-medium leading-tight">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <Link 
+                  href={user ? "/dashboard" : "/register/student"}
+                  className="w-full py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-slate-800 text-[14px] font-bold text-center hover:bg-slate-50 transition-colors"
+                >
+                  {user ? "Go to Dashboard \u2192" : "Reserve your spot \u2192"}
+                </Link>
+             </motion.div>
+             
+             {/* PRO PLAN */}
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ duration: 0.6, delay: 0.2 }}
+               className="relative rounded-[32px] bg-[#3b82f6] p-[2px] flex flex-col shadow-2xl h-full transform lg:scale-105 z-10"
+             >
+                <div className="text-center py-[10px] text-white text-[11px] font-bold uppercase tracking-[0.2em]">
+                   Most Popular
+                </div>
+                <div className="bg-white rounded-[30px] p-6 lg:p-8 flex-1 flex flex-col relative h-full">
+                   <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-[17px] font-bold text-[#1a2b3b]">Pro Member</h3>
+                      <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest border border-blue-100">
+                        29% OFF
+                      </span>
+                   </div>
+
+                   {/* Pricing & Toggle Row */}
+                   <div className="flex items-start justify-between">
+                     <div className="flex items-baseline gap-1">
+                        <span className="text-[44px] md:text-5xl font-black tracking-tighter text-[#1a2b3b]">
+                           {displayedPrice.symbol}{displayedPrice.amount}
+                        </span>
+                        <span className="text-slate-500 font-medium text-sm">{displayedPrice.period}</span>
+                     </div>
+                     
+                     {/* INR/USD Manual Toggle */}
+                     <div className="bg-slate-100 p-1 rounded-xl flex border border-slate-200 shadow-inner mt-2">
+                        <button 
+                          onClick={() => setSelectedCurrency("USD")} 
+                          className={cn("px-2.5 py-1 text-[11px] font-bold rounded-lg transition-colors", 
+                            selectedCurrency === "USD" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                          )}
+                        >
+                           USD
+                        </button>
+                        <button 
+                          onClick={() => setSelectedCurrency("INR")} 
+                          className={cn("px-2.5 py-1 text-[11px] font-bold rounded-lg transition-colors", 
+                            selectedCurrency === "INR" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                          )}
+                        >
+                           INR
+                        </button>
+                     </div>
+                   </div>
+
+                   <p className="text-[13px] text-slate-500 font-medium mt-2">
+                      8 spots open till this week
+                   </p>
+                   
+                   <div className="h-px w-full bg-slate-100 my-6" />
+                   
+                   <div className="mb-4 text-sm font-semibold text-slate-400">What's Included</div>
+                   <div className="flex-1 space-y-3 mb-8">
+                     <div className="flex flex-col gap-3 pb-2">
+                       {proFeatures.slice(0, 1).map((feature, i) => (
+                         <div key={i} className="flex items-start gap-2.5">
+                           <Check className="w-[14px] h-[14px] text-slate-400 shrink-0 mt-[3px]" strokeWidth={3} />
+                           <span className="text-[13px] text-slate-500 font-semibold leading-tight">{feature}</span>
+                         </div>
+                       ))}
+                     </div>
+                     {proFeatures.slice(1).map((feature, i) => (
+                       <div key={i} className="flex items-start gap-2.5">
+                         <Check className="w-[14px] h-[14px] text-blue-600 shrink-0 mt-[3px]" strokeWidth={3} />
+                         <span className="text-[13px] text-slate-700 font-medium leading-tight">{feature}</span>
+                       </div>
+                     ))}
+                   </div>
+
+                   <button
+                     type="button"
+                     onClick={() => void handleSubscribe()}
+                     disabled={!canSubscribe}
+                     className="w-full py-3.5 rounded-2xl bg-[#0a0f29] text-white text-[14px] font-bold text-center hover:bg-[#1a2b3b] transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                   >
+                     {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                     {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
+                   </button>
+                   {!pricingContext?.upgradesEnabled && !isPricingLoading && (
+                     <p className="text-[10px] text-amber-600 mt-2 text-center font-bold">Subscriptions are currently paused.</p>
+                   )}
+                </div>
+             </motion.div>
+
+          </div>
+        </div>
       </main>
 
       <Footer />
