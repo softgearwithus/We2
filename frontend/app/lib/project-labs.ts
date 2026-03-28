@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export type ProjectLabComplexity = 'Beginner' | 'Intermediate' | 'Advanced';
@@ -70,7 +72,7 @@ export type ProjectLabProgress = {
 };
 
 export const fetchProjectLabDomains = async (): Promise<ProjectLabDomainSummary[]> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/domains`);
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/domains`);
     if (!response.ok) throw new Error('Failed to fetch project lab domains');
     return response.json();
 };
@@ -79,19 +81,19 @@ export const fetchProjectLabs = async (domainId?: string): Promise<ProjectLab[]>
     const url = domainId
         ? `${API_BASE_URL}/project-labs?domainId=${encodeURIComponent(domainId)}`
         : `${API_BASE_URL}/project-labs`;
-    const response = await fetch(url);
+    const response = await fetchApi(url);
     if (!response.ok) throw new Error('Failed to fetch project labs');
     return response.json();
 };
 
 export const fetchProjectLab = async (id: string): Promise<ProjectLab> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/${id}`);
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/${id}`);
     if (!response.ok) throw new Error('Failed to fetch project lab');
     return response.json();
 };
 
 export const fetchProjectLabProgress = async (token: string): Promise<ProjectLabProgress> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/me/progress`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/me/progress`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch project lab progress');
@@ -99,7 +101,7 @@ export const fetchProjectLabProgress = async (token: string): Promise<ProjectLab
 };
 
 export const fetchProjectLabSubmissions = async (token: string): Promise<ProjectLabSubmission[]> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/me/submissions`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/me/submissions`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch project lab submissions');
@@ -111,7 +113,7 @@ export const submitProjectLab = async (
     projectId: string,
     payload: { repositoryUrl: string; liveDemoUrl?: string },
 ): Promise<ProjectLabSubmission> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/${projectId}/submissions`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/${projectId}/submissions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -124,7 +126,7 @@ export const submitProjectLab = async (
 };
 
 export const fetchProjectLabsAdmin = async (token: string): Promise<ProjectLab[]> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/admin/all`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/admin/all`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch project labs');
@@ -132,7 +134,7 @@ export const fetchProjectLabsAdmin = async (token: string): Promise<ProjectLab[]
 };
 
 export const createProjectLab = async (token: string, payload: Partial<ProjectLab>) => {
-    const response = await fetch(`${API_BASE_URL}/project-labs`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -149,7 +151,7 @@ export const updateProjectLab = async (
     id: string,
     payload: Partial<ProjectLab>,
 ): Promise<ProjectLab> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/${id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -162,7 +164,7 @@ export const updateProjectLab = async (
 };
 
 export const deleteProjectLab = async (token: string, id: string) => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -175,7 +177,7 @@ export const updateProjectLabSubmission = async (
     submissionId: string,
     payload: { status?: string; reviewNotes?: string },
 ): Promise<ProjectLabSubmission> => {
-    const response = await fetch(`${API_BASE_URL}/project-labs/admin/submissions/${submissionId}`, {
+    const response = await fetchApi(`${API_BASE_URL}/project-labs/admin/submissions/${submissionId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

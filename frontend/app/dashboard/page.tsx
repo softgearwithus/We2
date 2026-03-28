@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDashboardMode } from '../context/DashboardModeContext';
@@ -38,7 +40,7 @@ export default function DashboardPage() {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/dashboard-stats`, {
+                    const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/dashboard-stats`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }

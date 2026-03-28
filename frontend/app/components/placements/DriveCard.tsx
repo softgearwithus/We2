@@ -1,3 +1,5 @@
+import { fetchApi } from '../../lib/apiClient';
+
 import React from 'react';
 import Link from 'next/link';
 
@@ -73,7 +75,7 @@ export default function DriveCard({ drive }: DriveCardProps) {
                         const { getActiveToken } = await import('@/app/lib/auth-storage');
                         const token = getActiveToken();
                         if (token) {
-                            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications`, {
+                            await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',

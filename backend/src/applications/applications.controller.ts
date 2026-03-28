@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Post,
@@ -23,7 +25,7 @@ export class ApplicationsController {
   @Post()
   @Roles(UserRole.STUDENT)
   apply(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() createApplicationDto: CreateApplicationDto,
   ) {
     return this.applicationsService.apply(req.user.id, createApplicationDto);
@@ -31,7 +33,10 @@ export class ApplicationsController {
 
   @Get('drive/:driveId')
   @Roles(UserRole.COMPANY_ADMIN, UserRole.SUPER_ADMIN)
-  findByPlacement(@Request() req: any, @Param('driveId') driveId: string) {
+  findByPlacement(
+    @Request() req: AuthenticatedRequest,
+    @Param('driveId') driveId: string,
+  ) {
     // If super admin bypasses ownership check, they can. For company_admin, strictly enforce.
     // We will pass req.user.id to the service for validation
     return this.applicationsService.findByPlacement(driveId, req.user.id);

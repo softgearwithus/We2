@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, CheckCircle2, X, AlertTriangle, Loader2, Sparkles } from 'lucide-react';
@@ -27,7 +29,7 @@ export default function ATSScanner() {
     const isLimited = !creditsLoading && (credits?.resumeScans.remaining === 0);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
+        fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
             .then((res) => res.json())
             .then((data) => {
                 if (typeof data.maxUploadSizeMB === 'number') {
@@ -79,7 +81,7 @@ export default function ATSScanner() {
         try {
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken();
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/analyze`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/resume/analyze`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

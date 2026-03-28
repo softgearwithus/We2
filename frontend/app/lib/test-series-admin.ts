@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 const readErrorMessage = async (response: Response, fallback: string) => {
@@ -89,7 +91,7 @@ export const fetchAdminMcqs = async (token: string, query: Record<string, string
             params.append(key, String(value));
         }
     });
-    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch MCQs');
@@ -97,7 +99,7 @@ export const fetchAdminMcqs = async (token: string, query: Record<string, string
 };
 
 export const createMcq = async (token: string, payload: CreateMcqPayload) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -107,7 +109,7 @@ export const createMcq = async (token: string, payload: CreateMcqPayload) => {
 };
 
 export const updateMcq = async (token: string, id: string, payload: UpdateMcqPayload) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -117,7 +119,7 @@ export const updateMcq = async (token: string, id: string, payload: UpdateMcqPay
 };
 
 export async function deleteMcq(token: string, id: string) {
-    const res = await fetch(`${API_BASE_URL}/mcqs/${id}`, {
+    const res = await fetchApi(`${API_BASE_URL}/mcqs/${id}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -137,7 +139,7 @@ export async function fetchAdminWritex(
     if (params?.limit) query.set('limit', params.limit.toString());
     if (params?.page) query.set('page', params.page.toString());
 
-    const res = await fetch(`${API_BASE_URL}/write-x/admin?${query.toString()}`, {
+    const res = await fetchApi(`${API_BASE_URL}/write-x/admin?${query.toString()}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -160,7 +162,7 @@ export const bulkDeleteMcqs = async (
             params.append(key, String(value));
         }
     });
-    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -174,7 +176,7 @@ export const deleteMcqModule = async (token: string, category: 'subject' | 'comp
         groupKey,
         topicKey
     });
-    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -187,7 +189,7 @@ export const deleteMcqSubject = async (token: string, category: 'subject' | 'com
         category,
         groupKey
     });
-    const response = await fetch(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/admin?${params.toString()}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -196,7 +198,7 @@ export const deleteMcqSubject = async (token: string, category: 'subject' | 'com
 };
 
 export const updateMcqModuleDuration = async (token: string, category: 'subject' | 'company', groupKey: string, topicKey: string, durationMinutes: number) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/admin/duration`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/admin/duration`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ category, groupKey, topicKey, durationMinutes }),
@@ -206,7 +208,7 @@ export const updateMcqModuleDuration = async (token: string, category: 'subject'
 };
 
 export const importMcqsCsv = async (apiKey: string, csv: string) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/import`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/import`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -219,7 +221,7 @@ export const importMcqsCsv = async (apiKey: string, csv: string) => {
 };
 
 export const fetchMcqGroups = async (token: string, category: 'subject' | 'company') => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=group`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=group`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error(await readErrorMessage(response, 'Failed to fetch MCQ groups'));
@@ -227,7 +229,7 @@ export const fetchMcqGroups = async (token: string, category: 'subject' | 'compa
 };
 
 export const fetchMcqTopics = async (token: string, category: 'subject' | 'company', groupKey: string) => {
-    const response = await fetch(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=topic&groupKey=${encodeURIComponent(groupKey)}`, {
+    const response = await fetchApi(`${API_BASE_URL}/mcqs/groups?category=${category}&groupBy=topic&groupKey=${encodeURIComponent(groupKey)}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error(await readErrorMessage(response, 'Failed to fetch MCQ topics'));
@@ -235,7 +237,7 @@ export const fetchMcqTopics = async (token: string, category: 'subject' | 'compa
 };
 
 export const fetchWriteXGroups = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/writex/groups`, {
+    const response = await fetchApi(`${API_BASE_URL}/writex/groups`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch WriteX groups');
@@ -244,7 +246,7 @@ export const fetchWriteXGroups = async (token: string) => {
 
 export const fetchWriteXQuestions = async (token: string, topicKey?: string) => {
     const query = topicKey ? `?topicKey=${encodeURIComponent(topicKey)}` : '';
-    const response = await fetch(`${API_BASE_URL}/writex/questions${query}`, {
+    const response = await fetchApi(`${API_BASE_URL}/writex/questions${query}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch WriteX questions');
@@ -252,7 +254,7 @@ export const fetchWriteXQuestions = async (token: string, topicKey?: string) => 
 };
 
 export const createWriteXQuestion = async (token: string, payload: CreateWriteXPayload) => {
-    const response = await fetch(`${API_BASE_URL}/writex/questions`, {
+    const response = await fetchApi(`${API_BASE_URL}/writex/questions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -262,7 +264,7 @@ export const createWriteXQuestion = async (token: string, payload: CreateWriteXP
 };
 
 export const updateWriteXQuestion = async (token: string, id: string, payload: UpdateWriteXPayload) => {
-    const response = await fetch(`${API_BASE_URL}/writex/questions/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/writex/questions/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -272,7 +274,7 @@ export const updateWriteXQuestion = async (token: string, id: string, payload: U
 };
 
 export const deleteWriteXQuestion = async (token: string, id: string) => {
-    const response = await fetch(`${API_BASE_URL}/writex/questions/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/writex/questions/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });

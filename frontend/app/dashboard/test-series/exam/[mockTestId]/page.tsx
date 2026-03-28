@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -12,6 +14,7 @@ import { getStoredToken } from '@/app/lib/auth-storage';
 import { initVimMode } from 'monaco-vim';
 import Editor from '@monaco-editor/react';
 import CalculatorWidget from '@/app/components/simulator/CalculatorWidget';
+import { sanitizeRichHtml } from '@/lib/sanitize-rich-text';
 
 type QuestionStatus = 'not_visited' | 'not_answered' | 'answered' | 'marked_review' | 'answered_marked_review';
 
@@ -83,7 +86,7 @@ export default function ExamSimulatorPage() {
 
                 let fetchedResultData = null;
                 if (isReviewMode) {
-                    const res = await fetch(`${API_BASE}/test-series/student/results/${reviewId}`, {
+                    const res = await fetchApi(`${API_BASE}/test-series/student/results/${reviewId}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     if (res.ok) {
@@ -515,14 +518,14 @@ export default function ExamSimulatorPage() {
                                 <h3 className="font-bold text-sm text-slate-500 uppercase tracking-widest mb-4">Reading Passage</h3>
                                 <div
                                     className="text-base text-slate-800 leading-relaxed font-serif prose prose-slate max-w-none"
-                                    dangerouslySetInnerHTML={{ __html: activeQuestion.passageContent }}
+                                    dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(activeQuestion?.passageContent || '') }}
                                 />
                             </div>
                         )}
 
                         <div className="flex-1 overflow-y-auto p-8 lg:p-12 text-base text-slate-800 leading-relaxed">
                             <div className="max-w-4xl mx-auto">
-                                <div className="font-semibold text-lg mb-6 leading-relaxed text-slate-800 break-words" dangerouslySetInnerHTML={{ __html: activeQuestion?.questionText || '' }} />
+                                <div className="font-semibold text-lg mb-6 leading-relaxed text-slate-800 break-words" dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(activeQuestion?.questionText || '') }} />
 
                                 {activeQuestion?.imageUrl && (
                                     <div className="mb-8 relative inline-block">

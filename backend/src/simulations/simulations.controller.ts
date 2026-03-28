@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -47,7 +49,7 @@ export class SimulationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async create(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() createSimulationDto: CreateSimulationDto,
   ) {
     return this.simulationsService.create(req.user.id, createSimulationDto);
@@ -61,7 +63,7 @@ export class SimulationsController {
     type: [SimulationResponseDto],
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(@Request() req: any) {
+  async findAll(@Request() req: AuthenticatedRequest) {
     return this.simulationsService.findAllByUser(req.user.id);
   }
 
@@ -81,7 +83,7 @@ export class SimulationsController {
     },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async getStats(@Request() req: any) {
+  async getStats(@Request() req: AuthenticatedRequest) {
     return this.simulationsService.getStats(req.user.id);
   }
 
@@ -111,7 +113,7 @@ export class SimulationsController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden - Not your simulation' })
   @ApiResponse({ status: 404, description: 'Simulation not found' })
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.simulationsService.findOne(id, req.user.id);
   }
 
@@ -132,7 +134,7 @@ export class SimulationsController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Simulation not found' })
-  async start(@Param('id') id: string, @Request() req: any) {
+  async start(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.simulationsService.start(id, req.user.id);
   }
 
@@ -152,7 +154,7 @@ export class SimulationsController {
   @ApiResponse({ status: 404, description: 'Simulation not found' })
   async update(
     @Param('id') id: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() updateSimulationDto: UpdateSimulationDto,
   ) {
     return this.simulationsService.update(id, req.user.id, updateSimulationDto);
@@ -168,7 +170,7 @@ export class SimulationsController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Simulation not found' })
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.simulationsService.remove(id, req.user.id);
   }
 }

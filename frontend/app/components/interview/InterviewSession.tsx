@@ -1,3 +1,5 @@
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Volume2, Loader2, Play, Clock, ChevronLeft } from 'lucide-react';
@@ -148,7 +150,7 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
         const token = getActiveToken();
         const tryFetchReport = async () => {
             if (!aiBackendSessionIdRef.current) throw new Error('Missing session');
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/sessions/${aiBackendSessionIdRef.current}/report`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/sessions/${aiBackendSessionIdRef.current}/report`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -210,7 +212,7 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
             }
 
             const resumeAssetId = sessionStorage.getItem('emble.ai.resumeId');
-            const createAiSessionRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/sessions`, {
+            const createAiSessionRes = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/sessions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

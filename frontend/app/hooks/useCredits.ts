@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { getActiveToken } from '../lib/auth-storage';
 
@@ -19,7 +21,7 @@ export function useCredits() {
             const token = getActiveToken();
             if (!token) throw new Error('No auth token');
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/credits`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/me/credits`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

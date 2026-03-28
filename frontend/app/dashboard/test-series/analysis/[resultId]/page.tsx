@@ -1,11 +1,14 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { getStoredToken } from '@/app/lib/auth-storage';
 import { CheckCircle2, XCircle, AlertCircle, BookOpen, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { API_BASE } from '@/app/lib/test-series-builder';
+import { sanitizeRichHtml } from '@/lib/sanitize-rich-text';
 
 export default function MockTestAnalysisPage() {
     const params = useParams();
@@ -53,7 +56,7 @@ export default function MockTestAnalysisPage() {
             let token = getStoredToken('user') || getStoredToken('admin');
             if (!token) throw new Error("No token");
 
-            const res = await fetch(`${API_BASE}/test-series/student/results/${resultId}`, {
+            const res = await fetchApi(`${API_BASE}/test-series/student/results/${resultId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (!res.ok) {
@@ -148,7 +151,7 @@ export default function MockTestAnalysisPage() {
                                     {i + 1}
                                 </span>
                                 <div className="flex-1 overflow-hidden">
-                                    <div className="font-semibold text-slate-800 text-lg break-words" dangerouslySetInnerHTML={{ __html: resp.question.questionText }} />
+                                    <div className="font-semibold text-slate-800 text-lg break-words" dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(resp.question.questionText || '') }} />
                                     {resp.question.imageUrl && (
                                         <div className="mt-4 mb-4 relative inline-block">
                                             <img loading="lazy" decoding="async" src={resp.question.imageUrl} alt="Question Graphic" className="max-w-full md:max-w-xl h-auto max-h-80 rounded-xl border border-slate-200 shadow-sm object-contain bg-slate-50 block" />

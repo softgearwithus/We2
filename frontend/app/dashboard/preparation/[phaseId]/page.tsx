@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -97,7 +99,7 @@ export default function TopicPage() {
         setShowDetails(true);
         setLoadingDetails(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/course-content/${topicId}`);
+            const response = await fetchApi(`${API_BASE_URL}/course-content/${topicId}`);
             if (response.ok) {
                 const data = await response.json();
                 setDetailedContent(data);
@@ -121,7 +123,7 @@ export default function TopicPage() {
                 return;
             }
             try {
-                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                const response = await fetchApi(`${API_BASE_URL}/preparation/me/progress`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!response.ok) return;
@@ -145,7 +147,7 @@ export default function TopicPage() {
             const token = getActiveToken() || '';
             if (!token) return;
             try {
-                await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                await fetchApi(`${API_BASE_URL}/preparation/me/progress`, {
                     method: 'PATCH',
                     headers: {
                         Authorization: `Bearer ${token}`,

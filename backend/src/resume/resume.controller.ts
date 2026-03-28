@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Post,
@@ -35,7 +37,7 @@ export class ResumeController {
   @Get('all')
   @ApiOperation({ summary: 'Get all saved resumes for the user' })
   @ApiResponse({ status: 200, description: 'List of resumes retrieved' })
-  async getAllResumes(@Request() req: any) {
+  async getAllResumes(@Request() req: AuthenticatedRequest) {
     return this.resumeService.getAllResumes(req.user.id);
   }
 
@@ -44,7 +46,10 @@ export class ResumeController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific resume by ID' })
   @ApiResponse({ status: 200, description: 'Resume data retrieved' })
-  async getResumeById(@Request() req: any, @Param('id') id: string) {
+  async getResumeById(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     return this.resumeService.getResumeById(id, req.user.id);
   }
 
@@ -53,7 +58,10 @@ export class ResumeController {
   @Post()
   @ApiOperation({ summary: 'Create a new resume' })
   @ApiResponse({ status: 201, description: 'Resume created' })
-  async createResume(@Request() req: any, @Body() body: CreateResumeDto) {
+  async createResume(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: CreateResumeDto,
+  ) {
     return this.resumeService.createResume(req.user.id, body.title, body.data);
   }
 
@@ -63,7 +71,7 @@ export class ResumeController {
   @ApiOperation({ summary: 'Update an existing resume' })
   @ApiResponse({ status: 200, description: 'Resume updated' })
   async updateResume(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() body: UpdateResumeDto,
   ) {
@@ -75,7 +83,10 @@ export class ResumeController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a resume' })
   @ApiResponse({ status: 200, description: 'Resume deleted' })
-  async deleteResume(@Request() req: any, @Param('id') id: string) {
+  async deleteResume(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     return this.resumeService.deleteResume(id, req.user.id);
   }
 
@@ -84,7 +95,7 @@ export class ResumeController {
   @Post('analyze')
   @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
   async analyzeResume(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @UploadedFile() file: any,
     @Body('jobDescription') jobDescription?: string,
   ) {

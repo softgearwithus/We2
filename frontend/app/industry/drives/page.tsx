@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { Briefcase, MapPin, Calendar, Users, Eye, ArrowRight, Loader2, PlusCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +15,7 @@ export default function ActiveDrivesPage() {
             try {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
+                const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {

@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Brain, Calculator, Code2, Sparkles, ChevronRight, TrendingUp, Search, SlidersHorizontal, ArrowDownAZ, ArrowUpZA, Clock, type LucideIcon } from 'lucide-react';
@@ -76,7 +78,7 @@ export default function SubjectTestsPage() {
                     category: 'subject',
                     groupBy: 'group',
                 });
-                const response = await fetch(`${API_BASE_URL}/mcqs/groups?${params.toString()}`, {
+                const response = await fetchApi(`${API_BASE_URL}/mcqs/groups?${params.toString()}`, {
                     headers: { Authorization: `Bearer ${t}` },
                     cache: 'no-store',
                 });

@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -112,14 +114,14 @@ export class UsersController {
     },
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async getProfile(@Request() req: any) {
+  async getProfile(@Request() req: AuthenticatedRequest) {
     return this.usersService.findById(req.user.id);
   }
 
   @Get('dashboard-stats')
   @ApiOperation({ summary: 'Get user dashboard statistics' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
-  async getDashboardStats(@Request() req: any) {
+  async getDashboardStats(@Request() req: AuthenticatedRequest) {
     return this.usersService.getDashboardStats(req.user.id);
   }
 
@@ -130,7 +132,7 @@ export class UsersController {
     description: 'Payment history retrieved successfully',
   })
   async getMySubscriptionPayments(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Query('limit') limit?: string,
   ) {
     return this.usersService.getMySubscriptionPayments(
@@ -142,7 +144,7 @@ export class UsersController {
   @Get('me/credits')
   @ApiOperation({ summary: 'Get user credit remaining sizes' })
   @ApiResponse({ status: 200, description: 'Stats retrieved successfully' })
-  async getUserCredits(@Request() req: any) {
+  async getUserCredits(@Request() req: AuthenticatedRequest) {
     return this.usersService.getUserCredits(req.user.id);
   }
 
@@ -154,7 +156,7 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async updateProfile(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(req.user.id, updateUserDto);
@@ -181,7 +183,7 @@ export class UsersController {
     UploadLimitInterceptor,
   )
   async uploadAvatar(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
@@ -213,7 +215,7 @@ export class UsersController {
     description: 'Upgrades are temporarily disabled',
   })
   async upgradeSubscription(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() upgradeDto: UpgradeSubscriptionDto,
   ) {
     const { plan, paymentId, orderId, signature } = upgradeDto;
@@ -254,7 +256,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Create Razorpay order for plan upgrade' })
   @ApiResponse({ status: 201, description: 'Order created successfully' })
   async createUpgradeOrder(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() dto: CreateUpgradeOrderDto,
   ) {
     const settings = await this.adminSettingsService.getPlatformSettings();

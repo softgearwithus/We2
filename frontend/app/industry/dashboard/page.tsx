@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Building2, Briefcase, Users, PlusCircle, TrendingUp, Calendar, ArrowRight } from 'lucide-react';
@@ -19,7 +21,7 @@ export default function IndustryDashboard() {
                 // Fetch the company's drives
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
-                const drivesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
+                const drivesRes = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!drivesRes.ok) throw new Error('API Error');

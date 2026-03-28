@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect, useRef } from 'react';
 import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2, BarChart3, Sparkles } from 'lucide-react';
 import CommunicationDrillDashboard from './CommunicationDrillDashboard';

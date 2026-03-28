@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
@@ -34,9 +36,9 @@ export default function LeetCodeProfile() {
                 let projectSolved = 0;
                 let projectTotal = 0;
                 const [dashboardStatsRes, projectProgressRes, badgesRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/users/dashboard-stats`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch(`${API_BASE_URL}/project-labs/me/progress`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch(`${API_BASE_URL}/gamification/badges`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetchApi(`${API_BASE_URL}/users/dashboard-stats`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetchApi(`${API_BASE_URL}/project-labs/me/progress`, { headers: { Authorization: `Bearer ${token}` } }),
+                    fetchApi(`${API_BASE_URL}/gamification/badges`, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
 
                 if (dashboardStatsRes.ok) {

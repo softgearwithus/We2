@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -38,7 +40,7 @@ export default function PracticeSessionEntry() {
 
             const attemptFetch = async (t: string) => {
                 try {
-                    const response = await fetch(`${API_BASE_URL}/test-series/student/session?targetId=${chapterId}&type=chapter`, {
+                    const response = await fetchApi(`${API_BASE_URL}/test-series/student/session?targetId=${chapterId}&type=chapter`, {
                         headers: { Authorization: `Bearer ${t}` }
                     });
                     if (response.ok) return await response.json();

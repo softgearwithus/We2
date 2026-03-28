@@ -110,24 +110,24 @@ export default function NewProjectForm({
 
     const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev: ProjectLabFormState) => ({ ...prev, [name]: value }));
     };
 
     const handleDetailChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, details: { ...prev.details, [name]: value } }));
+        setFormData((prev: ProjectLabFormState) => ({ ...prev, details: { ...prev.details, [name]: value } }));
     };
 
     const handleReadmeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, readme: { ...prev.readme, [name]: value } }));
+        setFormData((prev: ProjectLabFormState) => ({ ...prev, readme: { ...prev.readme, [name]: value } }));
     };
 
     const addArrayItem = (field: string, tempField: string) => {
         const val = tempInputs[tempField as keyof typeof tempInputs] as string;
         if (!val.trim()) return;
 
-        setFormData(prev => {
+        setFormData((prev: ProjectLabFormState) => {
             const newState = { ...prev };
             // Handle nested vs top-level arrays
             if (['prerequisites', 'tools'].includes(field)) {
@@ -143,7 +143,7 @@ export default function NewProjectForm({
                     type: tempInputs.resourceType
                 }];
                 // Clear specific resource temp inputs
-                setTempInputs(prev => ({ ...prev, resourceTitle: '', resourceUrl: '', resourceType: 'docs' }));
+                setTempInputs((prev: any) => ({ ...prev, resourceTitle: '', resourceUrl: '', resourceType: 'docs' }));
                 return newState;
             } else {
                 (newState as any)[field] = [...(newState as any)[field], val.trim()];
@@ -153,21 +153,21 @@ export default function NewProjectForm({
 
         // Clear standard temp input
         if (field !== 'resources') {
-            setTempInputs(prev => ({ ...prev, [tempField]: '' }));
+            setTempInputs((prev: any) => ({ ...prev, [tempField]: '' }));
         }
     };
 
     const removeArrayItem = (field: string, index: number) => {
-        setFormData(prev => {
+        setFormData((prev: ProjectLabFormState) => {
             const newState = { ...prev };
             if (['prerequisites', 'tools'].includes(field)) {
                 (newState.details as any)[field] = (newState.details as any)[field].filter((_: any, i: number) => i !== index);
             } else if (['features', 'outcomes'].includes(field)) {
                 (newState.readme as any)[field] = (newState.readme as any)[field].filter((_: any, i: number) => i !== index);
             } else if (field === 'tasks') {
-                newState.tasks = newState.tasks.filter((_, i) => i !== index);
+                newState.tasks = newState.tasks.filter((_: any, i: number) => i !== index);
             } else if (field === 'resources') {
-                newState.details.resources = newState.details.resources.filter((_, i) => i !== index);
+                newState.details.resources = newState.details.resources.filter((_: any, i: number) => i !== index);
             } else {
                 (newState as any)[field] = (newState as any)[field].filter((_: any, i: number) => i !== index);
             }
@@ -226,7 +226,7 @@ export default function NewProjectForm({
         let items: any[] = [];
         if (['prerequisites', 'tools'].includes(field)) items = (formData.details as any)[field];
         else if (['features', 'outcomes'].includes(field)) items = (formData.readme as any)[field];
-        else if (field === 'tasks') items = formData.tasks.map(t => t.title);
+        else if (field === 'tasks') items = formData.tasks.map((t: any) => t.title);
         else items = (formData as any)[field];
 
         return (
@@ -236,7 +236,7 @@ export default function NewProjectForm({
                     <input
                         type="text"
                         value={(tempInputs as any)[tempField]}
-                        onChange={e => setTempInputs(prev => ({ ...prev, [tempField]: e.target.value }))}
+                        onChange={e => setTempInputs((prev: any) => ({ ...prev, [tempField]: e.target.value }))}
                         onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addArrayItem(field, tempField))}
                         placeholder={placeholder}
                         className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
@@ -390,9 +390,9 @@ export default function NewProjectForm({
                     <div className="space-y-2 mb-6">
                         <label className="text-sm font-semibold text-slate-700">Add Learning Resource</label>
                         <div className="flex flex-col md:flex-row gap-3">
-                            <input type="text" value={tempInputs.resourceTitle} onChange={e => setTempInputs(prev => ({ ...prev, resourceTitle: e.target.value }))} placeholder="Title (e.g. Official Docs)" className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500" />
-                            <input type="url" value={tempInputs.resourceUrl} onChange={e => setTempInputs(prev => ({ ...prev, resourceUrl: e.target.value }))} placeholder="URL (https://...)" className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500" />
-                            <select value={tempInputs.resourceType} onChange={e => setTempInputs(prev => ({ ...prev, resourceType: e.target.value as any }))} className="w-full md:w-32 rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none bg-white">
+                            <input type="text" value={tempInputs.resourceTitle} onChange={e => setTempInputs((prev: any) => ({ ...prev, resourceTitle: e.target.value }))} placeholder="Title (e.g. Official Docs)" className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500" />
+                            <input type="url" value={tempInputs.resourceUrl} onChange={e => setTempInputs((prev: any) => ({ ...prev, resourceUrl: e.target.value }))} placeholder="URL (https://...)" className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500" />
+                            <select value={tempInputs.resourceType} onChange={e => setTempInputs((prev: any) => ({ ...prev, resourceType: e.target.value as any }))} className="w-full md:w-32 rounded-lg border border-slate-200 px-4 py-2.5 text-sm outline-none bg-white">
                                 <option value="docs">Docs</option>
                                 <option value="design">Design</option>
                                 <option value="video">Video</option>
@@ -414,7 +414,7 @@ export default function NewProjectForm({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {formData.details.resources.map((res, idx) => (
+                                    {formData.details.resources.map((res: any, idx: number) => (
                                         <tr key={idx} className="border-b border-slate-50 last:border-none">
                                             <td className="py-3 px-4 font-medium text-slate-800">{res.title}</td>
                                             <td className="py-3 px-4"><span className="px-2 py-0.5 bg-slate-100 rounded text-xs text-slate-600 font-medium uppercase tracking-wider">{res.type}</span></td>

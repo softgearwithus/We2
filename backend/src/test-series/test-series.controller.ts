@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -34,6 +36,7 @@ import {
   UpdateCompanyDto,
   BulkQuestionsDto,
   SubmitMockTestDto,
+  SubmitSubjectPracticeDto,
 } from './dto/test-series.dto';
 
 @ApiTags('test-series')
@@ -95,7 +98,6 @@ export class TestSeriesController {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Submission crash',
           message: error?.message || 'Unknown error',
-          stack: error?.stack,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -107,7 +109,10 @@ export class TestSeriesController {
   @ApiOperation({
     summary: 'Submit a subject practice module and get a mock test result',
   })
-  async submitSubjectPractice(@CurrentUser() user: any, @Body() body: any) {
+  async submitSubjectPractice(
+    @CurrentUser() user: any,
+    @Body() body: SubmitSubjectPracticeDto,
+  ) {
     try {
       return await this.testSeriesService.submitSubjectPractice(
         user.userId || user.id,
@@ -120,7 +125,6 @@ export class TestSeriesController {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Submission crash',
           message: error?.message || 'Unknown error',
-          stack: error?.stack,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -244,7 +248,7 @@ export class TestSeriesController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './uploads/test-series',
-        filename: (req: any, file: any, cb: any) => {
+        filename: (req: AuthenticatedRequest, file: any, cb: any) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);

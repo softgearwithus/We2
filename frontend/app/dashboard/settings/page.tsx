@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Key, Mail, Trash2, ChevronRight, AlertTriangle, Save, CreditCard, Calendar, Star, Sparkles } from 'lucide-react';
@@ -31,7 +33,7 @@ export default function SettingsPage() {
 
             try {
                 setIsPaymentsLoading(true);
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/my/subscription/payments?limit=25`, {
+                const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/my/subscription/payments?limit=25`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!response.ok) {

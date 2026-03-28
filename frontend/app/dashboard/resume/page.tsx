@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useState, useRef, useEffect } from 'react';
 import ResumeForm from '@/app/components/resume/ResumeForm';
 import ResumePreview from '@/app/components/resume/ResumePreview';
@@ -30,7 +32,7 @@ export default function ResumeBuilderPage() {
         if (!token) return;
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/all`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/resume/all`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             if (response.ok) {
@@ -50,7 +52,7 @@ export default function ResumeBuilderPage() {
         if (!token) return;
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/${id}`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/resume/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             if (response.ok) {
@@ -78,7 +80,7 @@ export default function ResumeBuilderPage() {
             const endpoint = currentResumeId ? `/resume/${currentResumeId}` : `/resume`;
             const method = currentResumeId ? 'PUT' : 'POST';
             
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
@@ -545,7 +547,7 @@ export default function ResumeBuilderPage() {
                                                 <button
                                                     onClick={async () => {
                                                         const { getActiveToken } = await import('@/app/lib/auth-storage');
-                                                        fetch(`${process.env.NEXT_PUBLIC_API_URL}/resume/${resume.id}`, {
+                                                        fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/resume/${resume.id}`, {
                                                             method: 'DELETE',
                                                             headers: { 'Authorization': `Bearer ${getActiveToken()}` }
                                                         }).then(() => loadResumes());

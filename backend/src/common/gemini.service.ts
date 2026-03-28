@@ -288,7 +288,7 @@ export class GeminiService {
         this.logger.log(`Attempting to generate with model: ${modelName}`);
         const model = this.genAI.getGenerativeModel({ model: modelName });
         const result = await model.generateContent(parts);
-        const response = await result.response;
+        const response = result.response;
         const text = response.text();
         if (!text) {
           throw new Error('Empty response from Gemini');

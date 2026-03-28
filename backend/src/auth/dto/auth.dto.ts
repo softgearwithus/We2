@@ -66,11 +66,11 @@ export class RegisterDto {
 
   @ApiProperty({
     example: 'student',
-    description: 'User role (student, college_admin, company_admin)',
+    description: 'Public signup role (student only)',
     required: false,
   })
   @IsOptional()
-  @IsIn(['student', 'college_admin', 'company_admin'])
+  @IsIn(['student'])
   role?: string;
 
   @ApiProperty({

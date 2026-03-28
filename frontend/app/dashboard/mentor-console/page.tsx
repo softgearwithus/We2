@@ -356,7 +356,14 @@ export default function MentorConsolePage() {
                                                 )}
 
                                                 <button
-                                                    onClick={() => session.meetingLink && window.open(session.meetingLink, '_blank')}
+                                                    onClick={() =>
+                                                        session.meetingLink &&
+                                                        window.open(
+                                                            session.meetingLink,
+                                                            '_blank',
+                                                            'noopener,noreferrer',
+                                                        )
+                                                    }
                                                     className={`w-full py-2.5 rounded-xl text-sm font-bold shadow-md transition-colors ${session.meetingLink ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}`}
                                                 >
                                                     {session.meetingLink ? 'Join Meeting Room' : 'Link Pending'}

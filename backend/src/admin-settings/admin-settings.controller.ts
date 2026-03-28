@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Body,
   Controller,
@@ -100,7 +102,10 @@ export class AdminSettingsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update admin profile (Admin)' })
-  async updateProfile(@Request() req: any, @Body() dto: UpdateAdminProfileDto) {
+  async updateProfile(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: UpdateAdminProfileDto,
+  ) {
     return this.adminSettingsService.updateAdminProfile(req.user.id, dto);
   }
 
@@ -110,7 +115,7 @@ export class AdminSettingsController {
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update admin security settings (Admin)' })
   async updateSecurity(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() dto: UpdateAdminSecurityDto,
   ) {
     return this.adminSettingsService.updateAdminSecurity(req.user.id, dto);

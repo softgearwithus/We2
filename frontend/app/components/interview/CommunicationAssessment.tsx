@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -61,7 +63,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
             try {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/communication/cancel`, {
+                await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interviews/communication/cancel`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -198,7 +200,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
 
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken();
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/communication/submit`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interviews/communication/submit`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -217,7 +219,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
             const durationSeconds = metadata.durationSeconds;
             if (typeof durationSeconds === 'number' && result.id) {
                 try {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${result.id}`, {
+                    await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${result.id}`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -241,7 +243,7 @@ export default function CommunicationAssessment({ onBack, onComplete, drillConte
     const fetchSessionDetails = async (sessionId: string) => {
         const { getActiveToken } = await import('@/app/lib/auth-storage');
         const token = getActiveToken();
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${sessionId}`, {
+        const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interviews/${sessionId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

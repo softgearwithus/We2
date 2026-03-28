@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Company } from './entities/company.entity';
@@ -13,7 +17,11 @@ import { MockTestStudentResponse } from './entities/mock-test-student-response.e
 import { User } from '../users/user.entity';
 import { McqQuestion } from '../mcqs/entities/mcq-question.entity';
 import { TestEvaluationService } from './test-evaluation.service';
-import { CreateCompanyDto, UpdateCompanyDto } from './dto/test-series.dto';
+import {
+  CreateCompanyDto,
+  SubmitSubjectPracticeDto,
+  UpdateCompanyDto,
+} from './dto/test-series.dto';
 import { In } from 'typeorm';
 
 @Injectable()
@@ -150,7 +158,20 @@ export class TestSeriesService {
     return this.questionRepository.remove(question);
   }
 
-  async importBulkQuestions(sectionId: string, questionsData: any[]) {
+  async importBulkQuestions(
+    sectionId: string,
+    questionsData: Array<{
+      type: string;
+      question: string;
+      options?: string[];
+      correctAnswer?: string | number;
+      solutionText?: string;
+      passageContent?: string;
+      imageUrl?: string;
+      marks?: number;
+      order?: number;
+    }>,
+  ) {
     const section = await this.sectionRepository.findOne({
       where: { id: sectionId },
     });
@@ -159,7 +180,7 @@ export class TestSeriesService {
     const newQuestions = questionsData.map((q, index) => {
       const question = new MockTestQuestion();
       question.sectionId = sectionId;
-      if (Object.values(MockQuestionType).includes(q.type)) {
+      if (Object.values(MockQuestionType).includes(q.type as MockQuestionType)) {
         question.questionType = q.type as MockQuestionType;
       } else {
         question.questionType = MockQuestionType.SINGLE_CORRECT;
@@ -285,24 +306,17 @@ export class TestSeriesService {
 
     await this.mockTestResultRepository.save(result);
 
-    // Fetch all questions to evaluate MCQs instantly
-    const qIds = payload.responses.map((r) => r.questionId);
-    let attemptedQuestions: MockTestQuestion[] = [];
-    if (qIds.length > 0) {
-      attemptedQuestions = await this.questionRepository.find({
-        where: { id: In(qIds) },
-      });
-    }
-
-    // Fetch ALL questions for the mock test to calculate actual total marks and total questions
+    // Fetch ALL questions for this mock test once so we can validate ownership
+    // and compute totals from trusted server-side data.
     let actualTotalMarks = 0;
     let actualTotalQuestions = 0;
+    let allQuestions: MockTestQuestion[] = [];
     const allSections = await this.sectionRepository.find({
       where: { mockTestId },
     });
     const sectionIds = allSections.map((s) => s.id);
     if (sectionIds.length > 0) {
-      const allQuestions = await this.questionRepository.find({
+      allQuestions = await this.questionRepository.find({
         where: { sectionId: In(sectionIds) },
       });
       actualTotalQuestions = allQuestions.length;
@@ -312,14 +326,41 @@ export class TestSeriesService {
       );
     }
 
+    const questionById = new Map(allQuestions.map((q) => [q.id, q]));
+
+    // Dedupe by questionId (last non-empty answer wins) and validate ownership.
+    const dedupedResponses = new Map<
+      string,
+      { questionId: string; responseValue: string; timeSpentSeconds: number }
+    >();
+    for (const response of payload.responses) {
+      const normalizedQuestionId = String(response.questionId || '').trim();
+      if (!normalizedQuestionId) continue;
+      const question = questionById.get(normalizedQuestionId);
+      if (!question) {
+        throw new BadRequestException(
+          `Question ${normalizedQuestionId} does not belong to this mock test`,
+        );
+      }
+      dedupedResponses.set(normalizedQuestionId, {
+        questionId: normalizedQuestionId,
+        responseValue: String(response.responseValue || ''),
+        timeSpentSeconds:
+          typeof response.timeSpentSeconds === 'number' &&
+          Number.isFinite(response.timeSpentSeconds)
+            ? Math.max(0, Math.floor(response.timeSpentSeconds))
+            : 0,
+      });
+    }
+
     const totalMarks = 0;
     let marksObtained = 0;
     let requiresAiEvaluation = false;
 
     const studentResponses: MockTestStudentResponse[] = [];
 
-    for (const r of payload.responses) {
-      const question = attemptedQuestions.find((q) => q.id === r.questionId);
+    for (const r of dedupedResponses.values()) {
+      const question = questionById.get(r.questionId);
       if (!question) continue;
 
       const studentResp = this.mockTestResponseRepository.create({
@@ -349,9 +390,19 @@ export class TestSeriesService {
           studentResp.isCorrect = false;
         } else {
           // Check comma-separated arrays ignoring order
-          const correctArr = correctValue.split(',').sort().join(',');
+          const correctArr = correctValue
+            .split(',')
+            .map((part) => part.trim())
+            .filter(Boolean)
+            .sort()
+            .join(',');
           const studentArr = r.responseValue
-            ? r.responseValue.split(',').sort().join(',')
+            ? r.responseValue
+                .split(',')
+                .map((part) => part.trim())
+                .filter(Boolean)
+                .sort()
+                .join(',')
             : '';
           if (studentArr === correctArr) {
             studentResp.isCorrect = true;
@@ -405,53 +456,124 @@ export class TestSeriesService {
 
   async submitSubjectPractice(
     userId: string,
-    payload: {
-      subject: string;
-      topic: string;
-      title: string;
-      totalScore: number;
-      correctAnswers: number;
-      incorrectAnswers: number;
-      unattemptedQuestions: number;
-      timeTakenSeconds: number;
-      responses: {
-        question: { id: string };
-        responseValue: string;
-        isCorrect: boolean | null;
-      }[];
-    },
+    payload: SubmitSubjectPracticeDto,
   ) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
+    const safeSubject = String(payload.subject || '').trim();
+    const safeTopic = String(payload.topic || '').trim();
+    const safeTitle = String(payload.title || '').trim();
+    if (!safeSubject || !safeTopic || !safeTitle) {
+      throw new BadRequestException('subject, topic and title are required');
+    }
+
+    const uniqueMcqIds = Array.from(
+      new Set(
+        (payload.responses || [])
+          .map((r) => String(r?.question?.id || '').trim())
+          .filter(Boolean),
+      ),
+    );
+    if (!uniqueMcqIds.length) {
+      throw new BadRequestException('At least one response is required');
+    }
+
+    const mcqBank = await this.mcqQuestionRepository.find({
+      where: { id: In(uniqueMcqIds) },
+    });
+    const mcqById = new Map(mcqBank.map((mcq) => [mcq.id, mcq]));
+
+    for (const mcq of mcqBank) {
+      if (mcq.category !== 'subject' || mcq.groupKey !== safeSubject) {
+        throw new BadRequestException(
+          `Question ${mcq.id} does not belong to this subject module`,
+        );
+      }
+      if ((mcq.topicKey || '') !== safeTopic) {
+        throw new BadRequestException(
+          `Question ${mcq.id} does not belong to this topic`,
+        );
+      }
+    }
+
+    // Dedupe responses by question id and recompute correctness server-side.
+    const dedupedSubjectResponses = new Map<
+      string,
+      { questionId: string; responseValue: string }
+    >();
+    for (const response of payload.responses || []) {
+      const questionId = String(response?.question?.id || '').trim();
+      if (!questionId) continue;
+      if (!mcqById.has(questionId)) {
+        throw new BadRequestException(
+          `Question ${questionId} is invalid for this submission`,
+        );
+      }
+      dedupedSubjectResponses.set(questionId, {
+        questionId,
+        responseValue: String(response?.responseValue || '').trim(),
+      });
+    }
+
     const now = new Date();
-    const startTime = new Date(now.getTime() - payload.timeTakenSeconds * 1000);
+    const safeTimeTakenSeconds =
+      typeof payload.timeTakenSeconds === 'number' &&
+      Number.isFinite(payload.timeTakenSeconds)
+        ? Math.max(0, Math.floor(payload.timeTakenSeconds))
+        : 0;
+    const startTime = new Date(now.getTime() - safeTimeTakenSeconds * 1000);
+
+    const evaluatedResponses = Array.from(dedupedSubjectResponses.values()).map(
+      (response) => {
+        const question = mcqById.get(response.questionId)!;
+        const normalized = response.responseValue;
+        const parsedIndex = Number.parseInt(normalized, 10);
+        const isValidResponse = Number.isInteger(parsedIndex);
+        const isCorrect =
+          isValidResponse && parsedIndex === question.correctOptionIndex;
+        return {
+          questionId: response.questionId,
+          responseValue: normalized,
+          isCorrect,
+        };
+      },
+    );
+
+    const answeredCount = evaluatedResponses.filter(
+      (response) => response.responseValue !== '',
+    ).length;
+    const correctCount = evaluatedResponses.filter(
+      (response) => response.isCorrect,
+    ).length;
+    const incorrectCount = answeredCount - correctCount;
+    const unattemptedCount = uniqueMcqIds.length - answeredCount;
 
     const result = this.mockTestResultRepository.create({
       user,
       resultType: 'subject_practice',
-      subject: payload.subject,
-      topic: payload.topic,
-      titleSnapshot: payload.title,
+      subject: safeSubject,
+      topic: safeTopic,
+      titleSnapshot: safeTitle,
       startTime: startTime,
       endTime: now,
       isEvaluated: true,
-      totalMarks: payload.responses.length,
-      totalQuestions: payload.responses.length,
-      marksObtained: payload.totalScore,
+      totalMarks: uniqueMcqIds.length,
+      totalQuestions: uniqueMcqIds.length,
+      marksObtained: correctCount,
     });
 
     await this.mockTestResultRepository.save(result);
 
-    const studentResponses: MockTestStudentResponse[] = payload.responses.map(
-      (r) => {
+    const studentResponses: MockTestStudentResponse[] = evaluatedResponses.map(
+      (response) => {
         return this.mockTestResponseRepository.create({
           mockTestResult: result,
-          subjectMcqId: r.question.id, // Store original McqQuestion id loosely
-          responseValue: r.responseValue,
+          subjectMcqId: response.questionId, // Store original McqQuestion id loosely
+          responseValue: response.responseValue,
           timeSpentSeconds: 0, // Roughly speaking, or we divide time...
-          isCorrect: r.isCorrect,
-          marksAwarded: r.isCorrect ? 1 : 0,
+          isCorrect: response.isCorrect,
+          marksAwarded: response.isCorrect ? 1 : 0,
         });
       },
     );
@@ -463,6 +585,10 @@ export class TestSeriesService {
     return {
       success: true,
       id: result.id,
+      totalScore: correctCount,
+      correctAnswers: correctCount,
+      incorrectAnswers: incorrectCount,
+      unattemptedQuestions: unattemptedCount,
     };
   }
 

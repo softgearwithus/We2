@@ -4,17 +4,30 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { AdminService } from '../admin/admin.service';
 import { WriteXQuestion } from './entities/writex-question.entity';
 import { UpdateWriteXQuestionDto } from './dto/update-writex-question.dto';
 
+export interface WriteXEvaluationResult {
+  score: number;
+  summary: string;
+  criteria: {
+    relevance: number;
+    fluency: number;
+    grammar: number;
+    vocabulary: number;
+  };
+  strengths: string[];
+  improvements: string[];
+}
+
 @Injectable()
 export class WriteXService {
   private genAI: GoogleGenerativeAI;
-  private model: any;
+  private model: GenerativeModel;
 
   constructor(
     @InjectRepository(WriteXQuestion)
@@ -44,9 +57,12 @@ export class WriteXService {
     topicLabel?: string,
   ) {
     if (active && !topicKey) {
-      await this.questionRepo.update({ active: true, topicKey: null } as any, {
-        active: false,
-      });
+      await this.questionRepo.update(
+        { active: true, topicKey: IsNull() },
+        {
+          active: false,
+        },
+      );
     } else if (active && topicKey) {
       await this.questionRepo.update(
         { active: true, topicKey },
@@ -227,16 +243,28 @@ ${answer}
 """
 `;
 
-    const result = await this.model.generateContent(prompt);
-    const response = await result.response;
-    const textResponse = response.text();
+    const result: any = await this.model.generateContent(prompt);
+    const response: any = await result.response;
+    const textResponse: string = response.text();
     const jsonString = textResponse
       .replace(/^```json\s*/, '')
       .replace(/\s*```$/, '');
 
     try {
-      return JSON.parse(jsonString);
-    } catch (error) {
+      const parsed = JSON.parse(jsonString) as {
+        score: number;
+        summary: string;
+        criteria: {
+          relevance: number;
+          fluency: number;
+          grammar: number;
+          vocabulary: number;
+        };
+        strengths: string[];
+        improvements: string[];
+      };
+      return parsed;
+    } catch (_error) {
       throw new InternalServerErrorException(
         'Failed to parse WriteX evaluation',
       );

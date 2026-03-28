@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useState, useEffect } from 'react';
 import { getStoredToken } from '@/app/lib/auth-storage';
 import { Save, User, Shield, Key, Globe, AlertCircle, CheckCircle2, Loader2, Database } from 'lucide-react';
@@ -71,7 +73,7 @@ export default function AdminSettingsPage() {
 
                 const [platformData, profileRes] = await Promise.all([
                     fetchPlatformSettings(token),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
+                    fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                 ]);

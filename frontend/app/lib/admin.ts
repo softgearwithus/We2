@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export interface FeatureEngagement {
@@ -23,7 +25,7 @@ export interface AnalyticsData {
 
 export const fetchAdminAnalytics = async (token: string, range?: string): Promise<AnalyticsData> => {
     const query = range ? `?range=${encodeURIComponent(range)}` : '';
-    const response = await fetch(`${API_BASE_URL}/admin/analytics${query}`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/analytics${query}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch admin analytics');
@@ -66,7 +68,7 @@ export interface SubscriptionPaymentRecord {
 }
 
 export const fetchAdminStudents = async (token: string): Promise<StudentsData> => {
-    const response = await fetch(`${API_BASE_URL}/admin/students`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/students`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch admin students');
@@ -74,7 +76,7 @@ export const fetchAdminStudents = async (token: string): Promise<StudentsData> =
 };
 
 export const fetchAdminSubscriptionPayments = async (token: string, limit = 50): Promise<SubscriptionPaymentRecord[]> => {
-    const response = await fetch(`${API_BASE_URL}/admin/subscriptions/payments?limit=${encodeURIComponent(String(limit))}`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/subscriptions/payments?limit=${encodeURIComponent(String(limit))}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch subscription payments');

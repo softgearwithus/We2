@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -115,7 +117,7 @@ export default function VideoQASection({ onComplete }: VideoQASectionProps) {
         formData.append('referenceText', currentQuestion);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/analyze-audio`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interview/analyze-audio`, {
                 method: 'POST',
                 body: formData,
             });

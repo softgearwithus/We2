@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
@@ -142,7 +144,7 @@ export default function PricingCard({
                 return;
             }
 
-            const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
+            const orderRes = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +175,7 @@ export default function PricingCard({
                 order_id: orderData.orderId,
                 handler: async function (response: any) {
                     try {
-                        const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
+                        const upgradeResponse = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

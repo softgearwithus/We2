@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,13 +19,13 @@ export class GamificationController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get my gamification profile (XP, Level, Streak)' })
-  async getMyProfile(@Request() req: any) {
+  async getMyProfile(@Request() req: AuthenticatedRequest) {
     return this.gamificationService.getProfile(req.user.id);
   }
 
   @Get('badges')
   @ApiOperation({ summary: 'Get all badges and my earned ones' })
-  async getBadges(@Request() req: any) {
+  async getBadges(@Request() req: AuthenticatedRequest) {
     const [allBadges, myBadges] = await Promise.all([
       this.gamificationService.getAllBadges(),
       this.gamificationService.getBadges(req.user.id),

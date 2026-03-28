@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -52,7 +54,7 @@ export class ProjectLabsController {
   @UseGuards(JwtAuthGuard)
   @Get('me/progress')
   @ApiOperation({ summary: 'Get my project lab progress' })
-  async getMyProgress(@Request() req: any) {
+  async getMyProgress(@Request() req: AuthenticatedRequest) {
     return this.projectLabsService.getMyProgress(req.user.id);
   }
 
@@ -60,7 +62,7 @@ export class ProjectLabsController {
   @UseGuards(JwtAuthGuard)
   @Get('me/submissions')
   @ApiOperation({ summary: 'Get my project lab submissions' })
-  async getMySubmissions(@Request() req: any) {
+  async getMySubmissions(@Request() req: AuthenticatedRequest) {
     return this.projectLabsService.getMySubmissions(req.user.id);
   }
 
@@ -69,7 +71,7 @@ export class ProjectLabsController {
   @Post(':id/submissions')
   @ApiOperation({ summary: 'Submit a project lab' })
   async submit(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() dto: CreateProjectLabSubmissionDto,
   ) {

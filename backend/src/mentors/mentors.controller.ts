@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   BadRequestException,
   Body,
@@ -92,7 +94,7 @@ export class MentorsController {
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Create mentor session after payment verification' })
   async createSession(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() payload: VerifyMentorPaymentDto,
   ) {
     return this.mentorsService.createSessionFromPayment(req.user.id, payload);
@@ -101,14 +103,14 @@ export class MentorsController {
   @Get('mentor-sessions')
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'List student mentor sessions' })
-  async listStudentSessions(@Request() req: any) {
+  async listStudentSessions(@Request() req: AuthenticatedRequest) {
     return this.mentorsService.listStudentSessions(req.user.id);
   }
 
   @Get('mentor/requests')
   @Roles(UserRole.MENTOR)
   @ApiOperation({ summary: 'List mentor pending requests' })
-  async listMentorRequests(@Request() req: any) {
+  async listMentorRequests(@Request() req: AuthenticatedRequest) {
     return this.mentorsService.listMentorRequests(req.user.id);
   }
 
@@ -116,7 +118,7 @@ export class MentorsController {
   @Roles(UserRole.MENTOR)
   @ApiOperation({ summary: 'Accept mentor request and add meeting link' })
   async acceptRequest(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() body: { meetingLink: string },
   ) {
@@ -126,21 +128,24 @@ export class MentorsController {
   @Patch('mentor/requests/:id/decline')
   @Roles(UserRole.MENTOR)
   @ApiOperation({ summary: 'Decline mentor request' })
-  async declineRequest(@Request() req: any, @Param('id') id: string) {
+  async declineRequest(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     return this.mentorsService.declineRequest(req.user.id, id);
   }
 
   @Get('mentor/sessions')
   @Roles(UserRole.MENTOR)
   @ApiOperation({ summary: 'List mentor sessions' })
-  async listMentorSessions(@Request() req: any) {
+  async listMentorSessions(@Request() req: AuthenticatedRequest) {
     return this.mentorsService.listMentorSessions(req.user.id);
   }
 
   @Get('mentor/payouts')
   @Roles(UserRole.MENTOR)
   @ApiOperation({ summary: 'List mentor payouts' })
-  async listMentorPayouts(@Request() req: any) {
+  async listMentorPayouts(@Request() req: AuthenticatedRequest) {
     return this.mentorsService.listMentorPayouts(req.user.id);
   }
 
@@ -161,7 +166,7 @@ export class MentorsController {
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Create Razorpay order for mentor connect' })
   async createPaymentOrder(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() payload: CreateMentorPaymentOrderDto,
   ) {
     return this.mentorsService.createPaymentOrder(req.user.id, payload);
@@ -171,7 +176,7 @@ export class MentorsController {
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Verify Razorpay payment and create session' })
   async verifyPayment(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() payload: VerifyMentorPaymentDto,
   ) {
     const secret = process.env.RAZORPAY_KEY_SECRET;

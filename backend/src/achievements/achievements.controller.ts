@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -42,7 +44,7 @@ export class AchievementsController {
   @Get('me')
   @ApiOperation({ summary: 'Get my earned achievements' })
   @ApiResponse({ status: 200, description: 'List of earned achievements' })
-  async getMyAchievements(@Request() req: any) {
+  async getMyAchievements(@Request() req: AuthenticatedRequest) {
     return this.achievementsService.findByUser(req.user.id);
   }
 
@@ -63,7 +65,7 @@ export class AchievementsController {
       },
     },
   })
-  async getMyXp(@Request() req: any) {
+  async getMyXp(@Request() req: AuthenticatedRequest) {
     return this.achievementsService.getXpSummary(req.user.id);
   }
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
@@ -40,7 +42,7 @@ export default function CreateDrivePage() {
 
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

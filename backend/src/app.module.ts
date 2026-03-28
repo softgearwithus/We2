@@ -94,8 +94,11 @@ import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.enti
 import { QueriesModule } from './queries/queries.module';
 import { Query } from './queries/entities/query.entity';
 
+import { ScheduleModule } from '@nestjs/schedule';
+
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:

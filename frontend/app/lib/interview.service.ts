@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import { API_ENDPOINTS } from './api-config';
 
 export interface InterviewSession {
@@ -12,7 +14,7 @@ export interface InterviewResponse {
 }
 
 export const startInterviewSession = async (userId: string = 'guest'): Promise<InterviewSession> => {
-    const response = await fetch(`${API_ENDPOINTS.INTERVIEWS}/start`, {
+    const response = await fetchApi(`${API_ENDPOINTS.INTERVIEWS}/start`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -28,7 +30,7 @@ export const startInterviewSession = async (userId: string = 'guest'): Promise<I
 };
 
 export const sendInterviewMessage = async (interviewId: string, message: string): Promise<InterviewResponse> => {
-    const response = await fetch(`${API_ENDPOINTS.INTERVIEWS}/${interviewId}/message`, {
+    const response = await fetchApi(`${API_ENDPOINTS.INTERVIEWS}/${interviewId}/message`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -44,7 +46,7 @@ export const sendInterviewMessage = async (interviewId: string, message: string)
 };
 
 export const endInterviewSession = async (interviewId: string): Promise<void> => {
-    const response = await fetch(`${API_ENDPOINTS.INTERVIEWS}/${interviewId}/end`, {
+    const response = await fetchApi(`${API_ENDPOINTS.INTERVIEWS}/${interviewId}/end`, {
         method: 'POST',
     });
 

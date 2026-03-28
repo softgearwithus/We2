@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -27,7 +29,7 @@ export default function GenericTopicPage() {
             try {
                 // Construct the DB topic ID: e.g. technology-react-chapters
                 const dbTopicId = `${trackId}-${topicId}-chapters`;
-                const response = await fetch(`${API_BASE_URL}/course-content/${dbTopicId}`);
+                const response = await fetchApi(`${API_BASE_URL}/course-content/${dbTopicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

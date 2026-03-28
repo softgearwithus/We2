@@ -64,7 +64,7 @@ export class User {
   subscriptionStatus: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  subscriptionEndDate: Date;
+  subscriptionEndDate: Date | null;
 
   @Column({ type: 'varchar', nullable: true })
   pausedSubscriptionPlan?: string | null;

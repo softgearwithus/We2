@@ -1,13 +1,45 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InterviewService } from './interview.service';
 
 @Controller('interview/vapi')
 export class VapiController {
   constructor(private readonly interviewService: InterviewService) {}
 
+  private assertWebhookSecret(headerSecret?: string) {
+    const configuredSecret = process.env.VAPI_WEBHOOK_SECRET;
+    if (!configuredSecret) {
+      throw new UnauthorizedException('Vapi webhook secret not configured');
+    }
+    if (!headerSecret || !this.safeEqual(headerSecret, configuredSecret)) {
+      throw new UnauthorizedException('Invalid Vapi webhook secret');
+    }
+  }
+
+  private safeEqual(left: string, right: string) {
+    if (left.length !== right.length) return false;
+    let mismatch = 0;
+    for (let i = 0; i < left.length; i += 1) {
+      mismatch |= left.charCodeAt(i) ^ right.charCodeAt(i);
+    }
+    return mismatch === 0;
+  }
+
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
-  async handleVapiWebhook(@Body() payload: any) {
+  async handleVapiWebhook(
+    @Headers('x-vapi-secret') vapiSecretHeader: string | undefined,
+    @Body() payload: any,
+  ) {
+    this.assertWebhookSecret(vapiSecretHeader);
+
     // console.log('Vapi Webhook:', JSON.stringify(payload, null, 2));
 
     // 1. Initial Handshake / Setup
@@ -48,12 +80,17 @@ export class VapiController {
 
   @Post('chat')
   @HttpCode(HttpStatus.OK)
-  async handleVapiChat(@Body() payload: any) {
+  async handleVapiChat(
+    @Headers('x-vapi-secret') vapiSecretHeader: string | undefined,
+    @Body() payload: any,
+  ) {
+    this.assertWebhookSecret(vapiSecretHeader);
+
     // This is called by Vapi when "provider": "custom-llm" is selected
     // Payload contains the conversation history
 
     // Extract latest user message
-    const messages = payload.messages;
+    const messages = Array.isArray(payload?.messages) ? payload.messages : [];
     // Vapi sends [ { role: 'user', content: '...' }, ... ]
 
     if (!messages || messages.length === 0) {

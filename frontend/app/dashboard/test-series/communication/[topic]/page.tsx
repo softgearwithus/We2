@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, PenTool, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
@@ -46,7 +48,7 @@ export default function WriteXModuleSimulator({ params }: { params: Promise<{ to
             }
             try {
                 // Pass the topicKey to fetch the correct active prompt for this module
-                const response = await fetch(`${API_BASE_URL}/writex/question?topicKey=${topic}`, {
+                const response = await fetchApi(`${API_BASE_URL}/writex/question?topicKey=${topic}`, {
                     headers: { Authorization: `Bearer ${token}` },
                     cache: 'no-store',
                 });
@@ -81,7 +83,7 @@ export default function WriteXModuleSimulator({ params }: { params: Promise<{ to
         setResult(null);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/writex/submit`, {
+            const response = await fetchApi(`${API_BASE_URL}/writex/submit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

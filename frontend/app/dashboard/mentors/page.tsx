@@ -198,7 +198,13 @@ export default function MentorsDiscoveryPage() {
                                     <div className="mt-3">
                                         {session.status === 'accepted' && session.meetingLink ? (
                                             <button
-                                                onClick={() => window.open(session.meetingLink!, '_blank')}
+                                                onClick={() =>
+                                                    window.open(
+                                                        session.meetingLink!,
+                                                        '_blank',
+                                                        'noopener,noreferrer',
+                                                    )
+                                                }
                                                 className="w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
                                             >
                                                 Join Meeting

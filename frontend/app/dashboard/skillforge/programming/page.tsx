@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -23,7 +25,7 @@ export default function ProgrammingPage() {
         const fetchLanguages = async () => {
             try {
                 // Fetch the 'programming-languages' topic which contains our metadata
-                const response = await fetch(`${API_BASE_URL}/course-content/programming-languages`);
+                const response = await fetchApi(`${API_BASE_URL}/course-content/programming-languages`);
                 if (response.ok) {
                     const text = await response.text();
                     if (text) {

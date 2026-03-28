@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchApi } from '../lib/apiClient';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Suspense } from "react";
 import { Check, Loader2, Calendar, ShieldCheck, RotateCcw } from "lucide-react";
@@ -75,7 +77,7 @@ function PricingPageContent() {
     const loadPricingContext = async () => {
       try {
         setIsPricingLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/pricing-context`, {
+        const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/pricing-context`, {
           cache: "no-store",
         });
         if (!response.ok) {
@@ -189,7 +191,7 @@ function PricingPageContent() {
         return;
       }
 
-      const orderResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
+      const orderResponse = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -230,7 +232,7 @@ function PricingPageContent() {
         },
         handler: async (response: any) => {
           try {
-            const upgradeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
+            const upgradeResponse = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/upgrade`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

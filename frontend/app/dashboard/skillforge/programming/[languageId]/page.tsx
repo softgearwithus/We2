@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -27,7 +29,7 @@ export default function LanguageCoursePage() {
                 // Fetch the chapter list for this language
                 // E.g., topicId: 'programming-python-chapters'
                 const topicId = `programming-${languageId}-chapters`;
-                const response = await fetch(`${API_BASE_URL}/course-content/${topicId}`);
+                const response = await fetchApi(`${API_BASE_URL}/course-content/${topicId}`);
 
                 if (response.ok) {
                     const text = await response.text();

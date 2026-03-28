@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import {
     Users,
@@ -79,13 +81,13 @@ export default function AdminStudentsPage() {
         if (!token) return;
         try {
             if (actionType === 'delete') {
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/students/${selectedStudent.id}`, {
+                await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/admin/students/${selectedStudent.id}`, {
                     method: 'DELETE',
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
             } else {
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/students/${selectedStudent.id}/disable`, {
+                await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/admin/students/${selectedStudent.id}/disable`, {
                     method: 'PATCH',
                     headers: { Authorization: `Bearer ${token}` },
                 });

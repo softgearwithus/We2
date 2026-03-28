@@ -1,9 +1,11 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export type UpdateFlag = { href: string; enabled: boolean };
 
 export const fetchAdminUpdateFlags = async (token: string): Promise<UpdateFlag[]> => {
-    const response = await fetch(`${API_BASE_URL}/admin/updates`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/updates`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch update flags');
@@ -11,7 +13,7 @@ export const fetchAdminUpdateFlags = async (token: string): Promise<UpdateFlag[]
 };
 
 export const saveAdminUpdateFlags = async (token: string, flags: UpdateFlag[]) => {
-    const response = await fetch(`${API_BASE_URL}/admin/updates`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/updates`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -24,7 +26,7 @@ export const saveAdminUpdateFlags = async (token: string, flags: UpdateFlag[]) =
 };
 
 export const fetchPublicUpdateFlags = async (): Promise<UpdateFlag[]> => {
-    const response = await fetch(`${API_BASE_URL}/admin/public/updates`);
+    const response = await fetchApi(`${API_BASE_URL}/admin/public/updates`);
     if (!response.ok) throw new Error('Failed to fetch public update flags');
     return response.json();
 };
@@ -32,7 +34,7 @@ export const fetchPublicUpdateFlags = async (): Promise<UpdateFlag[]> => {
 export type PublicPlatformSettings = PlatformSettings;
 
 export const fetchPublicPlatformSettings = async (): Promise<PublicPlatformSettings> => {
-    const response = await fetch(`${API_BASE_URL}/admin/public/settings`, { cache: 'no-store' });
+    const response = await fetchApi(`${API_BASE_URL}/admin/public/settings`, { cache: 'no-store' });
     if (!response.ok) throw new Error('Failed to fetch public platform settings');
     return response.json();
 };
@@ -57,7 +59,7 @@ export type PlatformSettings = {
 };
 
 export const fetchPlatformSettings = async (token: string): Promise<PlatformSettings> => {
-    const response = await fetch(`${API_BASE_URL}/admin/settings/platform`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/settings/platform`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch platform settings');
@@ -65,7 +67,7 @@ export const fetchPlatformSettings = async (token: string): Promise<PlatformSett
 };
 
 export const updatePlatformSettings = async (token: string, payload: PlatformSettings) => {
-    const response = await fetch(`${API_BASE_URL}/admin/settings/platform`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/settings/platform`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -78,7 +80,7 @@ export const updatePlatformSettings = async (token: string, payload: PlatformSet
 };
 
 export const refreshFreeTier = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/admin/settings/platform/free-tier-refresh`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/settings/platform/free-tier-refresh`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -96,7 +98,7 @@ export type AdminProfilePayload = {
 };
 
 export const updateAdminProfile = async (token: string, payload: AdminProfilePayload) => {
-    const response = await fetch(`${API_BASE_URL}/admin/settings/profile`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/settings/profile`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -115,7 +117,7 @@ export type AdminSecurityPayload = {
 };
 
 export const updateAdminSecurity = async (token: string, payload: AdminSecurityPayload) => {
-    const response = await fetch(`${API_BASE_URL}/admin/settings/security`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/settings/security`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

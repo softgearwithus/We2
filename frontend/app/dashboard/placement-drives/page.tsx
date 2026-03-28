@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from '../../components/layout/Navbar';
@@ -23,7 +25,7 @@ export default function PlacementDrivesPage() {
                 else if (activeFilter === 'Remote') queryParam = '?type=Remote';
                 else if (activeFilter === 'Active Hiring') queryParam = '?status=Active Hiring';
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements${queryParam}`, {
+                const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements${queryParam}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

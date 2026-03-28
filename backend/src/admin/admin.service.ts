@@ -10,6 +10,8 @@ import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submi
 import { Placement } from '../placements/entities/placement.entity';
 import { Application } from '../applications/entities/application.entity';
 import { PendingUpgradeOrder } from '../users/entities/pending-upgrade-order.entity';
+import { UsersService } from '../users/users.service';
+import { CreateCompanyAdminDto } from './dto/create-company-admin.dto';
 
 @Injectable()
 export class AdminService {
@@ -32,7 +34,54 @@ export class AdminService {
     private applicationsRepo: Repository<Application>,
     @InjectRepository(PendingUpgradeOrder)
     private pendingUpgradeOrdersRepo: Repository<PendingUpgradeOrder>,
+    private usersService: UsersService,
   ) {}
+
+  async createCompanyAdmin(
+    dto: CreateCompanyAdminDto,
+    actor?: {
+      id?: string;
+      email?: string;
+      firstName?: string;
+      lastName?: string;
+    },
+  ) {
+    const user = await this.usersService.create(
+      dto.email,
+      dto.password,
+      UserRole.COMPANY_ADMIN,
+      dto.firstName,
+      dto.lastName,
+      dto.timezone,
+    );
+
+    const actorName =
+      `${actor?.firstName || ''} ${actor?.lastName || ''}`.trim() ||
+      actor?.email ||
+      'System';
+
+    await this.logAction({
+      actorId: actor?.id || null,
+      actorName,
+      action: 'Company Admin Provisioned',
+      target: user.email,
+      severity: 'info',
+      metadata: {
+        userId: user.id,
+      },
+    });
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      timezone: user.timezone,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+    };
+  }
 
   async getAnalytics(range?: string) {
     const now = Date.now();

@@ -11,6 +11,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailOtp } from './entities/email-otp.entity';
 import { EmailOtpService } from './services/email-otp.service';
+import type { StringValue } from 'ms';
 
 @Module({
   imports: [
@@ -19,13 +20,20 @@ import { EmailOtpService } from './services/email-otp.service';
     TypeOrmModule.forFeature([EmailOtp]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'fallback-secret',
-        signOptions: {
-          expiresIn: (configService.get<string>('JWT_EXPIRATION') ||
-            '3600s') as any,
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        if (!secret) {
+          throw new Error('JWT_SECRET is required');
+        }
+        const expiresIn = (configService.get<string>('JWT_EXPIRATION') ||
+          '3600s') as StringValue;
+        return {
+          secret,
+          signOptions: {
+            expiresIn,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

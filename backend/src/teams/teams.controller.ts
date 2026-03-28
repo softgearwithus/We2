@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -55,7 +57,7 @@ export class TeamsController {
   @Get('my-teams')
   @ApiOperation({ summary: 'Get teams the current user belongs to' })
   @ApiResponse({ status: 200, description: 'Teams the user is a member of' })
-  async getMyTeams(@Request() req: any) {
+  async getMyTeams(@Request() req: AuthenticatedRequest) {
     return this.teamsService.getUserTeams(req.user.id);
   }
 

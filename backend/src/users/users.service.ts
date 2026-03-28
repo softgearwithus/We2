@@ -3,7 +3,9 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -33,6 +35,8 @@ const DEFAULT_SUBSCRIPTION_PRICES_IN_PAISE: Record<string, number> = {
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
@@ -55,7 +59,7 @@ export class UsersService {
   async create(
     email: string,
     password: string,
-    role?: string,
+    role: UserRole = UserRole.STUDENT,
     firstName?: string,
     lastName?: string,
     timezone?: string,
@@ -69,13 +73,25 @@ export class UsersService {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    const normalizedRole = String(role || UserRole.STUDENT).toLowerCase();
+    const allowedRoles = new Set<string>([
+      UserRole.STUDENT,
+      UserRole.MENTOR,
+      UserRole.COMPANY_ADMIN,
+      UserRole.COLLEGE_ADMIN,
+      UserRole.SUPER_ADMIN,
+    ]);
+    if (!allowedRoles.has(normalizedRole)) {
+      throw new BadRequestException('Invalid role specified');
+    }
+
     const user = this.usersRepository.create({
       email: normalizedEmail,
       password: hashedPassword,
-      role: (role as any) || 'student',
+      role: normalizedRole as UserRole,
       subscriptionPlan: 'free',
       subscriptionStatus: 'inactive',
-      subscriptionEndDate: null as any,
+      subscriptionEndDate: null,
       firstName: firstName?.trim() || null,
       lastName: lastName?.trim() || null,
       timezone: timezone || null,
@@ -175,35 +191,6 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    // --- Exact Millisecond Expiration & Unpausing Logic ---
-    if (
-      user.subscriptionStatus === 'active' &&
-      user.subscriptionEndDate &&
-      user.subscriptionEndDate.getTime() <= Date.now()
-    ) {
-      if (
-        user.pausedSubscriptionPlan &&
-        user.pausedSubscriptionRemainingDays > 0
-      ) {
-        // Resume the paused plan
-        user.subscriptionPlan = user.pausedSubscriptionPlan;
-        user.subscriptionEndDate = new Date(
-          Date.now() +
-            user.pausedSubscriptionRemainingDays * 24 * 60 * 60 * 1000,
-        );
-
-        // Clear the paused state
-        user.pausedSubscriptionPlan = null;
-        user.pausedSubscriptionRemainingDays = 0;
-      } else {
-        // Downgrade to free
-        user.subscriptionPlan = 'free';
-        user.subscriptionStatus = 'expired';
-      }
-      // Save the automated transition to the DB immediately
-      await this.usersRepository.save(user);
-    }
-
     return user;
   }
 
@@ -214,7 +201,7 @@ export class UsersService {
 
   async findAll(role?: string): Promise<User[]> {
     if (role) {
-      return this.usersRepository.find({ where: { role: role as any } });
+      return this.usersRepository.find({ where: { role: role as UserRole } });
     }
     return this.usersRepository.find();
   }
@@ -238,50 +225,48 @@ export class UsersService {
       user.password = await bcrypt.hash(updateUserDto.password, 12);
     }
 
-    if ((updateUserDto as any).timezone !== undefined) {
-      user.timezone = (updateUserDto as any).timezone || null;
+    if (updateUserDto.timezone !== undefined) {
+      user.timezone = updateUserDto.timezone || null;
     }
 
-    if ((updateUserDto as any).avatarUrl !== undefined) {
-      user.avatarUrl = (updateUserDto as any).avatarUrl || null;
+    if (updateUserDto.avatarUrl !== undefined) {
+      user.avatarUrl = updateUserDto.avatarUrl || null;
     }
 
-    if ((updateUserDto as any).username !== undefined) {
-      user.username = (updateUserDto as any).username || null;
+    if (updateUserDto.username !== undefined) {
+      user.username = updateUserDto.username || null;
     }
 
-    if ((updateUserDto as any).roleTitle !== undefined) {
-      user.roleTitle = (updateUserDto as any).roleTitle || null;
+    if (updateUserDto.roleTitle !== undefined) {
+      user.roleTitle = updateUserDto.roleTitle || null;
     }
 
-    if ((updateUserDto as any).location !== undefined) {
-      user.location = (updateUserDto as any).location || null;
+    if (updateUserDto.location !== undefined) {
+      user.location = updateUserDto.location || null;
     }
 
-    if ((updateUserDto as any).bio !== undefined) {
-      user.bio = (updateUserDto as any).bio || null;
+    if (updateUserDto.bio !== undefined) {
+      user.bio = updateUserDto.bio || null;
     }
 
-    if ((updateUserDto as any).websiteUrl !== undefined) {
-      user.websiteUrl = (updateUserDto as any).websiteUrl || null;
+    if (updateUserDto.websiteUrl !== undefined) {
+      user.websiteUrl = updateUserDto.websiteUrl || null;
     }
 
-    if ((updateUserDto as any).githubUrl !== undefined) {
-      user.githubUrl = (updateUserDto as any).githubUrl || null;
+    if (updateUserDto.githubUrl !== undefined) {
+      user.githubUrl = updateUserDto.githubUrl || null;
     }
 
-    if ((updateUserDto as any).linkedinUrl !== undefined) {
-      user.linkedinUrl = (updateUserDto as any).linkedinUrl || null;
+    if (updateUserDto.linkedinUrl !== undefined) {
+      user.linkedinUrl = updateUserDto.linkedinUrl || null;
     }
 
-    if ((updateUserDto as any).isTwoFactorEnabled !== undefined) {
-      user.isTwoFactorEnabled = Boolean(
-        (updateUserDto as any).isTwoFactorEnabled,
-      );
+    if (updateUserDto.isTwoFactorEnabled !== undefined) {
+      user.isTwoFactorEnabled = Boolean(updateUserDto.isTwoFactorEnabled);
     }
 
-    if ((updateUserDto as any).isActive !== undefined) {
-      user.isActive = Boolean((updateUserDto as any).isActive);
+    if (updateUserDto.isActive !== undefined) {
+      user.isActive = Boolean(updateUserDto.isActive);
     }
 
     return this.usersRepository.save(user);
@@ -763,5 +748,54 @@ export class UsersService {
       paidAt: order.paidAt,
       createdAt: order.createdAt,
     }));
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async handleSubscriptionExpirations() {
+    this.logger.log('Running subscription expiration check...');
+    try {
+      const now = new Date();
+      // Use QueryBuilder to fetch users with active, expired subscriptions
+      const expiredUsers = await this.usersRepository
+        .createQueryBuilder('user')
+        .where('user.subscriptionStatus = :status', { status: 'active' })
+        .andWhere('user.subscriptionEndDate <= :now', { now })
+        .getMany();
+
+      if (expiredUsers.length === 0) {
+        this.logger.log('No expired subscriptions found.');
+        return;
+      }
+
+      this.logger.log(
+        `Found ${expiredUsers.length} expired subscriptions to process.`,
+      );
+
+      for (const user of expiredUsers) {
+        if (
+          user.pausedSubscriptionPlan &&
+          user.pausedSubscriptionRemainingDays > 0
+        ) {
+          // Resume the paused plan
+          user.subscriptionPlan = user.pausedSubscriptionPlan;
+          user.subscriptionEndDate = new Date(
+            now.getTime() +
+              user.pausedSubscriptionRemainingDays * 24 * 60 * 60 * 1000,
+          );
+          user.pausedSubscriptionPlan = null;
+          user.pausedSubscriptionRemainingDays = 0;
+          this.logger.log(`Resumed paused plan for user ${user.id}`);
+        } else {
+          // Downgrade to free
+          user.subscriptionPlan = 'free';
+          user.subscriptionStatus = 'expired';
+          this.logger.log(`Downgraded user ${user.id} to free plan`);
+        }
+        await this.usersRepository.save(user);
+      }
+      this.logger.log('Subscription expiration check completed successfully.');
+    } catch (error) {
+      this.logger.error('Error during subscription expiration check', error);
+    }
   }
 }

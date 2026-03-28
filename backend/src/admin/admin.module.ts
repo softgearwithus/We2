@@ -11,9 +11,11 @@ import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submi
 import { Placement } from '../placements/entities/placement.entity';
 import { Application } from '../applications/entities/application.entity';
 import { PendingUpgradeOrder } from '../users/entities/pending-upgrade-order.entity';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
+    UsersModule,
     TypeOrmModule.forFeature([
       AdminActivityLog,
       College,

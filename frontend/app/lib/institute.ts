@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export type InstituteStudent = {
@@ -18,7 +20,7 @@ export type InstituteStudent = {
 };
 
 export const fetchInstituteDashboard = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/institute/dashboard`, {
+    const response = await fetchApi(`${API_BASE_URL}/institute/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch institute dashboard');
@@ -35,7 +37,7 @@ export const fetchInstituteStudents = async (
     if (params.status) query.set('status', params.status);
     if (params.search) query.set('search', params.search);
 
-    const response = await fetch(`${API_BASE_URL}/institute/students?${query.toString()}`, {
+    const response = await fetchApi(`${API_BASE_URL}/institute/students?${query.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch institute students');
@@ -43,7 +45,7 @@ export const fetchInstituteStudents = async (
 };
 
 export const fetchInstitutePlacements = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/institute/placements`, {
+    const response = await fetchApi(`${API_BASE_URL}/institute/placements`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch institute placements');
@@ -51,7 +53,7 @@ export const fetchInstitutePlacements = async (token: string) => {
 };
 
 export const fetchInstituteSkills = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/institute/skills`, {
+    const response = await fetchApi(`${API_BASE_URL}/institute/skills`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch institute skills');
@@ -59,7 +61,7 @@ export const fetchInstituteSkills = async (token: string) => {
 };
 
 export const fetchInstituteReports = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/institute/reports`, {
+    const response = await fetchApi(`${API_BASE_URL}/institute/reports`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch institute reports');

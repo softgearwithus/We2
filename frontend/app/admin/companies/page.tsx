@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Building2, Plus, Mail, Loader2, CheckCircle2, X, Phone, Clock, XCircle, Inbox, LogOut, Briefcase, MapPin, Calendar, AlertCircle, Eye, FileText, UserPlus, IndianRupee, Tag } from 'lucide-react';
@@ -36,7 +38,7 @@ export default function CompaniesPage() {
     const fetchCompanies = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users?role=company_admin`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users?role=company_admin`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -53,7 +55,7 @@ export default function CompaniesPage() {
     const fetchLeads = async () => {
         setIsLeadsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -70,7 +72,7 @@ export default function CompaniesPage() {
     const fetchCampaigns = async () => {
         setIsCampaignsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -107,7 +109,7 @@ export default function CompaniesPage() {
     const handleRejectLead = async (leadId: string) => {
         if (!confirm('Are you sure you want to reject this request?')) return;
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads/${leadId}/status`, {
+            await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/company-leads/${leadId}/status`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,7 +126,7 @@ export default function CompaniesPage() {
     const handleImpersonate = async (companyId: string) => {
         if (!confirm('You are about to securely hijack this account session. Continue?')) return;
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/impersonate/${companyId}`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/impersonate/${companyId}`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -151,7 +153,7 @@ export default function CompaniesPage() {
 
         setIsActionLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/placements/${id}/verify`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements/${id}/verify`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -180,19 +182,19 @@ export default function CompaniesPage() {
     const onSubmit = async (data: any) => {
         setIsSubmitting(true);
         try {
-            // 1. Create the Company Admin User
             const payload = {
                 firstName: data.firstName,
+                lastName: data.lastName,
                 email: data.email,
                 password: data.password,
-                role: 'company_admin'
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
             };
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/admin/companies/admins`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}` // Though public, can pass it
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -200,7 +202,7 @@ export default function CompaniesPage() {
             if (res.ok) {
                 // 2. If provisioned from a Lead, update the Lead status to 'provisioned'
                 if (activeLeadId) {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads/${activeLeadId}/status`, {
+                    await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/company-leads/${activeLeadId}/status`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

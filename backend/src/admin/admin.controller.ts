@@ -1,11 +1,14 @@
 import {
   Controller,
   Get,
+  Post,
   UseGuards,
   Query,
   Patch,
   Delete,
   Param,
+  Body,
+  Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -13,6 +16,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
 import { AdminService } from './admin.service';
+import { CreateCompanyAdminDto } from './dto/create-company-admin.dto';
 
 @ApiTags('admin')
 @ApiBearerAuth('JWT-auth')
@@ -56,5 +60,25 @@ export class AdminController {
   @ApiOperation({ summary: 'Delete a student account' })
   async deleteStudent(@Param('id') id: string) {
     return this.adminService.deleteStudent(id);
+  }
+
+  @Post('companies/admins')
+  @Roles(UserRole.SUPER_ADMIN)
+  @ApiOperation({
+    summary: 'Provision company admin account (super admin only)',
+  })
+  async createCompanyAdmin(
+    @Request()
+    req: {
+      user?: {
+        id?: string;
+        email?: string;
+        firstName?: string;
+        lastName?: string;
+      };
+    },
+    @Body() body: CreateCompanyAdminDto,
+  ) {
+    return this.adminService.createCompanyAdmin(body, req.user);
   }
 }

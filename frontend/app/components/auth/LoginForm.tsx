@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -42,7 +44,7 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                 admin: 'super_admin',
             };
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

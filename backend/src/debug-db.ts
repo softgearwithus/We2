@@ -3,8 +3,9 @@ import { Interview } from './interview/entities/interview.entity';
 import { User } from './users/user.entity';
 import { resolveDbConfig } from './common/db-config';
 
+import * as dotenv from 'dotenv';
 const isDevEnv = process.env.NODE_ENV !== 'production';
-require('dotenv').config({
+dotenv.config({
   path: isDevEnv ? '.env.development' : undefined,
 });
 

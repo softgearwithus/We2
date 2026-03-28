@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CheckCircle2, XCircle, ArrowRight, Video, UploadCloud } from 'lucide-react';
@@ -30,7 +32,7 @@ export default function PreInterviewInstructions({ onStart, onBack }: PreIntervi
             }
             const formData = new FormData();
             formData.append('file', file);
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/resumes`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/interview/vapi/resumes`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2, PlayCircle, Code2, Database, Mail, Phone, MapPin, Search, Filter } from 'lucide-react';
@@ -21,7 +23,7 @@ export default function ATSBoardPage() {
             try {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/drive/${params.id}`, {
+                const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/drive/${params.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error('API Error');
@@ -43,7 +45,7 @@ export default function ATSBoardPage() {
         try {
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken();
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/applications/${appId}/status`, {
+            await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/${appId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

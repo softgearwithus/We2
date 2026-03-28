@@ -97,4 +97,8 @@ export class UpdateUserDto {
   @ApiProperty({ required: false, example: true })
   @IsOptional()
   isTwoFactorEnabled?: boolean;
+
+  @ApiProperty({ required: false, example: true })
+  @IsOptional()
+  isActive?: boolean;
 }

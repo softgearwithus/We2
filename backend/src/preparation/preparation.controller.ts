@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Body,
   Controller,
@@ -20,14 +22,14 @@ export class PreparationController {
 
   @Get('me/progress')
   @ApiOperation({ summary: 'Get my placement preparation progress' })
-  async getMyProgress(@Request() req: any) {
+  async getMyProgress(@Request() req: AuthenticatedRequest) {
     return this.preparationService.getProgress(req.user.id);
   }
 
   @Patch('me/progress')
   @ApiOperation({ summary: 'Update my placement preparation progress' })
   async updateMyProgress(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() dto: UpdatePreparationProgressDto,
   ) {
     return this.preparationService.updateProgress(

@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -41,7 +43,10 @@ export class TasksController {
   @ApiResponse({ status: 400, description: 'Simulation not active' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Simulation not found' })
-  async create(@Request() req: any, @Body() createTaskDto: CreateTaskDto) {
+  async create(
+    @Request() req: AuthenticatedRequest,
+    @Body() createTaskDto: CreateTaskDto,
+  ) {
     return this.tasksService.create(createTaskDto, req.user.id);
   }
 
@@ -57,7 +62,7 @@ export class TasksController {
   @ApiResponse({ status: 404, description: 'Simulation not found' })
   async findBySimulation(
     @Query('simulationId') simulationId: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.tasksService.findBySimulation(simulationId, req.user.id);
   }
@@ -96,7 +101,7 @@ export class TasksController {
   })
   async getStats(
     @Query('simulationId') simulationId: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.tasksService.getStats(simulationId, req.user.id);
   }
@@ -107,7 +112,7 @@ export class TasksController {
   @ApiResponse({ status: 200, description: 'Task details' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   @ApiResponse({ status: 404, description: 'Task not found' })
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.tasksService.findOne(id, req.user.id);
   }
 
@@ -121,7 +126,7 @@ export class TasksController {
   @ApiResponse({ status: 404, description: 'Task not found' })
   async submit(
     @Param('id') id: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body('submissionContent') submissionContent: string,
   ) {
     return this.tasksService.submit(id, req.user.id, submissionContent);
@@ -136,7 +141,7 @@ export class TasksController {
   @ApiResponse({ status: 404, description: 'Task not found' })
   async update(
     @Param('id') id: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
     return this.tasksService.update(id, req.user.id, updateTaskDto);

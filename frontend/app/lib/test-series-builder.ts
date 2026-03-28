@@ -1,10 +1,12 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export const API_BASE = API_BASE_URL;
 
 export async function fetchCompaniesList(token: string, isAdmin = false) {
     const route = isAdmin ? 'admin/companies' : 'student/companies';
-    const res = await fetch(`${API_BASE}/test-series/${route}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/${route}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch companies');
@@ -12,7 +14,7 @@ export async function fetchCompaniesList(token: string, isAdmin = false) {
 }
 
 export async function createCompany(token: string, payload: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/companies`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/companies`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,7 +27,7 @@ export async function createCompany(token: string, payload: any) {
 }
 
 export async function updateCompany(token: string, id: string, payload: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/companies/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/companies/${id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -38,7 +40,7 @@ export async function updateCompany(token: string, id: string, payload: any) {
 }
 
 export async function deleteCompany(token: string, id: string) {
-    const res = await fetch(`${API_BASE}/test-series/admin/companies/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/companies/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
     });
@@ -47,7 +49,7 @@ export async function deleteCompany(token: string, id: string) {
 }
 
 export async function fetchCompanyHierarchy(token: string, id: string) {
-    const res = await fetch(`${API_BASE}/test-series/student/companies/${id}/hierarchy`, {
+    const res = await fetchApi(`${API_BASE}/test-series/student/companies/${id}/hierarchy`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch hierarchy');
@@ -55,7 +57,7 @@ export async function fetchCompanyHierarchy(token: string, id: string) {
 }
 
 export async function createMockTest(token: string, payload: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/mock-tests`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/mock-tests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -65,7 +67,7 @@ export async function createMockTest(token: string, payload: any) {
 }
 
 export async function updateMockTest(token: string, id: string, payload: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/mock-tests/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/mock-tests/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -75,7 +77,7 @@ export async function updateMockTest(token: string, id: string, payload: any) {
 }
 
 export async function togglePublishMockTest(token: string, id: string, isPublished: boolean) {
-    const res = await fetch(`${API_BASE}/test-series/admin/mock-tests/${id}/publish`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/mock-tests/${id}/publish`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ isPublished })
@@ -85,7 +87,7 @@ export async function togglePublishMockTest(token: string, id: string, isPublish
 }
 
 export async function deleteMockTest(token: string, id: string) {
-    const res = await fetch(`${API_BASE}/test-series/admin/mock-tests/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/mock-tests/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
     });
@@ -94,7 +96,7 @@ export async function deleteMockTest(token: string, id: string) {
 }
 
 export async function createSection(token: string, payload: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/sections`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/sections`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -104,7 +106,7 @@ export async function createSection(token: string, payload: any) {
 }
 
 export async function updateSection(token: string, id: string, payload: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/sections/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/sections/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -114,7 +116,7 @@ export async function updateSection(token: string, id: string, payload: any) {
 }
 
 export async function deleteSection(token: string, id: string) {
-    const res = await fetch(`${API_BASE}/test-series/admin/sections/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/sections/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
     });
@@ -123,7 +125,7 @@ export async function deleteSection(token: string, id: string) {
 }
 
 export async function importBulkQuestions(token: string, sectionId: string, questions: any[]) {
-    const res = await fetch(`${API_BASE}/test-series/admin/sections/${sectionId}/bulk-questions`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/sections/${sectionId}/bulk-questions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ questions })
@@ -133,7 +135,7 @@ export async function importBulkQuestions(token: string, sectionId: string, ques
 }
 
 export async function addQuestion(token: string, sectionId: string, question: any) {
-    const res = await fetch(`${API_BASE}/test-series/admin/sections/${sectionId}/bulk-questions`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/sections/${sectionId}/bulk-questions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         // Using existing bulk endpoint to just push 1 question
@@ -144,7 +146,7 @@ export async function addQuestion(token: string, sectionId: string, question: an
 }
 
 export async function fetchMockTestFull(token: string, id: string) {
-    const res = await fetch(`${API_BASE}/test-series/student/mock-tests/${id}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/student/mock-tests/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch mock test details');
@@ -152,7 +154,7 @@ export async function fetchMockTestFull(token: string, id: string) {
 }
 
 export async function fetchStudentResults(token: string) {
-    const res = await fetch(`${API_BASE}/test-series/student/results`, {
+    const res = await fetchApi(`${API_BASE}/test-series/student/results`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch results');
@@ -190,7 +192,7 @@ export async function submitMockTest(token: string, id: string, payload: {
     endTime: string | Date,
     responses: { questionId: string, responseValue: string, timeSpentSeconds: number }[]
 }) {
-    const res = await fetch(`${API_BASE}/test-series/student/mock-tests/${id}/submit`, {
+    const res = await fetchApi(`${API_BASE}/test-series/student/mock-tests/${id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload)
@@ -200,7 +202,7 @@ export async function submitMockTest(token: string, id: string, payload: {
 }
 
 export async function fetchSectionQuestions(token: string, sectionId: string) {
-    const res = await fetch(`${API_BASE}/test-series/admin/sections/${sectionId}/questions`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/sections/${sectionId}/questions`, {
         headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error('Failed to fetch section questions');
@@ -208,7 +210,7 @@ export async function fetchSectionQuestions(token: string, sectionId: string) {
 }
 
 export async function deleteSingleQuestion(token: string, questionId: string) {
-    const res = await fetch(`${API_BASE}/test-series/admin/questions/${questionId}`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/questions/${questionId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
     });
@@ -220,7 +222,7 @@ export async function uploadQuestionImage(token: string, file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await fetch(`${API_BASE}/test-series/admin/upload-image`, {
+    const res = await fetchApi(`${API_BASE}/test-series/admin/upload-image`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData

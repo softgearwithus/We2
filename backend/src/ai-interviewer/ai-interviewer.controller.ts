@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Post,
@@ -29,7 +31,10 @@ export class AiInterviewerController {
   ) {}
 
   @Post('sessions')
-  async createSession(@Request() req: any, @Body() dto: CreateAiInterviewDto) {
+  async createSession(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: CreateAiInterviewDto,
+  ) {
     const session = await this.aiService.createSession(req.user.id, dto);
     const aiBase = this.configService.get<string>('AI_INTERVIEW_BASE_URL');
     const aiKey = this.configService.get<string>('AI_INTERVIEW_INTERNAL_KEY');
@@ -65,19 +70,25 @@ export class AiInterviewerController {
   }
 
   @Get('sessions/:id/report')
-  async getReport(@Request() req: any, @Param('id') id: string) {
+  async getReport(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     return this.aiService.getReport(id, req.user.id);
   }
 
   @Post('sessions/:id/start')
-  async startSession(@Request() req: any, @Param('id') id: string) {
+  async startSession(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     return this.aiService.startSession(id, req.user.id);
   }
 
   @Post('resumes')
   @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
   async uploadResume(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (!file) {

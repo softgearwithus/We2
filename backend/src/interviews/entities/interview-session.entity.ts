@@ -64,13 +64,13 @@ export class InterviewSession {
   duration: number; // in seconds
 
   @Column({ type: 'simple-json', nullable: true })
-  questions: any[] | null; // AI-generated questions
+  questions: any[]; // AI-generated questions
 
   @Column({ type: 'simple-json', nullable: true })
-  analysis: any | null; // Detailed metrics (fluency, grammar, etc.)
+  analysis: any; // Detailed metrics (fluency, grammar, etc.)
 
   @Column({ type: 'simple-json', nullable: true })
-  responses: any[] | null; // User responses
+  responses: any[]; // User responses
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   aiInterviewerId: string | null; // AI persona identifier

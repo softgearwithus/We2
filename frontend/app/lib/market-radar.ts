@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 import { MarketRadarPayload } from './market-data';
 
@@ -10,7 +12,7 @@ export type MarketRadarResponse = {
 };
 
 export const fetchMarketRadar = async (token: string): Promise<MarketRadarResponse> => {
-    const response = await fetch(`${API_BASE_URL}/market-radar`, {
+    const response = await fetchApi(`${API_BASE_URL}/market-radar`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Market radar data not found');
@@ -18,7 +20,7 @@ export const fetchMarketRadar = async (token: string): Promise<MarketRadarRespon
 };
 
 export const fetchAdminMarketRadar = async (token: string): Promise<MarketRadarResponse> => {
-    const response = await fetch(`${API_BASE_URL}/admin/market-radar`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/market-radar`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Market radar data not found');
@@ -26,7 +28,7 @@ export const fetchAdminMarketRadar = async (token: string): Promise<MarketRadarR
 };
 
 export const publishMarketRadar = async (token: string, payload: MarketRadarPayload): Promise<MarketRadarResponse> => {
-    const response = await fetch(`${API_BASE_URL}/admin/market-radar`, {
+    const response = await fetchApi(`${API_BASE_URL}/admin/market-radar`, {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${token}`,

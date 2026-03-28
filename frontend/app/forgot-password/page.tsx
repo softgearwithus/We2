@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../lib/apiClient';
+
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -29,7 +31,7 @@ export default function ForgotPasswordPage() {
 
         setRequesting(true);
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/password/forgot/request-otp`, {
+            await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/password/forgot/request-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ identifier: identifier.trim() }),
@@ -66,7 +68,7 @@ export default function ForgotPasswordPage() {
 
         setResetting(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/password/forgot/reset`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/password/forgot/reset`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

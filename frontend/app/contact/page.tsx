@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../lib/apiClient';
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -72,7 +74,7 @@ export default function ContactPage() {
         try {
             if (subject === 'Company Partnership') {
                 // Route directly to the B2B CRM Lead Gen endpoint
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
+                const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -85,7 +87,7 @@ export default function ContactPage() {
                 if (!res.ok) throw new Error('Failed to send company lead');
             } else {
                 // Submit general query to Queries module
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/queries`, {
+                const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/queries`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

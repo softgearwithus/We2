@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -58,14 +60,14 @@ export class PerformanceController {
       },
     },
   })
-  async getMyMetrics(@Request() req: any) {
+  async getMyMetrics(@Request() req: AuthenticatedRequest) {
     return this.performanceService.getMetrics(req.user.id);
   }
 
   @Get('me/history')
   @ApiOperation({ summary: 'Get my full performance history' })
   @ApiResponse({ status: 200, description: 'Performance records list' })
-  async getMyHistory(@Request() req: any) {
+  async getMyHistory(@Request() req: AuthenticatedRequest) {
     return this.performanceService.findByUser(req.user.id);
   }
 
@@ -75,7 +77,7 @@ export class PerformanceController {
   @ApiResponse({ status: 200, description: 'Simulation performance records' })
   async getBySimulation(
     @Param('simulationId') simulationId: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.performanceService.findBySimulation(simulationId, req.user.id);
   }

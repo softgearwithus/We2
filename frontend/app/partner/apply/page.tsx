@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState } from 'react';
 import { Building2, Rocket, ShieldCheck, Zap, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
@@ -20,7 +22,7 @@ export default function PartnerApplyPage() {
     const onSubmit = async (data: LeadFormData) => {
         setIsSubmitting(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/company-leads`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -31,7 +33,10 @@ export class PlacementsController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN)
-  create(@Request() req: any, @Body() createPlacementDto: CreatePlacementDto) {
+  create(
+    @Request() req: AuthenticatedRequest,
+    @Body() createPlacementDto: CreatePlacementDto,
+  ) {
     if (req.user.role === UserRole.COMPANY_ADMIN) {
       createPlacementDto.companyId = req.user.id;
     }
@@ -41,13 +46,13 @@ export class PlacementsController {
   @Get('my-drives')
   @UseGuards(RolesGuard)
   @Roles(UserRole.COMPANY_ADMIN)
-  findMyDrives(@Request() req: any) {
+  findMyDrives(@Request() req: AuthenticatedRequest) {
     return this.placementsService.findMyDrives(req.user.id);
   }
 
   @Get()
   findAll(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Query('type') type?: PlacementType,
     @Query('status') status?: PlacementStatus,
   ) {

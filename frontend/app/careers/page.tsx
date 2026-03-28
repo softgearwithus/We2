@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../lib/apiClient';
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -50,7 +52,7 @@ export default function CareersPage() {
         setMounted(true);
         const fetchCareers = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/careers?activeOnly=true`);
+                const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/careers?activeOnly=true`);
                 if (res.ok) {
                     const data = await res.json();
                     // Map API careers to match UI expectations

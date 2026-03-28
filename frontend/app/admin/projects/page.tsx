@@ -35,7 +35,7 @@ export default function AdminProjects() {
         setIsDeleting(true);
         try {
             await deleteProjectLab(token, id);
-            setAllProjects((prev) => prev.filter((project) => project.id !== id));
+            setAllProjects((prev: ProjectLab[]) => prev.filter((project: ProjectLab) => project.id !== id));
         } catch (error: any) {
             setLoadError(error?.message || 'Failed to delete project.');
         } finally {
@@ -46,14 +46,14 @@ export default function AdminProjects() {
     // Simplistic search filter on title or domain
     const filteredProjects = useMemo(() => {
         const query = searchQuery.toLowerCase();
-        return allProjects.filter(p =>
+        return allProjects.filter((p: ProjectLab) =>
             p.title.toLowerCase().includes(query) ||
             (p.domainId || '').toLowerCase().includes(query)
         );
     }, [allProjects, searchQuery]);
 
     const domainCount = useMemo(() => {
-        const set = new Set(allProjects.map((project) => project.domainId));
+        const set = new Set(allProjects.map((project: ProjectLab) => project.domainId));
         return set.size;
     }, [allProjects]);
 
@@ -107,7 +107,7 @@ export default function AdminProjects() {
                     </div>
                     {/* Rough estimate calculation */}
                     <p className="text-2xl font-bold text-slate-900">
-                        {Math.floor(allProjects.reduce((acc, curr) => acc + parseInt(curr.estimatedTime.split(' ')[0] || '0'), 0))}h+
+                        {Math.floor(allProjects.reduce((acc: number, curr: ProjectLab) => acc + parseInt(curr.estimatedTime.split(' ')[0] || '0'), 0))}h+
                     </p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
@@ -158,7 +158,7 @@ export default function AdminProjects() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {filteredProjects.slice(0, 15).map((project, index) => (
+                            {filteredProjects.slice(0, 15).map((project: ProjectLab, index: number) => (
                                 <motion.tr
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}

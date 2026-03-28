@@ -4,10 +4,13 @@ import {
   IsOptional,
   IsBoolean,
   IsUrl,
-  IsNumber,
-  IsEnum,
+  IsInt,
   IsArray,
+  IsUUID,
+  Min,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateCompanyDto {
   @IsString()
@@ -47,6 +50,32 @@ export class BulkQuestionsDto {
   questions: any[];
 }
 
+class SubmitMockTestResponseDto {
+  @IsUUID()
+  questionId: string;
+
+  @IsString()
+  responseValue: string;
+
+  @IsInt()
+  @Min(0)
+  timeSpentSeconds: number;
+}
+
+class SubjectPracticeQuestionRefDto {
+  @IsUUID()
+  id: string;
+}
+
+class SubjectPracticeResponseDto {
+  @ValidateNested()
+  @Type(() => SubjectPracticeQuestionRefDto)
+  question: SubjectPracticeQuestionRefDto;
+
+  @IsString()
+  responseValue: string;
+}
+
 export class SubmitMockTestDto {
   @IsString()
   startTime: string;
@@ -55,9 +84,30 @@ export class SubmitMockTestDto {
   endTime: string;
 
   @IsArray()
-  responses: {
-    questionId: string;
-    responseValue: string;
-    timeSpentSeconds: number;
-  }[];
+  @ValidateNested({ each: true })
+  @Type(() => SubmitMockTestResponseDto)
+  responses: SubmitMockTestResponseDto[];
+}
+
+export class SubmitSubjectPracticeDto {
+  @IsString()
+  @IsNotEmpty()
+  subject: string;
+
+  @IsString()
+  @IsNotEmpty()
+  topic: string;
+
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsInt()
+  @Min(0)
+  timeTakenSeconds: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SubjectPracticeResponseDto)
+  responses: SubjectPracticeResponseDto[];
 }

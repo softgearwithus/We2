@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Body,
   Controller,
@@ -118,7 +120,10 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @ApiResponse({ status: 429, description: 'Too many requests' })
-  async login(@Body() loginDto: LoginDto, @Request() req: any) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.authService.login(loginDto, req);
   }
 
@@ -128,7 +133,7 @@ export class AuthController {
   @Post('logout')
   @ApiOperation({ summary: 'Logout and revoke current session' })
   @ApiResponse({ status: 200, description: 'Session revoked successfully' })
-  async logout(@Request() req: any) {
+  async logout(@Request() req: AuthenticatedRequest) {
     return this.authService.logout(req.user.id);
   }
 

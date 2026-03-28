@@ -6,17 +6,26 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { Resume } from './entities/resume.entity';
 import { User } from '../users/user.entity';
-const pdfParse = require('pdf-parse');
+
+import pdfParse from 'pdf-parse';
+
+export interface ResumeAnalysisResult {
+  score: number;
+  summary: string;
+  strengths: string[];
+  weaknesses: string[];
+  suggestions: string[];
+}
 
 @Injectable()
 export class ResumeService {
   private genAI: GoogleGenerativeAI;
-  private model: any;
+  private model: GenerativeModel;
 
   constructor(
     private configService: ConfigService,
@@ -47,8 +56,7 @@ export class ResumeService {
       if (!user) throw new NotFoundException('User not found');
 
       const isPro =
-        user.subscriptionStatus === 'active' &&
-        user.subscriptionPlan === 'pro';
+        user.subscriptionStatus === 'active' && user.subscriptionPlan === 'pro';
       if (!isPro) {
         throw new ForbiddenException(
           'Pro subscription required for ATS resume scan.',
@@ -64,7 +72,7 @@ export class ResumeService {
       }
 
       // 1. Parse PDF
-      const pdfData = await pdfParse(buffer);
+      const pdfData = (await pdfParse(buffer)) as { text: string };
       const text = pdfData.text;
 
       if (!text || text.trim().length === 0) {
@@ -104,9 +112,9 @@ export class ResumeService {
         }
       `;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const textResponse = response.text();
+      const result: any = await this.model.generateContent(prompt);
+      const response: any = await result.response;
+      const textResponse: string = response.text();
 
       // Clean up markdown code blocks if present
       const jsonString = textResponse
@@ -114,7 +122,7 @@ export class ResumeService {
         .replace(/\s*```$/, '');
 
       try {
-        const parsed = JSON.parse(jsonString);
+        const parsed = JSON.parse(jsonString) as ResumeAnalysisResult;
 
         // Increment usage on success
         user.resumeScanUsage++;
@@ -156,7 +164,7 @@ export class ResumeService {
   async createResume(
     userId: string,
     title: string,
-    data?: Record<string, any>,
+    data?: Record<string, unknown>,
   ) {
     const resume = this.resumeRepo.create({
       userId,
@@ -166,11 +174,13 @@ export class ResumeService {
 
     try {
       return await this.resumeRepo.save(resume);
-    } catch (error: any) {
+    } catch (error: unknown) {
       const isUniqueViolation =
         error instanceof QueryFailedError &&
-        error?.driverError?.code === '23505' &&
-        String(error?.driverError?.detail || '').includes('(\"userId\")');
+        (error.driverError as { code?: string })?.code === '23505' &&
+        String(
+          (error.driverError as { detail?: string })?.detail || '',
+        ).includes('("userId")');
 
       if (!isUniqueViolation) {
         throw error;
@@ -194,7 +204,7 @@ export class ResumeService {
   async updateResume(
     id: string,
     userId: string,
-    updateData: { title?: string; data?: Record<string, any> },
+    updateData: { title?: string; data?: Record<string, unknown> },
   ) {
     const resume = await this.getResumeById(id, userId);
 

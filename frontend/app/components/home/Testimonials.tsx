@@ -13,6 +13,7 @@ const testimonials = [
         rating: 5,
         text: "Skeptical at first since it's a new platform, but the industrial logic is 1:1 with reality - it actually taught me how to handle production bugs properly.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Neha Gupta",
@@ -23,6 +24,7 @@ const testimonials = [
         rating: 5,
         text: "The Job Simulation is different from any other platform. It doesn't just give you questions - it gives you a system to build. Definitely worth the transition.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Rohan",
@@ -33,6 +35,7 @@ const testimonials = [
         rating: 5,
         text: "Used this for my lateral move - the SQL Industry 50 questions were correlated perfectly with my interview rounds. A very genuine approach.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Pooja Sharma",
@@ -43,6 +46,7 @@ const testimonials = [
         rating: 5,
         text: "The AI Mentor is a lifesaver. It doesn't spoil the answer but guides you through the logic - helped me stay consistent even during college exams.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Vikram Kumar",
@@ -53,6 +57,7 @@ const testimonials = [
         rating: 4,
         text: "Highly correlated content with what companies are actually asking right now. The platform is new so checking out the features took time, but content is solid.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Anjali",
@@ -63,6 +68,7 @@ const testimonials = [
         rating: 5,
         text: "The transition from student coding to industrial simulation was smooth. It's rare to find a platform that focuses so much on production standards.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Rahul",
@@ -73,6 +79,7 @@ const testimonials = [
         rating: 4,
         text: "The DSA pattern roadmap is much more focused than generic problem lists. It feels like a real curriculum designed to help you think like an engineer.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Megha Rao",
@@ -83,6 +90,7 @@ const testimonials = [
         rating: 5,
         text: "Started as a beta user - the platform is evolving, but the depth of coding playground features is very impressive for solving complex logic.",
         verified: true,
+        linkedInUrl: '',
     },
     {
         name: "Kartik",
@@ -93,6 +101,7 @@ const testimonials = [
         rating: 4,
         text: "Good correlation with actual industrial workflows. Removing specific name-branding makes it feel more like a professional training tool.",
         verified: true,
+        linkedInUrl: '',
     }
 ];
 
@@ -132,7 +141,14 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                             />
                         ))}
                     </div>
-                    <a href="#" className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors" aria-label={`View ${t.name}'s LinkedIn profile`}>
+                    <a
+                        href={t.linkedInUrl || undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-disabled={!t.linkedInUrl}
+                        className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors ${t.linkedInUrl ? 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white' : 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none'}`}
+                        aria-label={t.linkedInUrl ? `View ${t.name}'s LinkedIn profile` : `${t.name}'s LinkedIn profile is unavailable`}
+                    >
                         <Linkedin size={12} fill="currentColor" />
                     </a>
                 </div>
@@ -210,7 +226,13 @@ export default function Testimonials() {
                         
                         if (!showAll && i === 7) {
                             return (
-                                <div key={uniqueKey} className="group relative w-full h-full transform-gpu will-change-transform cursor-pointer" onClick={() => setShowAll(true)}>
+                                <button
+                                    type="button"
+                                    key={uniqueKey}
+                                    className="group relative w-full h-full transform-gpu will-change-transform cursor-pointer text-left"
+                                    onClick={() => setShowAll(true)}
+                                    aria-label={`View ${testimonials.length - 7} more testimonials`}
+                                >
                                     <div className="absolute inset-0 z-20 bg-background/50 backdrop-blur-[3px] rounded-[1rem] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-background/20 border border-border overflow-hidden">
                                         <div className="bg-white text-foreground border border-primary px-6 py-3 rounded-full font-bold shadow-2xl group-hover:scale-105 transition-transform flex items-center gap-2">
                                             View {testimonials.length - 7} More Stories →
@@ -219,7 +241,7 @@ export default function Testimonials() {
                                     <div className="relative z-10 opacity-60 pointer-events-none h-full">
                                         <Card t={t} />
                                     </div>
-                                </div>
+                                </button>
                             );
                         }
                         return <Card key={uniqueKey} t={t} />;

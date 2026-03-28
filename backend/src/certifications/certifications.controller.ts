@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -44,7 +46,7 @@ export class CertificationsController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get my certifications' })
   @ApiResponse({ status: 200, description: 'List of certifications' })
-  async getMyCerts(@Request() req: any) {
+  async getMyCerts(@Request() req: AuthenticatedRequest) {
     return this.certsService.findByUser(req.user.id);
   }
 

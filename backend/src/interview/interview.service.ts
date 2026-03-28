@@ -77,12 +77,13 @@ export class InterviewService {
       ]);
 
       return result.response.text();
-    } catch (error) {
-      const fs = require('fs');
-      fs.appendFileSync(
-        'backend-error.log',
-        `Error in analyzeAudio: ${error}\nStack: ${error.stack}\n`,
-      );
+    } catch (error: any) {
+      import('fs').then((fs) => {
+        fs.appendFileSync(
+          'backend-error.log',
+          `Error in analyzeAudio: ${error}\nStack: ${error.stack}\n`,
+        );
+      });
       throw error;
     }
   }
@@ -158,7 +159,19 @@ export class InterviewService {
     // Vapi: { role: 'user' | 'assistant' | 'system', content: string }
     // Gemini: { role: 'user' | 'model', parts: [{ text: string }] }
 
-    const history = messages
+    const safeMessages = messages.filter(
+      (m) =>
+        m &&
+        typeof m === 'object' &&
+        typeof m.role === 'string' &&
+        typeof m.content === 'string',
+    );
+
+    if (!safeMessages.length) {
+      return "I didn't catch that. Could you repeat?";
+    }
+
+    const history = safeMessages
       .slice(0, -1)
       .map((m) => ({
         role: m.role === 'assistant' ? 'model' : 'user',
@@ -166,7 +179,7 @@ export class InterviewService {
       }))
       .filter((m) => m.role !== 'system'); // Filter system if Gemini SDK handles it via systemInstruction
 
-    const lastMessage = messages[messages.length - 1];
+    const lastMessage = safeMessages[safeMessages.length - 1];
     const userMessage = lastMessage.content;
 
     try {
@@ -202,12 +215,10 @@ export class InterviewService {
     // In a real prod environment, use a task queue.
     // For this simulation, we'll use a reliable delayed execution.
     setTimeout(
-      async () => {
-        try {
-          await this.fetchVapiAnalysis(callId);
-        } catch (err) {
+      () => {
+        this.fetchVapiAnalysis(callId).catch((err) => {
           console.error(`Failed to fetch Vapi analysis for ${callId}:`, err);
-        }
+        });
       },
       5 * 60 * 1000,
     ); // 5 minutes

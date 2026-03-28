@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../lib/apiClient';
+
 import { useEffect, useState } from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
@@ -23,7 +25,7 @@ function RegisterPageContent() {
             : null;
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
+        fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/admin/public/settings`)
             .then((res) => res.json())
             .then((data) => setRegistrationsAllowed(Boolean(data.allowRegistrations)))
             .catch(() => null);

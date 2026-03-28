@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../../lib/apiClient';
+
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -43,7 +45,7 @@ export default function CompanyTopicMcqsPage() {
             if (!token || !company || !topic) return;
             setLoading(true);
             try {
-                const response = await fetch(
+                const response = await fetchApi(
                     `${API_BASE_URL}/mcqs?category=company&groupKey=${company}&topicKey=${topic}&page=${page}&limit=${limit}&order=latest`,
                     { headers: { Authorization: `Bearer ${token}` } },
                 );

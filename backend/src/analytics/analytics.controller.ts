@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,19 +19,19 @@ export class AnalyticsController {
 
   @Get('dashboard')
   @ApiOperation({ summary: 'Get aggregated dashboard stats for user' })
-  async getDashboardStats(@Request() req: any) {
+  async getDashboardStats(@Request() req: AuthenticatedRequest) {
     return this.analyticsService.getUserDashboardStats(req.user.id);
   }
 
   @Get('heatmap')
   @ApiOperation({ summary: 'Get submission activity heatmap' })
-  async getHeatmap(@Request() req: any) {
+  async getHeatmap(@Request() req: AuthenticatedRequest) {
     return this.analyticsService.getHeatmapData(req.user.id);
   }
 
   @Get('skills')
   @ApiOperation({ summary: 'Get skill radar data based on solved tags' })
-  async getSkills(@Request() req: any) {
+  async getSkills(@Request() req: AuthenticatedRequest) {
     return this.analyticsService.getSkillRadar(req.user.id);
   }
 }

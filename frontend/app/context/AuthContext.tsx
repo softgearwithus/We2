@@ -121,35 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [scope, router]);
 
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        const originalFetch = window.fetch.bind(window);
-        window.fetch = (async (...args: Parameters<typeof fetch>) => {
-            const response = await originalFetch(...args);
-
-            if (response.status === 401) {
-                const payload = await response.clone().json().catch(() => null);
-                if (isSessionRevokedError(response.status, payload)) {
-                    const input = args[0];
-                    const url = typeof input === 'string' ? input : input instanceof Request ? input.url : '';
-                    if (url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/register/')) {
-                        return response;
-                    }
-                    if (sessionStorage.getItem(SESSION_REVOKING_FLAG) !== '1') {
-                        sessionStorage.setItem(SESSION_REVOKING_FLAG, '1');
-                        window.dispatchEvent(new Event(SESSION_REVOKED_EVENT));
-                    }
-                }
-            }
-
-            return response;
-        }) as typeof window.fetch;
-
-        return () => {
-            window.fetch = originalFetch;
-        };
-    }, []);
+    // The global window.fetch override has been removed in favor of explicit fetchApi usage.
 
     useEffect(() => {
         const onSessionRevoked = () => {

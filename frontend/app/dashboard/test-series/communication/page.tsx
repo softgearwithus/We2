@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ChevronRight, PenTool, Sparkles, Search, SlidersHorizontal, ArrowDownAZ, ArrowUpZA, Clock } from 'lucide-react';
@@ -42,7 +44,7 @@ export default function WriteXModulesPage() {
 
             setLoading(true);
             try {
-                const response = await fetch(`${API_BASE_URL}/writex/groups`, {
+                const response = await fetchApi(`${API_BASE_URL}/writex/groups`, {
                     headers: { Authorization: `Bearer ${token}` },
                     cache: 'no-store',
                 });

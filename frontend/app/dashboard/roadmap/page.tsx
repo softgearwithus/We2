@@ -1,6 +1,8 @@
 
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -18,7 +20,7 @@ export default function RoadmapPage() {
             const token = getActiveToken() || '';
             if (!token) return;
             try {
-                const response = await fetch(`${API_BASE_URL}/preparation/me/progress`, {
+                const response = await fetchApi(`${API_BASE_URL}/preparation/me/progress`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!response.ok) return;

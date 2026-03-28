@@ -13,6 +13,7 @@ import { UpdateAdminProfileDto } from './dto/update-admin-profile.dto';
 import { UpdateAdminSecurityDto } from './dto/update-admin-security.dto';
 import { UsersService } from '../users/users.service';
 import { UserRole } from '../users/user.entity';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 const DEFAULT_PRO_MONTHLY_PRICE_INR = 799;
 const DEFAULT_USD_EXCHANGE_RATE = 83;

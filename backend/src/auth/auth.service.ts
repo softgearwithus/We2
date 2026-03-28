@@ -11,6 +11,21 @@ import { EmailOtpService } from './services/email-otp.service';
 import { Request } from 'express';
 import { UserRole } from '../users/user.entity';
 
+type AuthUserResponse = {
+  id: string;
+  email: string;
+  role: string;
+  subscriptionPlan: string;
+  subscriptionStatus: string;
+  subscriptionEndDate: Date | null;
+  firstName: string | null;
+  lastName: string | null;
+  credentialId: string | null;
+  collegeId: string | null;
+  department: string | null;
+  year: string | null;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,13 +37,17 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { email, password, role, firstName, lastName, timezone } =
       registerDto;
-    if ((role || 'student') === 'student') {
-      await this.emailOtpService.assertVerified(email);
+    const normalizedRole = (role || UserRole.STUDENT).toLowerCase();
+    if (normalizedRole !== UserRole.STUDENT) {
+      throw new ForbiddenException(
+        'Only student self-registration is allowed. Contact admin for other roles.',
+      );
     }
+    await this.emailOtpService.assertVerified(email);
     const user = await this.usersService.create(
       email,
       password,
-      role,
+      UserRole.STUDENT,
       firstName,
       lastName,
       timezone,
@@ -42,6 +61,36 @@ export class AuthService {
       subscriptionEndDate: user.subscriptionEndDate,
       firstName: user.firstName,
       lastName: user.lastName,
+    };
+  }
+
+  private toAuthUserResponse(user: {
+    id: string;
+    email: string;
+    role: string;
+    subscriptionPlan: string;
+    subscriptionStatus: string;
+    subscriptionEndDate: Date | null;
+    firstName: string | null;
+    lastName: string | null;
+    credentialId?: string | null;
+    collegeId?: string | null;
+    department?: string | null;
+    year?: string | null;
+  }): AuthUserResponse {
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      subscriptionPlan: user.subscriptionPlan,
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionEndDate: user.subscriptionEndDate,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      credentialId: user.credentialId || null,
+      collegeId: user.collegeId || null,
+      department: user.department || null,
+      year: user.year || null,
     };
   }
 
@@ -100,20 +149,7 @@ export class AuthService {
 
     return {
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        credentialId: (user as any).credentialId || null,
-        collegeId: (user as any).collegeId || null,
-        department: (user as any).department || null,
-        year: (user as any).year || null,
-        role: user.role,
-        subscriptionPlan: user.subscriptionPlan,
-        subscriptionStatus: user.subscriptionStatus,
-        subscriptionEndDate: user.subscriptionEndDate,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
+      user: this.toAuthUserResponse(user),
     };
   }
 
@@ -142,20 +178,7 @@ export class AuthService {
 
     return {
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        credentialId: (user as any).credentialId || null,
-        collegeId: (user as any).collegeId || null,
-        department: (user as any).department || null,
-        year: (user as any).year || null,
-        role: user.role,
-        subscriptionPlan: user.subscriptionPlan,
-        subscriptionStatus: user.subscriptionStatus,
-        subscriptionEndDate: user.subscriptionEndDate,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
+      user: this.toAuthUserResponse(user),
     };
   }
 

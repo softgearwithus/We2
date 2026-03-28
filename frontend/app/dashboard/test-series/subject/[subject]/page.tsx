@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -95,7 +97,7 @@ export default function SubjectModulesPage() {
                             groupBy: 'topic',
                             groupKey: subject,
                         });
-                        const response = await fetch(`${API_BASE_URL}/mcqs/groups?${params.toString()}`, {
+                        const response = await fetchApi(`${API_BASE_URL}/mcqs/groups?${params.toString()}`, {
                             headers: { Authorization: `Bearer ${token}` },
                             cache: 'no-store',
                         });

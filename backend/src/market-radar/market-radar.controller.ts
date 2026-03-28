@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import { Body, Controller, Get, Put, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -31,7 +33,10 @@ export class MarketRadarController {
   @Put('admin/market-radar')
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Publish market radar data' })
-  async publish(@Request() req: any, @Body() payload: PublishMarketRadarDto) {
+  async publish(
+    @Request() req: AuthenticatedRequest,
+    @Body() payload: PublishMarketRadarDto,
+  ) {
     return this.marketRadarService.publish(payload, req.user?.email || null);
   }
 }

@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 export interface Career {
     id: string;
     title: string;
@@ -24,7 +26,7 @@ export interface UpdateCareerData extends Partial<CreateCareerData> { }
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchCareersAdmin(token: string): Promise<Career[]> {
-    const res = await fetch(`${API_URL}/careers`, {
+    const res = await fetchApi(`${API_URL}/careers`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -38,7 +40,7 @@ export async function fetchCareersAdmin(token: string): Promise<Career[]> {
 }
 
 export async function getCareerById(id: string): Promise<Career> {
-    const res = await fetch(`${API_URL}/careers/${id}`);
+    const res = await fetchApi(`${API_URL}/careers/${id}`);
 
     if (!res.ok) {
         throw new Error(`Failed to fetch career with ID: ${id}`);
@@ -48,7 +50,7 @@ export async function getCareerById(id: string): Promise<Career> {
 }
 
 export async function createCareer(token: string, data: CreateCareerData): Promise<Career> {
-    const res = await fetch(`${API_URL}/careers`, {
+    const res = await fetchApi(`${API_URL}/careers`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -66,7 +68,7 @@ export async function createCareer(token: string, data: CreateCareerData): Promi
 }
 
 export async function updateCareer(token: string, id: string, data: UpdateCareerData): Promise<Career> {
-    const res = await fetch(`${API_URL}/careers/${id}`, {
+    const res = await fetchApi(`${API_URL}/careers/${id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -84,7 +86,7 @@ export async function updateCareer(token: string, id: string, data: UpdateCareer
 }
 
 export async function deleteCareer(token: string, id: string): Promise<void> {
-    const res = await fetch(`${API_URL}/careers/${id}`, {
+    const res = await fetchApi(`${API_URL}/careers/${id}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`

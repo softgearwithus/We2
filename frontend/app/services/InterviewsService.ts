@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 
 export interface InterviewSession {
     id: string;
@@ -83,7 +85,7 @@ export class InterviewsService {
         const token = getActiveToken();
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/interviews/me`, {
+            const response = await fetchApi(`${this.apiBaseUrl}/interviews/me`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -112,7 +114,7 @@ export class InterviewsService {
         const { getActiveToken } = await import('@/app/lib/auth-storage');
         const token = getActiveToken();
 
-        const response = await fetch(`${this.apiBaseUrl}/interviews/communication/generate`, {
+        const response = await fetchApi(`${this.apiBaseUrl}/interviews/communication/generate`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -141,7 +143,7 @@ export class InterviewsService {
         const token = getActiveToken();
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/interviews/${id}`, {
+            const response = await fetchApi(`${this.apiBaseUrl}/interviews/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

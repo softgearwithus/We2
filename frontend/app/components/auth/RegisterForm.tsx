@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -54,7 +56,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
         setIsLoading(true);
         setOtpStatus(null);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/request-otp`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/request-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -77,14 +79,14 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
         setIsLoading(true);
         try {
             const payload = { ...data, role: roleValue, subscriptionPlan: plan };
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
 
             if (response.ok) {
-                const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+                const loginResponse = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: data.email, password: data.password }),
@@ -132,7 +134,7 @@ export default function RegisterForm({ role, roleValue, redirectPath }: Register
         setIsLoading(true);
         setOtpStatus(null);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/verify-otp`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/verify-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp }),

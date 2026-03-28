@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -37,7 +39,7 @@ import { UserRole } from '../users/user.entity';
 export class CollegesController {
   constructor(private readonly collegesService: CollegesService) {}
 
-  private enforceCollegeAccess(req: any, collegeId: string) {
+  private enforceCollegeAccess(req: AuthenticatedRequest, collegeId: string) {
     if (req.user?.role === UserRole.SUPER_ADMIN) {
       return;
     }
@@ -64,7 +66,10 @@ export class CollegesController {
   @ApiParam({ name: 'id', description: 'College UUID' })
   @ApiOperation({ summary: 'Get college by ID' })
   @Roles(UserRole.SUPER_ADMIN, UserRole.COLLEGE_ADMIN)
-  async getCollege(@Request() req: any, @Param('id') id: string) {
+  async getCollege(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     this.enforceCollegeAccess(req, id);
     return this.collegesService.findOne(id);
   }
@@ -92,7 +97,10 @@ export class CollegesController {
   @Roles(UserRole.SUPER_ADMIN, UserRole.COLLEGE_ADMIN)
   @ApiParam({ name: 'id', description: 'College UUID' })
   @ApiOperation({ summary: 'List staff by college' })
-  async listStaff(@Request() req: any, @Param('id') id: string) {
+  async listStaff(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     this.enforceCollegeAccess(req, id);
     return this.collegesService.listStaff(id);
   }
@@ -102,7 +110,7 @@ export class CollegesController {
   @ApiParam({ name: 'id', description: 'College UUID' })
   @ApiOperation({ summary: 'Add staff to college' })
   async addStaff(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() payload: CreateStaffDto,
   ) {
@@ -116,7 +124,7 @@ export class CollegesController {
   @ApiParam({ name: 'staffId', description: 'Staff UUID' })
   @ApiOperation({ summary: 'Deactivate staff member' })
   async removeStaff(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Param('staffId') staffId: string,
   ) {
@@ -128,7 +136,10 @@ export class CollegesController {
   @Roles(UserRole.SUPER_ADMIN, UserRole.COLLEGE_ADMIN)
   @ApiParam({ name: 'id', description: 'College UUID' })
   @ApiOperation({ summary: 'List student cohorts' })
-  async listCohorts(@Request() req: any, @Param('id') id: string) {
+  async listCohorts(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     this.enforceCollegeAccess(req, id);
     return this.collegesService.listCohorts(id);
   }
@@ -138,7 +149,7 @@ export class CollegesController {
   @ApiParam({ name: 'id', description: 'College UUID' })
   @ApiOperation({ summary: 'Create student cohort + credentials' })
   async createCohort(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() payload: CreateCohortDto,
   ) {
@@ -152,7 +163,7 @@ export class CollegesController {
   @ApiParam({ name: 'cohortId', description: 'Cohort UUID' })
   @ApiOperation({ summary: 'Export cohort credentials as CSV' })
   async exportCohort(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Param('cohortId') cohortId: string,
     @Res() res: Response,
@@ -184,7 +195,7 @@ export class CollegesController {
   @ApiParam({ name: 'cohortId', description: 'Cohort UUID' })
   @ApiOperation({ summary: 'Delete student cohort' })
   async deleteCohort(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Param('cohortId') cohortId: string,
   ) {

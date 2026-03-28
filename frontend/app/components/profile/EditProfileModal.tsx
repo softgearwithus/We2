@@ -1,3 +1,5 @@
+import { fetchApi } from '../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Globe, Github, Linkedin, Save, X, AlertCircle } from 'lucide-react';
@@ -80,7 +82,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
             if (avatarFile) {
                 const formData = new FormData();
                 formData.append('file', avatarFile);
-                const avatarRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/avatar`, {
+                const avatarRes = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/profile/avatar`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -90,7 +92,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
                 if (!avatarRes.ok) throw new Error('Failed to upload profile picture.');
             }
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

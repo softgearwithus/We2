@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Post,
@@ -26,7 +28,7 @@ export class InterviewController {
 
   @Post('start')
   @UseGuards(JwtAuthGuard)
-  async startSession(@Request() req: any) {
+  async startSession(@Request() req: AuthenticatedRequest) {
     await this.interviewsService.deductCredit(req.user.id, 'audio');
     return this.interviewService.startSession(req.user.id);
   }
@@ -36,7 +38,7 @@ export class InterviewController {
   sendMessage(
     @Param('id') id: string,
     @Body('message') message: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.interviewService.processMessage(id, message, req.user.id);
   }
@@ -45,7 +47,7 @@ export class InterviewController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('audio'), UploadLimitInterceptor)
   async analyzeAudio(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
   ) {
@@ -65,20 +67,23 @@ export class InterviewController {
 
   @Post(':id/end')
   @UseGuards(JwtAuthGuard)
-  endSession(@Param('id') id: string, @Request() req: any) {
+  endSession(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.interviewService.endSession(id, req.user.id);
   }
 
   @Post('vapi/analysis')
   @UseGuards(JwtAuthGuard)
-  async getVapiAnalysis(@Body('callId') callId: string, @Request() req: any) {
+  async getVapiAnalysis(
+    @Body('callId') callId: string,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.interviewService.getVapiAnalysis(callId, req.user?.id);
   }
   @Post('vapi/resumes')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'), UploadLimitInterceptor)
   async uploadVapiResume(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (!file) {
@@ -90,7 +95,7 @@ export class InterviewController {
   @Post('vapi/sessions')
   @UseGuards(JwtAuthGuard)
   async createVapiSession(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body()
     body: {
       resumeAssetId?: string;
@@ -108,7 +113,10 @@ export class InterviewController {
 
   @Get('vapi/sessions/:id/report')
   @UseGuards(JwtAuthGuard)
-  async getVapiReport(@Request() req: any, @Param('id') id: string) {
+  async getVapiReport(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
     return this.interviewService.getVapiReportForSession(id, req.user?.id);
   }
 }

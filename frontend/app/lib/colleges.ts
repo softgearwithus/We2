@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export type CollegePayload = {
@@ -11,7 +13,7 @@ export type CollegePayload = {
 };
 
 export const fetchColleges = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch colleges');
@@ -19,7 +21,7 @@ export const fetchColleges = async (token: string) => {
 };
 
 export const createCollege = async (token: string, payload: CollegePayload) => {
-    const response = await fetch(`${API_BASE_URL}/colleges`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -29,7 +31,7 @@ export const createCollege = async (token: string, payload: CollegePayload) => {
 };
 
 export const updateCollege = async (token: string, id: string, payload: Partial<CollegePayload>) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -39,7 +41,7 @@ export const updateCollege = async (token: string, id: string, payload: Partial<
 };
 
 export const fetchCollegeById = async (token: string, id: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch college');
@@ -47,7 +49,7 @@ export const fetchCollegeById = async (token: string, id: string) => {
 };
 
 export const deleteCollege = async (token: string, id: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${id}`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -56,7 +58,7 @@ export const deleteCollege = async (token: string, id: string) => {
 };
 
 export const fetchCollegeStaff = async (token: string, collegeId: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/staff`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/staff`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch staff');
@@ -64,7 +66,7 @@ export const fetchCollegeStaff = async (token: string, collegeId: string) => {
 };
 
 export const createCollegeStaff = async (token: string, collegeId: string, payload: any) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/staff`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/staff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -74,7 +76,7 @@ export const createCollegeStaff = async (token: string, collegeId: string, paylo
 };
 
 export const deleteCollegeStaff = async (token: string, collegeId: string, staffId: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/staff/${staffId}`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/staff/${staffId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -83,7 +85,7 @@ export const deleteCollegeStaff = async (token: string, collegeId: string, staff
 };
 
 export const fetchCollegeCohorts = async (token: string, collegeId: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/cohorts`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/cohorts`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to fetch cohorts');
@@ -91,7 +93,7 @@ export const fetchCollegeCohorts = async (token: string, collegeId: string) => {
 };
 
 export const createCollegeCohort = async (token: string, collegeId: string, payload: any) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/cohorts`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/cohorts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
@@ -101,7 +103,7 @@ export const createCollegeCohort = async (token: string, collegeId: string, payl
 };
 
 export const exportCollegeCohort = async (token: string, collegeId: string, cohortId: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/cohorts/${cohortId}/export`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/cohorts/${cohortId}/export`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) throw new Error('Failed to export cohort');
@@ -109,7 +111,7 @@ export const exportCollegeCohort = async (token: string, collegeId: string, coho
 };
 
 export const deleteCollegeCohort = async (token: string, collegeId: string, cohortId: string) => {
-    const response = await fetch(`${API_BASE_URL}/colleges/${collegeId}/cohorts/${cohortId}`, {
+    const response = await fetchApi(`${API_BASE_URL}/colleges/${collegeId}/cohorts/${cohortId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     });

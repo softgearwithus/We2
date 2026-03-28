@@ -51,6 +51,7 @@ export class TestEvaluationService {
       const pendingResponses = result.responses.filter(
         (r) =>
           r.isCorrect === null &&
+          !!r.question &&
           (r.question.questionType === MockQuestionType.TEXT ||
             r.question.questionType === MockQuestionType.CODE),
       );

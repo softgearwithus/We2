@@ -1,3 +1,5 @@
+import { fetchApi } from '../lib/apiClient';
+
 import API_BASE_URL from './api-config';
 
 export type MentorProfile = {
@@ -59,7 +61,7 @@ export type MentorApplicationPayload = {
 };
 
 export const fetchMentors = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentors`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentors`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentors');
@@ -67,7 +69,7 @@ export const fetchMentors = async (token: string) => {
 };
 
 export const fetchStudentMentorSessions = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentor-sessions`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor-sessions`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentor sessions');
@@ -75,7 +77,7 @@ export const fetchStudentMentorSessions = async (token: string) => {
 };
 
 export const createMentorPaymentOrder = async (token: string, payload: { mentorId: string; durationMinutes: number }) => {
-    const res = await fetch(`${API_BASE_URL}/mentor-payments/order`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor-payments/order`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -88,7 +90,7 @@ export const createMentorPaymentOrder = async (token: string, payload: { mentorI
 };
 
 export const verifyMentorPayment = async (token: string, payload: any) => {
-    const res = await fetch(`${API_BASE_URL}/mentor-payments/verify`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor-payments/verify`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -101,7 +103,7 @@ export const verifyMentorPayment = async (token: string, payload: any) => {
 };
 
 export const submitMentorApplication = async (payload: MentorApplicationPayload) => {
-    const res = await fetch(`${API_BASE_URL}/mentor-applications`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor-applications`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -111,7 +113,7 @@ export const submitMentorApplication = async (payload: MentorApplicationPayload)
 };
 
 export const fetchMentorRequests = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentor/requests`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor/requests`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentor requests');
@@ -119,7 +121,7 @@ export const fetchMentorRequests = async (token: string) => {
 };
 
 export const acceptMentorRequest = async (token: string, sessionId: string, meetingLink: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentor/requests/${sessionId}/accept`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor/requests/${sessionId}/accept`, {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -132,7 +134,7 @@ export const acceptMentorRequest = async (token: string, sessionId: string, meet
 };
 
 export const declineMentorRequest = async (token: string, sessionId: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentor/requests/${sessionId}/decline`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor/requests/${sessionId}/decline`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -141,7 +143,7 @@ export const declineMentorRequest = async (token: string, sessionId: string) => 
 };
 
 export const fetchMentorSessions = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentor/sessions`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor/sessions`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentor sessions');
@@ -149,7 +151,7 @@ export const fetchMentorSessions = async (token: string) => {
 };
 
 export const fetchMentorPayouts = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/mentor/payouts`, {
+    const res = await fetchApi(`${API_BASE_URL}/mentor/payouts`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentor payouts');
@@ -157,7 +159,7 @@ export const fetchMentorPayouts = async (token: string) => {
 };
 
 export const fetchAdminMentors = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentors`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentors`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentors');
@@ -165,7 +167,7 @@ export const fetchAdminMentors = async (token: string) => {
 };
 
 export const fetchAdminMentorApplications = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentor-applications`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentor-applications`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch mentor applications');
@@ -173,7 +175,7 @@ export const fetchAdminMentorApplications = async (token: string) => {
 };
 
 export const approveMentorApplication = async (token: string, id: string) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentor-applications/${id}/approve`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentor-applications/${id}/approve`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -182,7 +184,7 @@ export const approveMentorApplication = async (token: string, id: string) => {
 };
 
 export const rejectMentorApplication = async (token: string, id: string) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentor-applications/${id}/reject`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentor-applications/${id}/reject`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -191,7 +193,7 @@ export const rejectMentorApplication = async (token: string, id: string) => {
 };
 
 export const toggleMentorStatus = async (token: string, id: string, isActive: boolean) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentors/${id}/status`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentors/${id}/status`, {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -204,7 +206,7 @@ export const toggleMentorStatus = async (token: string, id: string, isActive: bo
 };
 
 export const fetchAdminMentorPayouts = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentor-payouts`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentor-payouts`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch payouts');
@@ -212,7 +214,7 @@ export const fetchAdminMentorPayouts = async (token: string) => {
 };
 
 export const createAdminMentorPayout = async (token: string, payload: { mentorId: string; amountInr: number; referenceId: string }) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentor-payouts`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentor-payouts`, {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -225,7 +227,7 @@ export const createAdminMentorPayout = async (token: string, payload: { mentorId
 };
 
 export const fetchAdminMentorSessions = async (token: string) => {
-    const res = await fetch(`${API_BASE_URL}/admin/mentor-sessions`, {
+    const res = await fetchApi(`${API_BASE_URL}/admin/mentor-sessions`, {
         headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Failed to fetch sessions');

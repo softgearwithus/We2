@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../lib/apiClient';
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { motion } from 'framer-motion';
@@ -38,7 +40,7 @@ export default function AdminQueriesDashboard() {
         const fetchQueries = async () => {
             if (!token) return;
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/queries`, {
+                const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/queries`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -63,7 +65,7 @@ export default function AdminQueriesDashboard() {
     const handleResolveQuery = async (queryId: string) => {
         if (!token) return;
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/queries/${queryId}/status`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/queries/${queryId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

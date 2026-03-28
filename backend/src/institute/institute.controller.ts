@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,8 +23,8 @@ export class InstituteController {
   @Get('dashboard')
   @Roles(UserRole.COLLEGE_ADMIN, UserRole.MENTOR, UserRole.COMPANY_ADMIN)
   @ApiOperation({ summary: 'Institute dashboard stats' })
-  async dashboard(@Request() req: any) {
-    return this.collegesService.getInstituteDashboard(req.user.collegeId);
+  async dashboard(@Request() req: AuthenticatedRequest) {
+    return this.collegesService.getInstituteDashboard((req.user.collegeId as string));
   }
 
   @Get('students')
@@ -33,7 +35,7 @@ export class InstituteController {
   @ApiQuery({ name: 'status', required: false })
   @ApiQuery({ name: 'search', required: false })
   async students(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Query('year') year?: string,
     @Query('department') department?: string,
     @Query('status') status?: string,
@@ -41,7 +43,7 @@ export class InstituteController {
   ) {
     const scopeDepartment = req.user?.department || null;
     const scopeYear = req.user?.year || null;
-    return this.collegesService.getInstituteStudents(req.user.collegeId, {
+    return this.collegesService.getInstituteStudents((req.user.collegeId as string), {
       year: year ? Number(year) : undefined,
       department,
       status,
@@ -54,21 +56,21 @@ export class InstituteController {
   @Get('placements')
   @Roles(UserRole.COLLEGE_ADMIN, UserRole.MENTOR, UserRole.COMPANY_ADMIN)
   @ApiOperation({ summary: 'Institute placement metrics' })
-  async placements(@Request() req: any) {
-    return this.collegesService.getInstitutePlacements(req.user.collegeId);
+  async placements(@Request() req: AuthenticatedRequest) {
+    return this.collegesService.getInstitutePlacements((req.user.collegeId as string));
   }
 
   @Get('skills')
   @Roles(UserRole.COLLEGE_ADMIN, UserRole.MENTOR, UserRole.COMPANY_ADMIN)
   @ApiOperation({ summary: 'Institute skills heatmap' })
-  async skills(@Request() req: any) {
-    return this.collegesService.getInstituteSkills(req.user.collegeId);
+  async skills(@Request() req: AuthenticatedRequest) {
+    return this.collegesService.getInstituteSkills((req.user.collegeId as string));
   }
 
   @Get('reports')
   @Roles(UserRole.COLLEGE_ADMIN, UserRole.MENTOR, UserRole.COMPANY_ADMIN)
   @ApiOperation({ summary: 'Institute reports leaderboard' })
-  async reports(@Request() req: any) {
-    return this.collegesService.getInstituteReports(req.user.collegeId);
+  async reports(@Request() req: AuthenticatedRequest) {
+    return this.collegesService.getInstituteReports((req.user.collegeId as string));
   }
 }

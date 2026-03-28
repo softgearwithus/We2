@@ -1,3 +1,5 @@
+import type { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+
 import {
   Controller,
   Get,
@@ -41,14 +43,17 @@ export class InterviewsController {
   @ApiOperation({ summary: 'Create a new mock interview session' })
   @ApiResponse({ status: 201, description: 'Interview session created' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async create(@Body() dto: CreateInterviewDto, @Request() req: any) {
+  async create(
+    @Body() dto: CreateInterviewDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.interviewsService.create({ ...dto, userId: req.user.id });
   }
 
   @Get('me')
   @ApiOperation({ summary: 'Get my interview sessions' })
   @ApiResponse({ status: 200, description: 'List of interview sessions' })
-  async getMyInterviews(@Request() req: any) {
+  async getMyInterviews(@Request() req: AuthenticatedRequest) {
     return this.interviewsService.findByUser(req.user.id);
   }
 
@@ -70,7 +75,7 @@ export class InterviewsController {
       },
     },
   })
-  async getMyStats(@Request() req: any) {
+  async getMyStats(@Request() req: AuthenticatedRequest) {
     return this.interviewsService.getStats(req.user.id);
   }
 
@@ -89,7 +94,7 @@ export class InterviewsController {
   @ApiResponse({ status: 200, description: 'Interview details' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   @ApiResponse({ status: 404, description: 'Interview not found' })
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.interviewsService.findOne(id, req.user.id);
   }
 
@@ -100,7 +105,7 @@ export class InterviewsController {
   @ApiResponse({ status: 200, description: 'Interview started' })
   @ApiResponse({ status: 400, description: 'Interview already started' })
   @ApiResponse({ status: 404, description: 'Interview not found' })
-  async start(@Param('id') id: string, @Request() req: any) {
+  async start(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.interviewsService.start(id, req.user.id);
   }
 
@@ -115,7 +120,7 @@ export class InterviewsController {
   @ApiResponse({ status: 404, description: 'Interview not found' })
   async update(
     @Param('id') id: string,
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() dto: UpdateInterviewDto,
   ) {
     return this.interviewsService.update(id, req.user.id, dto);
@@ -124,7 +129,7 @@ export class InterviewsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async generateAudioDrill(
     @Body() body: { topic: string },
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.interviewsService.generateAudioDrill(req.user.id, body.topic);
   }
@@ -134,7 +139,7 @@ export class InterviewsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async generateCommunicationDrill(
     @Body() body: { topic?: string },
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.interviewsService.generateCommunicationDrill(
       req.user.id,
@@ -147,7 +152,7 @@ export class InterviewsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async analyzeAudioDrill(
     @Body() body: { audio: string; context: string },
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.interviewsService.analyzeAudioDrill(
       req.user.id,
@@ -162,41 +167,37 @@ export class InterviewsController {
   async submitCommunicationDrill(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() body: { metadata: string },
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
-    try {
-      const metadata = JSON.parse(body.metadata);
-      const theme = metadata?.theme;
-      // 1. Create session immediately (Fast)
-      const session = await this.interviewsService.submitCommunicationSession(
-        req.user.id,
-        theme,
-      );
-      // 2. Trigger background analysis (Async, don't await)
-      this.interviewsService.performBackgroundAnalysis(
-        session.id,
-        files,
-        metadata,
-      );
+    const metadata = JSON.parse(body.metadata);
+    const theme = metadata?.theme;
+    // 1. Create session immediately (Fast)
+    const session = await this.interviewsService.submitCommunicationSession(
+      req.user.id,
+      theme,
+    );
+    // 2. Trigger background analysis (Async, don't await)
+    this.interviewsService.performBackgroundAnalysis(
+      session.id,
+      files,
+      metadata,
+    );
 
-      // 3. Return the session immediately so UI can show "Processing..."
-      return session;
-    } catch (error) {
-      throw error;
-    }
+    // 3. Return the session immediately so UI can show "Processing..."
+    return session;
   }
 
   @Post('audio/deduct-credit')
   @ApiOperation({ summary: 'Deduct an audio drill credit' })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async deductAudioCredit(@Request() req: any) {
+  async deductAudioCredit(@Request() req: AuthenticatedRequest) {
     return this.interviewsService.deductCredit(req.user.id, 'audio');
   }
 
   @Post('video/deduct-credit')
   @ApiOperation({ summary: 'Deduct a video interview credit' })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async deductVideoCredit(@Request() req: any) {
+  async deductVideoCredit(@Request() req: AuthenticatedRequest) {
     return this.interviewsService.deductCredit(req.user.id, 'video');
   }
 
@@ -205,7 +206,7 @@ export class InterviewsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async cancelCommunicationDrill(
     @Body() body: { theme?: string },
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.interviewsService.cancelCommunicationSession(
       req.user.id,

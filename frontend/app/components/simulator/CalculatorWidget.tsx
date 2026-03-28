@@ -7,6 +7,225 @@ interface CalculatorWidgetProps {
     onClose: () => void;
 }
 
+type Token =
+    | { type: 'number'; value: number }
+    | { type: 'operator'; value: '+' | '-' | '*' | '/' }
+    | { type: 'lparen' }
+    | { type: 'rparen' };
+
+const PRECEDENCE: Record<'+' | '-' | '*' | '/', number> = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+};
+
+const tokenizeExpression = (expression: string): Token[] => {
+    const tokens: Token[] = [];
+    let index = 0;
+
+    while (index < expression.length) {
+        const char = expression[index];
+
+        if (char === ' ') {
+            index += 1;
+            continue;
+        }
+
+        if (char === '(') {
+            tokens.push({ type: 'lparen' });
+            index += 1;
+            continue;
+        }
+
+        if (char === ')') {
+            tokens.push({ type: 'rparen' });
+            index += 1;
+            continue;
+        }
+
+        if (char === '+' || char === '*' || char === '/') {
+            tokens.push({ type: 'operator', value: char });
+            index += 1;
+            continue;
+        }
+
+        if (char === '-') {
+            const prev = tokens[tokens.length - 1];
+            const isUnary = !prev || prev.type === 'operator' || prev.type === 'lparen';
+
+            if (isUnary) {
+                let cursor = index + 1;
+                let numberLiteral = '-';
+                while (cursor < expression.length) {
+                    const current = expression[cursor];
+                    if ((current >= '0' && current <= '9') || current === '.') {
+                        numberLiteral += current;
+                        cursor += 1;
+                        continue;
+                    }
+                    break;
+                }
+
+                if (numberLiteral === '-' || numberLiteral === '-.') {
+                    throw new Error('Invalid expression');
+                }
+
+                const parsed = Number(numberLiteral);
+                if (!Number.isFinite(parsed)) {
+                    throw new Error('Invalid expression');
+                }
+
+                tokens.push({ type: 'number', value: parsed });
+                index = cursor;
+                continue;
+            }
+
+            tokens.push({ type: 'operator', value: '-' });
+            index += 1;
+            continue;
+        }
+
+        if ((char >= '0' && char <= '9') || char === '.') {
+            let cursor = index;
+            let numberLiteral = '';
+            while (cursor < expression.length) {
+                const current = expression[cursor];
+                if ((current >= '0' && current <= '9') || current === '.') {
+                    numberLiteral += current;
+                    cursor += 1;
+                    continue;
+                }
+                break;
+            }
+
+            if (numberLiteral === '.' || numberLiteral.split('.').length > 2) {
+                throw new Error('Invalid expression');
+            }
+
+            const parsed = Number(numberLiteral);
+            if (!Number.isFinite(parsed)) {
+                throw new Error('Invalid expression');
+            }
+
+            tokens.push({ type: 'number', value: parsed });
+            index = cursor;
+            continue;
+        }
+
+        throw new Error('Unsupported character');
+    }
+
+    return tokens;
+};
+
+const evaluateExpression = (expression: string): number => {
+    const tokens = tokenizeExpression(expression);
+    if (!tokens.length) {
+        throw new Error('Empty expression');
+    }
+
+    const output: Token[] = [];
+    const operators: Token[] = [];
+
+    for (const token of tokens) {
+        if (token.type === 'number') {
+            output.push(token);
+            continue;
+        }
+
+        if (token.type === 'operator') {
+            while (operators.length) {
+                const top = operators[operators.length - 1];
+                if (
+                    top.type === 'operator' &&
+                    PRECEDENCE[top.value] >= PRECEDENCE[token.value]
+                ) {
+                    output.push(operators.pop()!);
+                    continue;
+                }
+                break;
+            }
+            operators.push(token);
+            continue;
+        }
+
+        if (token.type === 'lparen') {
+            operators.push(token);
+            continue;
+        }
+
+        if (token.type === 'rparen') {
+            let matched = false;
+            while (operators.length) {
+                const top = operators.pop()!;
+                if (top.type === 'lparen') {
+                    matched = true;
+                    break;
+                }
+                output.push(top);
+            }
+            if (!matched) {
+                throw new Error('Mismatched parentheses');
+            }
+        }
+    }
+
+    while (operators.length) {
+        const token = operators.pop()!;
+        if (token.type === 'lparen' || token.type === 'rparen') {
+            throw new Error('Mismatched parentheses');
+        }
+        output.push(token);
+    }
+
+    const stack: number[] = [];
+    for (const token of output) {
+        if (token.type === 'number') {
+            stack.push(token.value);
+            continue;
+        }
+        if (token.type !== 'operator') {
+            throw new Error('Invalid expression');
+        }
+
+        const right = stack.pop();
+        const left = stack.pop();
+        if (left === undefined || right === undefined) {
+            throw new Error('Invalid expression');
+        }
+
+        let result = 0;
+        switch (token.value) {
+            case '+':
+                result = left + right;
+                break;
+            case '-':
+                result = left - right;
+                break;
+            case '*':
+                result = left * right;
+                break;
+            case '/':
+                if (right === 0) {
+                    throw new Error('Division by zero');
+                }
+                result = left / right;
+                break;
+            default:
+                throw new Error('Invalid operator');
+        }
+
+        stack.push(result);
+    }
+
+    if (stack.length !== 1) {
+        throw new Error('Invalid expression');
+    }
+
+    return stack[0];
+};
+
 export default function CalculatorWidget({ onClose }: CalculatorWidgetProps) {
     const [display, setDisplay] = useState('0');
     const [equation, setEquation] = useState('');
@@ -62,10 +281,8 @@ export default function CalculatorWidget({ onClose }: CalculatorWidgetProps) {
 
     const calculate = () => {
         try {
-            // Safe eval approximation
             const fullEquation = equation + display;
-            // eslint-disable-next-line no-new-func
-            const result = new Function('return ' + fullEquation)();
+            const result = evaluateExpression(fullEquation);
             if (!isFinite(result) || isNaN(result)) throw new Error('Invalid');
 
             // Format to avoid long decimals

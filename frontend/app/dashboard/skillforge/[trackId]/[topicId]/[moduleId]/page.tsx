@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchApi } from '../../../../../lib/apiClient';
+
 import React, { useEffect, useState } from 'react';
 import API_BASE_URL from '@/app/lib/api-config';
 import Link from 'next/link';
@@ -34,7 +36,7 @@ export default function GenericModulePage() {
         const fetchModule = async () => {
             try {
                 const dbTopicId = `${trackId}-${topicId}-${moduleId}`;
-                const response = await fetch(`${API_BASE_URL}/course-content/${dbTopicId}`);
+                const response = await fetchApi(`${API_BASE_URL}/course-content/${dbTopicId}`);
 
                 if (response.ok) {
                     const text = await response.text();
