@@ -6,6 +6,7 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'export',
     compress: true,
     reactStrictMode: true,
     compiler: {
@@ -16,6 +17,7 @@ const nextConfig = {
         outputFileTracingRoot: __dirname,
     },
     images: {
+        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',
