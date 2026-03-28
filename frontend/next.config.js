@@ -9,12 +9,12 @@ const nextConfig = {
     output: 'export',
     compress: true,
     reactStrictMode: true,
+    outputFileTracingRoot: __dirname,
     compiler: {
         removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
     },
     experimental: {
         optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
-        outputFileTracingRoot: __dirname,
     },
     images: {
         unoptimized: true,
