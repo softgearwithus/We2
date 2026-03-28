@@ -6,7 +6,7 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
+    output: 'standalone',
     compress: true,
     reactStrictMode: true,
     outputFileTracingRoot: __dirname,
@@ -17,7 +17,6 @@ const nextConfig = {
         optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
     },
     images: {
-        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',
