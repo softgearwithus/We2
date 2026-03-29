@@ -14,8 +14,8 @@ async function bootstrap() {
     getRepositoryToken(Placement),
   );
 
-  console.log('Clearing old mocked drives...');
-  await placementRepo.clear();
+  // Seed logic safely appends rather than deleting
+  console.log('Seeding mock Placement Drives...');
 
   const mockDrives = [
     {

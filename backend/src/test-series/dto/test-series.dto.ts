@@ -24,6 +24,10 @@ export class CreateCompanyDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isNew?: boolean;
 }
 
 export class UpdateCompanyDto {
