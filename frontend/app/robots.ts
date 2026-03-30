@@ -8,11 +8,11 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       disallow: [
-        '/dashboard/', 
-        '/admin/', 
-        '/api/',
-        '/institute/dashboard/',
-        '/industry/dashboard/'
+        '/dashboard',
+        '/admin',
+        '/api',
+        '/institute',
+        '/industry'
       ],
     },
     sitemap: 'https://emble.in/sitemap.xml',

@@ -42,14 +42,12 @@ const perks = [
 ];
 
 export default function CareersPage() {
-    const [mounted, setMounted] = useState(false);
     const [selectedDept, setSelectedDept] = useState('All');
 
     const [jobs, setJobs] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setMounted(true);
         const fetchCareers = async () => {
             try {
                 const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/careers?activeOnly=true`);
@@ -77,8 +75,6 @@ export default function CareersPage() {
 
         fetchCareers();
     }, []);
-
-    if (!mounted) return null;
 
     const filteredJobs = selectedDept === 'All'
         ? jobs

@@ -2,7 +2,7 @@
 
 import { fetchApi } from '../lib/apiClient';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Target,
@@ -48,7 +48,6 @@ const supportChannels = [
 ];
 
 export default function ContactPage() {
-    const [mounted, setMounted] = useState(false);
     const [status, setStatus] = useState<'idle' | 'sending' | 'success'>('idle');
     const [subject, setSubject] = useState('General Inquiry');
     const [formData, setFormData] = useState({
@@ -58,10 +57,6 @@ export default function ContactPage() {
         message: '',
         phone: ''
     });
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -108,8 +103,6 @@ export default function ContactPage() {
             alert('Failed to send message. Please try again.');
         }
     };
-
-    if (!mounted) return null;
 
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">

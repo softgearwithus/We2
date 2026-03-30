@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Briefcase,
@@ -138,14 +138,7 @@ function StoryCard({ story, idx }: { story: typeof successStories[0], idx: numbe
 }
 
 export default function StoriesPage() {
-    const [mounted, setMounted] = useState(false);
     const [filter, setFilter] = useState('All');
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
 
     const filteredStories = filter === 'All'
         ? successStories

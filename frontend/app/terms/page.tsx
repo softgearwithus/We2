@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Shield,
@@ -46,14 +46,7 @@ const sections = [
 ];
 
 export default function TermsPage() {
-    const [mounted, setMounted] = useState(false);
     const [activeSection, setActiveSection] = useState("acceptance");
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
 
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">

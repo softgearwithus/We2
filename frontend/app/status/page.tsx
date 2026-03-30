@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Activity,
@@ -88,19 +88,12 @@ const changelog = [
 ];
 
 export default function StatusPage() {
-    const [mounted, setMounted] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const handleRefresh = () => {
         setIsRefreshing(true);
         setTimeout(() => setIsRefreshing(false), 1500);
     };
-
-    if (!mounted) return null;
 
     return (
         <main className="min-h-screen bg-white selection:bg-brand-orange selection:text-white">

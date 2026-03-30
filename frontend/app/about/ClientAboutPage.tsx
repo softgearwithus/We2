@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import {
     Mic,
@@ -41,14 +41,6 @@ const coreValues = [
 ];
 
 export default function AboutPage() {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
-
     return (
         <main className="min-h-screen bg-background flex flex-col font-sans">
             <Navbar />

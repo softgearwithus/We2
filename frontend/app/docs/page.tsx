@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Book,
@@ -105,14 +105,7 @@ const popularArticles = [
 ];
 
 export default function DocsPage() {
-    const [mounted, setMounted] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
 
     // Filter categories based on search query
     const filteredCategories = categories.map(cat => {

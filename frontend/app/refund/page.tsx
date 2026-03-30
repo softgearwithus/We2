@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     CreditCard,
@@ -37,14 +37,7 @@ const sections = [
 ];
 
 export default function RefundPage() {
-    const [mounted, setMounted] = useState(false);
     const [activeSection, setActiveSection] = useState("no-refunds");
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) return null;
 
     return (
         <main className="min-h-screen bg-white selection:bg-brand-orange selection:text-white">

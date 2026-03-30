@@ -8,6 +8,12 @@ export function proxy(request: NextRequest) {
 
     const path = request.nextUrl.pathname;
 
+    if (path === '/' && request.nextUrl.searchParams.has('ref')) {
+        const canonicalUrl = request.nextUrl.clone();
+        canonicalUrl.searchParams.delete('ref');
+        return NextResponse.redirect(canonicalUrl, 308);
+    }
+
     // Example: Redirect root /login to /login/student as default or a selection page
     // if (path === '/login') {
     //     return NextResponse.redirect(new URL('/login/student', request.url));
@@ -17,5 +23,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/login', '/dashboard/:path*'],
+    matcher: ['/', '/login', '/dashboard/:path*'],
 };

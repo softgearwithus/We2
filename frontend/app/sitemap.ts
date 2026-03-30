@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getAllSeoPages } from './lib/seo-pages';
+import { docsData } from './docs/data';
 
 export const dynamic = 'force-static';
 
@@ -43,5 +44,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9, // High priority to heavily ping Google for indexations
   }));
 
-  return [...staticRouteMap, ...dynamicSeoRouteMap];
+  const docsRouteMap = Object.keys(docsData).map((slug) => ({
+    url: `${baseUrl}/docs/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.75,
+  }));
+
+  return [...staticRouteMap, ...dynamicSeoRouteMap, ...docsRouteMap];
 }
