@@ -59,8 +59,8 @@ const config = {
     		},
     		fontFamily: {
     			sans: [
-    				'var(--font-inter)',
-    				'Inter',
+    				'var(--font-sans)',
+    				'Plus Jakarta Sans',
     				'-apple-system',
     				'BlinkMacSystemFont',
     				'Segoe UI',
@@ -70,11 +70,11 @@ const config = {
     				'sans-serif'
     			],
     			display: [
-    				'var(--font-pjs)',
+    				'var(--font-sans)',
     				'sans-serif'
     			],
     			mono: [
-    				'var(--font-jetbrains-mono)',
+    				'var(--font-mono)',
     				'monospace'
     			]
     		},

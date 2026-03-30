@@ -104,7 +104,7 @@ export default function CoreToolsShowcase() {
             viewport={{ once: true }}
             className="text-3xl md:text-[44px] font-[1000] text-[#1a2b3b] tracking-tight mb-5"
           >
-            Free Core Tools for Placement Preparation
+            Free Core Tools for Interview Preparation
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}

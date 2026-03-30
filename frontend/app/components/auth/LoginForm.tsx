@@ -112,11 +112,6 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
     return (
         <>
-            <div className="text-center md:text-left">
-                <h2 className={`text-3xl font-bold ${role === 'admin' ? 'font-mono text-green-600' : 'text-slate-900'}`}>Sign in</h2>
-                <p className="text-slate-500 mt-2">Access your {role} dashboard</p>
-            </div>
-
             <AuthNotice />
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

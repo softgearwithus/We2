@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import { CheckCircle2, Star, Linkedin } from 'lucide-react';
+import { Message, MessageContent } from "@/components/ai-elements/message";
 
 const testimonials = [
     {
@@ -96,16 +99,12 @@ const testimonials = [
     }
 ];
 
-import { Message, MessageContent } from "@/components/ai-elements/message";
-
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
     <Message from="assistant" className="w-full max-w-full bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all duration-300">
         <div className="flex gap-4 w-full">
-            {/* Avatar */}
             <div className={`shrink-0 w-12 h-12 rounded-full ${t.color} flex items-center justify-center font-bold text-sm shadow-sm border border-slate-200`}>
                 {t.initials}
             </div>
-            {/* Content */}
             <div className="flex flex-col w-full min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
                     <div className="flex items-center gap-1.5">
@@ -141,77 +140,38 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
     </Message>
 );
 
-export default function Testimonials() {
-    const [showAll, setShowAll] = useState(false);
-    const displayedTestimonials = showAll ? testimonials : testimonials.slice(0, 8); // Slice 8 for even 2-column
+export default function ReviewsPage() {
+  return (
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-foreground relative overflow-x-hidden pt-24">
+      {/* Absolute Dotted Background Layer */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: 'radial-gradient(hsl(var(--primary) / 0.15) 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }}
+      />
+      <Navbar />
 
-    return (
-        <section className="py-16 md:py-24 bg-transparent relative overflow-hidden border-t border-border/30">
-            {/* Header */}
-            <div className="max-w-7xl mx-auto px-6 mb-16 relative z-10 text-center">
-                <h2 className="text-4xl md:text-6xl font-[1000] text-foreground tracking-tighter mb-4">
-                    Offers dropped. <span className="text-primary">Lives changed.</span>
-                </h2>
-                <p className="text-xl text-foreground/70 font-medium max-w-2xl mx-auto leading-relaxed">
-                    Stop practicing blindly. See what happens when you train like a senior engineer and finally beat the applicant tracking systems.
-                </p>
+      <div className="relative z-10 flex flex-col gap-12 sm:gap-16 pb-20">
+        <div className="container mx-auto px-6 text-center max-w-3xl mt-12 mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-[1000] tracking-tighter mb-6 text-foreground">
+                Success <span className="text-primary">Stories</span>
+            </h1>
+            <p className="text-lg text-foreground/70 font-medium">Read firsthand how Emble has transformed the interview preparation process and changed careers.</p>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {testimonials.map((t, i) => {
+                    const uniqueKey = `${t.name.replace(/\s+/g, '-')}-${i}`;
+                    return <Card key={uniqueKey} t={t} />;
+                })}
             </div>
-
-            {/* AI Elements - Conversational Stats */}
-            {/* Platform Impact Stats Strip */}
-            <div className="max-w-5xl mx-auto px-6 mb-20 relative z-10">
-                <div className="bg-card border border-border shadow-sm rounded-3xl p-5 md:p-8 grid grid-cols-2 md:flex md:flex-row items-center justify-between md:divide-x divide-border gap-y-6 md:gap-0">
-                    
-                    <div className="flex flex-col items-center justify-center w-full md:w-1/4">
-                        <span className="text-3xl md:text-5xl font-black text-foreground flex items-center gap-1.5">4.3 <Star className="w-5 h-5 md:w-10 md:h-10 text-amber-400 fill-amber-400 -mt-1" /></span>
-                        <span className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1.5 text-center">Average Rating</span>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center w-full md:w-1/4">
-                        <span className="text-3xl md:text-5xl font-black text-foreground">400+</span>
-                        <span className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1.5 text-center">Active Users</span>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center w-full md:w-1/4">
-                        <span className="text-3xl md:text-5xl font-black text-foreground">110+</span>
-                        <span className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1.5 text-center">Resumes Analysed</span>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center w-full md:w-1/4 relative group cursor-default">
-                        <div className="hidden md:block absolute inset-0 bg-primary/5 scale-0 group-hover:scale-110 transition-transform duration-500 rounded-2xl" />
-                        <span className="text-3xl md:text-5xl font-black text-primary relative z-10">37</span>
-                        <span className="text-[10px] md:text-[11px] font-bold text-foreground uppercase tracking-widest mt-1.5 relative z-10 text-center">Interviews Conducted</span>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Conversation Grid Container */}
-            <div className="max-w-5xl mx-auto px-6 relative z-10">
-                <div className="mb-8 flex items-center gap-3 border-b border-border/50 pb-4">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Live Community Feedback</span>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {testimonials.slice(0, 2).map((t, i) => {
-                        const uniqueKey = `${t.name.replace(/\s+/g, '-')}-${i}`;
-                        return <Card key={uniqueKey} t={t} />;
-                    })}
-                </div>
-
-                <div className="mt-12 text-center">
-                    <a 
-                        href="/reviews"
-                        className="inline-flex items-center justify-center bg-card border border-border text-foreground hover:bg-secondary/50 px-8 py-3 rounded-full font-bold text-sm tracking-widest uppercase transition-all shadow-sm gap-2"
-                    >
-                        Read all success stories
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </section>
-    );
+        </div>
+      </div>
+      
+      <Footer />
+    </div>
+  );
 }

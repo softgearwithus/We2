@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import { User, Building2, Briefcase, ShieldCheck, ArrowRight, Sparkles, GraduationCap } from 'lucide-react';
+import { Building2, Briefcase, ShieldCheck, ArrowRight, Sparkles, GraduationCap } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
 
 function LoginSelectionPageContent() {
     const searchParams = useSearchParams();
@@ -19,50 +21,44 @@ function LoginSelectionPageContent() {
     const portals = [
         {
             role: 'Student',
-            icon: <GraduationCap size={32} className="text-white" />,
+            icon: <GraduationCap size={28} className="text-white" />,
             description: 'Access simulations, track progress, and build your verified portfolio.',
             link: safeNext ? `/login/student?next=${encodeURIComponent(safeNext)}` : '/login/student',
-            gradient: 'from-slate-600 to-violet-600',
-            border: 'hover:border-slate-300',
-            shadow: 'hover:shadow-slate-200',
+            gradient: 'from-violet-500 to-indigo-600',
             badge: 'Login Portal',
-            badgeColor: 'bg-slate-800',
+            badgeVar: 'default' as const,
             cta: 'Student Login'
         },
         {
             role: 'Institute',
-            icon: <Building2 size={32} className="text-white" />,
+            icon: <Building2 size={28} className="text-white" />,
             description: 'Partner with us to transform your campus into a tech talent hub.',
             link: safeNext ? `/login/college?next=${encodeURIComponent(safeNext)}` : '/login/college',
-            gradient: 'from-emerald-600 to-teal-600',
-            border: 'hover:border-emerald-300',
-            shadow: 'hover:shadow-emerald-500/20',
+            gradient: 'from-emerald-500 to-teal-600',
             badge: 'Partner Program',
-            badgeColor: 'bg-emerald-600',
+            badgeVar: 'secondary' as const,
             cta: 'Institute Login'
         },
         {
             role: 'Industry',
-            icon: <Briefcase size={32} className="text-white" />,
+            icon: <Briefcase size={28} className="text-white" />,
             description: 'Hire pre-vetted talent directly from our high-performance cohorts.',
             link: safeNext ? `/login/industry?next=${encodeURIComponent(safeNext)}` : '/login/industry',
             gradient: 'from-slate-800 to-black',
-            border: 'hover:border-slate-400',
-            shadow: 'hover:shadow-slate-500/20',
             badge: 'Hiring Solutions',
-            badgeColor: 'bg-slate-900',
+            badgeVar: 'outline' as const,
             cta: 'Company Login'
         },
     ];
 
     return (
-        <div className="min-h-screen bg-white selection:bg-brand-orange selection:text-white relative overflow-hidden flex flex-col">
-            {/* Background Decoration - Static for Performance */}
+        <div className="min-h-screen bg-slate-50 selection:bg-brand-orange selection:text-white relative overflow-hidden flex flex-col">
+            {/* Background Decoration */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-full max-w-full max-w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-3xl -mr-64 -mt-64" />
-                <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[800px] h-[800px] bg-slate-500/5 rounded-full blur-3xl -ml-64 -mb-64" />
+                <div className="absolute top-0 right-0 w-full max-w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-[120px] -mr-64 -mt-64" />
+                <div className="absolute bottom-0 left-0 w-full max-w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] -ml-64 -mb-64" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `radial-gradient(#000 1px, transparent 1px)`,
+                    backgroundImage: `radial-gradient(circle at 1px 1px, black 1px, transparent 0)`,
                     backgroundSize: '32px 32px'
                 }} />
             </div>
@@ -83,10 +79,10 @@ function LoginSelectionPageContent() {
             {/* Content */}
             <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
                 <div className="text-center max-w-3xl mb-16 animate-fade-in-up">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-black text-white text-[10px] font-bold uppercase tracking-widest mb-6 shadow-lg shadow-brand-orange/20">
+                    <Badge variant="outline" className="mb-6 py-1.5 px-4 rounded-full border-brand-orange/20 shadow-sm gap-2">
                         <Sparkles size={12} className="text-brand-orange" />
-                        Secure Access Portal
-                    </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-brand-orange">Secure Access Portal</span>
+                    </Badge>
                     <h1 className="text-5xl md:text-7xl font-black text-brand-black mb-6 tracking-tight leading-[1.1]">
                         Choose Your <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-red-500">Gateway.</span>
@@ -103,38 +99,38 @@ function LoginSelectionPageContent() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
                             key={portal.role}
+                            className="h-full"
                         >
                             <Link href={portal.link} className="block h-full group">
-                                <div className={`relative h-full bg-white rounded-[32px] p-1 border-2 border-transparent ${portal.border} transition-all duration-500 ${portal.shadow} hover:-translate-y-2`}>
-                                    <div className="absolute inset-0 bg-white rounded-[32px] shadow-xl shadow-slate-200/50" />
-
-                                    <div className="relative h-full bg-slate-50/30 backdrop-blur-sm rounded-[28px] p-8 overflow-hidden z-10 flex flex-col">
-                                        <div className={`absolute top-6 right-6 ${portal.badgeColor} text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg`}>
-                                            {portal.badge}
+                                <Card className="h-full flex flex-col border border-slate-200 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:border-brand-orange/30 transition-all duration-500 hover:-translate-y-2 rounded-[32px] overflow-hidden bg-white/60 backdrop-blur-xl relative">
+                                    <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${portal.gradient}`} />
+                                    <CardHeader className="p-8 pb-4 relative">
+                                        <div className="absolute top-8 right-8">
+                                            <Badge variant={portal.badgeVar} className="text-[10px] uppercase font-bold tracking-wider">{portal.badge}</Badge>
                                         </div>
-
-                                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-8 shadow-lg shadow-black/5 group-hover:scale-110 transition-transform duration-500`}>
+                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-500`}>
                                             {portal.icon}
                                         </div>
-
-                                        <h2 className="text-2xl font-black text-brand-black mb-3">{portal.role}</h2>
-
-                                        <p className="text-slate-500 font-medium leading-relaxed mb-8 flex-1">
+                                        <CardTitle className="text-2xl font-black text-brand-black">{portal.role}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="px-8 pb-6 flex-1">
+                                        <CardDescription className="text-base text-slate-500 font-medium leading-relaxed">
                                             {portal.description}
-                                        </p>
-
+                                        </CardDescription>
+                                    </CardContent>
+                                    <CardFooter className="px-8 pb-8 pt-0">
                                         <div className="flex items-center gap-2 font-bold text-sm text-brand-black group-hover:gap-4 transition-all">
                                             {portal.cta} <ArrowRight size={16} className="text-brand-orange" />
                                         </div>
-                                    </div>
-                                </div>
+                                    </CardFooter>
+                                </Card>
                             </Link>
                         </motion.div>
                     ))}
                 </div>
 
                 <div className="mt-20">
-                    <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
+                    <div className="flex items-center justify-center gap-6 text-sm font-medium text-slate-400">
                         <Link href="/secure/admin" className="flex items-center gap-2 hover:text-brand-orange transition-colors">
                             <ShieldCheck size={14} />
                             Admin Access
@@ -152,7 +148,7 @@ function LoginSelectionPageContent() {
 
 export default function LoginSelectionPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500 font-semibold">Loading...</div>}>
             <LoginSelectionPageContent />
         </Suspense>
     );

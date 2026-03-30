@@ -5,7 +5,6 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import FeatureShowcase from './components/home/FeatureShowcase';
 import Testimonials from './components/home/Testimonials';
-import FAQSection from './components/home/FAQSection';
 import ComparisonSection from './components/home/ComparisonSection';
 import AboutUs from './components/home/AboutUs';
 import CoreToolsShowcase from './components/home/CoreToolsShowcase';
@@ -33,16 +32,13 @@ export default function Home() {
       />
       <Navbar />
 
-      <div className="relative z-10 flex flex-col gap-12 sm:gap-16">
+      <div className="relative z-10 flex flex-col">
         <Hero />
         <ProblemSection />
         <HowItWorks />
-        <FeatureShowcase />
-        <CoreToolsShowcase />
         <TargetUsers />
         <ComparisonSection />
         <Testimonials />
-        <FAQSection />
       </div>
 
       <AboutUs />

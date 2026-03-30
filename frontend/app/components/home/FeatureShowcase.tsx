@@ -5,18 +5,8 @@ import { Mic, Video, CheckCircle2, Play, UploadCloud } from "lucide-react";
 
 export default function FeatureShowcase() {
   return (
-    <section className="py-24 bg-background/50 relative overflow-hidden" id="features">
+    <section className="pt-8 pb-24 relative overflow-hidden" id="features">
       <div className="max-w-7xl mx-auto px-6">
-
-        <div className="mb-16 text-center">
-          <h2 className="text-4xl md:text-5xl font-[900] text-foreground tracking-tight mb-4">
-            Emble Core Features
-          </h2>
-          <p className="text-lg text-foreground/60 font-medium max-w-xl mx-auto">
-            Everything you need to systematically crack top tech interviews.
-          </p>
-        </div>
-
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
 

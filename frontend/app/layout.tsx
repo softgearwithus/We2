@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 
 import { AuthProvider } from './context/AuthContext';
 import PremiumPopup from './components/shared/PremiumPopup';
@@ -8,21 +8,29 @@ import PremiumPopup from './components/shared/PremiumPopup';
 import './lib/api-config';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'], display: 'swap', variable: '--font-pjs' });
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jetbrains-mono' });
+const plusJakartaSans = Plus_Jakarta_Sans({ 
+  subsets: ['latin'], 
+  display: 'swap', 
+  variable: '--font-sans' 
+});
+
+const jetbrainsMono = JetBrains_Mono({ 
+  subsets: ['latin'], 
+  display: 'swap', 
+  variable: '--font-mono' 
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://emble.in'),
   title: {
-    default: "EMBLE | Top Trending Placement & Internship Platform 2026",
+    default: "EMBLE | Top Trending Interview Preparation & Internship Platform",
     template: '%s | EMBLE'
   },
-  description: 'Join EMBLE, the top trending platform for computer science placement preparation and practice. Master DSA, crack technical interviews, and gain real-world experience through advanced Job Simulations and AI Mock Interviews.',
-  keywords: ['Computer Science Placement Preparation', 'CS Placement Practice', 'Top Trending Placement Platform', 'Best Coding Bootcamp', 'Job Simulation Provider', 'Crack FAANG Interviews', 'DSA Preparation', 'Software Engineering Internship', 'AI Mock Interviews', 'System Design Training', 'EMBLE'],
+  description: 'Join EMBLE, the top trending platform for computer science interview preparation and practice. Master DSA, crack technical interviews, and gain real-world experience through advanced Job Simulations and AI Mock Interviews.',
+  keywords: ['Computer Science Interview Preparation', 'CS Interview Practice', 'Top Trending Preparation Platform', 'Best Coding Bootcamp', 'Job Simulation Provider', 'Crack FAANG Interviews', 'DSA Preparation', 'Software Engineering Internship', 'AI Mock Interviews', 'System Design Training', 'EMBLE'],
   authors: [{ name: 'EMBLE' }],
   openGraph: {
-    title: "EMBLE | Top Trending Placement & Job Simulation Platform",
+    title: "EMBLE | Top Trending Tech Preparation & Job Simulation Platform",
     description: 'Transform your coding career with real-world simulations and AI-powered mentorship. The ultimate shortcut to high-paying tech jobs.',
     url: 'https://emble.in',
     siteName: 'EMBLE',
@@ -31,7 +39,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'EMBLE - Top Trending Placement Platform',
+        alt: 'EMBLE - Top Trending Tech Preparation Platform',
       },
     ],
     locale: 'en_IN',
@@ -39,7 +47,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "EMBLE | Top Trending Placement Platform",
+    title: "EMBLE | Top Trending Interview Preparation Platform",
     description: 'Master coding interviews and land top tech jobs with EMBLE Job Simulations.',
     images: ['/twitter-image.jpg'],
   },
@@ -92,7 +100,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.className} ${plusJakartaSans.variable} ${jetbrainsMono.variable} font-sans font-medium text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`} suppressHydrationWarning>
+      <body className={`${plusJakartaSans.className} ${plusJakartaSans.variable} ${jetbrainsMono.variable} font-sans font-medium text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`} suppressHydrationWarning>
         <AuthProvider>
           {children}
           <PremiumPopup />

@@ -5,16 +5,16 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 
 const comparisonData = [
-    { feature: "Learning Model", typical: "Passive Video Lectures", we2: "Interactive Full-Stack Practice" },
-    { feature: "Problem Solving", typical: "Generic DSA Problems", we2: "Curated DSA & SQL Training" },
-    { feature: "Mentorship", typical: "Doubt Forums", we2: "AI Mock Interviews & Mentorship" },
-    { feature: "Experience", typical: "Theoretical Certifications", we2: "ATS Resume Builder & Scans" },
-    { feature: "Hiring Focus", typical: "Candidate Quantity", we2: "Guaranteed Prep Quality" },
+    { feature: "Interview Practice", typical: "Mocking with Peers", we2: "Dynamic AI Voice Interviews" },
+    { feature: "Test Preparation", typical: "Generic DSA Questions", we2: "100+ Company-Wise Test Series" },
+    { feature: "Feedback Loop", typical: "Wait Days for Reviews", we2: "Instant Granular AI Analytics" },
+    { feature: "Resume Building", typical: "Basic Document Templates", we2: "ATS-Optimized Auto-Builder" },
+    { feature: "Guidance", typical: "Expensive 1:1 Coaching", we2: "24/7 AI Support & Expert Access" },
 ];
 
 export default function ComparisonSection() {
     return (
-        <section className="py-12 md:py-16 relative overflow-hidden">
+        <section className="py-16 md:py-24 relative overflow-hidden">
             <div className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-14">
                     <h2 className="text-4xl font-bold text-foreground tracking-tight mb-4">
@@ -55,7 +55,7 @@ export default function ComparisonSection() {
 
                 <div className="mt-8 md:mt-12 p-6 bg-secondary rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="text-foreground font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
-                        Students using EMBLE are <strong className="text-primary font-bold">3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Placement ecosystem.
+                        Students using EMBLE are <strong className="text-primary font-bold">3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Preparation ecosystem.
                     </div>
                     <Button asChild size="lg" className="whitespace-nowrap px-8 py-6 bg-foreground text-background rounded-xl font-bold text-[15px] hover:bg-background hover:text-foreground hover:border-primary border border-transparent transition-all shadow-xl active:scale-95">
                       <Link href="/register">

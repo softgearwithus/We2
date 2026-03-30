@@ -10,7 +10,7 @@ const faqsData = {
   "General": [
     {
       q: "What is Emble?",
-      a: "Emble is an integrated AI placement ecosystem designed to help you master real-time technical interviews and access industrial-grade preparation tools."
+      a: "Emble is an integrated AI preparation ecosystem designed to help you master real-time technical interviews and access industrial-grade preparation tools."
     },
     {
       q: "Is it completely free?",
@@ -65,7 +65,7 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
 
   return (
-    <section className="py-24 md:py-32 bg-background relative overflow-hidden" id="faq">
+    <section className="py-16 md:py-24 bg-background relative overflow-hidden" id="faq">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
           

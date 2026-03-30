@@ -71,9 +71,10 @@ export default function Navbar() {
     }, []);
 
     const guestNavItems = [
-        { label: 'Features', href: '/#features' },
+        { label: 'Features', href: '/features' },
         { label: 'Pricing', href: '/pricing' },
-        { label: 'FAQ', href: '/#faq' }
+        { label: 'Success Stories', href: '/reviews' },
+        { label: 'FAQ', href: '/faq' }
     ];
 
     const authNavItems = [
@@ -112,10 +113,10 @@ export default function Navbar() {
                 {/* Brand */}
                 <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
                     <span className={cn(
-                        "text-2xl font-[900] tracking-tighter transition-colors",
+                        "text-[1.35rem] font-bold tracking-tight transition-colors",
                         isDarkBg ? "text-white" : "text-foreground"
                     )}>
-                        EMBLE<span className="text-primary">.</span>
+                        emble
                     </span>
                 </Link>
 
@@ -242,8 +243,9 @@ export default function Navbar() {
                             )}>
                                 Sign in
                             </Link>
-                            <Link href="/register" className="bg-foreground hover:bg-foreground/90 text-background px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95">
-                                Get Started
+                            <Link href="/register" className="relative group overflow-hidden bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg border border-slate-800">
+                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
+                                <span className="relative z-10">Get Started</span>
                             </Link>
                         </>
                     )}
@@ -322,8 +324,9 @@ export default function Navbar() {
                             <Link href="/login" className="text-center py-3 w-full font-medium text-foreground/80">
                                 Sign in
                             </Link>
-                            <Link href="/register" className="bg-foreground text-background py-4 w-full rounded-xl text-center font-bold">
-                                Get Started
+                            <Link href="/register" className="relative group overflow-hidden bg-slate-900 text-white py-4 w-full rounded-full text-center font-bold transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-lg border border-slate-800">
+                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
+                                <span className="relative z-10">Get Started</span>
                             </Link>
                         </>
                     )}

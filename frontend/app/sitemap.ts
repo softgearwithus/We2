@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { getAllSeoPages } from './lib/seo-pages';
 
 export const dynamic = 'force-static';
 
@@ -28,10 +29,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/copyright', changeFrequency: 'yearly', priority: 0.25 },
   ];
 
-  return routes.map((route) => ({
+  const staticRouteMap = routes.map((route) => ({
     url: `${baseUrl}${route.path}`,
     lastModified: new Date(),
     changeFrequency: route.changeFrequency,
     priority: route.priority,
   }));
+
+  const dynamicSeoRouteMap = getAllSeoPages().map((page) => ({
+    url: `${baseUrl}/${page.category}/${page.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.9, // High priority to heavily ping Google for indexations
+  }));
+
+  return [...staticRouteMap, ...dynamicSeoRouteMap];
 }

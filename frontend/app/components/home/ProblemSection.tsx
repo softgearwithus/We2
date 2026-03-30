@@ -31,8 +31,8 @@ export default function ProblemSection() {
     },
     {
       icon: <BrainCircuit className="w-10 h-10 text-[#1a2b3b] mb-4 md:mb-6" strokeWidth={1.5} />,
-      title: "Practicing random DSA without direction",
-      description: "Focus exclusively on the core logic patterns top companies actually test.",
+      title: "Taking random mock tests without direction",
+      description: "Focus exclusively on targeted company-wise test series and patterns that actually get asked.",
       color: "bg-[#efeff1] border-transparent col-span-1 md:col-span-1 md:row-span-1 text-center items-center justify-center p-8 md:p-10",
       titleClass: "text-[20px] md:text-[24px] font-bold text-[#1a2b3b] tracking-tight leading-snug mb-4",
       descClass: "text-[14px] font-medium text-slate-600 leading-relaxed"
@@ -40,7 +40,7 @@ export default function ProblemSection() {
   ];
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden" id="problems">
+    <section className="py-16 md:py-24 bg-background relative overflow-hidden" id="problems">
       <div className="max-w-6xl mx-auto px-6">
         
         {/* Section Header */}
@@ -51,7 +51,7 @@ export default function ProblemSection() {
             viewport={{ once: true }}
             className="text-3xl md:text-[44px] font-[1000] text-[#1a2b3b] tracking-tight mb-5"
           >
-            Placement Preparation Shouldn’t Feel Confusing
+            Preparation Shouldn’t Feel Confusing
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
