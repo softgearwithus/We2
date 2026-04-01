@@ -8,6 +8,7 @@ import { cn } from '@/app/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VideoMetrics } from './AssessmentReport';
 import { useRouter } from 'next/navigation';
+import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
 
 interface InterviewSessionProps {
     onEnd: (metrics: VideoMetrics, durationSeconds: number) => void;
@@ -264,29 +265,29 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
 
     if (sessionState === 'processing') {
         return (
-            <div className="fixed inset-0 z-[110] bg-slate-50 flex flex-col items-center justify-center text-center p-8 font-sans">
+            <div className="fixed inset-0 z-[110] bg-background/90 backdrop-blur-xl flex flex-col items-center justify-center text-center p-4 sm:p-8 font-sans">
                 <motion.div 
-                    initial={{ scale: 0.9, opacity: 0 }}
+                    initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="bg-white p-10 rounded-3xl shadow-xl border border-slate-100 max-w-md w-full"
+                    className="bg-card p-8 sm:p-10 rounded-3xl shadow-xl border border-border max-w-md w-full"
                 >
                     <div className="relative mb-8 mx-auto w-24 h-24">
-                        <div className="absolute inset-0 rounded-full border-4 border-slate-50 border-t-slate-600 animate-spin" />
+                        <div className="absolute inset-0 rounded-full border-4 border-muted border-t-primary animate-spin" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <Loader2 className="w-10 h-10 text-slate-800 animate-spin" />
+                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
                         </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-3">Analyzing Performance</h2>
-                    <p className="text-slate-500 mb-6 leading-relaxed">Placement Mode AI is generating your detailed scorecard. This might take a few moments...</p>
+                    <h2 className="text-2xl font-bold text-foreground mb-3">Analyzing Performance</h2>
+                    <p className="text-muted-foreground mb-6 leading-relaxed">Placement Mode AI is generating your detailed scorecard. This might take a few moments...</p>
                     
                     {analysisHint && (
-                        <div className="mb-4 text-xs font-medium text-slate-800 bg-slate-50 py-2 px-3 rounded-lg">
+                        <div className="mb-4 text-xs font-medium text-foreground bg-muted py-2 px-3 rounded-lg">
                             {analysisHint}
                         </div>
                     )}
                     
                     {analysisError && (
-                        <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-100 px-4 py-3 rounded-xl text-left">
+                        <div className="mb-6 text-sm text-destructive font-medium bg-destructive/10 border border-destructive/20 px-4 py-3 rounded-xl text-left">
                             {analysisError}
                         </div>
                     )}
@@ -294,14 +295,14 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                     <div className="flex flex-col gap-3">
                         <Button 
                             onClick={startAnalysisPolling} 
-                            className="w-full h-12 rounded-xl bg-slate-900 text-white hover:bg-slate-800 font-semibold"
+                            className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
                         >
                             Check Status Again
                         </Button>
                         <Button
                             variant="ghost"
                             onClick={() => router.push('/dashboard/interview?mode=analysis')}
-                            className="w-full h-12 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
+                            className="w-full h-12 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted font-medium"
                         >
                             Go to Analysis Dashboard
                         </Button>
@@ -312,162 +313,154 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
     }
 
     return (
-        <div className="fixed inset-0 z-[100] bg-slate-950 flex font-sans text-slate-100 overflow-hidden">
-            {/* Soft Ambient Background for Dark Theme */}
-            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900/20 via-slate-950 to-slate-950" />
-
+        <div className="fixed inset-0 z-[100] bg-background flex flex-col font-sans text-foreground overflow-hidden md:p-4">
             {/* Top Bar */}
-            <div className="absolute top-0 left-0 right-0 h-20 z-50 px-8 flex items-center justify-between border-b border-white/5 bg-slate-950/50 backdrop-blur-xl">
-                <div className="flex items-center gap-4">
-                    <button onClick={onCancel} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
-                        <ChevronLeft size={24} />
-                    </button>
+            <header className="h-16 lg:h-20 shrink-0 z-50 px-4 lg:px-8 flex items-center justify-between border-b bg-card/50 backdrop-blur-xl md:rounded-t-3xl border md:border-b-0 shadow-sm relative">
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <Button variant="ghost" size="icon" onClick={onCancel} className="rounded-full text-muted-foreground hover:text-foreground transition-colors">
+                        <ChevronLeft size={20} />
+                    </Button>
                     <div>
-                        <h1 className="text-lg font-bold text-white tracking-tight">AI Mock Interview</h1>
+                        <h1 className="text-base lg:text-lg font-bold tracking-tight">AI Mock Interview</h1>
                         <div className="flex items-center gap-2 mt-0.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live Session</span>
+                            <span className="text-[9px] sm:text-[10px] font-bold text-emerald-500 uppercase tracking-widest hidden sm:inline-block">Live Session</span>
                         </div>
                     </div>
                 </div>
 
                 {sessionState === 'active' && (
-                    <div className="bg-slate-900/80 border border-white/10 px-4 py-2 rounded-full flex items-center gap-3 shadow-lg">
-                        <Clock size={16} className={cn("text-slate-400", timeLeft < 60 && "text-red-400 animate-pulse")} />
-                        <span className={cn("font-mono font-medium text-lg tabular-nums", timeLeft < 60 ? "text-red-400" : "text-white")}>
+                    <div className="bg-muted border border-border px-3 py-1.5 lg:px-4 lg:py-2 rounded-full flex items-center gap-2 sm:gap-3 shadow-inner">
+                        <Clock size={14} className={cn("text-muted-foreground", timeLeft < 60 && "text-destructive animate-pulse")} />
+                        <span className={cn("font-mono font-medium text-sm lg:text-base tabular-nums", timeLeft < 60 ? "text-destructive" : "text-foreground")}>
                             {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
                         </span>
                     </div>
                 )}
-            </div>
+            </header>
 
             {/* Main Workspace */}
-            <div className="relative z-10 w-full h-full flex flex-col lg:flex-row items-center justify-center p-6 pt-28 gap-6 max-w-7xl mx-auto">
+            <main className="flex-1 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-4 lg:gap-6 p-4 pt-2 lg:p-6 lg:pt-6 overflow-y-auto lg:overflow-hidden relative">
 
-                {/* Main Camera Stage (Left/Top) */}
-                <div className="flex-1 w-full h-full relative min-h-[400px]">
-                    <div className="h-full w-full bg-slate-900 rounded-3xl border border-white/10 overflow-hidden relative shadow-2xl group flex items-center justify-center">
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            muted
-                            className="w-full h-full object-cover transform -scale-x-100"
-                        />
-                        
-                        {sessionState === 'active' && permissionsGranted && (
-                            <div className="absolute top-6 left-6 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                                <span className="text-xs font-medium text-white/90">You</span>
-                            </div>
-                        )}
-
-                        {/* Start Overlay / Permissions Modal */}
-                        {sessionState === 'idle' && (
-                            <div className="absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-8">
-                                {!permissionsGranted ? (
-                                    <motion.div
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        className="bg-slate-900 p-8 rounded-3xl shadow-2xl text-center max-w-md border border-white/10"
-                                    >
-                                        <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400 ring-1 ring-blue-500/30">
-                                            <Mic size={32} />
-                                        </div>
-                                        <h2 className="text-2xl font-bold text-white mb-3 tracking-tight">Camera & Mic Access</h2>
-                                        <p className="text-slate-400 mb-8 leading-relaxed text-sm">
-                                            We need access to your camera and microphone to conduct the mock interview effectively.
-                                        </p>
-                                        <Button onClick={requestPermissions} className="w-full h-12 text-base bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-blue-900/20 transition-all">
-                                            Allow Access
-                                        </Button>
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        className="bg-slate-900 p-8 rounded-3xl shadow-2xl text-center max-w-md border border-white/10"
-                                    >
-                                        <div className="w-16 h-16 bg-slate-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-400 ring-1 ring-slate-200">
-                                            <Play size={32} className="ml-1" />
-                                        </div>
-                                        <h2 className="text-2xl font-bold text-white mb-3 tracking-tight">Ready to Begin?</h2>
-                                        <p className="text-slate-400 mb-8 leading-relaxed text-sm">
-                                            You're about to start a 15-minute technical screening. Make sure you're in a quiet environment.
-                                        </p>
-                                        <Button onClick={handleStart} className="w-full h-12 text-base bg-slate-800 hover:bg-slate-500 text-white rounded-xl font-semibold shadow-lg shadow-slate-200 transition-all">
-                                            Start Interview
-                                        </Button>
-                                    </motion.div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Controls Bar */}
-                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-slate-900/80 backdrop-blur-xl p-2 pl-4 pr-2 rounded-2xl border border-white/10 shadow-2xl transition-all duration-300 transform translate-y-20 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 group-hover:visible" style={{ opacity: sessionState === 'active' ? 1 : 0, transform: sessionState === 'active' ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(20px)' }}>
-                            <button
-                                onClick={toggleMute}
-                                className={cn(
-                                    "p-3.5 rounded-xl transition-all flex items-center gap-2",
-                                    isMuted
-                                        ? "bg-rose-500/20 text-rose-400 hover:bg-rose-500/30"
-                                        : "bg-white/5 text-white hover:bg-white/10"
-                                )}
-                            >
-                                {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
-                            </button>
-                            
-                            <div className="w-px h-8 bg-white/10 mx-1" />
-                            
-                            <Button 
-                                onClick={handleEnd} 
-                                variant="destructive" 
-                                className="rounded-xl px-5 h-[46px] bg-rose-600 hover:bg-rose-500 font-semibold shadow-lg shadow-rose-900/20"
-                            >
-                                End Call
-                            </Button>
+                {/* Camera Stage (Top/Left) */}
+                <div className="w-full lg:flex-1 relative flex flex-col min-h-[340px] lg:min-h-0 bg-black rounded-3xl border border-border shadow-md overflow-hidden group shrink-0 lg:shrink">
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        muted
+                        className="w-full h-full object-cover transform -scale-x-100"
+                    />
+                    
+                    {sessionState === 'active' && permissionsGranted && (
+                        <div className="absolute top-4 left-4 bg-background/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 shadow-sm">
+                            <span className="text-xs font-medium text-white/90">You</span>
                         </div>
+                    )}
+
+                    {/* Start Overlay / Permissions Modal */}
+                    {sessionState === 'idle' && (
+                        <div className="absolute inset-0 z-20 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center p-6 sm:p-8">
+                            {!permissionsGranted ? (
+                                <motion.div
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    className="bg-card p-6 sm:p-8 rounded-3xl shadow-xl text-center max-w-sm w-full border border-border"
+                                >
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary ring-1 ring-primary/20">
+                                        <Mic size={24} className="sm:w-7 sm:h-7" />
+                                    </div>
+                                    <h2 className="text-lg sm:text-2xl font-bold mb-2 tracking-tight">Camera & Mic Access</h2>
+                                    <p className="text-muted-foreground mb-6 leading-relaxed text-sm">
+                                        We need access to your camera and microphone to conduct the mock interview effectively.
+                                    </p>
+                                    <Button onClick={requestPermissions} className="w-full h-11 text-sm bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold shadow-md transition-all">
+                                        Allow Access
+                                    </Button>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    className="bg-card p-6 sm:p-8 rounded-3xl shadow-xl text-center max-w-sm w-full border border-border"
+                                >
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary ring-1 ring-primary/20">
+                                        <Play size={24} className="ml-1 sm:w-7 sm:h-7" />
+                                    </div>
+                                    <h2 className="text-lg sm:text-2xl font-bold mb-2 tracking-tight">Ready to Begin?</h2>
+                                    <p className="text-muted-foreground mb-6 leading-relaxed text-sm">
+                                        You're about to start a 15-minute technical screening. Make sure you're in a quiet environment.
+                                    </p>
+                                    <Button onClick={handleStart} className="w-full h-11 text-sm bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold shadow-md transition-all">
+                                        Start Interview
+                                    </Button>
+                                </motion.div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Controls Bar for Video */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-background/80 backdrop-blur-xl p-1.5 pl-3 pr-1.5 rounded-2xl border border-border shadow-lg transition-all duration-300 transform translate-y-16 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 peer" style={{ opacity: sessionState === 'active' ? 1 : 0, transform: sessionState === 'active' ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(20px)' }}>
+                        <Button
+                            variant={isMuted ? "destructive" : "ghost"}
+                            size="icon"
+                            onClick={toggleMute}
+                            className={cn(
+                                "rounded-xl w-10 h-10 transition-colors",
+                                isMuted ? "bg-destructive/20 hover:bg-destructive/30 text-destructive" : "hover:bg-accent"
+                            )}
+                            title={isMuted ? "Unmute" : "Mute"}
+                        >
+                            {isMuted ? <MicOff size={18} /> : <Mic size={18} />}
+                        </Button>
+                        
+                        <div className="w-px h-6 bg-border mx-1" />
+                        
+                        <Button 
+                            onClick={handleEnd} 
+                            variant="destructive" 
+                            className="rounded-xl px-4 h-10 font-semibold shadow-md"
+                        >
+                            End Call
+                        </Button>
                     </div>
                 </div>
 
-                {/* Visualizer & Chat (Right) */}
-                <div className="w-full lg:w-full max-w-full max-w-[420px] h-full flex flex-col gap-6">
-                    {/* AI Avatar / Status */}
-                    <div className="bg-slate-900 rounded-3xl p-6 shadow-2xl border border-white/10 flex flex-col items-center justify-center relative overflow-hidden shrink-0 h-[220px]">
-                        {/* Animated background glow when speaking */}
-                        <div className={cn(
-                            "absolute inset-0 bg-slate-500/10 transition-opacity duration-700 blur-3xl",
-                            isSpeaking ? "opacity-100" : "opacity-0"
-                        )} />
-                        
-                        <div className="relative z-10 flex flex-col items-center">
-                            <div className="relative w-20 h-20 mb-4">
-                                {/* Outer pulsing ring */}
-                                {isSpeaking && (
-                                    <motion.div 
-                                        className="absolute inset-0 rounded-full border-2 border-slate-400"
-                                        animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                    />
-                                )}
-                                
-                                <div className={cn(
-                                    "absolute inset-0 rounded-full bg-gradient-to-tr from-slate-600 to-slate-600 flex items-center justify-center shadow-lg transition-transform duration-300",
-                                    isSpeaking ? "scale-105 shadow-slate-200" : "scale-100"
-                                )}>
-                                    <Volume2 className={cn("w-8 h-8 text-white transition-opacity", isSpeaking ? "opacity-100" : "opacity-70")} />
-                                </div>
+                {/* Right Sidebar: AI Visualizer & Chat */}
+                <div className="w-full lg:w-[400px] xl:w-[480px] flex flex-col gap-3 lg:gap-6 lg:h-full relative flex-1 lg:flex-none">
+                    
+                    {/* Simplified AI Visualizer Header (Sticks top) */}
+                    <div className="bg-card rounded-3xl p-4 lg:p-6 shadow-sm border border-border flex items-center gap-4 relative overflow-hidden shrink-0">
+                        {isSpeaking && (
+                            <div className="absolute inset-0 bg-primary/5 transition-opacity duration-700 blur-xl opacity-100" />
+                        )}
+                        <div className="relative w-12 h-12 lg:w-14 lg:h-14 shrink-0">
+                            {isSpeaking && (
+                                <motion.div 
+                                    className="absolute inset-0 rounded-full border-2 border-primary/50"
+                                    animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                />
+                            )}
+                            <div className={cn(
+                                "absolute inset-0 rounded-full bg-gradient-to-tr from-primary/90 to-primary flex items-center justify-center shadow-md transition-transform duration-300",
+                                isSpeaking ? "scale-105" : "scale-100"
+                            )}>
+                                <Volume2 className={cn("w-5 h-5 lg:w-6 lg:h-6 text-primary-foreground transition-opacity", isSpeaking ? "opacity-100" : "opacity-80")} />
                             </div>
-                            
-                            <h3 className="font-bold text-lg text-white tracking-tight">Emble AI</h3>
-                            <p className="text-xs font-medium text-slate-400 uppercase tracking-widest mt-1">Lead Interviewer</p>
+                        </div>
+                        
+                        <div className="flex-1 relative z-10">
+                            <h3 className="font-bold text-base lg:text-lg tracking-tight">Emble AI</h3>
+                            <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lead Interviewer</p>
                         </div>
 
-                        {/* Audio Waveform */}
-                        <div className="absolute bottom-6 left-0 right-0 h-10 flex items-end justify-center gap-1.5 opacity-50">
-                            {[...Array(12)].map((_, i) => (
+                        {/* Audio Waveform visualization */}
+                        <div className="flex items-end justify-center gap-1 h-8 opacity-60 relative z-10">
+                            {[...Array(6)].map((_, i) => (
                                 <motion.div
                                     key={i}
-                                    className="w-1.5 bg-slate-400 rounded-t-full"
-                                    animate={{ height: isSpeaking ? [4, 15 + Math.random() * 20, 4] : 4 }}
+                                    className="w-1 lg:w-1.5 bg-primary rounded-t-full"
+                                    animate={{ height: isSpeaking ? [4, 8 + Math.random() * 16, 4] : 4 }}
                                     transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
                                 />
                             ))}
@@ -475,21 +468,23 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                     </div>
 
                     {/* Chat Feed */}
-                    <div className="flex-1 bg-slate-900 rounded-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col relative">
+                    <div className="flex-1 bg-card rounded-3xl border border-border shadow-sm flex flex-col relative overflow-hidden min-h-[380px] lg:min-h-0">
                         {sessionState === 'active' && (
-                            <div className="absolute top-0 left-0 right-0 px-5 py-3 border-b border-white/5 bg-slate-900/90 backdrop-blur-md z-10 flex items-center justify-between">
+                            <div className="px-4 py-2 border-b border-border bg-card/90 backdrop-blur-md z-10 flex items-center justify-between shrink-0">
                                 <div className="flex items-center gap-2">
                                     <div className={cn("w-2 h-2 rounded-full", vapiStatus === 'active' || vapiStatus === 'speaking' || vapiStatus === 'listening' ? "bg-emerald-500" : "bg-amber-500")} />
-                                    <span className="text-xs font-medium text-slate-300">{vapiStatus === 'active' || vapiStatus === 'speaking' || vapiStatus === 'listening' ? 'Connected' : 'Connecting...'}</span>
+                                    <span className="text-xs font-semibold text-muted-foreground">
+                                        {vapiStatus === 'active' || vapiStatus === 'speaking' || vapiStatus === 'listening' ? 'Connected' : 'Connecting...'}
+                                    </span>
                                 </div>
                             </div>
                         )}
                         
-                        <div className="flex-1 overflow-y-auto p-5 pt-14 space-y-5" ref={scrollRef}>
+                        <div className="flex-1 overflow-y-auto p-4 lg:p-5 space-y-6" ref={scrollRef}>
                             <AnimatePresence initial={false}>
                                 {chatHistory.length === 0 && (
-                                    <div className="flex items-center justify-center h-full text-slate-500 text-sm font-medium">
-                                        Transcript will appear here
+                                    <div className="flex items-center justify-center h-full text-muted-foreground text-sm flex-col gap-2">
+                                        <span>Transcript will appear here</span>
                                     </div>
                                 )}
                                 {chatHistory.map((msg, idx) => (
@@ -497,42 +492,35 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                                         key={idx}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className={cn(
-                                            "flex flex-col",
-                                            msg.role === 'user' ? "items-end" : "items-start"
-                                        )}
                                     >
-                                        <div className="flex items-center gap-2 mb-1.5 px-1">
-                                            {msg.role === 'assistant' && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Emble AI</span>}
-                                            {msg.role === 'user' && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">You</span>}
+                                        <div className={cn("flex items-center gap-2 mb-1.5 px-1", msg.role === 'user' ? "justify-end" : "justify-start")}>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{msg.role === 'assistant' ? 'Emble AI' : 'You'}</span>
                                         </div>
-                                        <div className={cn(
-                                            "max-w-[85%] px-4 py-3 text-sm leading-relaxed shadow-sm",
-                                            msg.role === 'user'
-                                                ? "bg-slate-800 text-white rounded-2xl rounded-tr-sm"
-                                                : "bg-slate-800 text-slate-200 border border-white/5 rounded-2xl rounded-tl-sm"
-                                        )}>
-                                            {msg.role === 'assistant' && msg.followup && (
-                                                <div className="text-[10px] uppercase tracking-widest text-slate-300 font-bold mb-1.5 flex items-center gap-1">
-                                                    <div className="w-1 h-1 rounded-full bg-slate-400" /> Follow-up
-                                                </div>
-                                            )}
-                                            {msg.text}
-                                        </div>
+                                        <Message from={msg.role as "user" | "assistant"}>
+                                            <MessageContent>
+                                                {msg.role === 'assistant' && msg.followup && (
+                                                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-bold mb-1.5 flex items-center gap-1.5">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-primary/50" /> Follow-up
+                                                    </div>
+                                                )}
+                                                <MessageResponse>{msg.text}</MessageResponse>
+                                            </MessageContent>
+                                        </Message>
                                     </motion.div>
                                 ))}
                             </AnimatePresence>
                         </div>
                         
+                        {/* Live Live Transcript Footer */}
                         {sessionState === 'active' && (
-                            <div className="p-4 border-t border-white/5 bg-slate-900 shrink-0">
-                                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 flex justify-between items-center">
-                                    <span>Live Transcript</span>
-                                    {(vapiStatus === 'listening' || vapiStatus === 'speaking') && <span className="text-rose-400 animate-pulse">Live</span>}
+                            <div className="p-3 lg:p-4 border-t border-border bg-muted/30 shrink-0 relative transition-colors">
+                                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2 flex justify-between items-center px-1">
+                                    <span>Live Context</span>
+                                    {(vapiStatus === 'listening' || vapiStatus === 'speaking') && <span className="text-primary animate-pulse flex items-center gap-1"><Mic size={10} /> Active</span>}
                                 </div>
                                 <div className={cn(
-                                    "w-full text-sm min-h-[60px] max-h-[100px] overflow-y-auto whitespace-pre-wrap p-3 rounded-xl border transition-colors",
-                                    (vapiStatus === 'listening' || vapiStatus === 'speaking') ? "bg-slate-800 border-white/10 text-slate-200" : "bg-slate-900 border-transparent text-slate-500"
+                                    "w-full text-xs sm:text-sm min-h-[50px] max-h-[100px] overflow-y-auto whitespace-pre-wrap p-3 rounded-xl border transition-all duration-300",
+                                    (vapiStatus === 'listening' || vapiStatus === 'speaking') ? "bg-background border-primary/20 text-foreground" : "bg-card border-transparent text-muted-foreground"
                                 )}>
                                     {liveTranscript || (vapiStatus === 'listening' ? 'Listening for your response...' : 'Transcript will appear as you speak.')}
                                 </div>
@@ -540,7 +528,7 @@ export default function InterviewSession({ onEnd, onCancel, initialSeconds = 900
                         )}
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     );
 }

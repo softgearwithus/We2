@@ -1,8 +1,6 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import UserDropdown from "@/components/shadcn-space/blocks/dashboard-shell-01/user-dropdown";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import NotificationDropdown from "@/components/shadcn-space/blocks/dashboard-shell-01/notification-dropdown";
-import { BellRing } from "lucide-react";
 
 import { useAuth } from "@/app/context/AuthContext";
 import Link from "next/link";
@@ -32,15 +30,6 @@ export function SiteHeader() {
       </div>
 
       <div className="flex items-center gap-3">
-        <NotificationDropdown
-          defaultOpen={false}
-          align="center"
-          trigger={
-            <div className="rounded-full p-2 hover:bg-accent relative before:absolute before:bottom-0 before:left-1/2 before:z-10 before:w-2 before:h-2 before:rounded-full before:bg-emerald-500 shadow-[0_0_10px_-4px_var(--color-primary)] ring-1 ring-emerald-500/30 before:top-1 cursor-pointer">
-              <BellRing className="size-4" />
-            </div>
-          }
-        />
         <UserDropdown
           defaultOpen={false}
           align="center"

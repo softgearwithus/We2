@@ -73,16 +73,4 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-const CardAction = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={cn("w-full py-2 hover:bg-slate-50 transition-colors text-sm font-medium text-slate-600 rounded-b-xl border-t border-slate-100", className)}
-    {...props}
-  />
-))
-CardAction.displayName = "CardAction"
-
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, CardAction }
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

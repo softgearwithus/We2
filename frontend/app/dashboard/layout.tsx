@@ -88,7 +88,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         },
         
         { isSection: true, label: 'LABS' },
-        { icon: 'terminal', label: 'IDE Workspace', href: '/dashboard/ide', hasUpdate: updateIndicators['/dashboard/ide'] },
         { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },
         {
             icon: 'mic',

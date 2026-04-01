@@ -1,8 +1,7 @@
 'use client';
 
 import { fetchApi } from '../../lib/apiClient';
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -61,7 +60,7 @@ export default function PreparationPage() {
     const currentPhase = roadmapData[currentIndex] || roadmapData[0];
 
     return (
-        <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 selection:bg-slate-100 selection:text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans text-slate-900 pb-20">
             {/* Ambient Background */}
             <div className="absolute -top-32 right-0 w-full max-w-full max-w-[520px] h-[520px] bg-slate-500/10 rounded-full blur-[140px] pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[480px] h-[480px] bg-brand-orange/10 rounded-full blur-[140px] pointer-events-none"></div>
@@ -124,7 +123,6 @@ export default function PreparationPage() {
                                 desc: 'Before writing complex scalable code, you need consistent execution speed and clean coding habits in a production-like editor.',
                                 icon: Code, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100',
                                 actions: [
-                                    { name: 'IDE Workspace', route: '/dashboard/ide', target: 'Ship 1 coding sprint' },
                                     { name: 'Technical Test Simulation', route: '/dashboard/test-series', target: 'Attempt 1 full section' }
                                 ]
                             },
