@@ -3,11 +3,102 @@ export type SeoPageData = {
     subDescription: string;
     heroHeadline: string;
     heroHeadlineSpan: string;
-    category: 'prep' | 'tools' | 'services' | 'company' | 'stack' | 'type';
+    category: 'prep' | 'tools' | 'services' | 'company' | 'stack' | 'type' | 'alternative';
     slug: string;
 };
 
 export const seoPages: Record<string, SeoPageData> = {
+    // ----------------------------------------
+    // COMPETITOR ALTERNATIVES
+    // ----------------------------------------
+    'hirevue-alternative': {
+        category: 'alternative',
+        slug: 'hirevue-alternative',
+        title: 'Best HireVue Alternative | AI Interview Platform',
+        heroHeadline: 'The Better ',
+        heroHeadlineSpan: 'HireVue Alternative',
+        subDescription: 'Looking for a HireVue alternative? Emble offers faster automated technical screening, better developer experience, and superior AI Interview Intelligence without the massive enterprise bloat.',
+    },
+    'humanly-alternative': {
+        category: 'alternative',
+        slug: 'humanly-alternative',
+        title: '#1 Humanly Alternative | Conversational AI Screening',
+        heroHeadline: 'The Ultimate ',
+        heroHeadlineSpan: 'Humanly Alternative',
+        subDescription: 'Switch to Emble for automated screening. Unlike Humanly, we provide deep technical assessment and coding environment integration natively inside our conversational AI.',
+    },
+    'interview-query-alternative': {
+        category: 'alternative',
+        slug: 'interview-query-alternative',
+        title: 'Best Interview Query Alternative | AI Mock Interviews',
+        heroHeadline: 'The #1 ',
+        heroHeadlineSpan: 'Interview Query Alternative',
+        subDescription: 'Stop paying for static question banks. Emble provides dynamic, real-time voice AI mock interviews that adapt to your exact resume and target company, making it the best Interview Query alternative.',
+    },
+    'final-round-ai-alternative': {
+        category: 'alternative',
+        slug: 'final-round-ai-alternative',
+        title: 'Final Round AI Alternative | Free Mock Interview Prep',
+        heroHeadline: 'The Smarter ',
+        heroHeadlineSpan: 'Final Round AI Alternative',
+        subDescription: 'Get better real-time feedback and technical problem solving support. Emble uses state-of-the-art Interview Intelligence to guide you through system design and DSA better than Final Round AI.',
+    },
+    'hackerrank-alternative': {
+        category: 'alternative',
+        slug: 'hackerrank-alternative',
+        title: 'HackerRank Alternative | Modern Technical Assessment',
+        heroHeadline: 'The Modern ',
+        heroHeadlineSpan: 'HackerRank Alternative',
+        subDescription: 'Move beyond rigid algorithmic puzzles. Emble serves as the best HackerRank alternative by combining live coding environments with a Conversational AI interviewer that actually evaluates engineering judgment.',
+    },
+    'codesignal-alternative': {
+        category: 'alternative',
+        slug: 'codesignal-alternative',
+        title: 'Best CodeSignal Alternative | Fair Engineering Tests',
+        heroHeadline: 'A Fairer ',
+        heroHeadlineSpan: 'CodeSignal Alternative',
+        subDescription: 'If you want a fairer, more contextual technical evaluation, Emble is the ultimate CodeSignal alternative. We assess how developers actually build features, not just how they invert binary trees.',
+    },
+    'coderpad-alternative': {
+        category: 'alternative',
+        slug: 'coderpad-alternative',
+        title: '#1 CoderPad Alternative | AI-Assisted Pair Programming',
+        heroHeadline: 'The Next-Gen ',
+        heroHeadlineSpan: 'CoderPad Alternative',
+        subDescription: 'Emble replaces basic shared IDEs with a highly intelligent, voice-powered AI interviewer. Making it the best CoderPad alternative for scaling your engineering interviews quickly.',
+    },
+    'hackerearth-alternative': {
+        category: 'alternative',
+        slug: 'hackerearth-alternative',
+        title: 'HackerEarth Alternative for Tech Hiring',
+        heroHeadline: 'The Superior ',
+        heroHeadlineSpan: 'HackerEarth Alternative',
+        subDescription: 'Evaluate candidates on real-world capabilities. Emble is the top HackerEarth alternative for companies looking to eliminate bias and save engineering hours through AI screening.',
+    },
+    'interviewing-io-alternative': {
+        category: 'alternative',
+        slug: 'interviewing-io-alternative',
+        title: 'Interviewing.io Alternative | Elite AI Mock Interviews',
+        heroHeadline: 'The 24/7 ',
+        heroHeadlineSpan: 'Interviewing.io Alternative',
+        subDescription: 'Stop waiting for expensive human mentors. Emble is the ultimate Interviewing.io alternative, giving you unlimited access to an AI Staff Engineer that provides brutal FAANG-level feedback instantly.',
+    },
+    'pramp-alternative': {
+        category: 'alternative',
+        slug: 'pramp-alternative',
+        title: 'Best Pramp Alternative for Free Mock Interviews',
+        heroHeadline: 'The Ultimate ',
+        heroHeadlineSpan: 'Pramp Alternative',
+        subDescription: 'Instead of matching with random peers who don\'t know how to interview you, use Emble. The #1 Pramp alternative designed to simulate exact coding rounds with a highly capable AI.',
+    },
+    'codility-alternative': {
+        category: 'alternative',
+        slug: 'codility-alternative',
+        title: 'Codility Alternative | Next Generation Tech Screening',
+        heroHeadline: 'The Top ',
+        heroHeadlineSpan: 'Codility Alternative',
+        subDescription: 'Emble outperforms standard technical screening by bringing in voice-activated AI reasoning tracking, making it the most accurate Codility alternative on the market.',
+    },
     // ----------------------------------------
     // CORE PLATFORM & ROLE PREP
     // ----------------------------------------

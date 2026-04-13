@@ -243,9 +243,8 @@ export default function Navbar() {
                             )}>
                                 Sign in
                             </Link>
-                            <Link href="/register" className="relative group overflow-hidden bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg border border-slate-800">
-                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
-                                <span className="relative z-10">Get Started</span>
+                            <Link href="/register" className="bg-[#0a0f29] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-lg hover:shadow-[#556B2F]/25 border border-[#0a0f29] hover:border-[#556B2F] hover:bg-[#556B2F]">
+                                Get Started
                             </Link>
                         </>
                     )}
@@ -324,9 +323,8 @@ export default function Navbar() {
                             <Link href="/login" className="text-center py-3 w-full font-medium text-foreground/80">
                                 Sign in
                             </Link>
-                            <Link href="/register" className="relative group overflow-hidden bg-slate-900 text-white py-4 w-full rounded-full text-center font-bold transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-lg border border-slate-800">
-                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
-                                <span className="relative z-10">Get Started</span>
+                            <Link href="/register" className="bg-[#0a0f29] text-white py-4 w-full rounded-full text-center font-bold transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-lg hover:shadow-[#556B2F]/25 border border-[#0a0f29] hover:border-[#556B2F] hover:bg-[#556B2F]">
+                                Get Started
                             </Link>
                         </>
                     )}

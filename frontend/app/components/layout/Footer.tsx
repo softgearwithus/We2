@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Terminal, Linkedin, Twitter, MessageCircle, Mail } from 'lucide-react';
+import { Terminal, Linkedin, Twitter, Instagram, Mail } from 'lucide-react';
 import { getAllSeoPages } from '@/app/lib/seo-pages';
 
 export default function Footer() {
@@ -54,18 +54,18 @@ export default function Footer() {
 
                     {/* Socials */}
                     <div className="flex items-center gap-4 text-white/50">
-                        <Link href="https://linkedin.com" target="_blank" className="hover:text-white transition-colors" aria-label="LinkedIn">
+                        <Link href="https://www.linkedin.com/company/joinemble/" target="_blank" className="hover:text-white transition-colors" aria-label="LinkedIn">
                             <Linkedin className="w-5 h-5" />
                         </Link>
-                        <Link href="https://twitter.com" target="_blank" className="hover:text-white transition-colors" aria-label="Twitter">
+                        <Link href="https://x.com/joinEmble" target="_blank" className="hover:text-white transition-colors" aria-label="X (Twitter)">
                             <Twitter className="w-5 h-5" />
                         </Link>
-                        <Link href="https://discord.com" target="_blank" className="hover:text-white transition-colors" aria-label="Discord">
-                            <MessageCircle className="w-5 h-5" />
+                        <Link href="https://www.instagram.com/emble.in/" target="_blank" className="hover:text-white transition-colors" aria-label="Instagram">
+                            <Instagram className="w-5 h-5" />
                         </Link>
-                        <Link href="mailto:support@emble.in" className="hover:text-white transition-colors" aria-label="Email support@emble.in">
+                        <a href="mailto:support@emble.in" className="hover:text-white transition-colors" aria-label="Email support@emble.in">
                             <Mail className="w-5 h-5" />
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -78,8 +78,8 @@ export default function Footer() {
                 </div>
             </div>
 
-            {/* SEO Mega-Footprint (Fine print at the bottom logically) */}
-            <div className="w-full max-w-[1400px] mx-auto px-6 pt-10 pb-4 relative z-10">
+            {/* SEO Mega-Footprint (Hidden from UI, visible to crawlers) */}
+            <div className="sr-only">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
                     {/* Role Prep */}
                     <div className="flex flex-col gap-1.5">
@@ -121,6 +121,13 @@ export default function Footer() {
                         <h3 className="text-white/30 font-semibold text-[10px] uppercase tracking-widest mb-1.5">Services</h3>
                         {getAllSeoPages().filter(p => p.category === 'services').map(page => (
                             <Link key={page.slug} href={`/services/${page.slug}`} className="text-white/20 hover:text-white/60 text-[10px] leading-snug transition-colors line-clamp-1">{page.title.split('|')[0].trim()}</Link>
+                        ))}
+                    </div>
+                    {/* Alternatives */}
+                    <div className="flex flex-col gap-1.5">
+                        <h3 className="text-white/30 font-semibold text-[10px] uppercase tracking-widest mb-1.5">Alternatives</h3>
+                        {getAllSeoPages().filter(p => p.category === 'alternative').map(page => (
+                            <Link key={page.slug} href={`/alternative/${page.slug}`} className="text-white/20 hover:text-white/60 text-[10px] leading-snug transition-colors line-clamp-1">{page.title.split('|')[0].trim()}</Link>
                         ))}
                     </div>
                 </div>

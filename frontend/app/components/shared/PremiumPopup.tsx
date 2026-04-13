@@ -78,31 +78,31 @@ export default function PremiumPopup() {
                                 setShowMainModal(false);
                                 setShowMinimizedBanner(true);
                             }}
-                            className="absolute top-4 right-4 p-1.5 text-foreground/50 hover:text-foreground hover:bg-secondary rounded-full transition-colors z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            className="absolute top-4 right-4 p-1.5 text-foreground/50 hover:text-foreground hover:bg-secondary rounded-full transition-colors z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#556B2F]"
                         >
                             <X size={16} />
                         </button>
 
                         <div className="p-6 text-left bg-card relative">
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                                    <Sparkles size={20} className="text-primary" />
+                                <div className="w-12 h-12 rounded-2xl bg-[#556B2F]/10 flex items-center justify-center shrink-0 border border-[#556B2F]/20">
+                                    <Sparkles size={20} className="text-[#556B2F]" />
                                 </div>
                                 <h3 className="text-xl font-black text-foreground tracking-tight leading-tight">
                                     Unlock Premium <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">Placement Mode</span>
+                                    <span className="text-[#556B2F]">Interview Mode</span>
                                 </h3>
                             </div>
 
                             <p className="text-foreground/70 mb-6 font-medium leading-relaxed text-sm">
-                                Upgrade to experience the complete Full Stack Bootcamp and double your chances of clearing technical rounds with AI mock interviews.
+                                Upgrade to access unlimited AI mock interviews, advanced analytics, and double your chances of clearing technical rounds.
                             </p>
 
                             <div className="flex items-center gap-3">
                                 <Link
                                     href="/pricing"
                                     onClick={() => setShowMainModal(false)}
-                                    className="flex-1 h-12 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                    className="flex-1 h-12 bg-[#556B2F] hover:bg-[#4b5e29] text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-[0.98] text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#556B2F] focus-visible:ring-offset-2"
                                 >
                                     Upgrade Now
                                     <ArrowRight size={16} />
@@ -137,7 +137,7 @@ export default function PremiumPopup() {
                         <Link href="/pricing" className="absolute right-0 pr-16 opacity-0 group-hover:opacity-100 group-hover:-translate-x-4 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
                             <div className="bg-card px-5 py-3 rounded-l-2xl shadow-xl border border-border border-r-0 flex items-center gap-2 text-sm font-bold text-foreground whitespace-nowrap">
                                 Subscribe Now
-                                <ArrowRight size={14} className="text-primary" />
+                                <ArrowRight size={14} className="text-[#556B2F]" />
                             </div>
                         </Link>
 
@@ -146,11 +146,11 @@ export default function PremiumPopup() {
                             href="/pricing"
                             className="relative w-14 h-14 bg-card rounded-[18px] flex items-center justify-center shadow-2xl border border-border z-10 hover:scale-110 transition-transform duration-300"
                         >
-                            <div className="absolute inset-0 bg-primary/20 rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity blur-md -z-10"></div>
-                            <ShieldCheck size={24} className="text-primary relative z-10" />
+                            <div className="absolute inset-0 bg-[#556B2F]/20 rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity blur-md -z-10"></div>
+                            <ShieldCheck size={24} className="text-[#556B2F] relative z-10" />
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#556B2F] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-[#556B2F]"></span>
                             </span>
                         </Link>
                     </motion.div>
@@ -159,4 +159,3 @@ export default function PremiumPopup() {
         </>
     );
 }
-

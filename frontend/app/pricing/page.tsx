@@ -10,6 +10,8 @@ import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
 import { useAuth } from "@/app/context/AuthContext";
 import { cn } from "@/app/lib/utils";
+import TalkToSalesModal from "@/app/components/shared/TalkToSalesModal";
+import PricingCard from "@/app/components/pricing/PricingCard";
 
 const PRO_PLAN_ID = "pro_1m";
 const SUBSCRIBE_INTENT_PATH = `/pricing?intent=subscribe&plan=${PRO_PLAN_ID}`;
@@ -43,6 +45,7 @@ function PricingPageContent() {
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const autoTriggeredCheckoutRef = useRef(false);
   const [selectedCurrency, setSelectedCurrency] = useState<"INR" | "USD">("USD");
+  const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
 
   const freeFeatures = [
     "Limited Company & Subject Test Series",
@@ -59,6 +62,15 @@ function PricingPageContent() {
     "Unlimited Project Labs",
     "1-on-1 Industry Leader Guidance",
     "24/7 Priority Support",
+  ];
+
+  const enterpriseFeatures = [
+    "Customized interview per candidate",
+    "Bulk minutes & custom volume",
+    "Advanced evaluation segments",
+    "White-labeling options",
+    "Dedicated account manager",
+    "Custom API integrations",
   ];
 
   useEffect(() => {
@@ -310,26 +322,26 @@ function PricingPageContent() {
       <Navbar />
       
       <main className="flex-1 flex flex-col items-center pt-28 pb-24 px-6 z-10 w-full">
-        <div className="max-w-[1100px] w-full mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-16 items-center">
+        <div className="max-w-[1300px] w-full mx-auto grid grid-cols-1 xl:grid-cols-[minmax(350px,400px)_1fr] gap-12 xl:gap-16 items-start">
           
-          {/* LEFT SIDE: Copy & Features */}
+          {/* LEFT COLUMN: Copy & Features */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex flex-col items-start gap-4 text-left"
+            className="flex flex-col items-start text-left gap-6 w-full sticky top-32"
           >
             <span className="px-4 py-1.5 rounded-full border border-border/80 text-[13px] font-semibold bg-white shadow-sm tracking-wide text-slate-800">
               Our Pricing
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-[56px] font-[1000] tracking-tight text-[#1a2b3b] leading-[1.1] mt-2 mb-2">
+            <h1 className="text-4xl md:text-5xl lg:text-[56px] font-[1000] tracking-tight text-[#1a2b3b] leading-[1.1]">
               Personalized plans <br className="hidden md:block"/> and pricing
             </h1>
-            <p className="text-lg text-slate-600 font-medium leading-relaxed max-w-sm">
-              Flexible pricing plans designed to fit your needs and help your career grow.
+            <p className="text-lg text-slate-600 font-medium leading-relaxed">
+              Flexible pricing plans designed to fit your needs, whether you're a candidate or building a hiring team.
             </p>
             
-            <div className="space-y-4 my-6">
+            <div className="flex flex-col gap-4 mt-4">
               {[
                 { icon: <Calendar className="w-[18px] h-[18px]" />, text: "Lifetime free access for core tools" },
                 { icon: <ShieldCheck className="w-[18px] h-[18px]" />, text: "No hidden fees or conditions" },
@@ -342,12 +354,11 @@ function PricingPageContent() {
               ))}
             </div>
 
-            <div className="mt-8 pt-8 w-full border-t border-slate-100">
-               <p className="text-sm text-slate-500 font-medium mb-4">Trusted by secure Payments service</p>
+            <div className="mt-8 pt-8 w-full border-t border-slate-100 flex flex-col items-start">
+               <p className="text-[13px] text-slate-500 font-medium mb-4">Trusted by secure Payments service</p>
                <div className="flex items-center gap-6 opacity-80 mix-blend-multiply">
-                  {/* Razorpay Logo Element */}
                   <div className="flex items-center gap-2 font-[1000] text-[#02042b] tracking-widest text-[17px]">
-                    <svg viewBox="0 0 100 100" className="w-[22px] h-[22px] fill-[#338be2]">
+                    <svg viewBox="0 0 100 100" className="w-[20px] h-[20px] fill-[#338be2]">
                        <path d="M0,50 C0,22.3857625 22.3857625,0 50,0 C77.6142375,0 100,22.3857625 100,50 C100,77.6142375 77.6142375,100 50,100 C22.3857625,100 0,77.6142375 0,50 Z" opacity="0.1"/>
                        <path d="M72.5,35 L42.5,85 L35,85 L47.5,45 L25,45 L40,20 L62.5,20 L55,35 L72.5,35 Z" fill="#3395ff" />
                     </svg>
@@ -357,137 +368,172 @@ function PricingPageContent() {
             </div>
           </motion.div>
 
-          {/* RIGHT SIDE: Cards Wrapper */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end relative w-full lg:max-w-[700px] ml-auto">
+          {/* RIGHT COLUMN: CARDS GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch w-full relative pt-8">
              
-             {/* FREE PLAN */}
-             <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.6, delay: 0.1 }}
-               className="rounded-[32px] border-[1.5px] border-border bg-white p-6 lg:p-8 flex flex-col shadow-sm h-full max-h-[96%]"
-             >
-                <div className="mb-6">
-                  <h3 className="text-[17px] font-bold text-[#1a2b3b] mb-4">Free</h3>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-[44px] md:text-5xl font-black tracking-tighter text-[#1a2b3b]">$0</span>
-                    <span className="text-slate-500 font-medium text-sm">/mo</span>
+             {/* FREE PLAN (Standard Card) */}
+             <div className="w-full rounded-[24px] border border-slate-200 bg-white p-6 md:p-8 flex flex-col shadow-sm h-full">
+                <div className="flex flex-col min-h-[140px]">
+                  <h3 className="text-[20px] font-semibold text-slate-900">Free</h3>
+                  <div className="flex items-baseline gap-1 mt-auto pb-4">
+                    <span className="text-[40px] md:text-5xl font-bold tracking-tight text-slate-900">$0</span>
+                    <span className="text-slate-500 font-medium text-[15px]">/mo</span>
                   </div>
-                  <p className="text-[13px] text-slate-500 font-medium mt-2">
-                    Lifetime free access for Core tools.
+                  <p className="text-[13px] text-slate-500 min-h-[40px]">
+                    Perfect for students and individuals just getting started.
                   </p>
                 </div>
                 
-                <div className="h-px w-full bg-slate-100 mb-6" />
+                <div className="h-px w-full bg-slate-100 mb-6 mt-4" />
                 
-                <div className="mb-4 text-sm font-semibold text-slate-400">What's Included</div>
-                <div className="flex-1 space-y-3 mb-8">
+                <div className="mb-4 text-[13px] font-semibold text-slate-400">What's Included</div>
+                <div className="flex-1 space-y-4 mb-8">
                   {freeFeatures.map((feature, i) => (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <Check className="w-[14px] h-[14px] text-slate-800 shrink-0 mt-[3px]" strokeWidth={3} />
-                      <span className="text-[13px] text-slate-700 font-medium leading-tight">{feature}</span>
+                    <div key={i} className="flex items-start gap-3">
+                      <Check className="w-[16px] h-[16px] text-slate-800 shrink-0 mt-[2px]" strokeWidth={2.5} />
+                      <span className="text-[14px] text-slate-600 leading-tight">{feature}</span>
                     </div>
                   ))}
                 </div>
 
-                <Link 
-                  href={user ? "/dashboard" : "/register/student"}
-                  className="w-full py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-slate-800 text-[14px] font-bold text-center hover:bg-slate-50 transition-colors"
-                >
-                  {user ? "Go to Dashboard \u2192" : "Reserve your spot \u2192"}
-                </Link>
-             </motion.div>
+                <div className="mt-auto">
+                  <button 
+                    onClick={() => router.push(user ? "/dashboard" : "/register/student")}
+                    className="w-full py-3.5 rounded-full border border-slate-200 text-slate-900 text-[14px] font-medium text-center hover:bg-slate-50 transition-colors"
+                  >
+                    {user ? "Go to Dashboard \u2192" : "Reserve your spot \u2192"}
+                  </button>
+                </div>
+             </div>
              
-             {/* PRO PLAN */}
-             <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ duration: 0.6, delay: 0.2 }}
-               className="relative rounded-[32px] bg-[#3b82f6] p-[2px] flex flex-col shadow-2xl h-full transform lg:scale-105 z-10"
-             >
-                <div className="text-center py-[10px] text-white text-[11px] font-bold uppercase tracking-[0.2em]">
+             {/* PRO PLAN (Featured Card with Blue Header) */}
+             <div className="w-full rounded-[24px] bg-[#3b82f6] shadow-xl flex flex-col relative overflow-hidden z-10 border-2 border-[#3b82f6] md:-mt-[40px]">
+                {/* Header Banner (approx 40px height) */}
+                <div className="py-2.5 text-center text-white text-[12px] font-medium tracking-wide w-full max-h-[40px]">
                    Most Popular
                 </div>
-                <div className="bg-white rounded-[30px] p-6 lg:p-8 flex-1 flex flex-col relative h-full">
-                   <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-[17px] font-bold text-[#1a2b3b]">Pro Member</h3>
-                      <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest border border-blue-100">
-                        29% OFF
-                      </span>
-                   </div>
-
-                   {/* Pricing & Toggle Row */}
-                   <div className="flex items-start justify-between">
-                     <div className="flex items-baseline gap-1">
-                        <span className="text-[44px] md:text-5xl font-black tracking-tighter text-[#1a2b3b]">
-                           {displayedPrice.symbol}{displayedPrice.amount}
-                        </span>
-                        <span className="text-slate-500 font-medium text-sm">{displayedPrice.period}</span>
-                     </div>
-                     
-                     {/* INR/USD Manual Toggle */}
-                     <div className="bg-slate-100 p-1 rounded-xl flex border border-slate-200 shadow-inner mt-2">
-                        <button 
-                          onClick={() => setSelectedCurrency("USD")} 
-                          className={cn("px-2.5 py-1 text-[11px] font-bold rounded-lg transition-colors", 
-                            selectedCurrency === "USD" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                          )}
-                        >
-                           USD
-                        </button>
-                        <button 
-                          onClick={() => setSelectedCurrency("INR")} 
-                          className={cn("px-2.5 py-1 text-[11px] font-bold rounded-lg transition-colors", 
-                            selectedCurrency === "INR" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                          )}
-                        >
-                           INR
-                        </button>
-                     </div>
-                   </div>
-
-                   <p className="text-[13px] text-slate-500 font-medium mt-2">
-                      8 spots open till this week
-                   </p>
+                
+                {/* Card Body */}
+                <div className="bg-white rounded-b-[22px] rounded-t-[8px] p-6 md:p-8 flex-1 flex flex-col relative w-full h-full">
                    
-                   <div className="h-px w-full bg-slate-100 my-6" />
-                   
-                   <div className="mb-4 text-sm font-semibold text-slate-400">What's Included</div>
-                   <div className="flex-1 space-y-3 mb-8">
-                     <div className="flex flex-col gap-3 pb-2">
-                       {proFeatures.slice(0, 1).map((feature, i) => (
-                         <div key={i} className="flex items-start gap-2.5">
-                           <Check className="w-[14px] h-[14px] text-slate-400 shrink-0 mt-[3px]" strokeWidth={3} />
-                           <span className="text-[13px] text-slate-500 font-semibold leading-tight">{feature}</span>
+                   <div className="flex flex-col min-h-[140px]">
+                      <div className="flex flex-col items-start gap-3 pt-1">
+                         <h3 className="text-[20px] font-semibold text-slate-900 leading-none mb-1">Pro Member</h3>
+                         
+                         <div className="flex items-center gap-3">
+                            <span className="bg-blue-50 text-blue-600 text-[11px] font-bold px-2.5 py-1 rounded-full border border-blue-100 whitespace-nowrap">
+                              29% OFF
+                            </span>
+
+                            {/* INR/USD Manual Toggle neatly placed beside the discount tag */}
+                            <div className="flex bg-slate-50 p-[3px] rounded-lg border border-slate-200 shadow-sm shrink-0">
+                               <button 
+                                 onClick={() => setSelectedCurrency("USD")} 
+                                 className={cn("px-2 py-[2px] text-[10px] font-bold rounded-md transition-colors", 
+                                   selectedCurrency === "USD" ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/50" : "text-slate-500 hover:text-slate-700"
+                                 )}
+                               >
+                                  USD
+                               </button>
+                               <button 
+                                 onClick={() => setSelectedCurrency("INR")} 
+                                 className={cn("px-2 py-[2px] text-[10px] font-bold rounded-md transition-colors", 
+                                   selectedCurrency === "INR" ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/50" : "text-slate-500 hover:text-slate-700"
+                                 )}
+                               >
+                                  INR
+                               </button>
+                            </div>
                          </div>
-                       ))}
-                     </div>
-                     {proFeatures.slice(1).map((feature, i) => (
-                       <div key={i} className="flex items-start gap-2.5">
-                         <Check className="w-[14px] h-[14px] text-blue-600 shrink-0 mt-[3px]" strokeWidth={3} />
-                         <span className="text-[13px] text-slate-700 font-medium leading-tight">{feature}</span>
+                      </div>
+
+                      <div className="flex justify-between items-end mt-auto pb-4 pt-4">
+                         <div className="flex items-baseline gap-1">
+                            <span className="text-[40px] md:text-5xl font-bold tracking-tight text-slate-900 truncate">
+                               {displayedPrice.symbol}{displayedPrice.amount}
+                            </span>
+                            <span className="text-slate-500 font-medium text-[15px] shrink-0">{displayedPrice.period}</span>
+                         </div>
+                      </div>
+                      
+                      <p className="text-[13px] text-slate-500 min-h-[40px]">
+                         8 spots open till this week
+                      </p>
+                   </div>
+                   
+                   <div className="h-px w-full bg-slate-100 mb-6 mt-4" />
+                   
+                   <div className="mb-4 text-[13px] font-semibold text-slate-400">What's Included</div>
+                   <div className="flex-1 space-y-4 mb-8">
+                     {proFeatures.map((feature, i) => (
+                       <div key={i} className="flex items-start gap-3">
+                         <Check className={cn("w-[16px] h-[16px] shrink-0 mt-[2px]", i === 0 ? "text-slate-400" : "text-blue-500")} strokeWidth={2.5} />
+                         <span className={cn("text-[14px] leading-tight", i === 0 ? "text-slate-500 font-medium" : "text-slate-700 font-semibold")}>{feature}</span>
                        </div>
                      ))}
                    </div>
 
-                   <button
-                     type="button"
-                     onClick={() => void handleSubscribe()}
-                     disabled={!canSubscribe}
-                     className="w-full py-3.5 rounded-2xl bg-[#0a0f29] text-white text-[14px] font-bold text-center hover:bg-[#1a2b3b] transition-colors flex items-center justify-center gap-2 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                   >
-                     {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                     {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
-                   </button>
-                   {!pricingContext?.upgradesEnabled && !isPricingLoading && (
-                     <p className="text-[10px] text-amber-600 mt-2 text-center font-bold">Subscriptions are currently paused.</p>
-                   )}
+                   <div className="mt-auto pt-2">
+                     <button
+                       type="button"
+                       onClick={() => void handleSubscribe()}
+                       disabled={!canSubscribe}
+                       className="w-full py-3.5 rounded-full bg-[#0a0f29] text-white text-[14px] font-medium text-center hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                     >
+                       {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                       {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
+                     </button>
+                     {!pricingContext?.upgradesEnabled && !isPricingLoading && (
+                       <div className="absolute -bottom-6 left-0 right-0 flex justify-center">
+                         <p className="text-[11px] text-amber-600 font-medium">Subscriptions paused.</p>
+                       </div>
+                     )}
+                   </div>
                 </div>
-             </motion.div>
+             </div>
+
+             {/* ENTERPRISE PLAN (Standard Card) */}
+             <div className="w-full rounded-[24px] border border-slate-200 bg-white p-6 md:p-8 flex flex-col shadow-sm h-full">
+                <div className="flex flex-col min-h-[140px]">
+                  <h3 className="text-[20px] font-semibold text-slate-900">Enterprise</h3>
+                  <div className="flex items-baseline gap-1 mt-auto pb-4">
+                    <span className="text-[40px] md:text-5xl font-bold tracking-tight text-slate-900">Custom</span>
+                  </div>
+                  <p className="text-[13px] text-slate-500 min-h-[40px]">
+                    Customized interviews charged per bundle minutes limit.
+                  </p>
+                </div>
+                
+                <div className="h-px w-full bg-slate-100 mb-6 mt-4" />
+                
+                <div className="mb-4 text-[13px] font-semibold text-slate-400">Everything in Pro, plus:</div>
+                <div className="flex-1 space-y-4 mb-8">
+                  {enterpriseFeatures.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <Check className="w-[16px] h-[16px] text-[#0a0f29] shrink-0 mt-[2px]" strokeWidth={2.5} />
+                      <span className="text-[14px] text-slate-600 leading-tight">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-auto">
+                  <button 
+                    onClick={() => setIsSalesModalOpen(true)}
+                    className="w-full py-3.5 rounded-full border border-slate-200 text-slate-900 text-[14px] font-medium text-center hover:bg-slate-50 transition-colors"
+                  >
+                    Talk to Sales &rarr;
+                  </button>
+                </div>
+             </div>
 
           </div>
         </div>
       </main>
+
+      <TalkToSalesModal 
+        isOpen={isSalesModalOpen} 
+        onClose={() => setIsSalesModalOpen(false)} 
+      />
 
       <Footer />
     </div>

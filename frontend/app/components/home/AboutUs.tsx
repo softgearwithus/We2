@@ -28,13 +28,13 @@ export default function AboutUs() {
             Our Story
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-tight">
-            Built by engineers tired of failing interviews.
+            Built by engineers, for engineers.
           </h2>
           <p className="text-lg text-foreground/70 font-medium leading-relaxed">
-            We spent months grinding generic coding questions only to freeze when a real technical recruiter asked us to explain our architecture. We realized that coding skill doesn't equal interview skill.
+            We spent months sitting on both sides of the table—grinding generic coding questions as candidates, and wasting hours on basic technical screens as interviewers.
           </p>
           <p className="text-lg text-foreground/70 font-medium leading-relaxed">
-            Emble was built to fix this. We replaced generic text-based practice with a realistic, high-pressure vocal AI simulator. Fail in private, pass the real thing.
+            Emble was built to fix both. We replaced static resumes and scripted AI wrappers with an autonomous evaluator. Companies hire faster, and candidates get a realistic, objective chance to shine.
           </p>
           <div className="pt-4 flex items-center gap-4">
             <div className="h-px bg-border flex-1 max-w-[50px]"></div>
@@ -54,16 +54,18 @@ export default function AboutUs() {
 
           <div className="relative z-10 flex flex-col items-center">
             <h2 className="text-3xl lg:text-4xl font-[900] tracking-tight mb-4 leading-snug">
-              Your First Interview Practice Takes Just 5 Minutes.
+              Transform Your Hiring Pipeline Today.
             </h2>
             <p className="text-lg text-background/70 font-medium mb-8">
-              No credit card required. Start natively with eO today and see exactly where you stand.
+              No credit card required. Experience our autonomous evaluator eO in action and stop wasting engineering hours.
             </p>
-            <Button asChild size="lg" className="w-full sm:w-auto h-14 rounded-2xl bg-background text-foreground border border-primary px-8 text-[16px] font-bold hover:bg-background/90 hover:scale-[1.02] active:scale-95 shadow-xl transition-all">
-              <Link href="/dashboard">
-                Start Practicing Now
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <Button asChild size="lg" className="w-full sm:w-auto h-14 rounded-2xl bg-background text-foreground border border-primary px-8 text-[16px] font-bold hover:bg-background/90 hover:scale-[1.02] active:scale-95 shadow-xl transition-all">
+                <Link href="/register">
+                  Start Hiring Better
+                </Link>
+              </Button>
+            </div>
           </div>
         </motion.div>
 

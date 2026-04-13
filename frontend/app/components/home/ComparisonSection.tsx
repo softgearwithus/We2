@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 
 const comparisonData = [
-    { feature: "Interview Practice", typical: "Mocking with Peers", we2: "Dynamic AI Voice Interviews" },
-    { feature: "Test Preparation", typical: "Generic DSA Questions", we2: "100+ Company-Wise Test Series" },
-    { feature: "Feedback Loop", typical: "Wait Days for Reviews", we2: "Instant Granular AI Analytics" },
-    { feature: "Resume Building", typical: "Basic Document Templates", we2: "ATS-Optimized Auto-Builder" },
-    { feature: "Guidance", typical: "Expensive 1:1 Coaching", we2: "24/7 AI Support & Expert Access" },
+    { feature: "AI Technology", typical: "Basic Chatbots", we2: "Smart AI That Remembers Everything" },
+    { feature: "Conversation", typical: "Robotic & Scripted", we2: "Feels Like a Real Human Chat" },
+    { feature: "Grading Accuracy", typical: "Simple Keyword Search", we2: "99.9% Perfect Scoring" },
+    { feature: "Personalization", typical: "Same Questions for All", we2: "Custom Questions Based on Job details" },
+    { feature: "Fraud Detection", typical: "Easy to Cheat", we2: "Smart Anti-Cheat System" },
 ];
 
 export default function ComparisonSection() {
@@ -18,10 +18,10 @@ export default function ComparisonSection() {
             <div className="max-w-5xl mx-auto px-6">
                 <div className="text-center mb-14">
                     <h2 className="text-4xl font-bold text-foreground tracking-tight mb-4">
-                        The <span className="text-primary font-black">EMBLE Edge</span>
+                        Why We Are <span className="text-primary font-black">Better</span>
                     </h2>
                     <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
-                        Why traditional courses leave you "job-unready" and how we solve it.
+                        We aren't just another AI wrapper. We built an autonomous evaluator from the ground up with memory and emotional intelligence.
                     </p>
                 </div>
 
@@ -30,7 +30,7 @@ export default function ComparisonSection() {
                         <thead>
                             <tr className="bg-secondary/50">
                                 <th className="p-6 text-sm font-bold text-foreground/60 uppercase tracking-widest border-b border-border">Feature</th>
-                                <th className="p-6 text-sm font-bold text-foreground/60 uppercase tracking-widest border-b border-border">Typical Course</th>
+                                <th className="p-6 text-sm font-bold text-foreground/60 uppercase tracking-widest border-b border-border">Standard AI</th>
                                 <th className="p-6 text-sm font-bold text-primary uppercase tracking-widest border-b border-border bg-secondary">EMBLE Platform</th>
                             </tr>
                         </thead>
@@ -55,12 +55,12 @@ export default function ComparisonSection() {
 
                 <div className="mt-8 md:mt-12 p-6 bg-secondary rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="text-foreground font-medium text-center sm:text-left text-sm sm:text-base leading-relaxed">
-                        Students using EMBLE are <strong className="text-primary font-bold">3.5x more likely</strong> to pass technical screening due to our comprehensive Full Stack Preparation ecosystem.
+                        Teams using EMBLE complete hiring pipelines <strong className="text-primary font-bold">4x faster</strong>, filtering out noise with 99.9% shortlisting efficiency.
                     </div>
                     <Button asChild size="lg" className="whitespace-nowrap px-8 py-6 bg-foreground text-background rounded-xl font-bold text-[15px] hover:bg-background hover:text-foreground hover:border-primary border border-transparent transition-all shadow-xl active:scale-95">
-                      <Link href="/register">
-                        Start Now
-                      </Link>
+                        <Link href="/register">
+                            Start Now
+                        </Link>
                     </Button>
                 </div>
             </div>

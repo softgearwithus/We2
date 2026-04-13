@@ -96,7 +96,7 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
                   {customTitle} <span className="text-primary">{customTitleSpan}</span>
                 </>
               ) : (
-                "Practice Real Tech Interviews."
+                "Your AI Hiring Partner."
               )}
             </motion.h1>
 
@@ -107,7 +107,7 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
               className="max-w-[42rem] leading-relaxed text-foreground/80 text-[16px] sm:text-[18px] lg:text-[19px] sm:leading-8 font-medium"
             >
               {customSubDescription || (
-                <>Simulate tech interviews with <span className="font-bold text-[#6b7280] bg-[#eed9db] px-2.5 py-0.5 rounded-md mx-1">eO</span> or book a 1:1 interview with industry experts. Improve your resume score and practice <span className="whitespace-nowrap">company-specific tests</span>, all in one platform.</>
+                <>Your AI partner that interviews, evaluates, and shortlists only the candidates worth hiring. For candidates, simulate real technical interviews with <span className="font-bold text-[#6b7280] bg-[#eed9db] px-2.5 py-0.5 rounded-md mx-1">eO</span> and land your dream job.</>
               )}
             </motion.p>
 
@@ -117,15 +117,21 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
               transition={{ duration: 1, delay: 0.2, ease: "easeInOut" }}
               className="mt-6 sm:mt-8 flex flex-col items-start gap-4 w-full sm:w-auto"
             >
-              <Button asChild size="lg" className="relative h-14 px-8 sm:px-10 rounded-full font-bold text-base transition-all duration-500 hover:scale-[1.02] active:scale-95 group overflow-hidden bg-slate-900 text-white shadow-2xl hover:shadow-indigo-500/25 border border-slate-800">
-                <Link href="/dashboard" className="relative z-10 flex items-center justify-center w-full">
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
-                  <span className="relative z-10">Start Practicing Free</span>
-                  <ArrowRight className="relative z-10 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              </Button>
+              <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-4 flex-wrap">
+                <Button asChild size="lg" className="relative h-14 px-8 sm:px-10 rounded-full font-bold text-base transition-all duration-500 hover:scale-[1.02] active:scale-95 group bg-[#0a0f29] text-white shadow-2xl hover:bg-[#556B2F] hover:shadow-[#556B2F]/25 border border-[#0a0f29] hover:border-[#556B2F] w-full sm:w-auto">
+                  <Link href="/register" className="relative z-10 flex items-center justify-center w-full">
+                    <span className="relative z-10">Start Hiring Better</span>
+                    <ArrowRight className="relative z-10 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="relative h-14 px-8 sm:px-10 rounded-full font-bold text-base transition-all duration-500 hover:scale-[1.02] active:scale-95 group border-2 border-slate-200 bg-white text-slate-900 hover:bg-slate-50 hover:border-slate-300 shadow-sm w-full sm:w-auto">
+                  <Link href="/dashboard" className="relative z-10 flex items-center justify-center w-full">
+                    <span className="relative z-10">Practice as Candidate</span>
+                  </Link>
+                </Button>
+              </div>
               <p className="text-[13px] font-medium text-slate-500 pl-4 flex items-center gap-2">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-500"></span> Includes eO & 1:1 human interviews
+                <span className="flex h-2 w-2 rounded-full bg-[#556B2F]"></span> Includes eO evaluate & exact simulations
               </p>
             </motion.div>
           </div>
@@ -146,84 +152,7 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
               <div className="w-[2px] h-6 bg-gradient-to-b from-primary to-primary/20" />
             </div>
 
-            {/* Ultra-Premium Glassmorphic Annotation */}
-            <div className="hidden lg:block absolute -top-[120px] xl:-top-[130px] left-[5%] xl:-left-[5%] z-50 pointer-events-none">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  opacity: { duration: 0.8, delay: 1.5 },
-                  scale: { duration: 0.8, delay: 1.5, type: "spring" }
-                }}
-                className="relative"
-              >
-                <div className="max-w-[220px] xl:max-w-[240px] relative group/message">
-                  <Message from="assistant" className="relative shadow-sm border border-slate-200 rounded-2xl bg-white/95 backdrop-blur-xl overflow-hidden">
-                    {/* Glass shine overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-white/0 pointer-events-none" />
-
-                    <MessageContent className="p-4 bg-transparent border-none shadow-none flex flex-col gap-1.5 w-full">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center justify-center relative w-4 h-4 rounded-full bg-emerald-100">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                          </div>
-                          <span className="font-bold text-[11px] text-indigo-500 uppercase tracking-widest">eO Says </span>
-                        </div>
-                      </div>
-                      <div className="text-[12.5px] leading-snug text-slate-700 bg-transparent text-left break-words w-full">
-                        <span className="text-slate-500 font-medium">I have perfect memory.</span><br />
-                        <span className="font-semibold text-slate-800">Yes, I am your personal interviewer.</span>
-                      </div>
-                    </MessageContent>
-                  </Message>
-                </div>
-
-                {/* Flowing animated dash connection line */}
-                <svg className="absolute -bottom-[35px] left-[50%] w-[50px] h-[40px] overflow-visible pointer-events-none" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Stable background dashed path */}
-                  <motion.path
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ delay: 2.2, duration: 1, ease: "easeInOut" }}
-                    d="M 0 0 Q 15 25, 30 35"
-                    stroke="url(#line-glow)"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeDasharray="5 5"
-                    opacity="0.3"
-                  />
-                  {/* Animated flowing dashed overlay */}
-                  <motion.path
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, strokeDashoffset: [10, 0] }}
-                    transition={{
-                      opacity: { delay: 2.2, duration: 1 },
-                      strokeDashoffset: { repeat: Infinity, duration: 1, ease: "linear" }
-                    }}
-                    d="M 0 0 Q 15 25, 30 35"
-                    stroke="url(#line-glow)"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeDasharray="5 5"
-                  />
-                  {/* Elegant arrowhead pointing to the card */}
-                  <motion.path
-                    initial={{ opacity: 0, y: -3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 2.8, duration: 0.3 }}
-                    d="M 30 38 L 24 28 L 36 30 Z"
-                    fill="#8b5cf6"
-                  />
-                  <defs>
-                    <linearGradient id="line-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#8b5cf6" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </motion.div>
-            </div>
+            {/* Removed Glassmorphic Annotation per request */}
 
             <div className="w-full max-w-[320px] aspect-[4/5] bg-background/50 backdrop-blur-md border border-border rounded-2xl shadow-xl overflow-hidden relative flex flex-col p-6 items-center justify-between group-hover:border-primary/30 group-hover:shadow-primary/10 transition-all duration-500">
 
@@ -364,14 +293,14 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
         {/* Company Logos Strip */}
         <div className="w-full relative z-20 mt-20 sm:mt-28 pb-4 overflow-hidden text-center opacity-0 animate-[fadeIn_1s_ease-in-out_1s_forwards]">
           <p className="text-[14px] sm:text-[15px] text-foreground/50 font-medium tracking-wide mb-8 sm:mb-10">
-            Featuring targeted test series for <span className="font-bold text-foreground/70">100+ top companies</span>
+            Simulating hundreds of <span className="font-bold text-foreground/70">companies' interviews</span>
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-10 sm:gap-x-16 max-w-5xl mx-auto opacity-70 grayscale hover:grayscale-0 transition-all duration-700">
             {[
-              "accenture.png", "adobe.png", "capegemini.png", "cisco.jpg", "cognizant.png", 
+              "accenture.png", "adobe.png", "capegemini.png", "cisco.jpg", "cognizant.png",
               "oracle.png", "salesforce.png", "samsung.png", "tcs.png", "zoho.png"
             ].map((logo, idx) => (
-              <img 
+              <img
                 key={idx}
                 src={`/companies/${logo}`}
                 alt="Company Logo"

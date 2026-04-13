@@ -8,38 +8,38 @@ import PremiumPopup from './components/shared/PremiumPopup';
 import './lib/api-config';
 import './globals.css';
 
-const plusJakartaSans = Plus_Jakarta_Sans({ 
-  subsets: ['latin'], 
-  display: 'swap', 
-  variable: '--font-sans' 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans'
 });
 
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ['latin'], 
-  display: 'swap', 
-  variable: '--font-mono' 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono'
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://emble.in'),
   title: {
-    default: "EMBLE | Top Trending Interview Preparation & Internship Platform",
-    template: '%s | EMBLE'
+    default: "Emble | The #1 AI Interview Platform for Hiring & Preparation",
+    template: '%s | Emble'
   },
-  description: 'Join EMBLE, the top trending platform for computer science interview preparation and practice. Master DSA, crack technical interviews, and gain real-world experience through advanced Job Simulations and AI Mock Interviews.',
-  keywords: ['Computer Science Interview Preparation', 'CS Interview Practice', 'Top Trending Preparation Platform', 'Best Coding Bootcamp', 'Job Simulation Provider', 'Crack FAANG Interviews', 'DSA Preparation', 'Software Engineering Internship', 'AI Mock Interviews', 'System Design Training', 'EMBLE'],
+  description: 'Experience the #1 AI interview platform. Emble helps top companies evaluate engineers instantly with eO, while giving candidates realistic AI mock interviews to crack technical rounds.',
+  keywords: ['#1 AI Interview Platform', 'AI Mock Interviews', 'Technical Interview Evaluation', 'Developer Evaluation Tool', 'Hire Engineers Fast', 'Crack Technical Interviews', 'eO Evaluation', 'Coding Interview Practice', 'Emble'],
   authors: [{ name: 'EMBLE' }],
   openGraph: {
-    title: "EMBLE | Top Trending Tech Preparation & Job Simulation Platform",
-    description: 'Transform your coding career with real-world simulations and AI-powered mentorship. The ultimate shortcut to high-paying tech jobs.',
+    title: "Emble | #1 AI Interview Platform",
+    description: 'The #1 AI interview platform for engineering teams to evaluate talent, and for developers to master technical interviews through AI simulation.',
     url: 'https://emble.in',
-    siteName: 'EMBLE',
+    siteName: 'Emble',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'EMBLE - Top Trending Tech Preparation Platform',
+        alt: 'Emble - #1 AI Interview Platform',
       },
     ],
     locale: 'en_IN',
@@ -47,18 +47,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "EMBLE | Top Trending Interview Preparation Platform",
-    description: 'Master coding interviews and land top tech jobs with EMBLE Job Simulations.',
+    title: "Emble | #1 AI Interview Platform",
+    description: 'The #1 AI interview platform. Evaluate talent instantly or practice for your next big tech interview.',
     images: ['/twitter-image.jpg'],
-  },
-  icons: {
-    icon: '/icon.png',
-    shortcut: '/icon.png',
-    apple: '/icon.png',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/icon.png',
-    },
   },
   robots: {
     index: true,

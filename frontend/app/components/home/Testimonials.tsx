@@ -117,11 +117,11 @@ const Card = ({ t }: { t: typeof testimonials[0] }) => (
                         {t.role} @ <span className="text-slate-700 font-semibold">{t.college}</span>
                     </span>
                 </div>
-                
+
                 <MessageContent className="text-slate-600 text-[14px] leading-relaxed mb-4 group-[.is-assistant]:text-slate-600">
                     "{t.text}"
                 </MessageContent>
-                
+
                 <div className="flex items-center justify-between mt-auto pt-3 border-t border-slate-100">
                     <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
@@ -161,7 +161,7 @@ export default function Testimonials() {
             {/* Platform Impact Stats Strip */}
             <div className="max-w-5xl mx-auto px-6 mb-20 relative z-10">
                 <div className="bg-card border border-border shadow-sm rounded-3xl p-5 md:p-8 grid grid-cols-2 md:flex md:flex-row items-center justify-between md:divide-x divide-border gap-y-6 md:gap-0">
-                    
+
                     <div className="flex flex-col items-center justify-center w-full md:w-1/4">
                         <span className="text-3xl md:text-5xl font-black text-foreground flex items-center gap-1.5">4.3 <Star className="w-5 h-5 md:w-10 md:h-10 text-amber-400 fill-amber-400 -mt-1" /></span>
                         <span className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1.5 text-center">Average Rating</span>
@@ -192,7 +192,7 @@ export default function Testimonials() {
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Live Community Feedback</span>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {testimonials.slice(0, 2).map((t, i) => {
                         const uniqueKey = `${t.name.replace(/\s+/g, '-')}-${i}`;
@@ -201,13 +201,13 @@ export default function Testimonials() {
                 </div>
 
                 <div className="mt-12 text-center">
-                    <a 
+                    <a
                         href="/reviews"
                         className="inline-flex items-center justify-center bg-card border border-border text-foreground hover:bg-secondary/50 px-8 py-3 rounded-full font-bold text-sm tracking-widest uppercase transition-all shadow-sm gap-2"
                     >
                         Read all success stories
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </a>
                 </div>
