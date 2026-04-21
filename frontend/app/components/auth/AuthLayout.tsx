@@ -12,38 +12,36 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children, title, subtitle, role }: AuthLayoutProps) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50 selection:bg-brand-orange selection:text-white relative overflow-hidden">
-            {/* Ambient Background Elements */}
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#f8f9fa] selection:bg-[#ffa116] selection:text-[#202b20] relative overflow-hidden font-inter">
+            {/* Minimal Grid Background */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-full max-w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-[120px] -mr-64 -mt-64" />
-                <div className="absolute bottom-0 left-0 w-full max-w-[800px] h-[800px] bg-slate-500/5 rounded-full blur-[120px] -ml-64 -mb-64" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `radial-gradient(circle at 1px 1px, black 1px, transparent 0)`,
-                    backgroundSize: '32px 32px'
+                    backgroundImage: `linear-gradient(to right, #202b20 1px, transparent 1px), linear-gradient(to bottom, #202b20 1px, transparent 1px)`,
+                    backgroundSize: '40px 40px'
                 }} />
             </div>
 
             <div className="relative z-10 w-full max-w-md animate-fade-in-up">
                 {/* Logo Area */}
                 <div className="flex justify-center mb-8">
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <span className="font-black text-3xl text-brand-black tracking-tight">EMBLE</span>
+                    <Link href="/" className="flex items-center gap-3 group px-6 py-2 border-2 border-[#202b20] bg-white shadow-[4px_4px_0px_0px_#202b20] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#202b20] transition-all">
+                        <span className="font-[800] text-3xl text-[#202b20] tracking-tighter">emble</span>
                     </Link>
                 </div>
                 
                 {/* Centered Card */}
-                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 sm:p-10 relative overflow-hidden">
-                    {/* Subtle top border gradient for role differentiation */}
-                    <div className={`absolute top-0 left-0 w-full h-1 ${
-                        role === 'student' ? 'bg-gradient-to-r from-violet-500 to-indigo-500' :
-                        role === 'college' ? 'bg-gradient-to-r from-teal-500 to-emerald-500' :
-                        role === 'industry' ? 'bg-gradient-to-r from-slate-800 to-black' :
-                        'bg-gradient-to-r from-green-500 to-green-700'
+                <div className="bg-white border-2 border-[#202b20] shadow-[8px_8px_0px_0px_#202b20] p-8 sm:p-10 relative overflow-hidden">
+                    {/* Role Indicator Bar */}
+                    <div className={`absolute top-0 left-0 w-full h-2 border-b-2 border-[#202b20] ${
+                        role === 'student' ? 'bg-[#ffa116]' :
+                        role === 'college' ? 'bg-emerald-400' :
+                        role === 'industry' ? 'bg-[#202b20]' :
+                        'bg-blue-400'
                     }`} />
                     
-                    <div className="text-center mb-8">
-                        <h1 className="text-2xl font-black text-brand-black mb-2 tracking-tight">{title}</h1>
-                        <p className="text-sm text-slate-500 font-medium leading-relaxed">{subtitle}</p>
+                    <div className="text-center mb-8 mt-2">
+                        <h1 className="text-2xl font-[700] text-[#202b20] mb-2 tracking-tight uppercase">{title}</h1>
+                        <p className="text-sm text-[#202b20]/70 font-[500] leading-relaxed">{subtitle}</p>
                     </div>
 
                     <div className="mt-8">
@@ -54,16 +52,16 @@ export default function AuthLayout({ children, title, subtitle, role }: AuthLayo
                 <div className="mt-8 text-center flex items-center justify-center gap-4">
                     <Link
                         href="/login"
-                        className="text-sm font-semibold text-slate-500 hover:text-brand-orange transition-colors"
+                        className="text-sm font-[600] text-[#202b20] hover:bg-[#ffa116] px-2 py-1 border-2 border-transparent hover:border-[#202b20] transition-colors"
                     >
-                        ← Portal Selection
+                        ← PORTAL
                     </Link>
-                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <span className="w-1.5 h-1.5 bg-[#202b20]" />
                     <Link
                         href="/"
-                        className="text-sm font-semibold text-slate-500 hover:text-brand-orange transition-colors"
+                        className="text-sm font-[600] text-[#202b20] hover:bg-[#ffa116] px-2 py-1 border-2 border-transparent hover:border-[#202b20] transition-colors"
                     >
-                        Home
+                        HOME
                     </Link>
                 </div>
             </div>

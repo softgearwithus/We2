@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import { JsonLd } from '../seo/JsonLd';
 
 const faqsData = {
   "General": [
@@ -64,28 +65,42 @@ export default function FAQSection() {
   const [activeTab, setActiveTab] = useState<Category>("General");
   const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": Object.values(faqsData).flat().map((faq) => ({
+      "@type": "Question",
+      "name": faq.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.a
+      }
+    }))
+  };
+
   return (
-    <section className="py-16 md:py-24 bg-background relative overflow-hidden" id="faq">
+    <section className="py-16 md:py-24 bg-[#efeff1] relative overflow-hidden" id="faq">
+      <JsonLd data={faqSchema} />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
           
           {/* Left Side: Headings & CTA */}
           <div className="lg:col-span-5 flex flex-col items-start pt-4">
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-primary text-foreground mb-6 bg-white shadow-sm">
+            <span className="inline-block px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold uppercase tracking-wider text-[#202b20] mb-6 bg-[#ffa116] shadow-[4px_4px_0_0_#202b20]">
               FAQs
             </span>
-            <h2 className="text-4xl md:text-5xl lg:text-5xl font-medium text-foreground tracking-tight mb-6 leading-tight">
-              Everything you need to know
+            <h2 className="text-[3rem] md:text-[4.5rem] font-[800] text-[#202b20] tracking-tighter mb-6 leading-none">
+              Everything you <span className="text-white bg-[#202b20] px-3 shadow-[4px_4px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">need</span> to know
             </h2>
-            <p className="text-lg text-foreground/70 leading-relaxed mb-16 max-w-md">
+            <p className="text-lg text-[#202b20]/70 leading-relaxed mb-16 max-w-md">
               Explore helpful information about our AI interviews, practice drills, and the free tools available to supercharge your hiring potential.
             </p>
 
-            <div className="bg-white p-8 border border-primary rounded-2xl w-full max-w-sm shadow-sm">
-              <h3 className="text-xl font-medium text-foreground mb-6">
+            <div className="bg-[#ffa116] p-8 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] rounded-none w-full max-w-sm">
+              <h3 className="text-xl font-bold uppercase tracking-wide text-[#202b20] mb-6">
                 Still have questions? Our team is ready to assist.
               </h3>
-              <Button asChild className="rounded-xl px-6 py-5 bg-background text-foreground border border-primary font-bold shadow-md hover:scale-105 active:scale-95 transition-transform w-full sm:w-auto">
+              <Button asChild className="rounded-none px-6 py-5 bg-white text-[#202b20] border-2 border-[#202b20] font-bold shadow-[4px_4px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] hover:bg-slate-50 transition-all w-full sm:w-auto">
                 <Link href="/contact">
                   Contact Support
                 </Link>
@@ -97,7 +112,7 @@ export default function FAQSection() {
           <div className="lg:col-span-7">
             
             {/* Tabs */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border border-border rounded-xl w-max max-w-full overflow-x-auto shadow-sm">
+            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border-2 border-[#202b20] rounded-none w-max max-w-full overflow-x-auto shadow-[4px_4px_0_0_#202b20]">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -105,10 +120,10 @@ export default function FAQSection() {
                     setActiveTab(cat);
                     setOpenIndex(0); // Reset accordion on tab change
                   }}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-5 py-2.5 rounded-none text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                     activeTab === cat 
-                      ? 'bg-slate-50 border border-primary text-foreground shadow-sm' 
-                      : 'text-foreground/60 hover:text-foreground hover:bg-slate-50'
+                      ? 'bg-[#202b20] text-white border-2 border-[#202b20]' 
+                      : 'text-[#202b20]/60 hover:text-[#202b20] hover:bg-slate-50 border-2 border-transparent'
                   }`}
                 >
                   {cat}
@@ -129,18 +144,18 @@ export default function FAQSection() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
-                      className={`border rounded-2xl transition-colors duration-300 ${isOpen ? 'bg-slate-50 border-primary shadow-sm' : 'bg-transparent border-border hover:border-primary/50'}`}
+                      className={`border-2 rounded-none transition-all duration-300 ${isOpen ? 'bg-white border-[#202b20] shadow-[4px_4px_0_0_#202b20]' : 'bg-white/50 border-[#202b20]/20 hover:border-[#202b20] hover:shadow-[4px_4px_0_0_#ffa116]'}`}
                     >
                       <button
                         onClick={() => setOpenIndex(isOpen ? null : index)}
                         className="w-full text-left px-6 py-5 flex items-center justify-between group"
                       >
-                        <span className={`text-lg font-medium pr-8 transition-colors ${isOpen ? 'text-foreground' : 'text-foreground/80 group-hover:text-foreground'}`}>
+                        <span className={`text-lg font-bold pr-8 transition-colors ${isOpen ? 'text-[#202b20]' : 'text-[#202b20]/70 group-hover:text-[#202b20]'}`}>
                           {faq.q}
                         </span>
-                        <div className={`p-1.5 rounded-full transition-colors flex-shrink-0 ${isOpen ? 'bg-white border border-primary text-foreground' : 'text-foreground/40 group-hover:bg-slate-50 border border-transparent group-hover:text-foreground/80'}`}>
+                        <div className={`p-1.5 rounded-none transition-colors border-2 flex-shrink-0 ${isOpen ? 'bg-[#ffa116] border-[#202b20] text-[#202b20] shadow-[2px_2px_0_0_#202b20]' : 'text-[#202b20]/40 group-hover:bg-[#ffa116] border-transparent group-hover:border-[#202b20] group-hover:shadow-[2px_2px_0_0_#202b20] group-hover:text-[#202b20]'}`}>
                           <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                            <ChevronDown className="w-5 h-5 text-primary" />
+                            <ChevronDown className="w-5 h-5 text-current" />
                           </motion.div>
                         </div>
                       </button>
@@ -154,7 +169,7 @@ export default function FAQSection() {
                             transition={{ duration: 0.3, ease: 'easeInOut' }}
                             className="overflow-hidden"
                           >
-                            <div className="px-6 pb-6 text-foreground/70 leading-relaxed pt-2 border-t border-border mt-2">
+                            <div className="px-6 pb-6 text-[#202b20]/80 font-[500] leading-relaxed pt-2 border-t-2 border-[#202b20]/10 mt-2">
                               {faq.a}
                             </div>
                           </motion.div>

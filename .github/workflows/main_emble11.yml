@@ -7,6 +7,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'
+      - 'dataset.json'
+      - 'sql_dataset.json'
+      - '.github/workflows/main_emble11.yml'
   workflow_dispatch:
 
 jobs:

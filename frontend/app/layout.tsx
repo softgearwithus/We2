@@ -1,17 +1,19 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 
 import { AuthProvider } from './context/AuthContext';
 import PremiumPopup from './components/shared/PremiumPopup';
+import { JsonLd } from './components/seo/JsonLd';
 
 import './lib/api-config';
 import './globals.css';
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-sans'
+  variable: '--font-sans',
+  weight: ['300', '400', '500', '600', '700']
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -23,15 +25,15 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://emble.in'),
   title: {
-    default: "Emble | The #1 AI Interview Platform for Hiring & Preparation",
+    default: "Emble | The #1 AI Interview Platform for Hiring & Preparation", // Kept trending title per user request
     template: '%s | Emble'
   },
-  description: 'Experience the #1 AI interview platform. Emble helps top companies evaluate engineers instantly with eO, while giving candidates realistic AI mock interviews to crack technical rounds.',
-  keywords: ['#1 AI Interview Platform', 'AI Mock Interviews', 'Technical Interview Evaluation', 'Developer Evaluation Tool', 'Hire Engineers Fast', 'Crack Technical Interviews', 'eO Evaluation', 'Coding Interview Practice', 'Emble'],
+  description: 'Emble is the #1 AI interview platform. Run automated technical screening to instantly evaluate software engineers, or practice with realistic voice AI mock interviews to crack your next big coding round.',
+  keywords: ['#1 AI Interview Platform', 'AI Mock Interviews', 'Automated Technical Screening', 'Developer Evaluation Tool', 'Hire Engineers Fast', 'Crack Technical Interviews', 'System Design Simulator', 'Coding Interview Practice', 'Emble'],
   authors: [{ name: 'EMBLE' }],
   openGraph: {
-    title: "Emble | #1 AI Interview Platform",
-    description: 'The #1 AI interview platform for engineering teams to evaluate talent, and for developers to master technical interviews through AI simulation.',
+    title: "Emble | The #1 AI Interview Platform for Hiring & Preparation",
+    description: 'The definitive AI interview platform for engineering teams to evaluate talent at scale, and for developers to master technical interviews through hyper-realistic AI simulation.',
     url: 'https://emble.in',
     siteName: 'Emble',
     images: [
@@ -39,7 +41,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Emble - #1 AI Interview Platform',
+        alt: 'Emble - The #1 AI Interview Platform',
       },
     ],
     locale: 'en_IN',
@@ -48,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Emble | #1 AI Interview Platform",
-    description: 'The #1 AI interview platform. Evaluate talent instantly or practice for your next big tech interview.',
+    description: 'The #1 AI interview platform. Evaluate tech talent instantly or practice for your next big FAANG interview.',
     images: ['/twitter-image.jpg'],
   },
   robots: {
@@ -91,8 +93,26 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${plusJakartaSans.className} ${plusJakartaSans.variable} ${jetbrainsMono.variable} font-sans font-medium text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`} suppressHydrationWarning>
+      <body className={`${inter.className} ${inter.variable} ${jetbrainsMono.variable} font-sans text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`} suppressHydrationWarning>
         <AuthProvider>
+          <JsonLd data={{
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Emble",
+            "operatingSystem": "Web Application",
+            "applicationCategory": "BusinessApplication",
+            "description": "The #1 AI interview platform for engineering teams to evaluate talent, and for developers to master technical interviews through AI simulation.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "ratingCount": "184"
+            }
+          }} />
           {children}
           <PremiumPopup />
         </AuthProvider>

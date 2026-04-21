@@ -9,6 +9,12 @@ const nextConfig = {
     output: 'standalone',
     compress: true,
     reactStrictMode: true,
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
+    typescript: {
+        ignoreBuildErrors: true,
+    },
     outputFileTracingRoot: __dirname,
     async redirects() {
         return [

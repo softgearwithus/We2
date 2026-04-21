@@ -43,6 +43,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: pageData.subDescription,
       url: `https://emble.in/services/${slug}`,
       siteName: 'Emble',
+      images: [
+        {
+          url: `/api/og?slug=${slug}`,
+          width: 1200,
+          height: 630,
+          alt: pageData.title,
+        },
+      ],
       type: 'website',
     },
   };

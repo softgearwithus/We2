@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { JsonLd } from '../seo/JsonLd';
 
 interface FAQ {
   question: string;
@@ -17,8 +18,22 @@ interface ProgrammaticFAQProps {
 export default function ProgrammaticFAQ({ competitorName, faqs }: ProgrammaticFAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
+      <JsonLd data={faqSchema} />
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-[44px] font-[1000] text-[#1a2b3b] tracking-tight mb-5">

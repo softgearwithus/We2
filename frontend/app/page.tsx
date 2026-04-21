@@ -4,13 +4,16 @@ import AudioPlayerMessage from './components/home/AudioPlayerMessage';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import FeatureShowcase from './components/home/FeatureShowcase';
-import Testimonials from './components/home/Testimonials';
-import ComparisonSection from './components/home/ComparisonSection';
-import AboutUs from './components/home/AboutUs';
-import CoreToolsShowcase from './components/home/CoreToolsShowcase';
-import ProblemSection from './components/home/ProblemSection';
-import HowItWorks from './components/home/HowItWorks';
-import TargetUsers from './components/home/TargetUsers';
+import dynamic from 'next/dynamic';
+
+const Testimonials = dynamic(() => import('./components/home/Testimonials'));
+const ComparisonSection = dynamic(() => import('./components/home/ComparisonSection'));
+const AboutUs = dynamic(() => import('./components/home/AboutUs'));
+const CoreToolsShowcase = dynamic(() => import('./components/home/CoreToolsShowcase'));
+const ProblemSection = dynamic(() => import('./components/home/ProblemSection'));
+const HowItWorks = dynamic(() => import('./components/home/HowItWorks'));
+const TargetUsers = dynamic(() => import('./components/home/TargetUsers'));
+const CursorGrainyCloud = dynamic(() => import('./components/shared/CursorGrainyCloud'));
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -22,17 +25,21 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-foreground relative overflow-x-hidden">
-      {/* Absolute Dotted Background Layer */}
+      <CursorGrainyCloud />
+      {/* Architectural Grid Background Layer */}
       <div
         className="absolute inset-0 pointer-events-none z-0"
         style={{
-          backgroundImage: 'radial-gradient(hsl(var(--primary) / 0.15) 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
+          backgroundImage: `
+            linear-gradient(to right, #202b2015 1px, transparent 1px),
+            linear-gradient(to bottom, #202b2015 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
         }}
       />
       <Navbar />
 
-      <div className="relative z-10 flex flex-col">
+      <div className="relative z-10 flex flex-col w-full pb-16">
         <Hero />
         <ProblemSection />
         <HowItWorks />

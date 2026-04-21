@@ -2,18 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Instrument_Serif } from "next/font/google";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "motion/react";
 import Link from 'next/link';
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, GripHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SpeechInput } from "@/components/ai-elements/speech-input";
-import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
-import ParticlesBackground from '../ui/ParticlesBackground';
-
-const waveformHeights = [
-  0.2, 0.4, 0.3, 0.5, 0.8, 1.0, 0.7, 0.4, 0.6, 0.9, 0.8, 0.6, 0.4, 0.3, 0.5, 0.7,
-  0.6, 0.8, 1.0, 0.9, 0.5, 0.3, 0.4, 0.6, 0.8
-];
 
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
@@ -31,6 +23,9 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
   const [sessionState, setSessionState] = useState<"idle" | "connecting" | "active">("idle");
   const [time, setTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const dragX = useMotionValue(0);
+  const dragY = useMotionValue(0);
 
   // Timer for active session
   useEffect(() => {
@@ -75,8 +70,7 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
   };
 
   return (
-    <section className="bg-background text-foreground min-h-[85vh] flex items-center pt-36 pb-10 md:pt-44 lg:pt-48 md:pb-12 overflow-hidden relative">
-      <ParticlesBackground />
+    <section className="bg-transparent text-[#202b20] min-h-[85vh] flex items-center pt-32 pb-8 md:pt-40 lg:pt-48 overflow-hidden relative">
       <audio ref={audioRef} src="/preview-e01.mp3" preload="auto" />
       <div className="container mx-auto px-6 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center max-w-7xl mx-auto">
@@ -84,19 +78,19 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
           {/* Left Content */}
           <div className="relative flex flex-col items-start text-left sm:gap-8 gap-6 z-20">
 
-
+            {/* Apple Thin Typography on Neo-Brutalism */}
             <motion.h1
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeInOut" }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-foreground"
+              className="text-[3rem] sm:text-[4rem] md:text-[5rem] lg:text-[5.5rem] font-[300] leading-[1.05] tracking-tighter text-[#202b20]"
             >
               {customTitle ? (
                 <>
-                  {customTitle} <span className="text-primary">{customTitleSpan}</span>
+                  {customTitle} <span className="inline-block bg-[#ffa116] text-[#202b20] px-4 py-1 sm:py-2 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] mt-2 tracking-tight">{customTitleSpan}</span>
                 </>
               ) : (
-                "Your AI Hiring Partner."
+                <>Intelligent layer <br className="hidden lg:block" />for <span className="inline-block bg-[#ffa116] text-[#202b20] px-4 py-1 sm:py-2 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] mt-2 sm:mt-4 lg:ml-2 tracking-tight">interviews.</span></>
               )}
             </motion.h1>
 
@@ -104,10 +98,10 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.1, ease: "easeInOut" }}
-              className="max-w-[42rem] leading-relaxed text-foreground/80 text-[16px] sm:text-[18px] lg:text-[19px] sm:leading-8 font-medium"
+              className="max-w-[42rem] mt-2 leading-relaxed text-[#202b20]/80 text-[18px] sm:text-[20px] lg:text-[22px] font-[400]"
             >
               {customSubDescription || (
-                <>Your AI partner that interviews, evaluates, and shortlists only the candidates worth hiring. For candidates, simulate real technical interviews with <span className="font-bold text-[#6b7280] bg-[#eed9db] px-2.5 py-0.5 rounded-md mx-1">eO</span> and land your dream job.</>
+                <>Experience the most powerful intelligent Interviewer. Automate technical screening, get deep candidate insights, and hire top talent effortlessly.</>
               )}
             </motion.p>
 
@@ -117,174 +111,196 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
               transition={{ duration: 1, delay: 0.2, ease: "easeInOut" }}
               className="mt-6 sm:mt-8 flex flex-col items-start gap-4 w-full sm:w-auto"
             >
-              <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-4 flex-wrap">
-                <Button asChild size="lg" className="relative h-14 px-8 sm:px-10 rounded-full font-bold text-base transition-all duration-500 hover:scale-[1.02] active:scale-95 group bg-[#0a0f29] text-white shadow-2xl hover:bg-[#556B2F] hover:shadow-[#556B2F]/25 border border-[#0a0f29] hover:border-[#556B2F] w-full sm:w-auto">
+              {/* Tavus Buttons Restored */}
+              <div className="flex flex-col sm:flex-row w-full gap-4">
+                <Button asChild size="lg" className="relative h-14 sm:h-16 px-8 sm:px-10 rounded-none font-bold text-base sm:text-lg transition-transform duration-200 hover:-translate-y-1 active:translate-y-[2px] active:shadow-none group bg-[#ffa116] text-[#202b20] shadow-[4px_4px_0_0_#202b20] hover:bg-[#ff9100] border-2 border-[#202b20] w-full sm:w-auto">
                   <Link href="/register" className="relative z-10 flex items-center justify-center w-full">
                     <span className="relative z-10">Start Hiring Better</span>
-                    <ArrowRight className="relative z-10 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                    <ArrowRight className="relative z-10 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="relative h-14 px-8 sm:px-10 rounded-full font-bold text-base transition-all duration-500 hover:scale-[1.02] active:scale-95 group border-2 border-slate-200 bg-white text-slate-900 hover:bg-slate-50 hover:border-slate-300 shadow-sm w-full sm:w-auto">
+                <Button asChild variant="outline" size="lg" className="relative h-14 sm:h-16 px-8 sm:px-10 rounded-none font-bold text-base sm:text-lg transition-transform duration-200 hover:-translate-y-1 active:translate-y-[2px] active:shadow-none group border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#202b20] hover:text-white shadow-[4px_4px_0_0_#202b20] w-full sm:w-auto">
                   <Link href="/dashboard" className="relative z-10 flex items-center justify-center w-full">
                     <span className="relative z-10">Practice as Candidate</span>
                   </Link>
                 </Button>
               </div>
-              <p className="text-[13px] font-medium text-slate-500 pl-4 flex items-center gap-2">
+              <p className="text-[13px] font-medium text-slate-500 pl-4 flex items-center gap-2 mt-2">
                 <span className="flex h-2 w-2 rounded-full bg-[#556B2F]"></span> Includes eO evaluate & exact simulations
               </p>
             </motion.div>
           </div>
 
-          {/* Right Content - Hanging Voice Section */}
+          {/* Right Content - Hanging Voice Section Restored Tavus Style */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.3, ease: "easeInOut" }}
-            whileHover={{ y: -4 }}
             className="w-full flex-1 flex flex-col items-center justify-center relative z-20 group cursor-pointer lg:mt-0 mt-8"
           >
-            {/* Hanging Stitch Effect */}
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex flex-col items-center z-30">
-              <div className="w-3 h-3 rounded-full bg-primary shadow flex items-center justify-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-background" />
+            {/* Unified wrapper for rope coordinate calculation */}
+            <div className="relative flex flex-col items-center w-full max-w-[320px]">
+
+              {/* Brutalist Hanging Wire Anchor Box */}
+              <div className="w-6 h-6 border-2 border-[#202b20] bg-white rounded-none flex items-center justify-center shadow-[4px_4px_0_0_#202b20] relative z-30">
+                <div className="w-2 h-2 rounded-none bg-[#202b20]" />
               </div>
-              <div className="w-[2px] h-6 bg-gradient-to-b from-primary to-primary/20" />
-            </div>
 
-            {/* Removed Glassmorphic Annotation per request */}
+              {/* Dynamic SVG Stretchable Rope */}
+              <svg className="absolute top-[12px] left-1/2 overflow-visible pointer-events-none z-10" style={{ width: 2, height: 2 }}>
+                <motion.line
+                  x1={0} y1={0}
+                  x2={dragX} y2={useTransform(dragY, y => y + 52)}
+                  stroke="#202b20"
+                  strokeWidth="8"
+                />
+              </svg>
 
-            <div className="w-full max-w-[320px] aspect-[4/5] bg-background/50 backdrop-blur-md border border-border rounded-2xl shadow-xl overflow-hidden relative flex flex-col p-6 items-center justify-between group-hover:border-primary/30 group-hover:shadow-primary/10 transition-all duration-500">
+              <motion.div
+                style={{ x: dragX, y: dragY, marginTop: "40px" }}
+                drag
+                dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                dragElastic={0.6}
+                whileDrag={{ scale: 1.05, rotate: 2, cursor: "grabbing" }}
+                whileHover={{ cursor: "grab" }}
+                className="w-full aspect-[4/5] bg-white border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] rounded-none overflow-hidden relative flex flex-col p-6 items-center justify-between z-40"
+              >
 
-              <AnimatePresence mode="wait">
-                {/* IDLE STATE */}
-                {sessionState === "idle" && (
-                  <motion.div
-                    key="idle"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-col items-center w-full h-full justify-between py-2"
-                  >
-                    {/* Header Text */}
-                    <div className="text-center space-y-3 pt-2">
-                      <h3 className="text-[22px] font-medium text-foreground tracking-tight">Preview eO</h3>
-                      <p className={`${instrumentSerif.className} text-[16px] text-foreground/60 leading-snug`}>
-                        our first most expressive<br />interview model
-                      </p>
-                      <p className="text-[14px] font-bold text-foreground/70 tracking-wide pt-2">
-                        I have a voice
-                      </p>
-                    </div>
+                {/* Drag Handle Indicator */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center justify-center bg-[#ffa116] border-b-4 border-x-4 border-t-0 border-[#202b20] px-4 py-1 text-[11px] font-black uppercase tracking-widest text-[#202b20] pointer-events-none z-50 transition-colors">
+                  <GripHorizontal size={14} className="mr-1.5" /> move
+                </div>
 
-                    {/* Precise Soundbar Visual from Image */}
-                    <div className="flex items-center justify-center gap-[6px] h-20 w-full my-auto">
-                      {[8, 16, 40, 24, 48, 24, 40, 16, 8].map((baseHeight, i) => (
-                        <motion.div
-                          key={i}
-                          className="w-[8px] rounded-full bg-[#202b20]"
-                          animate={{
-                            height: [`${baseHeight}px`, `${baseHeight * 1.3}px`, `${baseHeight}px`],
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            delay: i * 0.1,
-                            ease: "easeInOut"
-                          }}
-                        />
-                      ))}
-                    </div>
+                <AnimatePresence mode="wait">
+                  {/* IDLE STATE */}
+                  {sessionState === "idle" && (
+                    <motion.div
+                      key="idle"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center w-full h-full justify-between py-2"
+                    >
+                      {/* Header Text */}
+                      <div className="text-center space-y-3 pt-2">
+                        <h3 className="text-[26px] font-[300] tracking-tighter text-[#202b20]">Preview eO</h3>
+                        <p className={`${instrumentSerif.className} text-[16px] text-[#202b20]/60 leading-snug`}>
+                          our first most expressive<br />interview model
+                        </p>
+                        <p className="text-[14px] font-[500] text-[#202b20]/70 tracking-wide pt-2">
+                          I have a voice
+                        </p>
+                      </div>
 
-                    {/* Button */}
-                    <div className="w-full pb-2 px-2">
-                      <button
-                        onClick={() => handleSpeechChange(true)}
-                        className="w-full h-[46px] flex items-center justify-center rounded-[24px] border border-foreground/20 bg-transparent text-foreground hover:bg-foreground/5 transition-colors"
-                      >
-                        <span className="font-medium text-[15px]">Start speaking</span>
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
+                      {/* Precise Soundbar Visual from Image */}
+                      <div className="flex items-center justify-center gap-[6px] h-20 w-full my-auto">
+                        {[8, 16, 40, 24, 48, 24, 40, 16, 8].map((baseHeight, i) => (
+                          <motion.div
+                            key={i}
+                            className="w-[8px] rounded-full bg-[#202b20]"
+                            animate={{
+                              height: [`${baseHeight}px`, `${baseHeight * 1.3}px`, `${baseHeight}px`],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              delay: i * 0.1,
+                              ease: "easeInOut"
+                            }}
+                          />
+                        ))}
+                      </div>
 
-                {/* CONNECTING STATE */}
-                {sessionState === "connecting" && (
-                  <motion.div
-                    key="connecting"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center w-full h-full gap-8"
-                  >
-                    <div className="flex-1 flex items-center justify-center relative w-full">
-                      {/* Solid light green core */}
-                      <div className="w-48 h-48 rounded-full bg-secondary/60 absolute" />
-                      {/* Expanding rings */}
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                        className="w-56 h-56 rounded-full border border-primary/40 absolute"
-                      />
-                      <motion.div
-                        animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
-                        transition={{ duration: 2, delay: 0.5, repeat: Infinity, ease: "linear" }}
-                        className="w-64 h-64 rounded-full border border-primary/20 absolute"
-                      />
-                    </div>
-                    <div className="pb-8">
-                      <p className="text-primary font-bold tracking-wide">connecting</p>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* ACTIVE STATE */}
-                {sessionState === "active" && (
-                  <motion.div
-                    key="active"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-between w-full h-full"
-                  >
-                    <div className="flex-1 flex items-center justify-center relative w-full mt-12">
-                      {/* Dashed outer ring */}
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                        className="w-64 h-64 absolute rounded-full border-[3px] border-dashed border-primary"
-                      />
-                      {/* Inner dashed ring rotating opposite */}
-                      <motion.div
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                        className="w-52 h-52 absolute rounded-full border-[2px] border-dashed border-primary/50"
-                      />
-                    </div>
-
-                    <div className="w-full flex flex-col items-center gap-6 pb-4">
-                      <p className="text-foreground/60 font-mono text-sm tracking-widest">{formatTime(time)}</p>
-
-                      <div className="flex items-center gap-4">
+                      {/* Button */}
+                      <div className="w-full pb-2 px-2">
                         <button
-                          onClick={() => handleSpeechChange(false)}
-                          className="w-12 h-12 rounded-full bg-secondary border border-primary/20 text-primary flex items-center justify-center hover:bg-secondary/80 transition-colors shadow-sm"
+                          onClick={() => handleSpeechChange(true)}
+                          className="w-full h-[52px] flex items-center justify-center rounded-none border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#ffa116] transition-all shadow-[4px_4px_0_0_#202b20] active:translate-y-[2px] active:translate-x-[2px] active:shadow-[4px_4px_0_0_#202b20] font-black uppercase tracking-widest text-[#202b20]"
                         >
-                          {/* Recording indicator dot */}
-                          <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                        </button>
-                        <button
-                          onClick={endSession}
-                          className="h-12 px-6 rounded-full bg-destructive/20 text-destructive font-medium hover:bg-destructive/30 border border-destructive/20 transition-colors"
-                        >
-                          end session
+                          Start speaking
                         </button>
                       </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    </motion.div>
+                  )}
 
+                  {/* CONNECTING STATE */}
+                  {sessionState === "connecting" && (
+                    <motion.div
+                      key="connecting"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center justify-center w-full h-full gap-8"
+                    >
+                      <div className="flex-1 flex items-center justify-center relative w-full">
+                        {/* Geometric Core */}
+                        <div className="w-24 h-24 bg-[#ffa116] border-2 border-[#202b20] absolute shadow-[4px_4px_0_0_#202b20]" />
+                        {/* Expanding geometric frames */}
+                        <motion.div
+                          animate={{ scale: [1, 1.5, 1], rotate: [0, 90, 180] }}
+                          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-24 h-24 border-2 border-[#202b20] absolute"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 2, 1], rotate: [45, 135, 225] }}
+                          transition={{ duration: 3, delay: 0.5, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-24 h-24 border-2 border-[#202b20] absolute"
+                        />
+                      </div>
+                      <div className="pb-8">
+                        <p className="text-[#202b20] font-bold tracking-wide uppercase">connecting</p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ACTIVE STATE */}
+                  {sessionState === "active" && (
+                    <motion.div
+                      key="active"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center justify-between w-full h-full"
+                    >
+                      <div className="flex-1 flex items-center justify-center relative w-full mt-12">
+                        {/* Geometric gears/boxes */}
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                          className="w-48 h-48 absolute border-2 border-dashed border-[#202b20]"
+                        />
+                        <motion.div
+                          animate={{ rotate: -360 }}
+                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                          className="w-32 h-32 absolute border-2 border-dotted border-[#202b20] bg-[#ffa116]/10"
+                        />
+                        <div className="w-16 h-16 bg-[#202b20] absolute shadow-[4px_4px_0_0_#ffa116]" />
+                      </div>
+
+                      <div className="w-full flex flex-col items-center gap-6 pb-4">
+                        <p className="text-[#202b20]/60 font-mono text-sm tracking-widest">{formatTime(time)}</p>
+
+                        <div className="flex items-center gap-4">
+                          <button
+                            aria-label="Stop recording"
+                            onClick={() => handleSpeechChange(false)}
+                            className="w-12 h-12 rounded-none border-2 border-[#202b20] bg-white flex items-center justify-center hover:bg-[#ffa116] transition-colors shadow-[4px_4px_0_0_#202b20] active:translate-y-1 active:translate-x-1 active:shadow-none"
+                          >
+                            <span className="w-4 h-4 bg-red-500 border-2 border-[#202b20] animate-pulse" />
+                          </button>
+                          <button
+                            onClick={endSession}
+                            className="h-12 px-6 rounded-none bg-red-500/10 text-red-600 font-black border-2 border-red-500 hover:bg-red-500 hover:text-white transition-colors shadow-[4px_4px_0px_0px_#ef4444] active:translate-y-1 active:translate-x-1 active:shadow-none uppercase tracking-widest text-sm"
+                          >
+                            end session
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+              </motion.div>
             </div>
           </motion.div>
 
@@ -292,8 +308,8 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
 
         {/* Company Logos Strip */}
         <div className="w-full relative z-20 mt-20 sm:mt-28 pb-4 overflow-hidden text-center opacity-0 animate-[fadeIn_1s_ease-in-out_1s_forwards]">
-          <p className="text-[14px] sm:text-[15px] text-foreground/50 font-medium tracking-wide mb-8 sm:mb-10">
-            Simulating hundreds of <span className="font-bold text-foreground/70">companies' interviews</span>
+          <p className="text-[14px] sm:text-[15px] text-[#202b20]/50 font-medium tracking-wide mb-8 sm:mb-10">
+            Simulating hundreds of <span className="font-bold text-[#202b20]/70">companies' interviews</span>
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-10 sm:gap-x-16 max-w-5xl mx-auto opacity-70 grayscale hover:grayscale-0 transition-all duration-700">
             {[

@@ -318,10 +318,10 @@ function PricingPageContent() {
   ]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans antialiased flex flex-col relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#efeff1] text-[#202b20] font-sans antialiased selection:bg-[#ffa116]/30 selection:text-[#202b20] flex flex-col relative pt-24">
       <Navbar />
       
-      <main className="flex-1 flex flex-col items-center pt-28 pb-24 px-6 z-10 w-full">
+      <main className="flex-1 flex flex-col items-center pt-16 pb-24 px-6 z-10 w-full">
         <div className="max-w-[1300px] w-full mx-auto grid grid-cols-1 xl:grid-cols-[minmax(350px,400px)_1fr] gap-12 xl:gap-16 items-start">
           
           {/* LEFT COLUMN: Copy & Features */}
@@ -331,13 +331,13 @@ function PricingPageContent() {
             transition={{ duration: 0.6 }}
             className="flex flex-col items-start text-left gap-6 w-full sticky top-32"
           >
-            <span className="px-4 py-1.5 rounded-full border border-border/80 text-[13px] font-semibold bg-white shadow-sm tracking-wide text-slate-800">
+            <span className="px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold bg-[#ffa116] shadow-[4px_4px_0px_0px_#202b20] uppercase tracking-wider text-[#202b20]">
               Our Pricing
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-[56px] font-[1000] tracking-tight text-[#1a2b3b] leading-[1.1]">
+            <h1 className="text-[3rem] md:text-[4.5rem] lg:text-[5rem] font-[800] tracking-tighter text-[#202b20] leading-[1.1]">
               Personalized plans <br className="hidden md:block"/> and pricing
             </h1>
-            <p className="text-lg text-slate-600 font-medium leading-relaxed">
+            <p className="text-lg text-[#202b20]/80 font-[500] leading-relaxed">
               Flexible pricing plans designed to fit your needs, whether you're a candidate or building a hiring team.
             </p>
             
@@ -347,8 +347,8 @@ function PricingPageContent() {
                 { icon: <ShieldCheck className="w-[18px] h-[18px]" />, text: "No hidden fees or conditions" },
                 { icon: <RotateCcw className="w-[18px] h-[18px]" />, text: "Cancel anytime securely" },
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-slate-600 font-medium text-[15px]">
-                   <div className="text-slate-400">{item.icon}</div>
+                <div key={i} className="flex items-center gap-3 text-[#202b20] font-medium text-[15px]">
+                   <div className="text-[#202b20] bg-[#ffa116] p-1 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] -rotate-3">{item.icon}</div>
                    <span>{item.text}</span>
                 </div>
               ))}
@@ -372,12 +372,12 @@ function PricingPageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch w-full relative pt-8">
              
              {/* FREE PLAN (Standard Card) */}
-             <div className="w-full rounded-[24px] border border-slate-200 bg-white p-6 md:p-8 flex flex-col shadow-sm h-full">
+             <div className="w-full rounded-none border-2 border-[#202b20] bg-white p-6 md:p-8 flex flex-col shadow-[4px_4px_0px_0px_#202b20] h-full">
                 <div className="flex flex-col min-h-[140px]">
-                  <h3 className="text-[20px] font-semibold text-slate-900">Free</h3>
+                  <h3 className="text-[20px] font-bold text-[#202b20] uppercase tracking-wide">Free</h3>
                   <div className="flex items-baseline gap-1 mt-auto pb-4">
-                    <span className="text-[40px] md:text-5xl font-bold tracking-tight text-slate-900">$0</span>
-                    <span className="text-slate-500 font-medium text-[15px]">/mo</span>
+                    <span className="text-[40px] md:text-5xl font-[800] tracking-tighter text-[#202b20]">$0</span>
+                    <span className="text-[#202b20]/60 font-medium text-[15px]">/mo</span>
                   </div>
                   <p className="text-[13px] text-slate-500 min-h-[40px]">
                     Perfect for students and individuals just getting started.
@@ -386,12 +386,12 @@ function PricingPageContent() {
                 
                 <div className="h-px w-full bg-slate-100 mb-6 mt-4" />
                 
-                <div className="mb-4 text-[13px] font-semibold text-slate-400">What's Included</div>
+                <div className="mb-4 text-[13px] font-bold uppercase tracking-wider text-[#202b20]/50">What's Included</div>
                 <div className="flex-1 space-y-4 mb-8">
                   {freeFeatures.map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <Check className="w-[16px] h-[16px] text-slate-800 shrink-0 mt-[2px]" strokeWidth={2.5} />
-                      <span className="text-[14px] text-slate-600 leading-tight">{feature}</span>
+                      <Check className="w-[18px] h-[18px] text-[#202b20] shrink-0 mt-[1px]" strokeWidth={3} />
+                      <span className="text-[14px] text-[#202b20] font-medium leading-tight">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -399,7 +399,7 @@ function PricingPageContent() {
                 <div className="mt-auto">
                   <button 
                     onClick={() => router.push(user ? "/dashboard" : "/register/student")}
-                    className="w-full py-3.5 rounded-full border border-slate-200 text-slate-900 text-[14px] font-medium text-center hover:bg-slate-50 transition-colors"
+                    className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all"
                   >
                     {user ? "Go to Dashboard \u2192" : "Reserve your spot \u2192"}
                   </button>
@@ -407,38 +407,38 @@ function PricingPageContent() {
              </div>
              
              {/* PRO PLAN (Featured Card with Blue Header) */}
-             <div className="w-full rounded-[24px] bg-[#3b82f6] shadow-xl flex flex-col relative overflow-hidden z-10 border-2 border-[#3b82f6] md:-mt-[40px]">
+             <div className="w-full rounded-none bg-[#ffa116] flex flex-col relative z-10 border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] md:-mt-[40px]">
                 {/* Header Banner (approx 40px height) */}
-                <div className="py-2.5 text-center text-white text-[12px] font-medium tracking-wide w-full max-h-[40px]">
+                <div className="py-2.5 text-center bg-[#202b20] text-white text-[12px] font-bold uppercase tracking-widest w-full max-h-[40px] border-b-2 border-[#202b20]">
                    Most Popular
                 </div>
                 
                 {/* Card Body */}
-                <div className="bg-white rounded-b-[22px] rounded-t-[8px] p-6 md:p-8 flex-1 flex flex-col relative w-full h-full">
+                <div className="bg-[#ffa116] p-6 md:p-8 flex-1 flex flex-col relative w-full h-full">
                    
                    <div className="flex flex-col min-h-[140px]">
-                      <div className="flex flex-col items-start gap-3 pt-1">
-                         <h3 className="text-[20px] font-semibold text-slate-900 leading-none mb-1">Pro Member</h3>
+                       <div className="flex flex-col items-start gap-3 pt-1">
+                         <h3 className="text-[20px] font-bold uppercase tracking-wide text-[#202b20] leading-none mb-1">Pro Member</h3>
                          
                          <div className="flex items-center gap-3">
-                            <span className="bg-blue-50 text-blue-600 text-[11px] font-bold px-2.5 py-1 rounded-full border border-blue-100 whitespace-nowrap">
+                            <span className="bg-[#202b20] text-[#ffa116] text-[11px] font-bold px-2.5 py-1 rounded-none border-2 border-[#202b20] whitespace-nowrap shadow-[2px_2px_0px_0px_#202b20]">
                               29% OFF
                             </span>
 
                             {/* INR/USD Manual Toggle neatly placed beside the discount tag */}
-                            <div className="flex bg-slate-50 p-[3px] rounded-lg border border-slate-200 shadow-sm shrink-0">
+                            <div className="flex bg-white/50 p-[3px] rounded-none border-2 border-[#202b20] shrink-0">
                                <button 
                                  onClick={() => setSelectedCurrency("USD")} 
-                                 className={cn("px-2 py-[2px] text-[10px] font-bold rounded-md transition-colors", 
-                                   selectedCurrency === "USD" ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/50" : "text-slate-500 hover:text-slate-700"
+                                 className={cn("px-2 py-[2px] text-[10px] font-bold uppercase tracking-wider rounded-none transition-all", 
+                                   selectedCurrency === "USD" ? "bg-[#202b20] text-white" : "text-[#202b20] hover:bg-[#202b20]/10"
                                  )}
                                >
                                   USD
                                </button>
                                <button 
                                  onClick={() => setSelectedCurrency("INR")} 
-                                 className={cn("px-2 py-[2px] text-[10px] font-bold rounded-md transition-colors", 
-                                   selectedCurrency === "INR" ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/50" : "text-slate-500 hover:text-slate-700"
+                                 className={cn("px-2 py-[2px] text-[10px] font-bold uppercase tracking-wider rounded-none transition-all", 
+                                   selectedCurrency === "INR" ? "bg-[#202b20] text-white" : "text-[#202b20] hover:bg-[#202b20]/10"
                                  )}
                                >
                                   INR
@@ -449,10 +449,10 @@ function PricingPageContent() {
 
                       <div className="flex justify-between items-end mt-auto pb-4 pt-4">
                          <div className="flex items-baseline gap-1">
-                            <span className="text-[40px] md:text-5xl font-bold tracking-tight text-slate-900 truncate">
+                            <span className="text-[40px] md:text-5xl font-[800] tracking-tighter text-[#202b20] truncate">
                                {displayedPrice.symbol}{displayedPrice.amount}
                             </span>
-                            <span className="text-slate-500 font-medium text-[15px] shrink-0">{displayedPrice.period}</span>
+                            <span className="text-[#202b20]/60 font-medium text-[15px] shrink-0">{displayedPrice.period}</span>
                          </div>
                       </div>
                       
@@ -461,14 +461,14 @@ function PricingPageContent() {
                       </p>
                    </div>
                    
-                   <div className="h-px w-full bg-slate-100 mb-6 mt-4" />
+                   <div className="h-0.5 w-full bg-[#202b20]/20 mb-6 mt-4" />
                    
-                   <div className="mb-4 text-[13px] font-semibold text-slate-400">What's Included</div>
+                   <div className="mb-4 text-[13px] font-bold uppercase tracking-wider text-[#202b20]/60">What's Included</div>
                    <div className="flex-1 space-y-4 mb-8">
                      {proFeatures.map((feature, i) => (
                        <div key={i} className="flex items-start gap-3">
-                         <Check className={cn("w-[16px] h-[16px] shrink-0 mt-[2px]", i === 0 ? "text-slate-400" : "text-blue-500")} strokeWidth={2.5} />
-                         <span className={cn("text-[14px] leading-tight", i === 0 ? "text-slate-500 font-medium" : "text-slate-700 font-semibold")}>{feature}</span>
+                         <Check className={cn("w-[18px] h-[18px] shrink-0 mt-[1px]", i === 0 ? "text-[#202b20]/60" : "text-[#202b20]")} strokeWidth={3} />
+                         <span className={cn("text-[14px] leading-tight", i === 0 ? "text-[#202b20]/70 font-medium" : "text-[#202b20] font-bold")}>{feature}</span>
                        </div>
                      ))}
                    </div>
@@ -478,14 +478,14 @@ function PricingPageContent() {
                        type="button"
                        onClick={() => void handleSubscribe()}
                        disabled={!canSubscribe}
-                       className="w-full py-3.5 rounded-full bg-[#0a0f29] text-white text-[14px] font-medium text-center hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                       className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                      >
                        {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                        {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
                      </button>
                      {!pricingContext?.upgradesEnabled && !isPricingLoading && (
-                       <div className="absolute -bottom-6 left-0 right-0 flex justify-center">
-                         <p className="text-[11px] text-amber-600 font-medium">Subscriptions paused.</p>
+                       <div className="mt-2 text-center">
+                         <p className="text-[12px] text-amber-700/80 font-medium">Subscriptions paused temporarily.</p>
                        </div>
                      )}
                    </div>
@@ -493,25 +493,25 @@ function PricingPageContent() {
              </div>
 
              {/* ENTERPRISE PLAN (Standard Card) */}
-             <div className="w-full rounded-[24px] border border-slate-200 bg-white p-6 md:p-8 flex flex-col shadow-sm h-full">
+             <div className="w-full rounded-none border-2 border-[#202b20] bg-white p-6 md:p-8 flex flex-col shadow-[4px_4px_0px_0px_#202b20] h-full">
                 <div className="flex flex-col min-h-[140px]">
-                  <h3 className="text-[20px] font-semibold text-slate-900">Enterprise</h3>
+                  <h3 className="text-[20px] font-bold text-[#202b20] uppercase tracking-wide">Enterprise</h3>
                   <div className="flex items-baseline gap-1 mt-auto pb-4">
-                    <span className="text-[40px] md:text-5xl font-bold tracking-tight text-slate-900">Custom</span>
+                    <span className="text-[40px] md:text-5xl font-[800] tracking-tighter text-[#202b20]">Custom</span>
                   </div>
                   <p className="text-[13px] text-slate-500 min-h-[40px]">
                     Customized interviews charged per bundle minutes limit.
                   </p>
                 </div>
                 
-                <div className="h-px w-full bg-slate-100 mb-6 mt-4" />
+                <div className="h-0.5 w-full bg-[#202b20]/10 mb-6 mt-4" />
                 
-                <div className="mb-4 text-[13px] font-semibold text-slate-400">Everything in Pro, plus:</div>
+                <div className="mb-4 text-[13px] font-bold uppercase tracking-wider text-[#202b20]/60">Everything in Pro, plus:</div>
                 <div className="flex-1 space-y-4 mb-8">
                   {enterpriseFeatures.map((feature, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <Check className="w-[16px] h-[16px] text-[#0a0f29] shrink-0 mt-[2px]" strokeWidth={2.5} />
-                      <span className="text-[14px] text-slate-600 leading-tight">{feature}</span>
+                      <Check className="w-[18px] h-[18px] text-[#202b20] shrink-0 mt-[1px]" strokeWidth={3} />
+                      <span className="text-[14px] text-[#202b20] font-medium leading-tight">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -519,7 +519,7 @@ function PricingPageContent() {
                 <div className="mt-auto">
                   <button 
                     onClick={() => setIsSalesModalOpen(true)}
-                    className="w-full py-3.5 rounded-full border border-slate-200 text-slate-900 text-[14px] font-medium text-center hover:bg-slate-50 transition-colors"
+                    className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all"
                   >
                     Talk to Sales &rarr;
                   </button>

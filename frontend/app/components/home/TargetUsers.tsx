@@ -23,35 +23,35 @@ export default function TargetUsers() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-secondary/20 relative" id="personas">
+    <section className="py-24 lg:py-32 bg-transparent relative" id="personas">
       <div className="max-w-7xl mx-auto px-6">
         
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 md:mb-24">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-bold text-foreground tracking-tight mb-4"
+            className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-[#202b20] mb-6"
           >
             Built for modern tech roles
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 pb-4 pr-4">
           {personas.map((persona, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="group bg-background p-10 rounded-3xl border shadow-sm hover:shadow-xl hover:border-border/80 transition-all duration-300"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.4 }}
+              className="group bg-white p-10 rounded-none border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#ffa116] transition-all duration-300"
             >
-              <div className="h-16 w-16 rounded-2xl bg-secondary/50 flex items-center justify-center mb-8">
+              <div className="h-16 w-16 rounded-none bg-[#efeff1] border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] flex items-center justify-center mb-8">
                 {persona.icon}
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">{persona.role}</h3>
-              <p className="text-foreground/70 font-medium leading-relaxed">
+              <h3 className="text-2xl font-[600] text-[#202b20] mb-4">{persona.role}</h3>
+              <p className="text-[#202b20]/75 font-[500] text-[16px] leading-relaxed">
                 {persona.description}
               </p>
             </motion.div>

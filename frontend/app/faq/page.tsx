@@ -5,15 +5,7 @@ import FAQSection from '@/app/components/home/FAQSection';
 
 export default function FAQPage() {
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-primary/20 selection:text-foreground relative overflow-x-hidden flex flex-col">
-            {/* Absolute Dotted Background Layer */}
-            <div
-                className="absolute inset-0 pointer-events-none z-0"
-                style={{
-                    backgroundImage: 'radial-gradient(hsl(var(--primary) / 0.15) 1px, transparent 1px)',
-                    backgroundSize: '24px 24px'
-                }}
-            />
+        <div className="min-h-screen bg-[#efeff1] text-[#202b20] font-sans antialiased selection:bg-[#ffa116]/30 selection:text-[#202b20] relative flex flex-col pt-24">
             <Navbar />
 
             <main className="relative z-10 flex-grow pt-24 pb-16">

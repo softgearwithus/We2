@@ -52,25 +52,23 @@ function LoginSelectionPageContent() {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 selection:bg-brand-orange selection:text-white relative overflow-hidden flex flex-col">
-            {/* Background Decoration */}
+        <div className="min-h-screen bg-[#f8f9fa] selection:bg-[#ffa116] selection:text-[#202b20] relative overflow-hidden flex flex-col font-inter">
+            {/* Minimal Grid Background */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 right-0 w-full max-w-[800px] h-[800px] bg-brand-orange/5 rounded-full blur-[120px] -mr-64 -mt-64" />
-                <div className="absolute bottom-0 left-0 w-full max-w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] -ml-64 -mb-64" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `radial-gradient(circle at 1px 1px, black 1px, transparent 0)`,
-                    backgroundSize: '32px 32px'
+                    backgroundImage: `linear-gradient(to right, #202b20 1px, transparent 1px), linear-gradient(to bottom, #202b20 1px, transparent 1px)`,
+                    backgroundSize: '40px 40px'
                 }} />
             </div>
 
             {/* Header */}
             <header className="relative z-10 py-8 px-6 md:px-12 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-3 group">
-                    <span className="font-black text-2xl text-brand-black tracking-tight">EMBLE</span>
+                <Link href="/" className="flex items-center gap-3 group px-6 py-2 border-2 border-[#202b20] bg-white shadow-[4px_4px_0px_0px_#202b20] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#202b20] transition-all">
+                    <span className="font-[800] text-2xl text-[#202b20] tracking-tighter">emble</span>
                 </Link>
                 <Link
                     href="/"
-                    className="px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:text-brand-black hover:border-slate-300 transition-all shadow-sm hover:shadow-md"
+                    className="px-5 py-2.5 bg-white border-2 border-[#202b20] text-sm font-[600] text-[#202b20] hover:bg-[#ffa116] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#202b20] transition-all uppercase"
                 >
                     Back to Home
                 </Link>
@@ -79,15 +77,12 @@ function LoginSelectionPageContent() {
             {/* Content */}
             <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
                 <div className="text-center max-w-3xl mb-16 animate-fade-in-up">
-                    <Badge variant="outline" className="mb-6 py-1.5 px-4 rounded-full border-brand-orange/20 shadow-sm gap-2">
-                        <Sparkles size={12} className="text-brand-orange" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-brand-orange">Secure Access Portal</span>
-                    </Badge>
-                    <h1 className="text-5xl md:text-7xl font-black text-brand-black mb-6 tracking-tight leading-[1.1]">
+
+                    <h1 className="text-5xl md:text-7xl font-[800] text-[#202b20] mb-6 tracking-tight leading-[1.1] uppercase">
                         Choose Your <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-red-500">Gateway.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffa116] to-[#ff9100]">Gateway.</span>
                     </h1>
-                    <p className="text-xl text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
+                    <p className="text-xl text-[#202b20]/70 font-[500] max-w-lg mx-auto leading-relaxed">
                         Whether you're a student building a career or an organization building the future, start here.
                     </p>
                 </div>
@@ -102,25 +97,29 @@ function LoginSelectionPageContent() {
                             className="h-full"
                         >
                             <Link href={portal.link} className="block h-full group">
-                                <Card className="h-full flex flex-col border border-slate-200 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:border-brand-orange/30 transition-all duration-500 hover:-translate-y-2 rounded-[32px] overflow-hidden bg-white/60 backdrop-blur-xl relative">
-                                    <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${portal.gradient}`} />
-                                    <CardHeader className="p-8 pb-4 relative">
-                                        <div className="absolute top-8 right-8">
-                                            <Badge variant={portal.badgeVar} className="text-[10px] uppercase font-bold tracking-wider">{portal.badge}</Badge>
+                                <Card className="h-full flex flex-col border-2 border-[#202b20] shadow-[8px_8px_0px_0px_#202b20] group-hover:shadow-[12px_12px_0px_0px_#ffa116] group-hover:-translate-y-1 transition-all duration-300 rounded-none bg-white relative">
+                                    <div className="absolute top-0 left-0 w-full h-2 border-b-2 border-[#202b20]" style={{
+                                        backgroundColor: portal.role === 'Student' ? '#ffa116' : portal.role === 'Institute' ? '#34d399' : '#202b20'
+                                    }} />
+                                    <CardHeader className="p-8 pb-4 relative mt-2">
+                                        <div className="absolute top-8 right-8 text-[10px] uppercase font-bold tracking-wider px-2 py-1 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20]">
+                                            {portal.badge}
                                         </div>
-                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${portal.gradient} flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-500`}>
+                                        <div className={`w-14 h-14 border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`} style={{
+                                            backgroundColor: portal.role === 'Student' ? '#ffa116' : portal.role === 'Institute' ? '#34d399' : '#202b20'
+                                        }}>
                                             {portal.icon}
                                         </div>
-                                        <CardTitle className="text-2xl font-black text-brand-black">{portal.role}</CardTitle>
+                                        <CardTitle className="text-2xl font-[800] uppercase text-[#202b20]">{portal.role}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="px-8 pb-6 flex-1">
-                                        <CardDescription className="text-base text-slate-500 font-medium leading-relaxed">
+                                        <CardDescription className="text-base text-[#202b20]/70 font-[500] leading-relaxed">
                                             {portal.description}
                                         </CardDescription>
                                     </CardContent>
                                     <CardFooter className="px-8 pb-8 pt-0">
-                                        <div className="flex items-center gap-2 font-bold text-sm text-brand-black group-hover:gap-4 transition-all">
-                                            {portal.cta} <ArrowRight size={16} className="text-brand-orange" />
+                                        <div className="flex items-center gap-2 font-[700] uppercase text-sm text-[#202b20] group-hover:gap-4 transition-all">
+                                            {portal.cta} <ArrowRight size={16} className="text-[#ffa116]" strokeWidth={3} />
                                         </div>
                                     </CardFooter>
                                 </Card>
@@ -130,13 +129,13 @@ function LoginSelectionPageContent() {
                 </div>
 
                 <div className="mt-20">
-                    <div className="flex items-center justify-center gap-6 text-sm font-medium text-slate-400">
-                        <Link href="/secure/admin" className="flex items-center gap-2 hover:text-brand-orange transition-colors">
+                    <div className="flex items-center justify-center gap-6 text-sm font-[600] text-[#202b20]/60 uppercase tracking-widest">
+                        <Link href="/secure/admin" className="flex items-center gap-2 hover:text-[#ffa116] transition-colors">
                             <ShieldCheck size={14} />
                             Admin Access
                         </Link>
-                        <span className="w-1 h-1 rounded-full bg-slate-300" />
-                        <Link href="/contact" className="hover:text-brand-orange transition-colors">
+                        <span className="w-1.5 h-1.5 bg-[#202b20]" />
+                        <Link href="/contact" className="hover:text-[#ffa116] transition-colors">
                             Need Help?
                         </Link>
                     </div>

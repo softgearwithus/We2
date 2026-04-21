@@ -4,77 +4,67 @@ import React from 'react';
 import Link from 'next/link';
 import { Terminal, Linkedin, Twitter, Instagram, Mail } from 'lucide-react';
 import { getAllSeoPages } from '@/app/lib/seo-pages';
+import { blogPosts } from '@/app/lib/blog-data';
 
 export default function Footer() {
     return (
-        <footer className="w-full bg-[#0F2317] text-white pt-24 pb-8 flex flex-col items-center relative overflow-hidden font-sans mt-auto">
-            {/* Background Grid */}
-            <div 
-                className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                style={{ 
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', 
-                    backgroundSize: '32px 32px' 
-                }} 
-            />
-
-            {/* Top Centered CTA / Newsletter Block removed per request */}
-
+        <footer className="w-full bg-[#efeff1] border-t-4 border-[#202b20] pt-16 pb-0 flex flex-col items-center relative overflow-hidden font-sans mt-auto">
             {/* Divider */}
-            <div className="w-full max-w-[1400px] border-t border-white/10 mx-auto" />
+            <div className="w-full max-w-[1400px] mx-auto mt-8" />
 
             {/* Middle Section: Branding & Links */}
-            <div className="w-full max-w-[1400px] mx-auto px-6 py-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 lg:gap-6 relative z-10">
+            <div className="w-full max-w-[1400px] mx-auto px-6 py-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10 lg:gap-6 relative z-10">
                 {/* Left: Branding */}
                 <div className="flex flex-col justify-start max-w-xs">
-                    <Link href="/" className="inline-flex items-center group mb-3">
-                        <span className="text-xl font-bold tracking-tight text-white">
-                            emble
+                    <Link href="/" className="inline-flex items-center group mb-4">
+                        <span className="text-3xl font-black tracking-tighter text-[#202b20] uppercase bg-[#ffa116] px-2 py-1 border-4 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20]">
+                            EMBLE
                         </span>
                     </Link>
-                    <p className="text-white/50 text-sm leading-relaxed">
+                    <p className="text-[#202b20] text-sm leading-relaxed font-[500] border-2 border-[#202b20] bg-white p-3 shadow-[4px_4px_0px_0px_#202b20]">
                         The most human AI interviews with free core tools for preparation mastery.
                     </p>
-                    <a href="mailto:support@emble.in" className="text-white/70 hover:text-white text-sm mt-4 font-medium inline-flex items-center gap-2 transition-colors">
+                    <a href="mailto:support@emble.in" className="text-[#202b20] hover:bg-[#ffa116] border-2 border-transparent hover:border-[#202b20] p-1 -ml-1 text-sm mt-4 font-black inline-flex items-center gap-2 transition-all shadow-none hover:shadow-[2px_2px_0px_0px_#202b20] uppercase">
                         <Mail className="w-4 h-4" /> support@emble.in
                     </a>
                 </div>
 
                 {/* Right: Horizontal Links & Socials */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:gap-12">
-                    <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-white/70">
-                        <Link href="/features" className="hover:text-white transition-colors">Features</Link>
-                        <Link href="/reviews" className="hover:text-white transition-colors">Success Stories</Link>
-                        <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-                        <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
-                        <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
-                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-                        <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+                    <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-black text-[#202b20] uppercase tracking-widest">
+                        <Link href="/features" className="hover:bg-[#ffa116] transition-colors px-1">Features</Link>
+                        <Link href="/reviews" className="hover:bg-[#ffa116] transition-colors px-1">Success Stories</Link>
+                        <Link href="/pricing" className="hover:bg-[#ffa116] transition-colors px-1">Pricing</Link>
+                        <Link href="/faq" className="hover:bg-[#ffa116] transition-colors px-1">FAQ</Link>
+                        <Link href="/blog" className="hover:bg-[#ffa116] transition-colors px-1">Blog</Link>
+                        <Link href="/about" className="hover:bg-[#ffa116] transition-colors px-1">About Us</Link>
+                        <Link href="/privacy" className="hover:bg-[#ffa116] transition-colors px-1">Privacy</Link>
+                        <Link href="/terms" className="hover:bg-[#ffa116] transition-colors px-1">Terms</Link>
+                        <Link href="/contact" className="hover:bg-[#ffa116] transition-colors px-1">Contact</Link>
                     </nav>
 
                     {/* Socials */}
-                    <div className="flex items-center gap-4 text-white/50">
-                        <Link href="https://www.linkedin.com/company/joinemble/" target="_blank" className="hover:text-white transition-colors" aria-label="LinkedIn">
+                    <div className="flex items-center gap-4 text-[#202b20]">
+                        <Link href="https://www.linkedin.com/company/joinemble/" target="_blank" className="w-10 h-10 rounded-none bg-white border-2 border-[#202b20] flex items-center justify-center text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0px_0px_#202b20] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" aria-label="LinkedIn">
                             <Linkedin className="w-5 h-5" />
                         </Link>
-                        <Link href="https://x.com/joinEmble" target="_blank" className="hover:text-white transition-colors" aria-label="X (Twitter)">
+                        <Link href="https://x.com/joinEmble" target="_blank" className="w-10 h-10 rounded-none bg-white border-2 border-[#202b20] flex items-center justify-center text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0px_0px_#202b20] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" aria-label="X (Twitter)">
                             <Twitter className="w-5 h-5" />
                         </Link>
-                        <Link href="https://www.instagram.com/emble.in/" target="_blank" className="hover:text-white transition-colors" aria-label="Instagram">
-                            <Instagram className="w-5 h-5" />
-                        </Link>
-                        <a href="mailto:support@emble.in" className="hover:text-white transition-colors" aria-label="Email support@emble.in">
-                            <Mail className="w-5 h-5" />
-                        </a>
+                         <Link href="https://www.instagram.com/emble.in/" target="_blank" className="w-10 h-10 rounded-none bg-white border-2 border-[#202b20] flex items-center justify-center text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0px_0px_#202b20] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" aria-label="Instagram">
+                             <Instagram className="w-5 h-5" />
+                         </Link>
                     </div>
                 </div>
             </div>
 
             {/* Bottom Row */}
-            <div className="w-full max-w-[1400px] border-t border-white/5 mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center text-xs text-white/40 relative z-10 gap-4">
-                <p>© 2026 Emble. All rights reserved.</p>
-                <div className="flex items-center gap-4">
-                    <p className="flex items-center gap-1">Made with <span className="text-red-500">♥</span> for preparation</p>
+            <div className="w-full border-t-4 border-[#202b20] mt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-[#202b20] font-black uppercase tracking-widest relative z-10 bg-[#efeff1]">
+                <div className="max-w-[1400px] mx-auto w-full px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p>© 2026 Emble. All rights reserved.</p>
+                    <div className="flex items-center gap-4">
+                        <p className="flex items-center gap-1">Made with <span className="text-white bg-red-500 border border-[#202b20] px-1 shadow-[1px_1px_0px_0px_#202b20]">♥</span> for preparation</p>
+                    </div>
                 </div>
             </div>
 
@@ -123,21 +113,24 @@ export default function Footer() {
                             <Link key={page.slug} href={`/services/${page.slug}`} className="text-white/20 hover:text-white/60 text-[10px] leading-snug transition-colors line-clamp-1">{page.title.split('|')[0].trim()}</Link>
                         ))}
                     </div>
-                    {/* Alternatives */}
+                    {/* Intelligence Hub (Blogs) */}
                     <div className="flex flex-col gap-1.5">
-                        <h3 className="text-white/30 font-semibold text-[10px] uppercase tracking-widest mb-1.5">Alternatives</h3>
-                        {getAllSeoPages().filter(p => p.category === 'alternative').map(page => (
-                            <Link key={page.slug} href={`/alternative/${page.slug}`} className="text-white/20 hover:text-white/60 text-[10px] leading-snug transition-colors line-clamp-1">{page.title.split('|')[0].trim()}</Link>
+                        <h3 className="text-white/30 font-semibold text-[10px] uppercase tracking-widest mb-1.5">Intelligence Hub</h3>
+                        {blogPosts.slice(0, 15).map(post => (
+                            <Link key={post.slug} href={`/blog/${post.slug}`} className="text-white/20 hover:text-white/60 text-[10px] leading-snug transition-colors line-clamp-1">{post.title}</Link>
                         ))}
+                        {blogPosts.length > 15 && (
+                            <Link href="/blog" className="text-[#ffa116]/40 hover:text-[#ffa116] text-[10px] font-bold uppercase tracking-tighter mt-1">View All Articles →</Link>
+                        )}
                     </div>
                 </div>
             </div>
 
             {/* Massive Footer Branding */}
-            <div className="w-full overflow-hidden flex justify-end items-center mt-2 pointer-events-none select-none pr-8 md:pr-12">
-                <h1 className="text-[15vw] leading-[0.8] font-[1000] text-white/5 tracking-tighter">
+            <div className="w-full overflow-hidden flex justify-end items-center mt-8 pointer-events-none select-none pr-8 md:pr-12 bg-[#efeff1]" aria-hidden="true">
+                <div className="text-[15vw] leading-[0.8] font-[1000] text-[#202b20]/5 tracking-wider uppercase font-sans">
                     emble
-                </h1>
+                </div>
             </div>
         </footer>
     );
