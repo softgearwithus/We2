@@ -62,7 +62,8 @@
   }
 
   body {
-    background-color: hsl(var(--background));
+    /* Base gradient matches CursorGrainyCloud — renders server-side, no flash */
+    background: linear-gradient(170deg, #e8edf5 0%, #f0f2f5 40%, #f5f5f3 100%);
     color: hsl(var(--foreground));
     @apply antialiased;
     scroll-behavior: smooth;

@@ -93,7 +93,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.className} ${inter.variable} ${jetbrainsMono.variable} font-sans text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`} suppressHydrationWarning>
+      <body
+        className={`${inter.className} ${inter.variable} ${jetbrainsMono.variable} font-sans text-slate-800 antialiased overflow-x-hidden w-full selection:bg-brand-orange selection:text-white`}
+        style={{ background: 'linear-gradient(170deg,#e8edf5 0%,#f0f2f5 40%,#f5f5f3 100%)' }}
+        suppressHydrationWarning
+      >
         <AuthProvider>
           <JsonLd data={{
             "@context": "https://schema.org",
