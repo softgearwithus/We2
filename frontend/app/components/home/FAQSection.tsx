@@ -86,21 +86,21 @@ export default function FAQSection() {
           
           {/* Left Side: Headings & CTA */}
           <div className="lg:col-span-5 flex flex-col items-start pt-4">
-            <span className="inline-block px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold uppercase tracking-wider text-[#202b20] mb-6 bg-[#ffa116] shadow-[4px_4px_0_0_#202b20]">
+            <span className="inline-block px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold uppercase tracking-wider text-[#202b20] mb-6 bg-[#ffa116] shadow-[2px_2px_0_0_#202b20]">
               FAQs
             </span>
             <h2 className="text-[3rem] md:text-[4.5rem] font-[800] text-[#202b20] tracking-tighter mb-6 leading-none">
-              Everything you <span className="text-white bg-[#202b20] px-3 shadow-[4px_4px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">need</span> to know
+              Everything you <span className="text-white bg-[#202b20] px-3 shadow-[2px_2px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">need</span> to know
             </h2>
             <p className="text-lg text-[#202b20]/70 leading-relaxed mb-16 max-w-md">
               Explore helpful information about our AI interviews, practice drills, and the free tools available to supercharge your hiring potential.
             </p>
 
-            <div className="bg-[#ffa116] p-8 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] rounded-none w-full max-w-sm">
+            <div className="bg-[#ffa116] p-8 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] rounded-none w-full max-w-sm">
               <h3 className="text-xl font-bold uppercase tracking-wide text-[#202b20] mb-6">
                 Still have questions? Our team is ready to assist.
               </h3>
-              <Button asChild className="rounded-none px-6 py-5 bg-white text-[#202b20] border-2 border-[#202b20] font-bold shadow-[4px_4px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] hover:bg-slate-50 transition-all w-full sm:w-auto">
+              <Button asChild className="rounded-none px-6 py-5 bg-white text-[#202b20] border-2 border-[#202b20] font-bold shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] hover:bg-slate-50 transition-all w-full sm:w-auto">
                 <Link href="/contact">
                   Contact Support
                 </Link>
@@ -112,7 +112,7 @@ export default function FAQSection() {
           <div className="lg:col-span-7">
             
             {/* Tabs */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border-2 border-[#202b20] rounded-none w-max max-w-full overflow-x-auto shadow-[4px_4px_0_0_#202b20]">
+            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border-2 border-[#202b20] rounded-none w-max max-w-full overflow-x-auto shadow-[2px_2px_0_0_#202b20]">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -144,7 +144,7 @@ export default function FAQSection() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
-                      className={`border-2 rounded-none transition-all duration-300 ${isOpen ? 'bg-white border-[#202b20] shadow-[4px_4px_0_0_#202b20]' : 'bg-white/50 border-[#202b20]/20 hover:border-[#202b20] hover:shadow-[4px_4px_0_0_#ffa116]'}`}
+                      className={`border-2 rounded-none transition-all duration-300 ${isOpen ? 'bg-white border-[#202b20] shadow-[2px_2px_0_0_#202b20]' : 'bg-white/50 border-[#202b20]/20 hover:border-[#202b20] hover:shadow-[2px_2px_0_0_#ffa116]'}`}
                     >
                       <button
                         onClick={() => setOpenIndex(isOpen ? null : index)}

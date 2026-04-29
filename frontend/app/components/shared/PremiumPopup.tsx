@@ -70,7 +70,7 @@ export default function PremiumPopup() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] w-[calc(100%-2rem)] sm:w-full max-w-[380px] bg-[#f8f9fa] rounded-xl overflow-hidden border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] will-change-transform"
+                        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] w-[calc(100%-2rem)] sm:w-full max-w-[380px] bg-[#f8f9fa] rounded-xl overflow-hidden border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] will-change-transform"
                     >
                         {/* Close Button */}
                         <button
@@ -135,7 +135,7 @@ export default function PremiumPopup() {
                     >
                         {/* Hidden CTA that expands on hover */}
                         <Link href="/pricing" className="absolute right-0 pr-16 opacity-0 group-hover:opacity-100 group-hover:-translate-x-2 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-                            <div className="bg-[#f8f9fa] px-5 py-3 rounded-l-xl border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] flex items-center gap-2 text-sm font-bold text-[#202b20] whitespace-nowrap">
+                            <div className="bg-[#f8f9fa] px-5 py-3 rounded-l-xl border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center gap-2 text-sm font-bold text-[#202b20] whitespace-nowrap">
                                 Subscribe Now
                                 <ArrowRight size={14} strokeWidth={3} className="text-[#34d399]" />
                             </div>
@@ -144,7 +144,7 @@ export default function PremiumPopup() {
                         {/* Core Circular Badge */}
                         <Link
                             href="/pricing"
-                            className="relative w-14 h-14 bg-[#ffa116] rounded-xl flex items-center justify-center border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] z-10 transition-all duration-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#202b20]"
+                            className="relative w-14 h-14 bg-[#ffa116] rounded-xl flex items-center justify-center border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] z-10 transition-all duration-300 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#202b20]"
                         >
                             <ShieldCheck size={26} className="text-[#202b20] relative z-10" strokeWidth={2.5} />
                             <span className="absolute -top-2 -right-2 flex h-4 w-4">

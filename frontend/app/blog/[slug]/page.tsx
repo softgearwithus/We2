@@ -183,7 +183,7 @@ export default async function BlogPostPage({ params }: Props) {
                     {/* ── Article Header ─────────────────────────────────────── */}
                     <header className="mb-14">
                         <div className="flex flex-wrap items-center gap-4 mb-8">
-                            <span className="bg-[#ffa116] border-4 border-[#202b20] px-3 py-1 font-black uppercase text-[11px] tracking-widest shadow-[4px_4px_0_0_#202b20]">
+                            <span className="bg-[#ffa116] border-4 border-[#202b20] px-3 py-1 font-black uppercase text-[11px] tracking-widest shadow-[2px_2px_0_0_#202b20]">
                                 {post.category}
                             </span>
                             <span className="flex items-center gap-1.5 text-[11px] font-black text-[#202b20]/40 uppercase tracking-widest">
@@ -214,7 +214,7 @@ export default async function BlogPostPage({ params }: Props) {
 
                         {/* Key Takeaways — article-specific */}
                         {seoData && (
-                            <div className="bg-[#efeff1] border-2 border-[#202b20] p-8 shadow-[6px_6px_0_0_#202b20]">
+                            <div className="bg-[#efeff1] border-2 border-[#202b20] p-8 shadow-[3px_3px_0_0_#202b20]">
                                 <p className="text-[11px] font-black uppercase tracking-widest text-[#202b20]/50 mb-5">
                                     Three things worth remembering
                                 </p>
@@ -252,7 +252,7 @@ export default async function BlogPostPage({ params }: Props) {
                         </p>
                         <Link
                             href="/register"
-                            className="inline-flex items-center gap-2 bg-[#202b20] text-white px-8 py-4 font-black uppercase tracking-widest text-[13px] shadow-[4px_4px_0_0_#ffa116] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                            className="inline-flex items-center gap-2 bg-[#202b20] text-white px-8 py-4 font-black uppercase tracking-widest text-[13px] shadow-[2px_2px_0_0_#ffa116] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                         >
                             Try Emble Free <ArrowRight className="w-4 h-4" />
                         </Link>
@@ -277,7 +277,7 @@ export default async function BlogPostPage({ params }: Props) {
                                         { stat: '94%', label: 'Reduction in first-round scheduling friction' },
                                         { stat: '$200k+', label: 'Avoided per bad senior engineering hire' },
                                     ].map(({ stat, label }) => (
-                                        <div key={stat} className="bg-[#202b20] border-0 p-8 text-center shadow-[6px_6px_0_0_#ffa116]">
+                                        <div key={stat} className="bg-[#202b20] border-0 p-8 text-center shadow-[3px_3px_0_0_#ffa116]">
                                             <div className="text-[2.5rem] font-black text-[#ffa116] leading-none mb-2">{stat}</div>
                                             <div className="text-[12px] font-[600] text-white/60 uppercase tracking-widest leading-snug">{label}</div>
                                         </div>
@@ -338,7 +338,7 @@ export default async function BlogPostPage({ params }: Props) {
                                     <Link
                                         key={related.slug}
                                         href={`/blog/${related.slug}`}
-                                        className="group bg-[#efeff1] border-2 border-[#202b20] p-6 shadow-[4px_4px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0_0_#ffa116] transition-all"
+                                        className="group bg-[#efeff1] border-2 border-[#202b20] p-6 shadow-[2px_2px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#ffa116] transition-all"
                                     >
                                         <div className="text-[9px] font-black uppercase tracking-widest text-[#202b20]/40 mb-3">
                                             {related.category} · {related.readTime}

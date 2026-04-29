@@ -40,11 +40,11 @@ const categories = [
         desc: "Master the technical interview roadmap and resume building.",
         icon: Code2,
         color: "orange",
-        exploreUrl: "/dashboard/preparation",
+        exploreUrl: "/dashboard/resume",
         links: [
             { label: "DSA Roadmap 2024", slug: "dsa-roadmap-2024" },
             { label: "Resume Lab Instructions", slug: "resume-lab-instructions" },
-            { label: "Mock Interview Prep", href: "/dashboard/interviews" }
+            { label: "Mock Interview Prep", href: "/dashboard/interview" }
         ]
     },
     {
@@ -52,7 +52,7 @@ const categories = [
         desc: "Deep dive into our 21-day industrial simulator workflows.",
         icon: Terminal,
         color: "emerald",
-        exploreUrl: "/dashboard/projects",
+        exploreUrl: "/dashboard/sprint",
         links: [
             { label: "Sprint Methodology", slug: "sprint-methodology" },
             { label: "Agile & JIRA Guide", slug: "agile-jira-guide" },
@@ -64,11 +64,11 @@ const categories = [
         desc: "Technical guides for the tools used in our simulation squads.",
         icon: Cpu,
         color: "purple",
-        exploreUrl: "/dashboard/projects",
+        exploreUrl: "/dashboard/sprint",
         links: [
             { label: "Docker & Containers", slug: "docker-containers" },
-            { label: "CI/CD Pipelines", href: "/dashboard/projects" },
-            { label: "System Observability", href: "/dashboard/projects" }
+            { label: "CI/CD Pipelines", href: "/dashboard/github/cicd" },
+            { label: "System Observability", href: "/dashboard/sprint" }
         ]
     },
     {

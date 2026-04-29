@@ -2,48 +2,75 @@
 
 import { fetchApi } from '../../lib/apiClient';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import Navbar from '../../components/layout/Navbar';
+import { useSearchParams, useRouter } from 'next/navigation';
 import DriveCard from '../../components/placements/DriveCard';
+import ApplyJobModal from '../../components/placements/ApplyJobModal';
 import { Building2, Search, Filter } from 'lucide-react';
 
-export default function PlacementDrivesPage() {
+function ActiveJobsContent() {
     const { token } = useAuth();
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [drives, setDrives] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<string>('All');
+    const [selectedDriveId, setSelectedDriveId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const applyId = searchParams.get('apply');
+        if (applyId) {
+            setSelectedDriveId(applyId);
+            const newUrl = new URL(window.location.href);
+            newUrl.searchParams.delete('apply');
+            window.history.replaceState({}, '', newUrl.toString());
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         const fetchDrives = async () => {
             setIsLoading(true);
             try {
-                // Construct query string based on active filter
-                let queryParam = '';
-                if (activeFilter === 'Internship') queryParam = '?type=Internship';
-                else if (activeFilter === 'Remote') queryParam = '?type=Remote';
-                else if (activeFilter === 'Active Hiring') queryParam = '?status=Active Hiring';
+                const publicParams = new URLSearchParams();
+                const privateParams = new URLSearchParams({ status: 'Active Hiring' });
 
-                const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements${queryParam}`, {
+                if (activeFilter === 'Internship') {
+                    publicParams.set('type', 'Internship');
+                    privateParams.set('type', 'Internship');
+                } else if (activeFilter === 'Remote') {
+                    publicParams.set('mode', 'Remote');
+                    privateParams.set('mode', 'Remote');
+                } else if (activeFilter === 'Hybrid') {
+                    publicParams.set('mode', 'Hybrid');
+                    privateParams.set('mode', 'Hybrid');
+                }
+
+                const publicQuery = publicParams.toString();
+                const privateQuery = privateParams.toString();
+
+                const endpoint = token
+                    ? `${process.env.NEXT_PUBLIC_API_URL}/placements${privateQuery ? `?${privateQuery}` : ''}`
+                    : `${process.env.NEXT_PUBLIC_API_URL}/placements/public/active${publicQuery ? `?${publicQuery}` : ''}`;
+
+                const response = await fetchApi(endpoint, token ? {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
-                });
+                } : undefined);
                 if (response.ok) {
                     const data = await response.json();
                     setDrives(data);
                 }
             } catch (error) {
-                console.error("Failed to fetch placement drives", error);
+                console.error('Failed to fetch active jobs', error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        if (token) {
-            fetchDrives();
-        }
+        fetchDrives();
     }, [token, activeFilter]);
 
     // Local Search Filtering
@@ -52,52 +79,53 @@ export default function PlacementDrivesPage() {
         drive.companyName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filterOptions = ['All', 'Internship', 'Remote', 'Active Hiring'];
+    const filterOptions = ['All', 'Internship', 'Remote', 'Hybrid', 'Active Hiring'];
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
-            {/* Header Section */}
-            <div className="bg-white rounded-3xl p-8 border border-slate-200 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto space-y-8 font-inter">
+            <div className="bg-white p-8 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] relative overflow-hidden">
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+                    backgroundImage: `linear-gradient(to right, #202b20 1px, transparent 1px), linear-gradient(to bottom, #202b20 1px, transparent 1px)`,
+                    backgroundSize: '20px 20px'
+                }} />
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                            <Building2 size={20} className="text-emerald-600" />
+                        <div className="w-12 h-12 bg-[#ffa116] border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center justify-center">
+                            <Building2 size={24} className="text-[#202b20]" />
                         </div>
-                        <h1 className="text-2xl font-bold text-slate-900">Placement Drives</h1>
+                        <h1 className="text-3xl font-[800] uppercase tracking-tight text-[#202b20]">Active Jobs</h1>
                     </div>
-                    <p className="text-slate-600 max-w-2xl text-lg">
+                    <p className="text-[#202b20]/80 max-w-2xl text-lg font-[500]">
                         Discover exclusive hiring opportunities, internships, and remote roles from our partner network.
                     </p>
                 </div>
             </div>
 
-            {/* Search and Filters */}
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="relative w-full md:max-w-md">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                <div className="relative w-full md:max-w-md group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#202b20]" size={20} />
                     <input
                         type="text"
-                        placeholder="Search drives by role, company..."
+                        placeholder="SEARCH JOBS..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-900 placeholder:text-slate-400 font-medium"
+                        className="w-full pl-12 pr-4 py-3 bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] focus:outline-none focus:-translate-y-0.5 focus:shadow-[4px_4px_0_0_#ffa116] transition-all text-[#202b20] placeholder:text-[#202b20]/50 font-[700] uppercase tracking-wide"
                     />
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 custom-scrollbar">
-                    <div className="flex items-center gap-2 px-3 text-slate-400 shrink-0">
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 custom-scrollbar">
+                    <div className="flex items-center gap-2 px-3 text-[#202b20] shrink-0">
                         <Filter size={16} />
-                        <span className="text-sm font-semibold uppercase tracking-wider">Filters:</span>
+                        <span className="text-sm font-[800] uppercase tracking-widest">Filters:</span>
                     </div>
                     {filterOptions.map(option => (
                         <button
                             key={option}
                             onClick={() => setActiveFilter(option)}
-                            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${activeFilter === option
-                                    ? 'bg-slate-900 text-white shadow-md'
-                                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                            className={`px-4 py-2 text-xs font-[800] uppercase tracking-wider transition-all border-2 border-[#202b20] hover:-translate-y-0.5 ${activeFilter === option
+                                    ? 'bg-[#ffa116] text-[#202b20] shadow-[2px_2px_0_0_#202b20]'
+                                    : 'bg-white text-[#202b20] hover:shadow-[2px_2px_0_0_#202b20]'
                                 }`}
                         >
                             {option}
@@ -106,28 +134,45 @@ export default function PlacementDrivesPage() {
                 </div>
             </div>
 
-            {/* Content Grid */}
             {isLoading ? (
                 <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+                    <div className="w-12 h-12 border-4 border-[#202b20] border-t-[#ffa116] animate-spin rounded-full"></div>
                 </div>
             ) : filteredDrives.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDrives.map(drive => (
-                        <DriveCard key={drive.id} drive={drive} />
+                        <DriveCard 
+                            key={drive.id} 
+                            drive={drive} 
+                            onApply={(driveId) => setSelectedDriveId(driveId)} 
+                        />
                     ))}
                 </div>
             ) : (
-                <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center">
-                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="material-symbols-outlined text-4xl text-slate-400">work_off</span>
+                <div className="bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] p-12 text-center">
+                    <div className="w-20 h-20 bg-[#ffa116] border-2 border-[#202b20] flex items-center justify-center mx-auto mb-6 shadow-[2px_2px_0_0_#202b20]">
+                        <span className="material-symbols-outlined text-4xl text-[#202b20]">work_off</span>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">No active drives found</h3>
-                    <p className="text-slate-500 max-w-sm mx-auto">
-                        We couldn't find any placement drives matching your current filters. Try an alternate search term.
+                    <h3 className="text-2xl font-[800] uppercase tracking-tight text-[#202b20] mb-2">No active jobs found</h3>
+                    <p className="text-[#202b20]/70 font-[500] max-w-sm mx-auto">
+                        We couldn't find any active jobs matching your current filters. Try an alternate search term.
                     </p>
                 </div>
             )}
+
+            <ApplyJobModal 
+                isOpen={!!selectedDriveId} 
+                onClose={() => setSelectedDriveId(null)} 
+                driveId={selectedDriveId || ''} 
+            />
         </div>
+    );
+}
+
+export default function PlacementDrivesPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div></div>}>
+            <ActiveJobsContent />
+        </Suspense>
     );
 }

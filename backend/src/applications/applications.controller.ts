@@ -37,14 +37,25 @@ export class ApplicationsController {
     @Request() req: AuthenticatedRequest,
     @Param('driveId') driveId: string,
   ) {
-    // If super admin bypasses ownership check, they can. For company_admin, strictly enforce.
-    // We will pass req.user.id to the service for validation
-    return this.applicationsService.findByPlacement(driveId, req.user.id);
+    return this.applicationsService.findByPlacement(
+      driveId,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Patch(':id/status')
   @Roles(UserRole.COMPANY_ADMIN, UserRole.SUPER_ADMIN)
-  updateStatus(@Param('id') id: string, @Body('status') status: string) {
-    return this.applicationsService.updateStatus(id, status);
+  updateStatus(
+    @Request() req: AuthenticatedRequest,
+    @Param('id') id: string,
+    @Body('status') status: string,
+  ) {
+    return this.applicationsService.updateStatus(
+      id,
+      status,
+      req.user.id,
+      req.user.role,
+    );
   }
 }

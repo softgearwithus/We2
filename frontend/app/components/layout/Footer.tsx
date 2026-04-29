@@ -17,11 +17,11 @@ export default function Footer() {
                 {/* Left: Branding */}
                 <div className="flex flex-col justify-start max-w-xs">
                     <Link href="/" className="inline-flex items-center group mb-4">
-                        <span className="text-3xl font-black tracking-tighter text-[#202b20] uppercase bg-[#ffa116] px-2 py-1 border-4 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20]">
+                        <span className="text-3xl font-black tracking-tighter text-[#202b20] uppercase bg-[#ffa116] px-2 py-1 border-4 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20]">
                             EMBLE
                         </span>
                     </Link>
-                    <p className="text-[#202b20] text-sm leading-relaxed font-[500] border-2 border-[#202b20] bg-white p-3 shadow-[4px_4px_0px_0px_#202b20]">
+                    <p className="text-[#202b20] text-sm leading-relaxed font-[500] border-2 border-[#202b20] bg-white p-3 shadow-[2px_2px_0px_0px_#202b20]">
                         The most human AI interviews with free core tools for preparation mastery.
                     </p>
                     <a href="mailto:support@emble.in" className="text-[#202b20] hover:bg-[#ffa116] border-2 border-transparent hover:border-[#202b20] p-1 -ml-1 text-sm mt-4 font-black inline-flex items-center gap-2 transition-all shadow-none hover:shadow-[2px_2px_0px_0px_#202b20] uppercase">

@@ -1,12 +1,27 @@
-import { IsString, IsEnum, IsOptional, IsUrl } from 'class-validator';
-import { PlacementType, PlacementStatus } from '../entities/placement.entity';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsUrl,
+  IsArray,
+  ArrayMinSize,
+  IsInt,
+  Min,
+  IsDateString,
+} from 'class-validator';
+import {
+  PlacementType,
+  PlacementStatus,
+  WorkMode,
+} from '../entities/placement.entity';
 
 export class CreatePlacementDto {
   @IsString()
   title: string;
 
   @IsString()
-  companyName: string;
+  @IsOptional()
+  companyName?: string;
 
   @IsOptional()
   @IsString()
@@ -19,6 +34,9 @@ export class CreatePlacementDto {
   @IsEnum(PlacementType)
   type: PlacementType;
 
+  @IsEnum(WorkMode)
+  workMode: WorkMode;
+
   @IsEnum(PlacementStatus)
   @IsOptional()
   status?: PlacementStatus;
@@ -26,8 +44,38 @@ export class CreatePlacementDto {
   @IsString()
   description: string;
 
+  @IsOptional()
   @IsUrl()
-  applyLink: string;
+  applyLink?: string;
+
+  @IsString()
+  jobProfile: string;
+
+  @IsString()
+  packageOffered: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  roles: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  skillsRequired?: string[];
+
+  @IsOptional()
+  @IsString()
+  experienceRequired?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  openings?: number;
+
+  @IsOptional()
+  @IsDateString()
+  applicationDeadline?: string;
 
   @IsOptional()
   @IsString()

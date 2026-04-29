@@ -104,7 +104,7 @@ export default function CoreToolsShowcase() {
             viewport={{ once: true }}
             className="text-[3rem] md:text-[4.5rem] leading-[1.1] font-[800] tracking-tighter text-[#202b20] mb-5"
           >
-            Free <span className="text-white bg-[#202b20] px-3 shadow-[4px_4px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">Core Tools</span> for Interview Preparation
+            Free <span className="text-white bg-[#202b20] px-3 shadow-[2px_2px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">Core Tools</span> for Interview Preparation
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -125,7 +125,7 @@ export default function CoreToolsShowcase() {
           {/* Navigation Arrows */}
           <button 
             onClick={prevSlide}
-            className="absolute left-0 md:left-6 z-40 bg-[#ffa116] border-2 border-[#202b20] p-3 md:p-4 rounded-none shadow-[4px_4px_0_0_#202b20] opacity-0 translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] transition-all duration-300"
+            className="absolute left-0 md:left-6 z-40 bg-[#ffa116] border-2 border-[#202b20] p-3 md:p-4 rounded-none shadow-[2px_2px_0_0_#202b20] opacity-0 translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] transition-all duration-300"
             aria-label="Previous slide"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-[#202b20]"><path d="m15 18-6-6 6-6"/></svg>
@@ -133,7 +133,7 @@ export default function CoreToolsShowcase() {
           
           <button 
             onClick={nextSlide}
-            className="absolute right-0 md:right-6 z-40 bg-[#ffa116] border-2 border-[#202b20] p-3 md:p-4 rounded-none shadow-[4px_4px_0_0_#202b20] opacity-0 -translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] transition-all duration-300"
+            className="absolute right-0 md:right-6 z-40 bg-[#ffa116] border-2 border-[#202b20] p-3 md:p-4 rounded-none shadow-[2px_2px_0_0_#202b20] opacity-0 -translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] transition-all duration-300"
             aria-label="Next slide"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-[#202b20]"><path d="m9 18 6-6-6-6"/></svg>
@@ -160,7 +160,7 @@ export default function CoreToolsShowcase() {
                 style={{ pointerEvents: props.pointerEvents }}
               >
                 {/* Image Container with Dynamic Border */}
-                 <div className={`relative w-full pb-[60%] bg-white rounded-none transition-all duration-300 ${props.diff === 0 ? 'border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20]' : 'border-2 border-[#202b20]/50 shadow-[4px_4px_0px_0px_rgba(32,43,32,0.2)]'}`}>
+                 <div className={`relative w-full pb-[60%] bg-white rounded-none transition-all duration-300 ${props.diff === 0 ? 'border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20]' : 'border-2 border-[#202b20]/50 shadow-[2px_2px_0px_0px_rgba(32,43,32,0.2)]'}`}>
                     <img 
                       src={tool.image} 
                       alt={tool.title} 

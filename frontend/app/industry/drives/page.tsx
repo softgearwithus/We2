@@ -3,39 +3,91 @@
 import { fetchApi } from '../../lib/apiClient';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Briefcase, MapPin, Calendar, Users, Eye, ArrowRight, Loader2, PlusCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ActiveDrivesPage() {
+    const router = useRouter();
     const [drives, setDrives] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         const fetchDrives = async () => {
+            setLoading(true);
+            setErrorMessage(null);
             try {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
+                if (!token) {
+                    router.push('/login/industry?next=%2Findustry%2Fdrives');
+                    return;
+                }
+
                 const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (res.ok) {
-                    const data = await res.json();
-                    setDrives(data);
+
+                if (res.status === 401) {
+                    router.push('/login/industry?next=%2Findustry%2Fdrives');
+                    return;
                 }
+
+                if (res.status === 403) {
+                    setErrorMessage('You do not have permission to access company drives.');
+                    setDrives([]);
+                    return;
+                }
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => null);
+                    throw new Error(err?.message || 'Unable to load your active drives.');
+                }
+
+                const data = await res.json();
+                setDrives(data);
             } catch (error) {
                 console.error("Failed to fetch active drives", error);
+                setErrorMessage('Unable to load active drives right now. Please try again.');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDrives();
-    }, []);
+    }, [router, reloadKey]);
 
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
                 <Loader2 size={32} className="animate-spin text-blue-600" />
+            </div>
+        );
+    }
+
+    if (errorMessage) {
+        return (
+            <div className="max-w-3xl mx-auto mt-12">
+                <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">Unable to load drives</h2>
+                    <p className="text-slate-600 mb-6">{errorMessage}</p>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setReloadKey((k) => k + 1)}
+                            className="px-4 py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition"
+                        >
+                            Retry
+                        </button>
+                        <Link
+                            href="/industry/dashboard"
+                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition"
+                        >
+                            Back to Dashboard
+                        </Link>
+                    </div>
+                </div>
             </div>
         );
     }

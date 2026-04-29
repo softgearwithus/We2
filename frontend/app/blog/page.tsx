@@ -70,7 +70,7 @@ export default function BlogPage() {
                             className={`px-6 py-2 border-2 border-[#202b20] text-[12px] font-black uppercase tracking-widest transition-all ${
                                 selectedCategory === category 
                                 ? 'bg-[#202b20] text-white shadow-none translate-x-1 translate-y-1' 
-                                : 'bg-white text-[#202b20] shadow-[4px_4px_0px_0px_#202b20] hover:translate-x-1 hover:translate-y-1 hover:shadow-none'
+                                : 'bg-white text-[#202b20] shadow-[2px_2px_0px_0px_#202b20] hover:translate-x-1 hover:translate-y-1 hover:shadow-none'
                             }`}
                         >
                             {category}
@@ -85,7 +85,7 @@ export default function BlogPage() {
                             <Link 
                                 key={post.slug} 
                                 href={`/blog/${post.slug}`}
-                                className="group bg-white border-2 border-[#202b20] shadow-[6px_6px_0px_0px_#202b20] flex flex-col p-6 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[10px_10px_0px_0px_#ffa116] transition-all h-full"
+                                className="group bg-white border-2 border-[#202b20] shadow-[3px_3px_0px_0px_#202b20] flex flex-col p-6 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0px_0px_#ffa116] transition-all h-full"
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="px-2 py-0.5 bg-[#ffa116] border-2 border-[#202b20] text-[9px] uppercase font-black tracking-widest text-[#202b20]">
@@ -122,15 +122,15 @@ export default function BlogPage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="py-32 text-center border-4 border-dashed border-[#202b20]/20 bg-white shadow-[8px_8px_0px_0px_#202b20]/5">
-                        <div className="bg-[#ffa116] w-16 h-16 mx-auto flex items-center justify-center border-4 border-[#202b20] shadow-[4px_4px_0_0_#202b20] mb-6">
+                    <div className="py-32 text-center border-4 border-dashed border-[#202b20]/20 bg-white shadow-[2px_2px_0px_0px_#202b20]/5">
+                        <div className="bg-[#ffa116] w-16 h-16 mx-auto flex items-center justify-center border-4 border-[#202b20] shadow-[2px_2px_0_0_#202b20] mb-6">
                             <Search className="w-8 h-8" />
                         </div>
                         <h3 className="text-2xl font-black uppercase tracking-widest text-[#202b20] mb-2">No Articles Found</h3>
                         <p className="text-[#202b20]/50 font-medium">Try searching for subjects like "Python", "Scale", or "Hiring".</p>
                         <button 
                             onClick={() => {setSearchQuery(''); setSelectedCategory('All');}}
-                            className="mt-8 px-8 py-3 bg-[#202b20] text-white font-black uppercase tracking-widest text-sm shadow-[4px_4px_0_0_#ffa116] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                            className="mt-8 px-8 py-3 bg-[#202b20] text-white font-black uppercase tracking-widest text-sm shadow-[2px_2px_0_0_#ffa116] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                         >
                             Reset Search
                         </button>

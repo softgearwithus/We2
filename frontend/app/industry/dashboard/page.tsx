@@ -3,28 +3,53 @@
 import { fetchApi } from '../../lib/apiClient';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { Building2, Briefcase, Users, PlusCircle, TrendingUp, Calendar, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function IndustryDashboard() {
+    const router = useRouter();
     const { user } = useAuth();
     const [stats, setStats] = useState({
         activeDrives: 0,
         totalApplicants: 0,
     });
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
+            setLoading(true);
+            setErrorMessage(null);
             try {
                 // Fetch the company's drives
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
+                if (!token) {
+                    router.push('/login/industry?next=%2Findustry%2Fdashboard');
+                    return;
+                }
                 const drivesRes = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!drivesRes.ok) throw new Error('API Error');
+
+                if (drivesRes.status === 401) {
+                    router.push('/login/industry?next=%2Findustry%2Fdashboard');
+                    return;
+                }
+
+                if (drivesRes.status === 403) {
+                    setErrorMessage('You do not have permission to access the company dashboard.');
+                    return;
+                }
+
+                if (!drivesRes.ok) {
+                    const err = await drivesRes.json().catch(() => null);
+                    throw new Error(err?.message || 'Unable to load dashboard data.');
+                }
+
                 const drives = await drivesRes.json();
                 const activeDrivesCount = drives.filter((d: any) => d.status === 'Active Hiring').length;
 
@@ -37,6 +62,7 @@ export default function IndustryDashboard() {
 
             } catch (error) {
                 console.error("Failed to fetch dashboard stats", error);
+                setErrorMessage('Unable to load dashboard data right now. Please try again.');
             } finally {
                 setLoading(false);
             }
@@ -45,12 +71,37 @@ export default function IndustryDashboard() {
         if (user) {
             fetchDashboardData();
         }
-    }, [user]);
+    }, [user, router, reloadKey]);
 
     if (loading) {
         return (
             <div className="flex h-64 items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    if (errorMessage) {
+        return (
+            <div className="max-w-3xl mx-auto mt-10">
+                <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">Dashboard unavailable</h2>
+                    <p className="text-slate-600 mb-6">{errorMessage}</p>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setReloadKey((k) => k + 1)}
+                            className="px-4 py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition"
+                        >
+                            Retry
+                        </button>
+                        <Link
+                            href="/industry/drives"
+                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition"
+                        >
+                            Go to Drives
+                        </Link>
+                    </div>
+                </div>
             </div>
         );
     }

@@ -16,7 +16,7 @@ export default function FeatureShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[4px_4px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
+            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
           >
             <div className="mb-8">
               <h3 className="text-3xl md:text-4xl font-[800] tracking-tighter text-[#202b20] mb-3">
@@ -28,7 +28,7 @@ export default function FeatureShowcase() {
             </div>
 
             <div className="mt-auto pt-8 w-full">
-              <div className="bg-[#efeff1] rounded-none p-4 sm:p-6 border-2 border-[#202b20] relative flex flex-col gap-5 shadow-[4px_4px_0_0_#202b20]">
+              <div className="bg-[#efeff1] rounded-none p-4 sm:p-6 border-2 border-[#202b20] relative flex flex-col gap-5 shadow-[2px_2px_0_0_#202b20]">
                 <div className="self-end bg-[#ffa116] text-[#202b20] font-bold px-4 py-3 rounded-none border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] text-sm max-w-[85%]">
                   eO: How would you scale the Redis cache for 1M reads/sec?
                 </div>
@@ -53,7 +53,7 @@ export default function FeatureShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[4px_4px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
+            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
           >
             <div className="mb-8">
               <h3 className="text-3xl md:text-4xl font-[800] tracking-tighter text-[#202b20] mb-3">
@@ -65,7 +65,7 @@ export default function FeatureShowcase() {
             </div>
 
             <div className="mt-auto pt-8 w-full">
-              <div className="bg-[#efeff1] rounded-none p-6 border-[3px] border-[#202b20] border-dashed shadow-[4px_4px_0_0_#202b20] flex flex-col items-center justify-center gap-6 text-center">
+              <div className="bg-[#efeff1] rounded-none p-6 border-[3px] border-[#202b20] border-dashed shadow-[2px_2px_0_0_#202b20] flex flex-col items-center justify-center gap-6 text-center">
                 <div className="flex -space-x-4 mb-2">
                   <div className="w-16 h-20 rounded-none bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center justify-center relative z-20 overflow-hidden transform group-hover:-rotate-6 transition-transform">
                     <span className="text-[10px] font-bold text-[#202b20] uppercase tracking-wider">YOUR_CV.pdf</span>
@@ -74,7 +74,7 @@ export default function FeatureShowcase() {
                     <span className="text-[10px] font-bold text-[#202b20] uppercase tracking-wider">APPLE_JD.pdf</span>
                   </div>
                 </div>
-                <div className="w-full bg-white border-2 border-[#202b20] rounded-none p-4 flex flex-col gap-3 shadow-[4px_4px_0_0_#202b20] text-center">
+                <div className="w-full bg-white border-2 border-[#202b20] rounded-none p-4 flex flex-col gap-3 shadow-[2px_2px_0_0_#202b20] text-center">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#202b20]">Extracting relevant experiences...</span>
                   <div className="w-full h-2 bg-[#202b20]/10 rounded-none overflow-hidden relative">
                     <div className="absolute inset-y-0 left-0 bg-[#ffa116] w-full border-r-2 border-[#202b20] animate-pulse" />
@@ -90,7 +90,7 @@ export default function FeatureShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[4px_4px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
+            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
           >
             <div className="mb-8">
               <h3 className="text-3xl md:text-4xl font-[800] tracking-tighter text-[#202b20] mb-3">
@@ -102,9 +102,9 @@ export default function FeatureShowcase() {
             </div>
 
             <div className="mt-auto pt-8 w-full">
-              <div className="bg-[#efeff1] rounded-none p-6 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] flex flex-col gap-4 text-center">
+              <div className="bg-[#efeff1] rounded-none p-6 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex flex-col gap-4 text-center">
                 <div className="flex items-center justify-center gap-6">
-                  <div className="w-24 h-24 rounded-none border-2 border-[#202b20] flex items-center justify-center relative shadow-[4px_4px_0_0_#202b20] bg-white transform -rotate-3">
+                  <div className="w-24 h-24 rounded-none border-2 border-[#202b20] flex items-center justify-center relative shadow-[2px_2px_0_0_#202b20] bg-white transform -rotate-3">
                     <span className="text-[2rem] font-[1000] text-[#202b20] tracking-tighter">8.2<span className="text-base text-[#202b20]/50">/10</span></span>
                   </div>
                   <div className="flex flex-col items-start gap-3 text-left">
@@ -128,7 +128,7 @@ export default function FeatureShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[4px_4px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
+            className="flex flex-col bg-white border-2 border-[#202b20] rounded-none p-8 sm:p-10 shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#ffa116] hover:-translate-y-1 transition-all overflow-hidden group"
           >
             <div className="mb-8">
               <h3 className="text-3xl md:text-4xl font-[800] tracking-tighter text-[#202b20] mb-3">
@@ -140,7 +140,7 @@ export default function FeatureShowcase() {
             </div>
 
             <div className="mt-auto pt-8 w-full">
-              <div className="w-full bg-white border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] rounded-none overflow-hidden flex flex-col">
+              <div className="w-full bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] rounded-none overflow-hidden flex flex-col">
                 <div className="bg-[#202b20] px-4 py-3 border-b-2 border-[#202b20] flex items-center justify-between">
                   <span className="text-[10px] font-bold text-[#ffa116] uppercase tracking-wider">Top Mock Tests</span>
                   <span className="text-[10px] font-bold text-white uppercase tracking-wider cursor-pointer hover:underline underline-offset-2">View All</span>

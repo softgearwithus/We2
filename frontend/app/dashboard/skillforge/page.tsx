@@ -39,7 +39,7 @@ const tracks = [
         icon: Target,
         color: 'text-emerald-500',
         bg: 'bg-emerald-500/10',
-        href: '/dashboard/ide',
+        href: '/dashboard/interview',
         progress: 45,
         total: 150,
         tags: ['Arrays', 'Graphs', 'DP'],

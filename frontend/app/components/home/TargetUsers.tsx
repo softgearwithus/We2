@@ -45,9 +45,9 @@ export default function TargetUsers() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, duration: 0.4 }}
-              className="group bg-white p-10 rounded-none border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#ffa116] transition-all duration-300"
+              className="group bg-white p-10 rounded-none border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#ffa116] transition-all duration-300"
             >
-              <div className="h-16 w-16 rounded-none bg-[#efeff1] border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] flex items-center justify-center mb-8">
+              <div className="h-16 w-16 rounded-none bg-[#efeff1] border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center justify-center mb-8">
                 {persona.icon}
               </div>
               <h3 className="text-2xl font-[600] text-[#202b20] mb-4">{persona.role}</h3>

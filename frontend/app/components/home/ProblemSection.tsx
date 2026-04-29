@@ -73,7 +73,7 @@ export default function ProblemSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className={`relative group flex flex-col rounded-none shadow-[4px_4px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#ffa116] transition-all overflow-hidden ${point.color}`}
+              className={`relative group flex flex-col rounded-none shadow-[2px_2px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#ffa116] transition-all overflow-hidden ${point.color}`}
             >
               <div>{point.icon}</div>
               <h3 className={point.titleClass}>

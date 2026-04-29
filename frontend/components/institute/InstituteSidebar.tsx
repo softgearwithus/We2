@@ -24,7 +24,6 @@ export function InstituteSidebar() {
     const menuItems = [
         { label: "Dashboard", href: "/institute/dashboard", icon: LayoutDashboard },
         { label: "Student Analytics", href: "/institute/students", icon: Users },
-        { label: "Placements", href: "/institute/placements", icon: Briefcase },
         { label: "Skill Intelligence", href: "/institute/skills", icon: PieChart },
         { label: "Reports", href: "/institute/reports", icon: BarChart3 },
     ];

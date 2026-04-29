@@ -4,7 +4,6 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { User } from './user.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
-import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submission.entity';
 import { Resume } from '../resume/entities/resume.entity';
 import { MentorSession } from '../mentors/entities/mentor-session.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
@@ -17,7 +16,6 @@ import { PendingUpgradeOrder } from './entities/pending-upgrade-order.entity';
     TypeOrmModule.forFeature([
       User,
       InterviewSession,
-      ProjectLabSubmission,
       Resume,
       MentorSession,
       UserGamification,

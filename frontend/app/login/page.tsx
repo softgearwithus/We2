@@ -63,14 +63,8 @@ function LoginSelectionPageContent() {
 
             {/* Header */}
             <header className="relative z-10 py-8 px-6 md:px-12 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-3 group px-6 py-2 border-2 border-[#202b20] bg-white shadow-[4px_4px_0px_0px_#202b20] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#202b20] transition-all">
-                    <span className="font-[800] text-2xl text-[#202b20] tracking-tighter">emble</span>
-                </Link>
-                <Link
-                    href="/"
-                    className="px-5 py-2.5 bg-white border-2 border-[#202b20] text-sm font-[600] text-[#202b20] hover:bg-[#ffa116] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#202b20] transition-all uppercase"
-                >
-                    Back to Home
+                <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+                    <span className="font-[800] text-3xl text-[#202b20] tracking-tighter">emble</span>
                 </Link>
             </header>
 
@@ -97,32 +91,32 @@ function LoginSelectionPageContent() {
                             className="h-full"
                         >
                             <Link href={portal.link} className="block h-full group">
-                                <Card className="h-full flex flex-col border-2 border-[#202b20] shadow-[8px_8px_0px_0px_#202b20] group-hover:shadow-[12px_12px_0px_0px_#ffa116] group-hover:-translate-y-1 transition-all duration-300 rounded-none bg-white relative">
+                                <div className="h-full flex flex-col border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all duration-300 bg-white relative">
                                     <div className="absolute top-0 left-0 w-full h-2 border-b-2 border-[#202b20]" style={{
                                         backgroundColor: portal.role === 'Student' ? '#ffa116' : portal.role === 'Institute' ? '#34d399' : '#202b20'
                                     }} />
-                                    <CardHeader className="p-8 pb-4 relative mt-2">
-                                        <div className="absolute top-8 right-8 text-[10px] uppercase font-bold tracking-wider px-2 py-1 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20]">
+                                    <div className="p-8 pb-4 relative mt-2">
+                                        <div className="absolute top-8 right-8 text-[10px] uppercase font-[800] tracking-wider px-2 py-1 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] bg-white">
                                             {portal.badge}
                                         </div>
-                                        <div className={`w-14 h-14 border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`} style={{
+                                        <div className={`w-14 h-14 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`} style={{
                                             backgroundColor: portal.role === 'Student' ? '#ffa116' : portal.role === 'Institute' ? '#34d399' : '#202b20'
                                         }}>
                                             {portal.icon}
                                         </div>
-                                        <CardTitle className="text-2xl font-[800] uppercase text-[#202b20]">{portal.role}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="px-8 pb-6 flex-1">
-                                        <CardDescription className="text-base text-[#202b20]/70 font-[500] leading-relaxed">
+                                        <h2 className="text-2xl font-[800] uppercase text-[#202b20]">{portal.role}</h2>
+                                    </div>
+                                    <div className="px-8 pb-6 flex-1">
+                                        <p className="text-base text-[#202b20]/80 font-[600] leading-relaxed">
                                             {portal.description}
-                                        </CardDescription>
-                                    </CardContent>
-                                    <CardFooter className="px-8 pb-8 pt-0">
-                                        <div className="flex items-center gap-2 font-[700] uppercase text-sm text-[#202b20] group-hover:gap-4 transition-all">
+                                        </p>
+                                    </div>
+                                    <div className="px-8 pb-8 pt-0 mt-auto">
+                                        <div className="flex items-center gap-2 font-[800] uppercase text-sm text-[#202b20] group-hover:gap-4 transition-all">
                                             {portal.cta} <ArrowRight size={16} className="text-[#ffa116]" strokeWidth={3} />
                                         </div>
-                                    </CardFooter>
-                                </Card>
+                                    </div>
+                                </div>
                             </Link>
                         </motion.div>
                     ))}

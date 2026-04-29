@@ -21,9 +21,6 @@ export function SiteHeader() {
       
       {/* Centered Navigation Links */}
       <div className="hidden md:flex flex-row items-center gap-8 absolute left-1/2 -translate-x-1/2">
-         <Link href="/dashboard/preparation" className="text-[14px] font-[600] tracking-tight text-slate-600 hover:text-slate-900 transition-colors">
-            Roadmap
-         </Link>
          <Link href="/pricing" className="text-[14px] font-[600] tracking-tight text-slate-600 hover:text-slate-900 transition-colors">
             Pricing
          </Link>
@@ -37,7 +34,7 @@ export function SiteHeader() {
             <div className="rounded-full">
               <Avatar className="size-8 cursor-pointer">
                 <AvatarImage
-                  src={(user as any)?.profilePicture}
+                  src={user?.avatarUrl || undefined}
                   alt={user?.firstName || 'User'}
                 />
                 <AvatarFallback className="bg-emerald-100 text-emerald-800 font-medium">

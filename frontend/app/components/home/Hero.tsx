@@ -23,7 +23,7 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
               {customTitle ? (
                 <>
                   {customTitle}{' '}
-                  <span className="inline-block bg-[#ffa116] text-[#202b20] px-4 py-1 sm:py-2 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] mt-2 tracking-tight">
+                  <span className="inline-block bg-[#ffa116] text-[#202b20] px-4 py-1 sm:py-2 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] mt-2 tracking-tight">
                     {customTitleSpan}
                   </span>
                 </>
@@ -31,7 +31,7 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
                 <>
                   Intelligent layer <br className="hidden lg:block" />
                   for{' '}
-                  <span className="inline-block bg-[#ffa116] text-[#202b20] px-4 py-1 sm:py-2 border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] mt-2 sm:mt-4 lg:ml-2 tracking-tight">
+                  <span className="inline-block bg-[#ffa116] text-[#202b20] px-4 py-1 sm:py-2 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] mt-2 sm:mt-4 lg:ml-2 tracking-tight">
                     interviews.
                   </span>
                 </>
@@ -46,13 +46,13 @@ export default function Hero({ customTitle, customTitleSpan, customSubDescriptio
 
             <div className="mt-6 sm:mt-8 flex flex-col items-start gap-4 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row w-full gap-4">
-                <Button asChild size="lg" className="relative h-14 sm:h-16 px-8 sm:px-10 rounded-none font-bold text-base sm:text-lg transition-transform duration-200 hover:-translate-y-1 active:translate-y-[2px] active:shadow-none group bg-[#ffa116] text-[#202b20] shadow-[4px_4px_0_0_#202b20] hover:bg-[#ff9100] border-2 border-[#202b20] w-full sm:w-auto">
+                <Button asChild size="lg" className="relative h-14 sm:h-16 px-8 sm:px-10 rounded-none font-bold text-base sm:text-lg transition-transform duration-200 hover:-translate-y-1 active:translate-y-[2px] active:shadow-none group bg-[#ffa116] text-[#202b20] shadow-[2px_2px_0_0_#202b20] hover:bg-[#ff9100] border-2 border-[#202b20] w-full sm:w-auto">
                   <Link href="/register" className="relative z-10 flex items-center justify-center w-full">
                     <span className="relative z-10">Start Hiring Better</span>
                     <ArrowRight className="relative z-10 w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="relative h-14 sm:h-16 px-8 sm:px-10 rounded-none font-bold text-base sm:text-lg transition-transform duration-200 hover:-translate-y-1 active:translate-y-[2px] active:shadow-none group border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#202b20] hover:text-white shadow-[4px_4px_0_0_#202b20] w-full sm:w-auto">
+                <Button asChild variant="outline" size="lg" className="relative h-14 sm:h-16 px-8 sm:px-10 rounded-none font-bold text-base sm:text-lg transition-transform duration-200 hover:-translate-y-1 active:translate-y-[2px] active:shadow-none group border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#202b20] hover:text-white shadow-[2px_2px_0_0_#202b20] w-full sm:w-auto">
                   <Link href="/dashboard" className="relative z-10 flex items-center justify-center w-full">
                     <span className="relative z-10">Practice as Candidate</span>
                   </Link>

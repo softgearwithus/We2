@@ -4,7 +4,7 @@ import { fetchApi } from '../../../../lib/apiClient';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2, PlayCircle, Code2, Database, Mail, Phone, MapPin, Search, Filter } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Loader2, Mail, MapPin, Phone, Search } from 'lucide-react';
 import Link from 'next/link';
 
 // The Kanban Statuses matching ApplicationStatus enum
@@ -15,37 +15,63 @@ export default function ATSBoardPage() {
     const router = useRouter();
     const [applicants, setApplicants] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [updatingParams, setUpdatingParams] = useState<string | null>(null);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
         const fetchATSData = async () => {
+            setLoading(true);
+            setErrorMessage(null);
             try {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
                 const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/drive/${params.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!res.ok) throw new Error('API Error');
+
+                if (res.status === 401) {
+                    router.push(`/login/industry?next=${encodeURIComponent(`/industry/drives/${params.id}/ats`)}`);
+                    return;
+                }
+
+                if (res.status === 403) {
+                    setErrorMessage('You do not have permission to access this drive ATS board.');
+                    setApplicants([]);
+                    return;
+                }
+
+                if (res.status === 404) {
+                    setErrorMessage('This drive was not found. It may have been removed.');
+                    setApplicants([]);
+                    return;
+                }
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => null);
+                    throw new Error(err?.message || 'Unable to load ATS data.');
+                }
+
                 const data = await res.json();
                 setApplicants(data);
             } catch (error) {
                 console.error("Failed to fetch ATS data", error);
-                router.push('/industry/drives');
+                setErrorMessage('Unable to load ATS data right now. Please try again.');
             } finally {
                 setLoading(false);
             }
         };
 
         if (params.id) fetchATSData();
-    }, [params.id, router]);
+    }, [params.id, router, reloadKey]);
 
     const moveApplicant = async (appId: string, newStatus: string) => {
         setUpdatingParams(appId);
         try {
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken();
-            await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/${appId}/status`, {
+            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/${appId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,9 +79,27 @@ export default function ATSBoardPage() {
                 },
                 body: JSON.stringify({ status: newStatus })
             });
+
+            if (res.status === 401) {
+                router.push(`/login/industry?next=${encodeURIComponent(`/industry/drives/${params.id}/ats`)}`);
+                return;
+            }
+
+            if (res.status === 403) {
+                setErrorMessage('You are not allowed to update this application status.');
+                return;
+            }
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => null);
+                alert(err?.message || 'Failed to update applicant status.');
+                return;
+            }
+
             setApplicants(prev => prev.map(a => a.id === appId ? { ...a, status: newStatus } : a));
         } catch (error) {
             console.error("Failed to move applicant status", error);
+            alert('Unable to update applicant status. Please try again.');
         } finally {
             setUpdatingParams(null);
         }
@@ -69,9 +113,45 @@ export default function ATSBoardPage() {
         );
     }
 
-    const filteredApplicants = applicants.filter(a =>
-        (a.student?.firstName + ' ' + a.student?.lastName).toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    if (errorMessage) {
+        return (
+            <div className="min-h-[70vh] flex items-center justify-center">
+                <div className="max-w-xl w-full bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">ATS Access Error</h2>
+                    <p className="text-slate-600 mb-6">{errorMessage}</p>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setReloadKey((k) => k + 1)}
+                            className="px-4 py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition"
+                        >
+                            Retry
+                        </button>
+                        <Link
+                            href="/industry/drives"
+                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition"
+                        >
+                            Back to Drives
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const filteredApplicants = applicants.filter((applicant) => {
+        const fallbackName = `${applicant.student?.firstName || ''} ${applicant.student?.lastName || ''}`.trim();
+        const searchable = [
+            applicant.candidateName,
+            fallbackName,
+            applicant.candidateEmail,
+            applicant.student?.email,
+        ]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+
+        return searchable.includes(searchTerm.toLowerCase());
+    });
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col pt-2">
@@ -99,7 +179,6 @@ export default function ATSBoardPage() {
                 </div>
             </div>
 
-            {/* Kanban Columns */}
             <div className="flex-1 flex gap-6 overflow-x-auto pb-8 custom-scrollbar pt-2">
                 {COLUMNS.map(column => (
                     <div key={column} className="flex-shrink-0 w-80 bg-slate-100 rounded-2xl flex flex-col max-h-[calc(100vh-160px)] border border-slate-200 shadow-inner">
@@ -121,21 +200,64 @@ export default function ATSBoardPage() {
                                                 {applicant.student?.avatarUrl ? (
                                                     <img loading="lazy" decoding="async" src={applicant.student.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    (applicant.student?.firstName?.[0] || 'U')
+                                                    ((applicant.candidateName || applicant.student?.firstName || 'U')?.[0] || 'U')
                                                 )}
                                             </div>
                                             <div>
                                                 <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                                                    {applicant.student?.firstName} {applicant.student?.lastName}
+                                                    {applicant.candidateName || `${applicant.student?.firstName || ''} ${applicant.student?.lastName || ''}`.trim() || applicant.student?.email || 'Unknown applicant'}
                                                 </h4>
                                                 <div className="text-xs text-slate-500 font-medium mt-0.5 line-clamp-1">
-                                                    {applicant.student?.department || 'Student'}
+                                                    {[
+                                                        applicant.candidateDepartment || applicant.student?.department || 'Student',
+                                                        applicant.candidateYear || applicant.student?.year || null,
+                                                    ].filter(Boolean).join(' • ')}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Action bar for changing status */}
+                                    <div className="space-y-2 text-xs text-slate-600">
+                                        {applicant.candidateEmail || applicant.student?.email ? (
+                                            <div className="flex items-center gap-2">
+                                                <Mail size={14} className="text-slate-400" />
+                                                <span className="line-clamp-1">{applicant.candidateEmail || applicant.student?.email}</span>
+                                            </div>
+                                        ) : null}
+                                        {applicant.candidatePhone ? (
+                                            <div className="flex items-center gap-2">
+                                                <Phone size={14} className="text-slate-400" />
+                                                <span>{applicant.candidatePhone}</span>
+                                            </div>
+                                        ) : null}
+                                        {applicant.candidateLocation || applicant.student?.location ? (
+                                            <div className="flex items-center gap-2">
+                                                <MapPin size={14} className="text-slate-400" />
+                                                <span className="line-clamp-1">{applicant.candidateLocation || applicant.student?.location}</span>
+                                            </div>
+                                        ) : null}
+                                        {applicant.resumeDriveUrl ? (
+                                            <a
+                                                href={applicant.resumeDriveUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-slate-700 font-semibold hover:bg-slate-100 transition-colors"
+                                            >
+                                                Resume link <ExternalLink size={14} />
+                                            </a>
+                                        ) : null}
+                                        {applicant.candidateLinkedinUrl || applicant.student?.linkedinUrl ? (
+                                            <a
+                                                href={applicant.candidateLinkedinUrl || applicant.student?.linkedinUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
+                                            >
+                                                LinkedIn profile <ExternalLink size={14} />
+                                            </a>
+                                        ) : null}
+                                    </div>
+
                                     <div className="pt-3 flex items-center justify-between gap-2 border-t border-slate-100 mt-1">
                                         <span className="text-xs font-bold text-slate-400">Move candidate to:</span>
                                         {updatingParams === applicant.id ? (

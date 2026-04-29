@@ -4,11 +4,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/app/lib/utils';
-import { Menu, X, Terminal, User, LogOut, Settings, LayoutDashboard, BookOpen, Video, Code2, ChevronDown, School, CircuitBoard, Map } from 'lucide-react';
+import { Menu, X, Terminal, User, LogOut, Settings, LayoutDashboard, BookOpen, Video, Code2, ChevronDown, School, CircuitBoard } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useDashboardMode } from '@/app/context/DashboardModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollProgressProvider, ScrollProgress } from '@/components/animate-ui/primitives/animate/scroll-progress';
+
+const GUEST_NAV_ITEMS = [
+    { label: 'Features', href: '/features' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Active Jobs', href: '/active-jobs' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'FAQ', href: '/faq' }
+] as const;
+
+const AUTH_NAV_ITEMS = [
+    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Pricing', href: '/pricing', icon: null }
+] as const;
 
 const getDisplayPlan = (plan?: string) => {
     if (!plan || plan === 'free') return 'Free';
@@ -70,24 +83,10 @@ export default function Navbar() {
         };
     }, []);
 
-    const guestNavItems = [
-        { label: 'Features', href: '/features' },
-        { label: 'Pricing', href: '/pricing' },
-        { label: 'Success Stories', href: '/reviews' },
-        { label: 'Blog', href: '/blog' },
-        { label: 'FAQ', href: '/faq' }
-    ];
-
-    const authNavItems = [
-        { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-        { label: 'Pricing', href: '/pricing', icon: null } // Kept for upgrades
-    ];
-
-    const currentNavItems = user ? authNavItems : guestNavItems;
+    const currentNavItems = user ? AUTH_NAV_ITEMS : GUEST_NAV_ITEMS;
 
     // Items to show specifically when INSIDE the dashboard layout (context is present)
     const dashboardNavItems = [
-        { label: 'Roadmap', href: '/dashboard/preparation', icon: Map },
         { label: 'Pricing', href: '/pricing', icon: null }
     ];
 
@@ -120,7 +119,7 @@ export default function Navbar() {
                     </Link>
 
                     {/* Nav Links Block */}
-                    <div className="hidden md:flex bg-white border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] items-stretch">
+                    <div className="hidden md:flex bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] items-stretch">
                         <div className="flex items-stretch font-[500] text-[14px] lg:text-[15px] tracking-tight text-[#202b20]">
                             {isDashboardLayout ? (
                                 dashboardNavItems.map((item, idx) => (
@@ -138,10 +137,10 @@ export default function Navbar() {
                                     </Link>
                                 ))
                             ) : (
-                                (user ? authNavItems : guestNavItems).map((item, idx) => {
+                                currentNavItems.map((item, idx) => {
                                     const isAnchor = item.href.includes('#');
                                     const LinkComponent = isAnchor && pathname !== '/' ? 'a' : Link;
-                                    const hasBullet = item.label === 'Pricing' || item.label === 'Success Stories';
+                                    const hasBullet = item.label === 'Pricing' || item.label === 'Active Jobs';
 
                                     return (
                                         <LinkComponent
@@ -149,7 +148,7 @@ export default function Navbar() {
                                             href={item.href}
                                             className={cn(
                                                 "flex items-center gap-2 px-4 lg:px-5 hover:bg-[#202b20] hover:text-white transition-colors relative group",
-                                                idx !== (user ? authNavItems : guestNavItems).length - 1 ? "border-r-2 border-[#202b20]" : ""
+                                                idx !== currentNavItems.length - 1 ? "border-r-2 border-[#202b20]" : ""
                                             )}
                                         >
                                             {/* @ts-ignore - icon is optional */}
@@ -166,7 +165,7 @@ export default function Navbar() {
                     </div>
 
                     {/* Right Block */}
-                    <div className="hidden md:flex bg-white border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] items-stretch">
+                    <div className="hidden md:flex bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] items-stretch">
                         {user ? (
                             <div className="relative flex" ref={userMenuRef}>
                                 <button
@@ -197,7 +196,7 @@ export default function Navbar() {
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 10 }}
                                             transition={{ duration: 0.2 }}
-                                            className="absolute right-[-2px] xl:right-0 top-[calc(100%+14px)] w-56 bg-white border-2 border-[#202b20] shadow-[6px_6px_0px_0px_#202b20] text-[#202b20] overflow-hidden flex flex-col pt-1"
+                                            className="absolute right-[-2px] xl:right-0 top-[calc(100%+14px)] w-56 bg-white border-2 border-[#202b20] shadow-[3px_3px_0px_0px_#202b20] text-[#202b20] overflow-hidden flex flex-col pt-1"
                                         >
                                             <div className="px-4 py-3 border-b-2 border-[#202b20] bg-white">
                                                 <p className="text-[9px] font-bold tracking-widest text-[#ffa116]">SIGNED IN AS</p>
@@ -249,7 +248,7 @@ export default function Navbar() {
                     {/* Mobile Menu Toggle */}
                     <button
                         aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-                        className="md:hidden flex items-center justify-center w-[46px] bg-white border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] text-[#202b20] pointer-events-auto hover:bg-[#ffa116] transition-colors active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_#202b20]"
+                        className="md:hidden flex items-center justify-center w-[46px] bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] text-[#202b20] pointer-events-auto hover:bg-[#ffa116] transition-colors active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_#202b20]"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
                         {mobileMenuOpen ? <X size={20} strokeWidth={3} /> : <Menu size={20} strokeWidth={3} />}
@@ -259,7 +258,7 @@ export default function Navbar() {
                 {/* Mobile Menu dropdown inside the relatively floating space */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full pointer-events-auto">
                     {mobileMenuOpen && (
-                        <div className="mt-4 bg-white border-2 border-[#202b20] flex flex-col md:hidden shadow-[6px_6px_0px_0px_#202b20] animate-fade-in-up max-h-[80vh] overflow-y-auto">
+                        <div className="mt-4 bg-white border-2 border-[#202b20] flex flex-col md:hidden shadow-[3px_3px_0px_0px_#202b20] animate-fade-in-up max-h-[80vh] overflow-y-auto">
                             {user && (
                                 <div className="flex flex-col gap-2 p-5 border-b-2 border-[#202b20] bg-white">
                                     <div className="flex items-center gap-3">

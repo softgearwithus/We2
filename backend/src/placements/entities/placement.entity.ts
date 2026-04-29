@@ -11,10 +11,16 @@ import { User } from '../../users/user.entity';
 
 export enum PlacementType {
   INTERNSHIP = 'Internship',
-  REMOTE = 'Remote',
   FULL_TIME = 'Full-Time',
   PART_TIME = 'Part-Time',
   CONTRACT = 'Contract',
+  REMOTE = 'Remote',
+}
+
+export enum WorkMode {
+  OFFLINE = 'Offline',
+  HYBRID = 'Hybrid',
+  REMOTE = 'Remote',
 }
 
 export enum PlacementStatus {
@@ -59,6 +65,13 @@ export class Placement {
 
   @Column({
     type: 'enum',
+    enum: WorkMode,
+    default: WorkMode.OFFLINE,
+  })
+  workMode: WorkMode;
+
+  @Column({
+    type: 'enum',
     enum: PlacementStatus,
     default: PlacementStatus.ACTIVE,
   })
@@ -67,8 +80,29 @@ export class Placement {
   @Column({ type: 'text' })
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   applyLink: string;
+
+  @Column({ nullable: true })
+  jobProfile: string;
+
+  @Column({ nullable: true })
+  packageOffered: string;
+
+  @Column('text', { array: true, default: '{}' })
+  roles: string[];
+
+  @Column('text', { array: true, default: '{}' })
+  skillsRequired: string[];
+
+  @Column({ nullable: true })
+  experienceRequired: string;
+
+  @Column({ type: 'int', nullable: true })
+  openings: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  applicationDeadline: Date;
 
   @Column({ nullable: true })
   batchEligible: string;

@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { ProjectType } from '@/app/lib/ProjectData';
-import { submitProjectLab } from '@/app/lib/project-labs';
 import { ChevronLeft, Code2, Clock, Github, ExternalLink, CheckCircle2, BookOpen, AlertCircle, Database, Layout, Server, Wrench, Layers, ListChecks, FileText, Figma, Video, Briefcase } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -44,36 +43,7 @@ export default function ProjectDetailView({ project, onBack }: ProjectDetailView
 
     const handleSubmit = async () => {
         if (!repoUrl && !submitted) return;
-        const { getActiveToken } = await import('@/app/lib/auth-storage');
-        const token = getActiveToken();
-        if (!token) {
-            setSubmitError('Please sign in to submit your work.');
-            return;
-        }
-        setSubmitError(null);
-        setIsSubmitting(true);
-        try {
-            await submitProjectLab(token, project.id, { repositoryUrl: repoUrl });
-            setSubmitted(true);
-
-            const stored = localStorage.getItem('emble_completed_projects');
-            let projects = [];
-            if (stored) {
-                try {
-                    projects = JSON.parse(stored);
-                } catch (e) {
-                    projects = [];
-                }
-            }
-            if (!projects.includes(project.id)) {
-                projects.push(project.id);
-                localStorage.setItem('emble_completed_projects', JSON.stringify(projects));
-            }
-        } catch (error: any) {
-            setSubmitError(error?.message || 'Submission failed. Please try again.');
-        } finally {
-            setIsSubmitting(false);
-        }
+        setSubmitError('Project Labs has been removed from the student dashboard.');
     };
 
     return (

@@ -24,13 +24,13 @@ interface FeatureCard {
 
 const productCards: FeatureCard[] = [
     {
-        id: 'test-series',
-        title: '100+ Company-Wise Test Series',
-        description: 'Pressure-test your DSA code in simulated environments.',
-        features: ['Real-time code execution', 'Actual past FAANG questions', 'Detailed time & space tracing'],
+        id: 'resume-builder',
+        title: 'AI Resume Builder',
+        description: 'Craft ATS-friendly resumes optimized for tech roles.',
+        features: ['Smart keyword optimization', 'Industry standard templates', 'Real-time ATS scoring'],
         icon: Code2,
-        href: '/dashboard/test-series',
-        imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop'
+        href: '/dashboard/resume',
+        imageUrl: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=2070&auto=format&fit=crop'
     },
     {
         id: 'mock-interview',

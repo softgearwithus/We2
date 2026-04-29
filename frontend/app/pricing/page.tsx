@@ -116,6 +116,10 @@ function PricingPageContent() {
   const isActiveProMember = isProMember && hasActiveSubscription;
 
   const displayedPrice = useMemo(() => {
+    if (isPricingLoading) {
+      return { amount: "...", symbol: "", period: "" };
+    }
+    
     if (!pricingContext) {
       if (selectedCurrency === "INR") {
         return { amount: "799", symbol: "₹", period: "/mo" };
@@ -136,7 +140,7 @@ function PricingPageContent() {
       symbol: "$",
       period: "/mo",
     };
-  }, [pricingContext, selectedCurrency]);
+  }, [pricingContext, selectedCurrency, isPricingLoading]);
 
   const subscribeCtaLabel = useMemo(() => {
     if (authLoading || isPricingLoading) return "Checking...";
@@ -331,7 +335,7 @@ function PricingPageContent() {
             transition={{ duration: 0.6 }}
             className="flex flex-col items-start text-left gap-6 w-full sticky top-32"
           >
-            <span className="px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold bg-[#ffa116] shadow-[4px_4px_0px_0px_#202b20] uppercase tracking-wider text-[#202b20]">
+            <span className="px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold bg-[#ffa116] shadow-[2px_2px_0px_0px_#202b20] uppercase tracking-wider text-[#202b20]">
               Our Pricing
             </span>
             <h1 className="text-[3rem] md:text-[4.5rem] lg:text-[5rem] font-[800] tracking-tighter text-[#202b20] leading-[1.1]">
@@ -372,7 +376,7 @@ function PricingPageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch w-full relative pt-8">
              
              {/* FREE PLAN (Standard Card) */}
-             <div className="w-full rounded-none border-2 border-[#202b20] bg-white p-6 md:p-8 flex flex-col shadow-[4px_4px_0px_0px_#202b20] h-full">
+             <div className="w-full rounded-none border-2 border-[#202b20] bg-white p-6 md:p-8 flex flex-col shadow-[2px_2px_0px_0px_#202b20] h-full">
                 <div className="flex flex-col min-h-[140px]">
                   <h3 className="text-[20px] font-bold text-[#202b20] uppercase tracking-wide">Free</h3>
                   <div className="flex items-baseline gap-1 mt-auto pb-4">
@@ -399,7 +403,7 @@ function PricingPageContent() {
                 <div className="mt-auto">
                   <button 
                     onClick={() => router.push(user ? "/dashboard" : "/register/student")}
-                    className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all"
+                    className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[2px_2px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all"
                   >
                     {user ? "Go to Dashboard \u2192" : "Reserve your spot \u2192"}
                   </button>
@@ -407,7 +411,7 @@ function PricingPageContent() {
              </div>
              
              {/* PRO PLAN (Featured Card with Blue Header) */}
-             <div className="w-full rounded-none bg-[#ffa116] flex flex-col relative z-10 border-2 border-[#202b20] shadow-[4px_4px_0px_0px_#202b20] md:-mt-[40px]">
+             <div className="w-full rounded-none bg-[#ffa116] flex flex-col relative z-10 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] md:-mt-[40px]">
                 {/* Header Banner (approx 40px height) */}
                 <div className="py-2.5 text-center bg-[#202b20] text-white text-[12px] font-bold uppercase tracking-widest w-full max-h-[40px] border-b-2 border-[#202b20]">
                    Most Popular
@@ -478,7 +482,7 @@ function PricingPageContent() {
                        type="button"
                        onClick={() => void handleSubscribe()}
                        disabled={!canSubscribe}
-                       className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                       className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[2px_2px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                      >
                        {isCheckoutLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                        {isCheckoutLoading ? "Opening Checkout..." : subscribeCtaLabel}
@@ -493,7 +497,7 @@ function PricingPageContent() {
              </div>
 
              {/* ENTERPRISE PLAN (Standard Card) */}
-             <div className="w-full rounded-none border-2 border-[#202b20] bg-white p-6 md:p-8 flex flex-col shadow-[4px_4px_0px_0px_#202b20] h-full">
+             <div className="w-full rounded-none border-2 border-[#202b20] bg-white p-6 md:p-8 flex flex-col shadow-[2px_2px_0px_0px_#202b20] h-full">
                 <div className="flex flex-col min-h-[140px]">
                   <h3 className="text-[20px] font-bold text-[#202b20] uppercase tracking-wide">Enterprise</h3>
                   <div className="flex items-baseline gap-1 mt-auto pb-4">
@@ -519,7 +523,7 @@ function PricingPageContent() {
                 <div className="mt-auto">
                   <button 
                     onClick={() => setIsSalesModalOpen(true)}
-                    className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all"
+                    className="w-full py-3.5 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] text-[14px] font-bold uppercase tracking-wider text-center shadow-[2px_2px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#202b20] hover:translate-y-[2px] transition-all"
                   >
                     Talk to Sales &rarr;
                   </button>

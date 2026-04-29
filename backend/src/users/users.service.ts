@@ -16,10 +16,6 @@ import {
   InterviewSession,
   InterviewStatus,
 } from '../interviews/entities/interview-session.entity';
-import {
-  ProjectLabSubmission,
-  ProjectLabSubmissionStatus,
-} from '../project-labs/entities/project-lab-submission.entity';
 import { Resume } from '../resume/entities/resume.entity';
 import { MentorSession } from '../mentors/entities/mentor-session.entity';
 import { UserGamification } from '../gamification/entities/user-gamification.entity';
@@ -42,8 +38,6 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @InjectRepository(InterviewSession)
     private interviewsRepository: Repository<InterviewSession>,
-    @InjectRepository(ProjectLabSubmission)
-    private projectLabSubmissionsRepository: Repository<ProjectLabSubmission>,
     @InjectRepository(Resume)
     private resumeRepository: Repository<Resume>,
     @InjectRepository(MentorSession)
@@ -367,22 +361,12 @@ export class UsersService {
   }
 
   async getDashboardStats(userId: string) {
-    const [interviewStats, projectStats, resume, mentorSessions, gamification] =
+    const [interviewStats, resume, mentorSessions, gamification] =
       await Promise.all([
         this.interviewsRepository.find({
           where: { userId, status: InterviewStatus.COMPLETED },
           select: ['id', 'overallScore', 'completedAt', 'createdAt'],
           order: { completedAt: 'DESC' },
-        }),
-        this.projectLabSubmissionsRepository.find({
-          where: { userId },
-          select: [
-            'projectId',
-            'status',
-            'submittedAt',
-            'reviewedAt',
-            'completedAt',
-          ],
         }),
         this.resumeRepository.findOne({ where: { userId } }),
         this.mentorSessionsRepository.find({
@@ -394,12 +378,7 @@ export class UsersService {
 
     const problemsSolved = 0;
     const interviewsCompleted = interviewStats.length;
-    const projectCompleted = projectStats.filter((s) =>
-      [
-        ProjectLabSubmissionStatus.APPROVED,
-        ProjectLabSubmissionStatus.COMPLETED,
-      ].includes(s.status),
-    ).length;
+    const projectCompleted = 0;
     const resumeUpdated = !!resume?.updatedAt;
 
     const streakDays = gamification?.currentStreak ?? 0;
@@ -431,10 +410,7 @@ export class UsersService {
     }> = [];
 
     const latestInterview = interviewStats[0];
-    const latestProject = projectStats.sort(
-      (a, b) =>
-        (b.submittedAt?.getTime() || 0) - (a.submittedAt?.getTime() || 0),
-    )[0];
+    
     const latestMentor = mentorSessions.sort(
       (a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0),
     )[0];
@@ -447,14 +423,6 @@ export class UsersService {
         ).toISOString(),
         icon: 'chat',
         color: 'text-indigo-500',
-      });
-    }
-    if (latestProject?.submittedAt) {
-      recentActivity.push({
-        title: 'Project lab submission',
-        time: latestProject.submittedAt.toISOString(),
-        icon: 'rocket_launch',
-        color: 'text-orange-500',
       });
     }
     if (resume?.updatedAt) {

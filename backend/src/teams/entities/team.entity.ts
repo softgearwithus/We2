@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { TeamMember } from './team-member.entity';
 import { Simulation } from '../../simulations/entities/simulation.entity';
-import { Project } from '../../projects/entities/project.entity';
 
 @Entity('teams')
 export class Team {
@@ -39,7 +38,4 @@ export class Team {
 
   @OneToMany(() => Simulation, (simulation) => simulation.team)
   simulations: Simulation[];
-
-  @OneToMany(() => Project, (project) => project.team)
-  projects: Project[];
 }

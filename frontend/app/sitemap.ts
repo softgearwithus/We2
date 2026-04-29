@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/curriculum', changeFrequency: 'weekly', priority: 0.95 },
     { path: '/pricing', changeFrequency: 'weekly', priority: 0.9 },
     { path: '/how-it-works', changeFrequency: 'weekly', priority: 0.9 },
+    { path: '/active-jobs', changeFrequency: 'daily', priority: 0.9 },
     { path: '/stories', changeFrequency: 'weekly', priority: 0.88 },
     { path: '/simulations', changeFrequency: 'weekly', priority: 0.86 },
     { path: '/ai-mentors', changeFrequency: 'weekly', priority: 0.84 },

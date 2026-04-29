@@ -6,7 +6,6 @@ import { CollegeStaff } from '../colleges/entities/college-staff.entity';
 import { AdminActivityLog } from './entities/admin-activity-log.entity';
 import { User, UserRole } from '../users/user.entity';
 import { InterviewSession } from '../interviews/entities/interview-session.entity';
-import { ProjectLabSubmission } from '../project-labs/entities/project-lab-submission.entity';
 import { Placement } from '../placements/entities/placement.entity';
 import { Application } from '../applications/entities/application.entity';
 import { PendingUpgradeOrder } from '../users/entities/pending-upgrade-order.entity';
@@ -26,8 +25,6 @@ export class AdminService {
     private usersRepo: Repository<User>,
     @InjectRepository(InterviewSession)
     private interviewSessionsRepo: Repository<InterviewSession>,
-    @InjectRepository(ProjectLabSubmission)
-    private projectLabSubmissionsRepo: Repository<ProjectLabSubmission>,
     @InjectRepository(Placement)
     private placementsRepo: Repository<Placement>,
     @InjectRepository(Application)
@@ -115,12 +112,16 @@ export class AdminService {
       .createQueryBuilder('session')
       .where('session.createdAt >= :since', { since })
       .getCount();
-    const projectCount = await this.projectLabSubmissionsRepo
-      .createQueryBuilder('submission')
-      .where('submission.submittedAt >= :since', { since })
+    const driveCount = await this.placementsRepo
+      .createQueryBuilder('placement')
+      .where('placement.createdAt >= :since', { since })
+      .getCount();
+    const applicationCount = await this.applicationsRepo
+      .createQueryBuilder('application')
+      .where('application.appliedAt >= :since', { since })
       .getCount();
 
-    const totalEngagement = interviewCount + projectCount || 1;
+    const totalEngagement = interviewCount + driveCount + applicationCount || 1;
     const percent = (count: number) =>
       Math.round((count / totalEngagement) * 100);
 
@@ -136,9 +137,14 @@ export class AdminService {
           percentage: percent(interviewCount),
         },
         {
-          stage: 'Submitted Project',
-          count: String(projectCount),
-          percentage: percent(projectCount),
+          stage: 'Posted Drives',
+          count: String(driveCount),
+          percentage: percent(driveCount),
+        },
+        {
+          stage: 'Applications',
+          count: String(applicationCount),
+          percentage: percent(applicationCount),
         },
         {
           stage: 'Subscribed',
@@ -154,10 +160,16 @@ export class AdminService {
           color: 'bg-rose-500',
         },
         {
-          name: 'Project Labs',
-          time: `${projectCount} submissions`,
-          percentage: percent(projectCount),
-          color: 'bg-amber-500',
+          name: 'Placement Drives',
+          time: `${driveCount} drives`,
+          percentage: percent(driveCount),
+          color: 'bg-blue-500',
+        },
+        {
+          name: 'Applications',
+          time: `${applicationCount} applications`,
+          percentage: percent(applicationCount),
+          color: 'bg-emerald-500',
         },
       ],
     };

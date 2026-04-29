@@ -11,8 +11,7 @@ interface UpdateState {
 
 export default function AdminUpdatesPage() {
     const [updates, setUpdates] = useState<UpdateState>({
-        '/dashboard/ide': false,
-        '/dashboard/projects': false,
+        '/dashboard/placement-drives': false,
         '/dashboard/market-radar': false,
     });
 
@@ -65,17 +64,13 @@ export default function AdminUpdatesPage() {
 
     const modules = [
         { id: '/dashboard', label: 'Overview', icon: <div className="text-slate-500 material-symbols-outlined">dashboard</div>, desc: 'Show indicator for general platform announcements.' },
-        { id: '/dashboard/preparation', label: 'Placement Preparation', icon: <div className="text-slate-700 material-symbols-outlined">school</div>, desc: 'Show indicator for new preparation roadmaps.' },
-        { id: '/dashboard/test-series', label: 'Test Series', icon: <div className="text-red-500 material-symbols-outlined">quiz</div>, desc: 'Show indicator for new or upcoming mock tests.' },
-        { id: '/dashboard/ide', label: 'IDE Workspace', icon: <div className="text-sky-500 material-symbols-outlined">terminal</div>, desc: 'Show indicator for new IDE workspace capabilities.' },
-        { id: '/dashboard/projects', label: 'Project Labs', icon: <Rocket size={20} className="text-slate-500" />, desc: 'Show indicator for newly added full-stack project builds.' },
+        { id: '/dashboard/placement-drives', label: 'Placement Drives', icon: <div className="text-sky-500 material-symbols-outlined">work</div>, desc: 'Show indicator for new placement drives and hiring opportunities.' },
         { id: '/dashboard/interview', label: 'Mock Interview', icon: <div className="text-amber-500 material-symbols-outlined">mic</div>, desc: 'Show indicator for new interview experiences or slots.' },
-        { id: '/dashboard/resume', label: 'Resume', icon: <div className="text-sky-500 material-symbols-outlined">description</div>, desc: 'Show indicator for new resume templates or feedback.' },
+        { id: '/dashboard/resume', label: 'Resume', icon: <div className="text-sky-500 material-symbols-outlined">description</div>, desc: 'Show indicator for new resume templates or feedback.' },     
         { id: '/dashboard/github', label: 'Git Mastery', icon: <div className="text-orange-500 material-symbols-outlined">memory</div>, desc: 'Show indicator for new Git lessons or pipelines.' },
         { id: '/dashboard/market-radar', label: 'Market Radar', icon: <Radar size={20} className="text-rose-500" />, desc: 'Show indicator for updated hiring data and trends.' },
-        { id: '/dashboard/mentors', label: 'Mentors', icon: <div className="text-teal-500 material-symbols-outlined">group</div>, desc: 'Show indicator for new mentors joining the platform.' },
+        { id: '/dashboard/mentors', label: 'Mentors', icon: <div className="text-teal-500 material-symbols-outlined">group</div>, desc: 'Show indicator for new mentors joining the platform.' },        
     ];
-
     if (isLoading) {
         return (
             <div className="p-8 max-w-4xl mx-auto min-h-[calc(100vh-64px)] flex items-center justify-center">

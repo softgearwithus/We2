@@ -32,7 +32,7 @@ Stop being just another "fresher". Build industrial proof-of-work across:
 - **Industrial Standards**: Clean code, modular architecture, and documentation.
 - **Production Systems**: Navigation of microservices and DevOps.
 
-[Explore Pricing](/pricing) | [Discover Phase 1](/dashboard/preparation)
+[Explore Pricing](/pricing) | [Discover Dashboard](/dashboard)
         `,
         relatedLinks: [
             { label: "Account Setup", href: "/docs/account-setup" },
@@ -63,7 +63,7 @@ It's a two-stage process:
 - Then, our **Video AI** analyzes your body language, technical accuracy, and confidence.
 - It's like having a senior engineer from a top tech firm coaching you 24/7.
 
-[Go to Problem Dashboard](/dashboard/problems)
+[Go to Mock Interview Dashboard](/dashboard/interview)
         `,
         relatedLinks: [
             { label: "Resume Lab", href: "/docs/resume-lab-instructions" },
@@ -94,7 +94,7 @@ Learn like a student, build like a professional. At Emble, you participate in in
 4. **Production Systems**
    Understand real-world scale. Navigate microservices and production-grade DevOps using Docker and CI/CD pipelines.
 
-[Join Job Simulation](/dashboard/projects)
+[Join Job Simulation](/dashboard/sprint)
         `,
         relatedLinks: [
             { label: "Curriculum FAQ", href: "/curriculum#faq" },
@@ -181,10 +181,10 @@ Receive AI feedback on tone, body language, and communication clarity.
 - **Salary Negotiation Strategies**: Learn how to leverage multiple offers.
 - **Leadership Principles**: Practice STAR methodology answers specifically tailored to companies like Amazon and Microsoft.
 
-[Go to Resume Builder](/dashboard/interviews)
+[Go to Resume Builder](/dashboard/resume)
         `,
         relatedLinks: [
-            { label: "Mock Interviews", href: "/dashboard/interviews" },
+            { label: "Mock Interviews", href: "/dashboard/interview" },
             { label: "DSA Roadmap", href: "/docs/dsa-roadmap-2024" }
         ]
     },

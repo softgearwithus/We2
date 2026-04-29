@@ -1,16 +1,19 @@
 'use client';
 
 import { fetchApi } from '../lib/apiClient';
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDashboardMode } from '../context/DashboardModeContext';
-import EngagementFilterHub from '../components/dashboard/prep0/EngagementFilterHub';
-import AIActionHub from '../components/dashboard/prep0/AIActionHub';
 import SimulationDashboard from '../components/dashboard/SimulationDashboard';
 import UpgradeNowCard from '../components/dashboard/UpgradeNowCard';
-import { Sparkles, Target, ArrowRight } from 'lucide-react';
+import {
+    ArrowRight, Mic, Brain, Award,
+    Search, Target, FileText,
+    Users, MessageSquare, Zap,
+} from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 interface DashboardStats {
     readinessScore: number;
@@ -21,35 +24,125 @@ interface DashboardStats {
     recentActivity: Array<{ title: string; time: string; icon: string; color: string }>;
 }
 
+/* ─── Feature Card ─────────────────────────────────────────────── */
+interface FeatureCardProps {
+    href: string;
+    imageSrc: string;
+    imageAlt: string;
+    badge?: string;
+    badgeAccent?: boolean;
+    title: string;
+    description: string;
+    bullets: Array<{ icon: React.ReactNode; text: string }>;
+    ctaLabel: string;
+    delay?: number;
+    colSpan?: string;
+    imagePosition?: string;
+}
+
+const appleFont = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif';
+const appleTextFont = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif';
+
+function FeatureCard({
+    href, imageSrc, imageAlt, badge, badgeAccent,
+    title, description, bullets, ctaLabel, delay = 0, colSpan = '',
+    imagePosition = 'object-center'
+}: FeatureCardProps) {
+    return (
+        <Link href={href} className={`block group ${colSpan}`}>
+            <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay, ease: [0.25, 0.1, 0.25, 1] }}
+                className="h-full bg-white border-2 border-[#202b20] hover:border-[#ffa116] transition-colors duration-200 flex flex-col"
+            >
+                {/* ── Image banner ── */}
+                <div className="relative w-full h-56 border-b-2 border-[#202b20] group-hover:border-[#ffa116] overflow-hidden bg-[#f0ede8] flex-shrink-0 transition-colors duration-200">
+                    <Image
+                        src={imageSrc}
+                        alt={imageAlt}
+                        fill
+                        className={`object-cover ${imagePosition}`}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    {badge && (
+                        <div className={`absolute top-3 left-3 text-[9px] font-[900] px-2 py-1 uppercase tracking-[0.15em] border-2 border-[#202b20] ${badgeAccent ? 'bg-[#ffa116] text-[#202b20]' : 'bg-[#202b20] text-white'}`}>
+                            {badge}
+                        </div>
+                    )}
+                </div>
+
+                {/* ── Content ── */}
+                <div className="p-6 flex flex-col flex-1">
+                    <h3
+                        className="text-[20px] font-[700] text-[#202b20] tracking-[-0.025em] leading-snug mb-2.5"
+                        style={{ fontFamily: appleFont }}
+                    >
+                        {title}
+                    </h3>
+                    <p
+                        className="text-[14px] text-[#202b20]/50 leading-[1.6] mb-5 font-[400] tracking-[-0.01em]"
+                        style={{ fontFamily: appleTextFont }}
+                    >
+                        {description}
+                    </p>
+
+                    <ul className="space-y-2.5 mb-6 flex-1">
+                        {bullets.map((b, i) => (
+                            <li key={i} className="flex items-center gap-2.5">
+                                <div className="w-5 h-5 bg-[#202b20] flex items-center justify-center text-white shrink-0">
+                                    {b.icon}
+                                </div>
+                                <span
+                                    className="text-[13px] font-[600] text-[#202b20]/75 tracking-[-0.01em]"
+                                    style={{ fontFamily: appleTextFont }}
+                                >
+                                    {b.text}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+
+                    {/* CTA */}
+                    <div className="flex items-center justify-between border-t-2 border-[#202b20] pt-4 mt-auto">
+                        <span
+                            className="text-[11px] font-[800] text-[#202b20] uppercase tracking-[0.12em] group-hover:text-[#ffa116] transition-colors"
+                            style={{ fontFamily: appleFont }}
+                        >
+                            {ctaLabel}
+                        </span>
+                        <div className="w-7 h-7 bg-[#202b20] group-hover:bg-[#ffa116] flex items-center justify-center transition-colors border-2 border-[#202b20]">
+                            <ArrowRight size={13} className="text-white group-hover:text-[#202b20] group-hover:translate-x-0.5 transition-all" />
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </Link>
+    );
+}
+
+/* ─── Page ─────────────────────────────────────────────────────── */
 export default function DashboardPage() {
     const { user, isLoading: authLoading } = useAuth();
     const dashboardContext = useDashboardMode();
     const mode = dashboardContext?.mode;
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const normalizedPlan = (user?.subscriptionPlan || '').toLowerCase();
-    const isProUser =
-        normalizedPlan === 'pro';
-    const isFreeUser = !isProUser;
+    const isFreeUser = normalizedPlan !== 'pro';
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!authLoading && user) {
-            // Only fetch placement stats if in prep mode, or fetch both if needed.
             const fetchStats = async () => {
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
                 try {
                     const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/users/dashboard-stats`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    if (response.ok) {
-                        const data = await response.json();
-                        setStats(data);
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch stats', error);
+                    if (response.ok) setStats(await response.json());
+                } catch (err) {
+                    console.error('Failed to fetch stats', err);
                 } finally {
                     setLoading(false);
                 }
@@ -58,102 +151,141 @@ export default function DashboardPage() {
         }
     }, [authLoading, user]);
 
-    // Work / Simulation Mode
-    if (mode === 'work') {
-        return <SimulationDashboard />;
-    }
+    if (mode === 'work') return <SimulationDashboard />;
 
     if (loading || !stats) {
-        return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div></div>;
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-[#202b20] border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
     }
 
-    // New Amber Dashboard Layout (Premium Light Theme)
     return (
-        <div className="min-h-screen bg-background relative overflow-hidden font-sans text-foreground pb-20">
-            {/* Ambient Background */}
-            <div className="absolute -top-32 right-0 w-full max-w-full max-w-[520px] h-[520px] bg-primary/10 rounded-full blur-[140px] pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-full max-w-full max-w-[480px] h-[480px] bg-secondary/30 rounded-full blur-[140px] pointer-events-none"></div>
+        <div className="min-h-screen bg-[#f7f7f5] text-foreground font-sans antialiased pb-24 pt-2">
 
-            <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-8 space-y-10">
-                <header className="pb-4">
-                    <p className="text-foreground/80 text-xl font-semibold max-w-2xl leading-relaxed">
-                        Maintain focus on what matters most: preparing for the technical and behavioral rounds of your dream companies.
-                    </p>
-                </header>
-                {/* Structurally Balanced Layout */}
-                <div className="flex flex-col gap-10">
+            <div className="max-w-6xl mx-auto px-6 md:px-10 py-10 space-y-8">
 
-                    {/* Top Row (Hero CTA) */}
-                    {isFreeUser && (
-                        <div className="w-full">
-                            <UpgradeNowCard />
-                        </div>
-                    )}
-
-                    {/* Primary Engagement Core */}
-                    <div className="w-full relative z-10 space-y-12">
-                        {/* Interview Flagship Module */}
-                        <div>
-                            <AIActionHub />
-                        </div>
-
-                        {/* Filtered Engagement Hub */}
-                        <div className="bg-card border border-border shadow-sm rounded-3xl p-6 md:p-8">
-                            <div className="mb-6">
-                                <h3 className="text-2xl font-extrabold text-card-foreground flex items-center gap-3 tracking-tight">
-                                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shadow-inner border border-primary/20">
-                                        <Target size={16} className="text-primary" />
-                                    </div>
-                                    Targeted Preparation
-                                </h3>
-                                <p className="text-sm font-medium text-foreground/60 mt-2">
-                                    Filter and access specific company test series, project labs, and resume builder.
-                                </p>
-                            </div>
-                            <EngagementFilterHub />
-                        </div>
+                {/* ── Page Header ── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b-2 border-[#202b20]"
+                >
+                    <div>
+                        <h1
+                            className="text-[32px] md:text-[38px] font-[700] text-[#202b20] tracking-[-0.04em] leading-none"
+                            style={{ fontFamily: appleFont }}
+                        >
+                            Your Dashboard
+                        </h1>
                     </div>
-                    {/* Footer Banner Row */}
-                    <div className="w-full pt-4">
-                        <Link href="/mentor/apply" className="block w-full group outline-none">
-                            <div className="relative overflow-hidden rounded-[32px] bg-card p-8 md:p-12 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-border hover:border-border hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] transition-all duration-500 transform group-hover:-translate-y-1 flex flex-col md:flex-row items-center justify-between gap-8">
-                                {/* Decorative elements */}
-                                <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[80px] translate-x-1/3 -translate-y-1/3 pointer-events-none group-hover:bg-primary/10 transition-colors duration-700"></div>
-                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 rounded-full blur-[60px] -translate-x-1/2 translate-y-1/2 pointer-events-none group-hover:bg-secondary/30 transition-colors duration-700"></div>
 
-                                <div className="relative z-10 flex-1">
-                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/50 border border-primary/20 text-foreground/80 text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4 shadow-sm">
-                                        <Sparkles size={14} className="text-primary" />
-                                        Earn With EMBLE
-                                    </div>
-
-                                    <h3 className="text-3xl md:text-4xl font-extrabold text-card-foreground tracking-tight mb-3 leading-tight">
-                                        Join as a <span className="text-primary">Mentor</span>
-                                    </h3>
-
-                                    <p className="text-[15px] md:text-base text-foreground/70 max-w-2xl leading-relaxed font-medium">
-                                        Got a great GATE/Codeforces score? Monetize your free time, guide the community, and earn well by taking 1:1 sessions today.
-                                    </p>
-                                </div>
-
-                                {/* Action Button */}
-                                <div className="relative z-10 flex-shrink-0 w-full md:w-auto">
-                                    <div className="relative h-14 px-8 sm:px-10 flex justify-center items-center rounded-full font-bold text-base transition-all duration-300 group-hover:scale-[1.02] active:scale-95 group/btn bg-primary text-primary-foreground shadow-md hover:bg-primary/90">
-                                        <span className="relative z-10 flex items-center gap-2">
-                                            Apply Now
-                                            <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                                        </span>
-                                    </div>
-                                </div>
+                    {/* Inline stats */}
+                    <div className="flex items-center gap-5 sm:gap-7 pb-0.5">
+                        {[
+                            { label: 'Readiness', value: `${stats.readinessScore}%` },
+                            { label: 'Streak', value: `${stats.streakDays}d` },
+                            { label: 'Interviews', value: stats.interviewsCompleted },
+                        ].map((s, i) => (
+                            <div key={i} className={`text-right ${i > 0 ? 'pl-5 sm:pl-7 border-l-2 border-[#202b20]/10' : ''}`}>
+                                <p className="text-[9px] font-[800] uppercase tracking-[0.15em] text-[#202b20]/35 mb-0.5"
+                                    style={{ fontFamily: appleFont }}>{s.label}</p>
+                                <p className="text-[20px] font-[800] text-[#202b20] leading-none tracking-[-0.03em]"
+                                    style={{ fontFamily: appleFont }}>{s.value}</p>
                             </div>
-                        </Link>
+                        ))}
                     </div>
+                </motion.div>
+
+                {/* ── Upgrade Banner (free users only) ── */}
+                {isFreeUser && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                        <UpgradeNowCard />
+                    </motion.div>
+                )}
+
+                {/* ── Feature Cards — even 2×2 grid ── */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    {/* 1. Video Based AI Interview */}
+                    <FeatureCard
+                        href="/dashboard/interview"
+                        imageSrc="/images/interview-hero.png"
+                        imageAlt="Student doing a video AI interview"
+                        imagePosition="object-center object-[50%_30%]"
+                        badge="Flagship"
+                        badgeAccent
+                        title="Video Based AI Interview"
+                        description="Practice with an AI interviewer that watches, listens, and adapts in real-time — company-specific questions, brutally honest feedback."
+                        bullets={[
+                            { icon: <Mic size={10} />, text: 'Live video & audio with speech recognition' },
+                            { icon: <Brain size={10} />, text: 'Adaptive follow-ups based on your answers' },
+                            { icon: <Award size={10} />, text: `${stats.interviewsCompleted} sessions completed on your account` },
+                        ]}
+                        ctaLabel="Start a Session"
+                        delay={0.1}
+                    />
+
+                    {/* 2. Resume & ATS */}
+                    <FeatureCard
+                        href="/dashboard/resume"
+                        imageSrc="/images/resume-hero.png"
+                        imageAlt="Student reviewing their resume"
+                        imagePosition="object-center object-[50%_20%]"
+                        title="Resume & ATS Suite"
+                        description="Build resumes that pass automated screening and get instant scoring against live tech industry benchmarks."
+                        bullets={[
+                            { icon: <Search size={10} />, text: 'Instant ATS keyword analysis' },
+                            { icon: <Target size={10} />, text: 'Role-specific gap identification' },
+                            { icon: <FileText size={10} />, text: 'One-click PDF & DOCX export' },
+                        ]}
+                        ctaLabel="Scan My Resume"
+                        delay={0.15}
+                    />
+
+                    {/* 3. Mentorship */}
+                    <FeatureCard
+                        href="/dashboard/mentors"
+                        imageSrc="/images/mentor-hero.png"
+                        imageAlt="Student in a 1:1 mentorship session"
+                        imagePosition="object-center object-[50%_25%]"
+                        title="1:1 Expert Mentorship"
+                        description="Pay-per-minute access to verified MNC engineers and tech leads. Get your specific doubts solved fast."
+                        bullets={[
+                            { icon: <Users size={10} />, text: '120+ verified engineers & team leads' },
+                            { icon: <MessageSquare size={10} />, text: 'Chat, audio, or video — your choice' },
+                            { icon: <Zap size={10} />, text: 'Average response under 3 minutes' },
+                        ]}
+                        ctaLabel="Find a Mentor"
+                        delay={0.2}
+                    />
+
+                    {/* 4. Active Jobs */}
+                    <FeatureCard
+                        href="/dashboard/placement-drives"
+                        imageSrc="/images/placement-drives-hero.png"
+                        imageAlt="Student getting hired at a placement drive"
+                        imagePosition="object-center object-[50%_35%]"
+                        title="Active Jobs"
+                        description="Explore live hiring opportunities matched to your skills and branch, then apply from a dedicated student flow with your resume link ready."
+                        bullets={[
+                            { icon: <Target size={10} />, text: 'Live company jobs updated daily' },
+                            { icon: <Award size={10} />, text: 'Eligibility matched automatically' },
+                            { icon: <Zap size={10} />, text: 'Dedicated apply page for every role' },
+                        ]}
+                        ctaLabel="Browse Jobs"
+                        delay={0.25}
+                    />
 
                 </div>
+
             </div>
         </div>
     );
 }
-
-
-

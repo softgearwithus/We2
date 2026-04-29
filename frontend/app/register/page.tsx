@@ -62,7 +62,7 @@ function RegisterPageContent() {
 
                 {/* Logo */}
                 <div className="relative z-10 w-fit">
-                    <Link href="/" className="flex items-center gap-3 group px-6 py-2 border-2 border-white bg-[#202b20] shadow-[4px_4px_0px_0px_white] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_white] transition-all">
+                    <Link href="/" className="flex items-center gap-3 group px-6 py-2 border-2 border-white bg-[#202b20] shadow-[2px_2px_0px_0px_white] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_white] transition-all">
                         <span className="font-[800] text-2xl tracking-tighter">emble</span>
                     </Link>
                 </div>
@@ -135,7 +135,7 @@ function RegisterPageContent() {
                         </div>
 
                         {!registrationsAllowed && (
-                            <div className="mb-6 border-2 border-[#202b20] bg-rose-50 px-4 py-3 text-sm font-[700] text-rose-700 text-center shadow-[4px_4px_0px_0px_#202b20] uppercase tracking-wide">
+                            <div className="mb-6 border-2 border-[#202b20] bg-rose-50 px-4 py-3 text-sm font-[700] text-rose-700 text-center shadow-[2px_2px_0px_0px_#202b20] uppercase tracking-wide">
                                 Registrations are currently closed. Please check back soon.
                             </div>
                         )}
@@ -146,8 +146,8 @@ function RegisterPageContent() {
                                 onClick={() => registrationsAllowed && handleNavigation(safeNext ? `/register/student?next=${encodeURIComponent(safeNext)}` : '/register/student', 'student')}
                                 animate={isNavigating && selection !== 'student' ? { opacity: 0.5 } : {}}
                                 className={`p-6 border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-visible ${selection === 'student'
-                                    ? 'border-[#202b20] bg-white shadow-[6px_6px_0px_0px_#ffa116] -translate-y-1'
-                                    : 'border-[#202b20] bg-white hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#202b20]'
+                                    ? 'border-[#202b20] bg-white shadow-[3px_3px_0px_0px_#ffa116] -translate-y-1'
+                                    : 'border-[#202b20] bg-white hover:-translate-y-1 hover:shadow-[3px_3px_0px_0px_#202b20]'
                                     } ${registrationsAllowed ? '' : 'opacity-60 cursor-not-allowed'}`}
                             >
                                 <div className={`w-14 h-14 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] flex items-center justify-center shrink-0 transition-transform ${selection === 'student' ? 'bg-[#ffa116] text-[#202b20]' : 'bg-white text-[#202b20] group-hover:scale-110'
@@ -178,8 +178,8 @@ function RegisterPageContent() {
                                 onClick={() => registrationsAllowed && handleNavigation('/contact', 'partner')}
                                 animate={isNavigating && selection !== 'partner' ? { opacity: 0.5 } : {}}
                                 className={`p-6 border-2 transition-all cursor-pointer flex items-center gap-6 relative overflow-visible ${selection === 'partner'
-                                    ? 'border-[#202b20] bg-white shadow-[6px_6px_0px_0px_#34d399] -translate-y-1'
-                                    : 'border-[#202b20] bg-white hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#202b20]'
+                                    ? 'border-[#202b20] bg-white shadow-[3px_3px_0px_0px_#34d399] -translate-y-1'
+                                    : 'border-[#202b20] bg-white hover:-translate-y-1 hover:shadow-[3px_3px_0px_0px_#202b20]'
                                     } ${registrationsAllowed ? '' : 'opacity-60 cursor-not-allowed'}`}
                             >
                                 <div className={`w-14 h-14 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] flex items-center justify-center shrink-0 transition-transform ${selection === 'partner' ? 'bg-[#34d399] text-[#202b20]' : 'bg-white text-[#202b20] group-hover:scale-110'
@@ -209,7 +209,7 @@ function RegisterPageContent() {
                         {/* Clarification Line for Partners */}
                         <motion.div
                             animate={isNavigating ? { opacity: 0 } : { opacity: 1 }}
-                            className="mt-8 p-4 border-2 border-[#202b20] bg-white shadow-[4px_4px_0px_0px_#202b20] text-center"
+                            className="mt-8 p-4 border-2 border-[#202b20] bg-white shadow-[2px_2px_0px_0px_#202b20] text-center"
                         >
                             <p className="text-[11px] text-[#202b20] font-[600] leading-relaxed tracking-wider uppercase">
                                 <span className="font-[800] text-[#ffa116] bg-[#202b20] px-1 mr-1">NOTE:</span> Institutes and Companies looking to collaborate or hire generally require a partnership discussion. Please proceed to our contact page.

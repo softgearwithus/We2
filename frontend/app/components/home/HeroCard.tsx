@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
 import { GripHorizontal } from 'lucide-react';
 
 export default function HeroCard() {
@@ -16,6 +16,7 @@ export default function HeroCard() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
+  const ropeY = useTransform(dragY, (y) => y + 52);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -63,13 +64,13 @@ export default function HeroCard() {
 
       <div className="relative flex flex-col items-center w-full max-w-[320px]">
         {/* Anchor box */}
-        <div className="w-6 h-6 border-2 border-[#202b20] bg-white rounded-none flex items-center justify-center shadow-[4px_4px_0_0_#202b20] relative z-30">
+        <div className="w-6 h-6 border-2 border-[#202b20] bg-white rounded-none flex items-center justify-center shadow-[2px_2px_0_0_#202b20] relative z-30">
           <div className="w-2 h-2 rounded-none bg-[#202b20]" />
         </div>
 
         {/* Rope SVG */}
         <svg className="absolute top-[12px] left-1/2 overflow-visible pointer-events-none z-10" style={{ width: 2, height: 2 }}>
-          <motion.line x1={0} y1={0} x2={dragX} y2={52} stroke="#202b20" strokeWidth="8" />
+          <motion.line x1={0} y1={0} x2={dragX} y2={ropeY} stroke="#202b20" strokeWidth="8" />
         </svg>
 
         {/* Draggable card */}
@@ -80,7 +81,7 @@ export default function HeroCard() {
           dragElastic={0.6}
           whileDrag={{ scale: 1.05, rotate: 2, cursor: 'grabbing' }}
           whileHover={{ cursor: 'grab' }}
-          className="w-full aspect-[4/5] bg-white border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] rounded-none overflow-hidden relative flex flex-col p-6 items-center justify-between z-40"
+          className="w-full aspect-[4/5] bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] rounded-none overflow-hidden relative flex flex-col p-6 items-center justify-between z-40"
         >
           {/* Drag handle */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center justify-center bg-[#ffa116] border-b-4 border-x-4 border-t-0 border-[#202b20] px-4 py-1 text-[11px] font-black uppercase tracking-widest text-[#202b20] pointer-events-none z-50">
@@ -124,7 +125,7 @@ export default function HeroCard() {
                 <div className="w-full pb-2 px-2">
                   <button
                     onClick={() => handleSpeechChange(true)}
-                    className="w-full h-[52px] flex items-center justify-center rounded-none border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#ffa116] transition-all shadow-[4px_4px_0_0_#202b20] active:translate-y-[2px] active:translate-x-[2px] font-black uppercase tracking-widest"
+                    className="w-full h-[52px] flex items-center justify-center rounded-none border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#ffa116] transition-all shadow-[2px_2px_0_0_#202b20] active:translate-y-[2px] active:translate-x-[2px] font-black uppercase tracking-widest"
                   >
                     Start speaking
                   </button>
@@ -148,7 +149,7 @@ export default function HeroCard() {
                     .spin-cw{animation:spinCW 3s ease-in-out infinite alternate;}
                     .spin-ccw{animation:spinCCW 3s 0.5s ease-in-out infinite alternate;}
                   `}</style>
-                  <div className="w-24 h-24 bg-[#ffa116] border-2 border-[#202b20] absolute shadow-[4px_4px_0_0_#202b20]" />
+                  <div className="w-24 h-24 bg-[#ffa116] border-2 border-[#202b20] absolute shadow-[2px_2px_0_0_#202b20]" />
                   <div className="spin-cw w-24 h-24 border-2 border-[#202b20] absolute" />
                   <div className="spin-ccw w-24 h-24 border-2 border-[#202b20] absolute" />
                 </div>
@@ -176,7 +177,7 @@ export default function HeroCard() {
                   `}</style>
                   <div className="ring-slow w-48 h-48 absolute border-2 border-dashed border-[#202b20]" />
                   <div className="ring-fast w-32 h-32 absolute border-2 border-dotted border-[#202b20] bg-[#ffa116]/10" />
-                  <div className="w-16 h-16 bg-[#202b20] absolute shadow-[4px_4px_0_0_#ffa116]" />
+                  <div className="w-16 h-16 bg-[#202b20] absolute shadow-[2px_2px_0_0_#ffa116]" />
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-6 pb-4">
@@ -185,13 +186,13 @@ export default function HeroCard() {
                     <button
                       aria-label="Stop recording"
                       onClick={() => handleSpeechChange(false)}
-                      className="w-12 h-12 rounded-none border-2 border-[#202b20] bg-white flex items-center justify-center hover:bg-[#ffa116] transition-colors shadow-[4px_4px_0_0_#202b20] active:translate-y-1 active:translate-x-1 active:shadow-none"
+                      className="w-12 h-12 rounded-none border-2 border-[#202b20] bg-white flex items-center justify-center hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0_0_#202b20] active:translate-y-1 active:translate-x-1 active:shadow-none"
                     >
                       <span className="w-4 h-4 bg-red-500 border-2 border-[#202b20] animate-pulse" />
                     </button>
                     <button
                       onClick={endSession}
-                      className="h-12 px-6 rounded-none bg-red-500/10 text-red-600 font-black border-2 border-red-500 hover:bg-red-500 hover:text-white transition-colors shadow-[4px_4px_0px_0px_#ef4444] active:translate-y-1 active:translate-x-1 active:shadow-none uppercase tracking-widest text-sm"
+                      className="h-12 px-6 rounded-none bg-red-500/10 text-red-600 font-black border-2 border-red-500 hover:bg-red-500 hover:text-white transition-colors shadow-[2px_2px_0px_0px_#ef4444] active:translate-y-1 active:translate-x-1 active:shadow-none uppercase tracking-widest text-sm"
                     >
                       end session
                     </button>

@@ -5,25 +5,25 @@ export class AddMockTestEntities1772385918912 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "public"."mock_test_questions_questiontype_enum" AS ENUM('MCQ', 'TEXT')`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'mock_test_questions_questiontype_enum') THEN CREATE TYPE "public"."mock_test_questions_questiontype_enum" AS ENUM('MCQ', 'TEXT'); END IF; END $$`,
     );
     await queryRunner.query(
-      `CREATE TABLE "mock_test_questions" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "sectionId" uuid NOT NULL, "questionType" "public"."mock_test_questions_questiontype_enum" NOT NULL DEFAULT 'MCQ', "questionText" text NOT NULL, "optionsJson" jsonb, "correctAnswer" character varying, "marks" integer, "order" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f1f38506a83f135032e40d9e903" PRIMARY KEY ("id"))`,
+      `CREATE TABLE IF NOT EXISTS "mock_test_questions" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "sectionId" uuid NOT NULL, "questionType" "public"."mock_test_questions_questiontype_enum" NOT NULL DEFAULT 'MCQ', "questionText" text NOT NULL, "optionsJson" jsonb, "correctAnswer" character varying, "marks" integer, "order" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f1f38506a83f135032e40d9e903" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "mock_test_sections" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "mockTestId" uuid NOT NULL, "title" character varying NOT NULL, "durationMinutes" integer, "order" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_00e9dd7abd59dec70d429cc6cf6" PRIMARY KEY ("id")); COMMENT ON COLUMN "mock_test_sections"."durationMinutes" IS 'Strict timer for this section in minutes, if null it uses global timer'`,
+      `CREATE TABLE IF NOT EXISTS "mock_test_sections" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "mockTestId" uuid NOT NULL, "title" character varying NOT NULL, "durationMinutes" integer, "order" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_00e9dd7abd59dec70d429cc6cf6" PRIMARY KEY ("id")); COMMENT ON COLUMN "mock_test_sections"."durationMinutes" IS 'Strict timer for this section in minutes, if null it uses global timer'`,
     );
     await queryRunner.query(
-      `CREATE TABLE "mock_tests" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "companyId" uuid NOT NULL, "title" character varying NOT NULL, "description" text, "totalDurationMinutes" integer NOT NULL DEFAULT '0', "order" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_10d21ba23138d224c258d5508c3" PRIMARY KEY ("id"))`,
+      `CREATE TABLE IF NOT EXISTS "mock_tests" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "companyId" uuid NOT NULL, "title" character varying NOT NULL, "description" text, "totalDurationMinutes" integer NOT NULL DEFAULT '0', "order" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_10d21ba23138d224c258d5508c3" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `ALTER TABLE "mock_test_questions" ADD CONSTRAINT "FK_78406b54dbc4da337e708893f6c" FOREIGN KEY ("sectionId") REFERENCES "mock_test_sections"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'FK_78406b54dbc4da337e708893f6c') THEN ALTER TABLE "mock_test_questions" ADD CONSTRAINT "FK_78406b54dbc4da337e708893f6c" FOREIGN KEY ("sectionId") REFERENCES "mock_test_sections"("id") ON DELETE CASCADE ON UPDATE NO ACTION; END IF; END $$`,
     );
     await queryRunner.query(
-      `ALTER TABLE "mock_test_sections" ADD CONSTRAINT "FK_52da1b9e921610e4b7769f2042e" FOREIGN KEY ("mockTestId") REFERENCES "mock_tests"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'FK_52da1b9e921610e4b7769f2042e') THEN ALTER TABLE "mock_test_sections" ADD CONSTRAINT "FK_52da1b9e921610e4b7769f2042e" FOREIGN KEY ("mockTestId") REFERENCES "mock_tests"("id") ON DELETE CASCADE ON UPDATE NO ACTION; END IF; END $$`,
     );
     await queryRunner.query(
-      `ALTER TABLE "mock_tests" ADD CONSTRAINT "FK_05928b41c2a71b22d2bf6ac2aca" FOREIGN KEY ("companyId") REFERENCES "companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'FK_05928b41c2a71b22d2bf6ac2aca') THEN ALTER TABLE "mock_tests" ADD CONSTRAINT "FK_05928b41c2a71b22d2bf6ac2aca" FOREIGN KEY ("companyId") REFERENCES "companies"("id") ON DELETE CASCADE ON UPDATE NO ACTION; END IF; END $$`,
     );
   }
 

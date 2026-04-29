@@ -20,9 +20,10 @@ import {
   PlacementType,
   PlacementStatus,
   DriveVerificationStatus,
+  WorkMode,
 } from './entities/placement.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/auth.decorators';
+import { Public, Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from '../users/user.entity';
 
 @UseGuards(JwtAuthGuard)
@@ -39,6 +40,9 @@ export class PlacementsController {
   ) {
     if (req.user.role === UserRole.COMPANY_ADMIN) {
       createPlacementDto.companyId = req.user.id;
+      if (!createPlacementDto.companyName) {
+        createPlacementDto.companyName = req.user.email;
+      }
     }
     return this.placementsService.create(createPlacementDto);
   }
@@ -55,24 +59,47 @@ export class PlacementsController {
     @Request() req: AuthenticatedRequest,
     @Query('type') type?: PlacementType,
     @Query('status') status?: PlacementStatus,
+    @Query('mode') mode?: WorkMode,
   ) {
     const isSuperAdmin = req.user.role === UserRole.SUPER_ADMIN;
-    return this.placementsService.findAll(type, status, isSuperAdmin);
+    return this.placementsService.findAll(type, status, isSuperAdmin, mode);
+  }
+
+  @Public()
+  @Get('public/active')
+  findPublicActive(
+    @Query('type') type?: PlacementType,
+    @Query('mode') mode?: WorkMode,
+    @Query('q') q?: string,
+  ) {
+    return this.placementsService.findPublicActiveJobs(type, mode, q);
+  }
+
+  @Public()
+  @Get('public/stats')
+  getPublicStats() {
+    return this.placementsService.getPublicActiveJobStats();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.placementsService.findOne(id);
+  findOne(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
+    return this.placementsService.findOne(id, req.user.id, req.user.role);
   }
 
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN)
   update(
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() updatePlacementDto: UpdatePlacementDto,
   ) {
-    return this.placementsService.update(id, updatePlacementDto);
+    return this.placementsService.update(
+      id,
+      updatePlacementDto,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Patch(':id/verify')
@@ -93,7 +120,7 @@ export class PlacementsController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN)
-  remove(@Param('id') id: string) {
-    return this.placementsService.remove(id);
+  remove(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
+    return this.placementsService.remove(id, req.user.id, req.user.role);
   }
 }

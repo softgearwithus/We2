@@ -12,7 +12,7 @@ const Step1Mockup = () => (
       </div>
     </div>
 
-    <div className="flex-1 bg-white rounded-none shadow-[4px_4px_0_0_#202b20] border-2 border-[#202b20] p-3 md:p-4 relative overflow-hidden flex flex-col justify-between">
+    <div className="flex-1 bg-white rounded-none shadow-[2px_2px_0_0_#202b20] border-2 border-[#202b20] p-3 md:p-4 relative overflow-hidden flex flex-col justify-between">
       <div className="space-y-3 h-full flex flex-col">
         <div className="flex items-center justify-between pb-2 border-b-2 border-[#202b20] shrink-0">
           <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ const Step1Mockup = () => (
         </div>
       </div>
 
-      <div className="absolute bottom-4 right-4 bg-[#202b20] text-white px-3 py-1.5 rounded-none text-[12px] font-[600] flex items-center gap-1.5 shadow-[4px_4px_0_0_#ffa116] uppercase border-2 border-[#202b20]">
+      <div className="absolute bottom-4 right-4 bg-[#202b20] text-white px-3 py-1.5 rounded-none text-[12px] font-[600] flex items-center gap-1.5 shadow-[2px_2px_0_0_#ffa116] uppercase border-2 border-[#202b20]">
         <CheckCircle2 className="w-3.5 h-3.5 text-[#ffa116]" strokeWidth={3} />
         Questions Generated
       </div>
@@ -89,10 +89,10 @@ const Step2Mockup = () => (
       </div>
     </div>
     <div className="flex-1 p-5 flex flex-col gap-4 justify-end bg-white">
-      <div className="self-start max-w-[85%] bg-white border-2 border-[#202b20] rounded-none px-4 py-3 text-[13px] text-[#202b20] font-[600] shadow-[4px_4px_0_0_#202b20] leading-relaxed">
+      <div className="self-start max-w-[85%] bg-white border-2 border-[#202b20] rounded-none px-4 py-3 text-[13px] text-[#202b20] font-[600] shadow-[2px_2px_0_0_#202b20] leading-relaxed">
         Based on your resume, I see you designed a WebSockets architecture at TechCorp. How would you handle connection drops?
       </div>
-      <div className="self-end max-w-[85%] bg-[#202b20] text-white border-2 border-[#202b20] rounded-none px-4 py-3 text-[13px] font-[600] shadow-[4px_4px_0_0_#ffa116] leading-relaxed">
+      <div className="self-end max-w-[85%] bg-[#202b20] text-white border-2 border-[#202b20] rounded-none px-4 py-3 text-[13px] font-[600] shadow-[2px_2px_0_0_#ffa116] leading-relaxed">
         I would implement a hybrid long-polling fallback and use sequence IDs...
       </div>
 
@@ -108,7 +108,7 @@ const Step2Mockup = () => (
 const Step3Mockup = () => (
   <div className="w-full h-full bg-white p-4 md:p-6 flex flex-col gap-4 transition-colors duration-500">
     <div className="flex gap-4 h-[65%]">
-      <div className="w-1/2 bg-[#ffa116] rounded-none border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] flex flex-col items-center justify-center relative">
+      <div className="w-1/2 bg-[#ffa116] rounded-none border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex flex-col items-center justify-center relative">
         <svg className="w-24 h-24 transform -rotate-90">
           <rect x="12" y="12" width="72" height="72" className="stroke-[#202b20] fill-none" strokeWidth="8" />
         </svg>
@@ -136,7 +136,7 @@ const Step3Mockup = () => (
       </div>
     </div>
 
-    <div className="bg-[#202b20] border-2 border-[#202b20] flex-1 rounded-none shadow-[4px_4px_0_0_#ffa116] p-4 flex items-center justify-between text-white relative overflow-hidden">
+    <div className="bg-[#202b20] border-2 border-[#202b20] flex-1 rounded-none shadow-[2px_2px_0_0_#ffa116] p-4 flex items-center justify-between text-white relative overflow-hidden">
       <div className="relative z-10">
         <div className="font-[600] text-sm uppercase text-[#ffa116]">Need deeper feedback?</div>
         <div className="text-white/80 font-[600] text-[12px] mt-0.5">Speak with an industry expert.</div>
@@ -186,7 +186,7 @@ export default function HowItWorks() {
           {steps.map((step, index) => (
             <div key={index} className={`flex flex-col md:flex-row items-center gap-12 lg:gap-20 ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
               <div className="w-full md:w-1/2 flex flex-col items-start text-left relative z-10">
-                <span className="px-4 py-1.5 rounded-none bg-[#202b20] text-white font-[600] text-[14px] tracking-widest mb-6 border-2 border-[#202b20] shadow-[4px_4px_0_0_#ffa116] uppercase">
+                <span className="px-4 py-1.5 rounded-none bg-[#202b20] text-white font-[600] text-[14px] tracking-widest mb-6 border-2 border-[#202b20] shadow-[2px_2px_0_0_#ffa116] uppercase">
                   {step.badge}
                 </span>
                 <h3 className="text-3xl md:text-4xl font-[500] text-[#202b20] tracking-tight mb-6">
@@ -197,7 +197,7 @@ export default function HowItWorks() {
                 </p>
               </div>
 
-              <div className="w-full md:w-1/2 aspect-square md:aspect-[4/3] bg-white border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] relative flex items-center justify-center p-0 transition-transform duration-500 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#202b20]">
+              <div className="w-full md:w-1/2 aspect-square md:aspect-[4/3] bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] relative flex items-center justify-center p-0 transition-transform duration-500 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#202b20]">
                 <div className="w-full h-full border-0 overflow-hidden relative bg-white">
                   <step.Mockup />
                 </div>

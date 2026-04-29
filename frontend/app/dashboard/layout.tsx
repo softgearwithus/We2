@@ -59,9 +59,16 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (!isLoading && !user) {
-            router.push('/login');
+            const query = searchParams.toString();
+            const nextPath = query ? `${pathname}?${query}` : pathname;
+            const isActiveJobsRoute = pathname === '/dashboard/placement-drives';
+            router.push(
+                isActiveJobsRoute
+                    ? `/login/student?next=${encodeURIComponent(nextPath)}`
+                    : '/login'
+            );
         }
-    }, [isLoading, user, router]);
+    }, [isLoading, user, router, pathname, searchParams]);
 
     interface MenuItem {
         isSection?: boolean;
@@ -75,20 +82,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     const placementMenu: MenuItem[] = [
         { isSection: true, label: 'DASHBOARDS' },
         { icon: 'dashboard', label: 'Overview', href: '/dashboard', hasUpdate: updateIndicators['/dashboard'] },
-        { icon: 'school', label: 'Placement Preparation', href: '/dashboard/preparation', hasUpdate: updateIndicators['/dashboard/preparation'] },
-        {
-            icon: 'quiz',
-            label: 'Test Series',
-            href: '/dashboard/test-series',
-            hasUpdate: updateIndicators['/dashboard/test-series'],
-            subItems: [
-                { label: 'Explore', href: '/dashboard/test-series', icon: 'grid_view' },
-                { label: 'Mock Analysis', href: '/dashboard/test-series/mock-analysis', icon: 'analytics' }
-            ]
-        },
-        
+
         { isSection: true, label: 'LABS' },
-        { icon: 'rocket_launch', label: 'Project Labs', href: '/dashboard/projects', hasUpdate: updateIndicators['/dashboard/projects'] },
         {
             icon: 'mic',
             label: 'Mock Interview',
@@ -99,7 +94,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Mock Analysis', href: '/dashboard/interview?mode=analysis', icon: 'analytics' }
             ]
         },
-        
+
         { isSection: true, label: 'CAREER' },
         { icon: 'description', label: 'Resume', href: '/dashboard/resume', hasUpdate: updateIndicators['/dashboard/resume'] },
         {
@@ -114,7 +109,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             ]
         },
         { icon: 'radar', label: 'Market Radar', href: '/dashboard/market-radar', hasUpdate: updateIndicators['/dashboard/market-radar'] },
-        
+
         { isSection: true, label: 'NETWORK' },
         {
             icon: 'group',
@@ -127,10 +122,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
                 { label: 'Join as a Mentor', href: '/mentor/apply', icon: 'person_add' }
             ]
         },
-        { icon: 'work', label: 'Placement Drives', href: '/dashboard/placement-drives', hasUpdate: updateIndicators['/dashboard/placement-drives'] },
+        { icon: 'work', label: 'Active Jobs', href: '/dashboard/placement-drives', hasUpdate: updateIndicators['/dashboard/placement-drives'] },
         { icon: 'support_agent', label: 'Help & Support', href: '/contact', hasUpdate: updateIndicators['/contact'] }
     ];
-
     const simulationMenu: MenuItem[] = [
         { isSection: true, label: 'DASHBOARDS' },
         { icon: 'dashboard', label: 'Overview', href: '/dashboard' },
@@ -183,7 +177,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     }));
 
     if (isLoading) {
-        return <div className="flex h-screen items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
+        return <div className="flex h-screen items-center justify-center bg-transparent"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
     }
 
     return (
@@ -195,7 +189,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
 function DashboardLayoutFallback() {
     return (
-        <div className="flex h-screen items-center justify-center bg-slate-50">
+        <div className="flex h-screen items-center justify-center bg-transparent">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
     );

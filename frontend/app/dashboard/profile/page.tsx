@@ -21,8 +21,6 @@ export default function LeetCodeProfile() {
         totalAttempted: 0,
         ideSolved: 0,
         ideTotal: 0,
-        projectSolved: 0,
-        projectTotal: 0,
     });
     const [badges, setBadges] = useState<Array<{ title: string; icon: string }>>([]);
 
@@ -33,11 +31,8 @@ export default function LeetCodeProfile() {
             try {
                 let ideSolved = 0;
                 let ideTotal = 0;
-                let projectSolved = 0;
-                let projectTotal = 0;
-                const [dashboardStatsRes, projectProgressRes, badgesRes] = await Promise.all([
+                const [dashboardStatsRes, badgesRes] = await Promise.all([
                     fetchApi(`${API_BASE_URL}/users/dashboard-stats`, { headers: { Authorization: `Bearer ${token}` } }),
-                    fetchApi(`${API_BASE_URL}/project-labs/me/progress`, { headers: { Authorization: `Bearer ${token}` } }),
                     fetchApi(`${API_BASE_URL}/gamification/badges`, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
 
@@ -46,12 +41,6 @@ export default function LeetCodeProfile() {
                     const interviewsCompleted = dashboardStats.interviewsCompleted || 0;
                     ideSolved = interviewsCompleted;
                     ideTotal = interviewsCompleted;
-                }
-
-                if (projectProgressRes.ok) {
-                    const progress = await projectProgressRes.json();
-                    projectSolved = progress.completedProjectIds?.length || 0;
-                    projectTotal = progress.submittedProjectIds?.length || 0;
                 }
 
                 if (badgesRes.ok) {
@@ -63,10 +52,8 @@ export default function LeetCodeProfile() {
                 setStats({
                     ideSolved,
                     ideTotal,
-                    projectSolved,
-                    projectTotal,
-                    totalSolved: ideSolved + projectSolved,
-                    totalAttempted: ideTotal + projectTotal,
+                    totalSolved: ideSolved,
+                    totalAttempted: ideTotal,
                 });
             } catch (error) {
                 console.error('Failed to load profile stats', error);
@@ -102,13 +89,6 @@ export default function LeetCodeProfile() {
             total: stats.ideTotal,
             color: 'text-slate-800',
             bg: 'bg-slate-500',
-        },
-        projects: {
-            label: 'Projects',
-            solved: stats.projectSolved,
-            total: stats.projectTotal,
-            color: 'text-amber-600',
-            bg: 'bg-amber-500',
         },
     };
     const totalAttempted = Math.max(1, solvedData.totalAttempted);
@@ -212,8 +192,7 @@ export default function LeetCodeProfile() {
                             {/* Linear Progress Bars */}
                             <div className="flex-1 w-full space-y-4 text-sm font-bold">
                                 {[
-                                    solvedData.ide,
-                                    solvedData.projects
+                                    solvedData.ide
                                 ].map((tier) => (
                                     <div key={tier.label}>
                                         <div className="flex justify-between items-center mb-1.5">

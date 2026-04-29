@@ -60,27 +60,30 @@ const UserDropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
         <DropdownMenuTrigger>{trigger}</DropdownMenuTrigger>
         <DropdownMenuContent
           align={align}
-          className="w-3xs rounded-2xl data-open:slide-in-from-bottom-20! data-closed:slide-out-to-bottom-20 data-open:fade-in-0 data-closed:fade-out-0 data-closed:zoom-out-100 duration-400"
+          className="w-3xs rounded-none border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] bg-white data-open:slide-in-from-bottom-20! data-closed:slide-out-to-bottom-20 data-open:fade-in-0 data-closed:fade-out-0 data-closed:zoom-out-100 duration-200"
         >
           {/* User Info */}
           <DropdownMenuGroup>
             <DropdownMenuLabel className="flex items-center gap-3 px-4 py-3">
               <div className="relative">
-                <Avatar className="data-[size=lg]:size-8">
+                <Avatar className="data-[size=lg]:size-8 border-2 border-[#202b20] rounded-none">
                   <AvatarImage
-                    src="https://images.shadcnspace.com/assets/profiles/user-11.jpg"
-                    alt="David McMichael"
+                    src={user?.avatarUrl || undefined}
+                    alt={user?.firstName || 'User'}
+                    className="object-cover"
                   />
-                  <AvatarFallback>DM</AvatarFallback>
+                  <AvatarFallback className="bg-[#ffa116] text-[#202b20] font-bold rounded-none">
+                    {user?.firstName?.[0]?.toUpperCase() || 'E'}
+                  </AvatarFallback>
                 </Avatar>
-                <span className="ring-card absolute right-0 bottom-0 size-2 rounded-full bg-green-600 ring-2" />
+                <span className="absolute right-[-4px] bottom-[-4px] size-3 bg-[#ffa116] border-2 border-[#202b20]" />
               </div>
 
               <div className="flex flex-col">
-                <span className="text-popover-foreground text-sm font-medium">
-                  {user?.firstName ? `${user.firstName} ${user.lastName}` : 'from Team Emble'}
+                <span className="text-[#202b20] text-sm font-bold uppercase tracking-tight">
+                  {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Team Emble'}
                 </span>
-                <span className="text-muted-foreground text-sm">
+                <span className="text-[#202b20]/70 text-xs font-medium">
                   {user?.email || 'hello@emble.com'}
                 </span>
               </div>

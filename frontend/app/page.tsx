@@ -5,15 +5,13 @@ import dynamic from 'next/dynamic';
 import { Metadata } from 'next';
 import CursorGrainyCloud from './components/shared/CursorGrainyCloud';
 
-// ── Below-fold sections: lazy SSR-safe imports ────────────────────────────────
-const ProblemSection    = dynamic(() => import('./components/home/ProblemSection'));
-const HowItWorks        = dynamic(() => import('./components/home/HowItWorks'));
-const FeatureShowcase   = dynamic(() => import('./components/home/FeatureShowcase'));
-const ComparisonSection = dynamic(() => import('./components/home/ComparisonSection'));
-const TargetUsers       = dynamic(() => import('./components/home/TargetUsers'));
-const Testimonials      = dynamic(() => import('./components/home/Testimonials'));
-const AboutUs           = dynamic(() => import('./components/home/AboutUs'));
-const AudioPlayerMessage = dynamic(() => import('./components/home/AudioPlayerMessage'));
+import ProblemSection from './components/home/ProblemSection';
+import HowItWorks from './components/home/HowItWorks';
+import FeatureShowcase from './components/home/FeatureShowcase';
+import ComparisonSection from './components/home/ComparisonSection';
+import TargetUsers from './components/home/TargetUsers';
+import Testimonials from './components/home/Testimonials';
+import AboutUs from './components/home/AboutUs';
 
 export const metadata: Metadata = {
   title: 'Emble – The #1 AI Interview Platform | Hire Smarter, Faster',
@@ -50,7 +48,6 @@ export default function Home() {
         <ComparisonSection />
         <TargetUsers />
         <Testimonials />
-        <AudioPlayerMessage />
       </div>
 
       <AboutUs />

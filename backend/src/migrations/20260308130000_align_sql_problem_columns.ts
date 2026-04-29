@@ -4,6 +4,10 @@ export class AlignSqlProblemColumns20260308130000 implements MigrationInterface 
   name = 'AlignSqlProblemColumns20260308130000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    if (!(await queryRunner.hasTable('sql_problems'))) {
+      return;
+    }
+
     await queryRunner.query(`
       ALTER TABLE "sql_problems"
       ADD COLUMN IF NOT EXISTS "platform" character varying(255)
@@ -23,6 +27,10 @@ export class AlignSqlProblemColumns20260308130000 implements MigrationInterface 
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    if (!(await queryRunner.hasTable('sql_problems'))) {
+      return;
+    }
+
     await queryRunner.query(`
       ALTER TABLE "sql_problems"
       DROP COLUMN IF EXISTS "companyTags"

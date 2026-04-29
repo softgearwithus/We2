@@ -4,7 +4,7 @@ import { fetchApi } from '../../lib/apiClient';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Building2, Plus, Mail, Loader2, CheckCircle2, X, Phone, Clock, XCircle, Inbox, LogOut, Briefcase, MapPin, Calendar, AlertCircle, Eye, FileText, UserPlus, IndianRupee, Tag } from 'lucide-react';
+import { Building2, Plus, Mail, Loader2, CheckCircle2, X, Phone, Clock, XCircle, Inbox, LogOut, Briefcase, Calendar, AlertCircle, Eye, FileText, UserPlus, IndianRupee, Tag } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 export default function CompaniesPage() {
@@ -519,7 +519,7 @@ export default function CompaniesPage() {
                                             <div className="font-bold text-slate-900 line-clamp-1">{drive.title}</div>
                                             <div className="text-xs text-slate-500 mt-1 flex items-center gap-2">
                                                 <span className="px-2 py-0.5 bg-slate-100 rounded border border-slate-200">{drive.type}</span>
-                                                {drive.location && <span><MapPin size={10} className="inline mr-0.5" />{drive.location}</span>}
+                                                {drive.location && <span><span className="material-symbols-outlined text-[10px] align-[-1px] mr-0.5">location_on</span>{drive.location}</span>}
                                             </div>
                                         </td>
                                         <td className="p-4">
@@ -620,7 +620,7 @@ export default function CompaniesPage() {
                                 </div>
                                 <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-500">
                                     <span className="flex items-center gap-1.5 text-slate-700"><Building2 size={16} className="text-slate-800" /> {viewDrive.companyName}</span>
-                                    {viewDrive.location && <span className="flex items-center gap-1.5"><MapPin size={16} /> {viewDrive.location}</span>}
+                                    {viewDrive.location && <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]">location_on</span> {viewDrive.location}</span>}
                                     <span className="flex items-center gap-1.5"><Briefcase size={16} /> {viewDrive.type}</span>
                                     {viewDrive.salary && <span className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"><IndianRupee size={14} /> {viewDrive.salary}</span>}
                                 </div>

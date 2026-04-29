@@ -100,7 +100,7 @@ const testimonials = [
 ];
 
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
-    <Message from="assistant" className="w-full max-w-full bg-white border-2 border-[#202b20] p-6 rounded-none shadow-[4px_4px_0px_0px_#202b20] hover:shadow-[8px_8px_0px_0px_#ffa116] hover:-translate-y-1 transition-all duration-300">
+    <Message from="assistant" className="w-full max-w-full bg-white border-2 border-[#202b20] p-6 rounded-none shadow-[2px_2px_0px_0px_#202b20] hover:shadow-[2px_2px_0px_0px_#ffa116] hover:-translate-y-1 transition-all duration-300">
         <div className="flex gap-4 w-full">
             <div className={`shrink-0 w-12 h-12 rounded-none border-2 border-[#202b20] ${t.color} flex items-center justify-center font-bold text-sm bg-[#ffa116] text-[#202b20] shadow-[2px_2px_0px_0px_#202b20]`}>
                 {t.initials}
@@ -148,7 +148,7 @@ export default function ReviewsPage() {
       <div className="relative z-10 flex flex-col gap-12 sm:gap-16 pb-20">
         <div className="container mx-auto px-6 text-center max-w-3xl mt-12 mb-8">
             <h1 className="text-[3rem] md:text-[5rem] leading-[1.1] font-[800] tracking-tighter mb-6 text-[#202b20]">
-                Success <span className="text-white bg-[#202b20] px-3 shadow-[4px_4px_0px_0px_#ffa116] block sm:inline-block mt-2 sm:mt-0">Stories</span>
+                Success <span className="text-white bg-[#202b20] px-3 shadow-[2px_2px_0px_0px_#ffa116] block sm:inline-block mt-2 sm:mt-0">Stories</span>
             </h1>
             <p className="text-lg text-[#202b20]/70 font-[500] max-w-2xl mx-auto">Read firsthand how Emble has transformed the interview preparation process and changed careers.</p>
         </div>

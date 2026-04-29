@@ -15,8 +15,6 @@ import { PerformanceModule } from './performance/performance.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { InterviewsModule } from './interviews/interviews.module';
 import { CertificationsModule } from './certifications/certifications.module';
-import { ProjectsModule } from './projects/projects.module';
-import { ProjectLabsModule } from './project-labs/project-labs.module';
 import { User } from './users/user.entity';
 import { Simulation } from './simulations/entities/simulation.entity';
 import { Task } from './tasks/entities/task.entity';
@@ -25,9 +23,6 @@ import { TeamMember } from './teams/entities/team-member.entity';
 import { Performance } from './performance/entities/performance.entity';
 import { Achievement } from './achievements/entities/achievement.entity';
 import { Certification } from './certifications/entities/certification.entity';
-import { Project } from './projects/entities/project.entity';
-import { ProjectLab } from './project-labs/entities/project-lab.entity';
-import { ProjectLabSubmission } from './project-labs/entities/project-lab-submission.entity';
 import { InterviewSession } from './interviews/entities/interview-session.entity';
 import { Interview } from './interview/entities/interview.entity';
 import { CollegesModule } from './colleges/colleges.module';
@@ -63,8 +58,6 @@ import { McqsModule } from './mcqs/mcqs.module';
 import { McqQuestion } from './mcqs/entities/mcq-question.entity';
 import { WriteXModule } from './writex/writex.module';
 import { WriteXQuestion } from './writex/entities/writex-question.entity';
-import { PreparationModule } from './preparation/preparation.module';
-import { PreparationProgress } from './preparation/entities/preparation-progress.entity';
 import { resolveDbConfig } from './common/db-config';
 import { Client } from 'pg';
 import { CareersModule } from './careers/careers.module';
@@ -76,13 +69,6 @@ import { Application } from './applications/entities/application.entity';
 import { CompanyLeadsModule } from './company-leads/company-leads.module';
 import { CompanyLead } from './company-leads/entities/company-lead.entity';
 import { EmailOtp } from './auth/entities/email-otp.entity';
-import { Company } from './test-series/entities/company.entity';
-import { MockTest } from './test-series/entities/mock-test.entity';
-import { MockTestSection } from './test-series/entities/mock-test-section.entity';
-import { MockTestQuestion } from './test-series/entities/mock-test-question.entity';
-import { MockTestResult } from './test-series/entities/mock-test-result.entity';
-import { MockTestStudentResponse } from './test-series/entities/mock-test-student-response.entity';
-import { TestSeriesModule } from './test-series/test-series.module';
 import { AiInterviewerModule } from './ai-interviewer/ai-interviewer.module';
 import { ResumeDocument } from './ai-interviewer/entities/resume-document.entity';
 import { AiInterviewSession } from './ai-interviewer/entities/ai-interview-session.entity';
@@ -176,9 +162,6 @@ import { ScheduleModule } from '@nestjs/schedule';
             Performance,
             Achievement,
             Certification,
-            Project,
-            ProjectLab,
-            ProjectLabSubmission,
             InterviewSession,
             Interview,
             CourseContent,
@@ -188,7 +171,6 @@ import { ScheduleModule } from '@nestjs/schedule';
             Resume,
             McqQuestion,
             WriteXQuestion,
-            PreparationProgress,
             College,
             CollegeStaff,
             StudentCohort,
@@ -206,12 +188,6 @@ import { ScheduleModule } from '@nestjs/schedule';
             Application,
             CompanyLead,
             EmailOtp,
-            Company,
-            MockTest,
-            MockTestSection,
-            MockTestQuestion,
-            MockTestResult,
-            MockTestStudentResponse,
             ResumeDocument,
             AiInterviewSession,
             AiInterviewReport,
@@ -240,8 +216,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     AchievementsModule,
     InterviewsModule,
     CertificationsModule,
-    ProjectsModule,
-    ProjectLabsModule,
     InterviewModule,
     CourseContentModule,
     AiModule,
@@ -256,12 +230,10 @@ import { ScheduleModule } from '@nestjs/schedule';
     ResumeModule,
     McqsModule,
     WriteXModule,
-    PreparationModule,
     CareersModule,
     PlacementsModule,
     ApplicationsModule,
     CompanyLeadsModule,
-    TestSeriesModule,
     AiInterviewerModule,
     QueriesModule,
   ],

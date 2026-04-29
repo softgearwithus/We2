@@ -99,7 +99,7 @@ const testimonials = [
 import { Message, MessageContent } from "@/components/ai-elements/message";
 
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
-    <Message from="assistant" className="w-full max-w-full bg-white border-2 border-[#202b20] p-5 rounded-none shadow-[4px_4px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all duration-300">
+    <Message from="assistant" className="w-full max-w-full bg-white border-2 border-[#202b20] p-5 rounded-none shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#ffa116] hover:-translate-y-1 transition-all duration-300">
         <div className="flex gap-4 w-full">
             {/* Avatar */}
             <div className={`shrink-0 w-12 h-12 rounded-none ${t.color} flex items-center justify-center font-[600] text-sm shadow-[2px_2px_0_0_#202b20] border-2 border-[#202b20]`}>
@@ -150,7 +150,7 @@ export default function Testimonials() {
             {/* Header */}
             <div className="max-w-7xl mx-auto px-6 mb-24 relative z-10 text-center">
                 <h2 className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-[#202b20] mb-6">
-                    Offers dropped. <br className="md:hidden" /><span className="text-white bg-[#202b20] px-4 py-1 border-2 border-[#202b20] shadow-[4px_4px_0_0_#ffa116]">Lives changed.</span>
+                    Offers dropped. <br className="md:hidden" /><span className="text-white bg-[#202b20] px-4 py-1 border-2 border-[#202b20] shadow-[2px_2px_0_0_#ffa116]">Lives changed.</span>
                 </h2>
                 <p className="text-lg md:text-xl text-[#202b20]/75 font-[500] max-w-2xl mx-auto leading-relaxed mt-4">
                     Stop practicing blindly. See what happens when you train like a senior engineer and finally beat the applicant tracking systems.
@@ -159,7 +159,7 @@ export default function Testimonials() {
 
             {/* Platform Impact Stats Strip */}
             <div className="max-w-5xl mx-auto px-6 mb-20 relative z-10">
-                <div className="bg-white border-2 border-[#202b20] shadow-[4px_4px_0_0_#202b20] rounded-none p-5 md:p-8 grid grid-cols-2 md:flex md:flex-row items-center justify-between md:divide-x-2 divide-[#202b20] gap-y-8 md:gap-0">
+                <div className="bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] rounded-none p-5 md:p-8 grid grid-cols-2 md:flex md:flex-row items-center justify-between md:divide-x-2 divide-[#202b20] gap-y-8 md:gap-0">
 
                     <div className="flex flex-col items-center justify-center w-full md:w-1/4 pb-4 md:pb-0">
                         <span className="text-3xl md:text-5xl font-[800] text-[#202b20] flex items-center gap-1.5 tracking-tighter">4.3 <Star className="w-5 h-5 md:w-8 md:h-8 stroke-[#202b20] fill-[#ffa116] stroke-2 -mt-1" /></span>
@@ -202,7 +202,7 @@ export default function Testimonials() {
                 <div className="mt-16 text-center">
                     <a
                         href="/reviews"
-                        className="inline-flex items-center justify-center bg-white border-2 border-[#202b20] text-[#202b20] hover:bg-[#ffa116] px-8 py-4 rounded-none font-[600] text-[13px] tracking-widest uppercase transition-all shadow-[4px_4px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_0_#202b20] gap-2"
+                        className="inline-flex items-center justify-center bg-white border-2 border-[#202b20] text-[#202b20] hover:bg-[#ffa116] px-8 py-4 rounded-none font-[600] text-[13px] tracking-widest uppercase transition-all shadow-[2px_2px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#202b20] gap-2"
                     >
                         Read all success stories
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

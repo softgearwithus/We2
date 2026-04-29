@@ -11,10 +11,18 @@ import { useForm } from 'react-hook-form';
 
 type DriveFormData = {
     title: string;
+    jobProfile: string;
     type: string;
+    workMode: string;
     description: string;
-    applyLink: string;
+    roles: string;
+    skillsRequired: string;
+    experienceRequired: string;
+    openings: number;
+    applicationDeadline: string;
+    applyLink?: string;
     batchEligible: string;
+    packageOffered: string;
     salaryRange: string;
     location: string;
 };
@@ -27,17 +35,38 @@ export default function CreateDrivePage() {
     // We auto-fill the companyName from the authenticated user's profile
     const { register, handleSubmit, formState: { errors } } = useForm<DriveFormData>({
         defaultValues: {
-            type: 'Full-Time'
+            type: 'Full-Time',
+            workMode: 'Offline',
         }
     });
+
+    const parseCsv = (value: string) =>
+        value
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean);
 
     const onSubmit = async (data: DriveFormData) => {
         setSubmitting(true);
         try {
             // The backend requires companyName. companyId is extracted from JWT by the controller.
             const payload = {
-                ...data,
-                companyName: user?.firstName || 'Corporate Partner'
+                title: data.title,
+                jobProfile: data.jobProfile,
+                type: data.type,
+                workMode: data.workMode,
+                description: data.description,
+                roles: parseCsv(data.roles),
+                skillsRequired: parseCsv(data.skillsRequired),
+                experienceRequired: data.experienceRequired || undefined,
+                openings: data.openings ? Number(data.openings) : undefined,
+                applicationDeadline: data.applicationDeadline || undefined,
+                applyLink: data.applyLink || undefined,
+                batchEligible: data.batchEligible || undefined,
+                packageOffered: data.packageOffered,
+                salaryRange: data.salaryRange || data.packageOffered,
+                location: data.location || undefined,
+                companyName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || user?.email || 'Corporate Partner'
             };
 
             const { getActiveToken } = await import('@/app/lib/auth-storage');
@@ -101,45 +130,78 @@ export default function CreateDrivePage() {
                             </div>
 
                             <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Job Profile *</label>
+                                <input
+                                    {...register('jobProfile', { required: 'Job profile is required' })}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                                    placeholder="e.g. Frontend Engineering"
+                                />
+                                {errors.jobProfile && <p className="text-red-500 text-sm mt-1">{errors.jobProfile.message}</p>}
+                            </div>
+
+                            <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-1">Employment Type *</label>
                                 <select
-                                    {...register('type')}
+                                    {...register('type', { required: 'Type is required' })}
                                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none bg-white"
                                 >
                                     <option value="Full-Time">Full-Time</option>
                                     <option value="Internship">Internship</option>
-                                    <option value="Remote">Remote</option>
+                                    <option value="Part-Time">Part-Time</option>
                                     <option value="Contract">Contract</option>
+                                    <option value="Remote">Remote</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Work Mode *</label>
+                                <select
+                                    {...register('workMode', { required: 'Work mode is required' })}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none bg-white"
+                                >
+                                    <option value="Offline">Offline</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="Remote">Remote</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
                                     <MapPin size={16} className="text-slate-400" />
-                                    Location
+                                    Location *
                                 </label>
                                 <input
-                                    {...register('location')}
+                                    {...register('location', { required: 'Location is required' })}
                                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
                                     placeholder="e.g. Bangalore, India"
                                 />
+                                {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
                             </div>
                         </div>
 
                         {/* Targeting Criteria */}
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">External Application Link *</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Package Offered *</label>
                                 <input
-                                    {...register('applyLink', { required: 'External URL is required' })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none font-mono text-sm"
-                                    placeholder="https://company.careers/..."
+                                    {...register('packageOffered', { required: 'Package is required' })}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                                    placeholder="e.g. 14 LPA or 40,000/month stipend"
                                 />
-                                {errors.applyLink && <p className="text-red-500 text-sm mt-1">{errors.applyLink.message}</p>}
+                                {errors.packageOffered && <p className="text-red-500 text-sm mt-1">{errors.packageOffered.message}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Salary Range / Stipend</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">External Application Link (Optional)</label>
+                                <input
+                                    {...register('applyLink')}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none font-mono text-sm"
+                                    placeholder="https://company.careers/..."
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Salary Range / Stipend (Optional)</label>
                                 <input
                                     {...register('salaryRange')}
                                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
@@ -155,7 +217,56 @@ export default function CreateDrivePage() {
                                     placeholder="e.g. 2024, 2025"
                                 />
                             </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Openings</label>
+                                <input
+                                    type="number"
+                                    min={1}
+                                    {...register('openings', { valueAsNumber: true })}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                                    placeholder="e.g. 12"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Application Deadline</label>
+                                <input
+                                    type="date"
+                                    {...register('applicationDeadline')}
+                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                                />
+                            </div>
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-bold text-slate-700 mb-2">Roles (comma separated) *</label>
+                            <input
+                                {...register('roles', { required: 'At least one role is required' })}
+                                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                                placeholder="e.g. Frontend Development, API Integration"
+                            />
+                            {errors.roles && <p className="text-red-500 text-sm mt-1">{errors.roles.message}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-slate-700 mb-2">Skills Required (comma separated)</label>
+                            <input
+                                {...register('skillsRequired')}
+                                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                                placeholder="e.g. React, Node.js, PostgreSQL"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-bold text-slate-700 mb-2">Experience Required</label>
+                        <input
+                            {...register('experienceRequired')}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none"
+                            placeholder="e.g. 0-2 years"
+                        />
                     </div>
 
                     <div className="pt-4">
