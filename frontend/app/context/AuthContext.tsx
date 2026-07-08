@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearAllAuthSessions, clearAuthSession, getStoredToken, getTokenIssuedAt, getTokenPersistent, resolveAuthScope, storeAuthSession } from '../lib/auth-storage';
+import { isSessionRevokedError, SESSION_REVOKED_EVENT, SESSION_REVOKING_FLAG } from '../lib/apiClient';
 
 interface User {
     id: string;
@@ -25,6 +26,7 @@ interface User {
     websiteUrl?: string | null;
     githubUrl?: string | null;
     linkedinUrl?: string | null;
+    isTwoFactorEnabled?: boolean;
 }
 
 interface AuthContextType {
@@ -37,16 +39,6 @@ interface AuthContextType {
     token: string | null;
     scope: 'user' | 'admin';
 }
-
-const SESSION_REVOKED_EVENT = 'emble:session-revoked';
-const SESSION_REVOKING_FLAG = 'emble.auth.revoking';
-
-const isSessionRevokedError = (status: number, payload: any) => {
-    if (status !== 401) return false;
-    const code = payload?.code || payload?.error?.code;
-    const message = String(payload?.message || payload?.error?.message || '').toUpperCase();
-    return code === 'SESSION_REVOKED' || message.includes('SESSION_REVOKED');
-};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

@@ -99,40 +99,40 @@ const testimonials = [
 import { Message, MessageContent } from "@/components/ai-elements/message";
 
 const Card = ({ t }: { t: typeof testimonials[0] }) => (
-    <Message from="assistant" className="w-full max-w-full bg-white border-2 border-[#202b20] p-5 rounded-none shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#ffa116] hover:-translate-y-1 transition-all duration-300">
+    <Message from="assistant" className="w-full max-w-full bg-white border border-gray-100 p-6 rounded-3xl shadow-sm hover:shadow-md transition-all duration-300">
         <div className="flex gap-4 w-full">
             {/* Avatar */}
-            <div className={`shrink-0 w-12 h-12 rounded-none ${t.color} flex items-center justify-center font-[600] text-sm shadow-[2px_2px_0_0_#202b20] border-2 border-[#202b20]`}>
+            <div className={`shrink-0 w-12 h-12 rounded-full ${t.color.replace('text-[#202b20]', 'text-gray-700').replace('bg-slate-100', 'bg-slate-50')} flex items-center justify-center font-[600] text-sm border border-gray-100`}>
                 {t.initials}
             </div>
             {/* Content */}
             <div className="flex flex-col w-full min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-3">
                     <div className="flex items-center gap-1.5">
-                        <h4 className="font-[600] text-[#202b20] text-[15px]">{t.name}</h4>
-                        {t.verified && <CheckCircle2 size={16} className="text-[#ffa116] fill-[#202b20]" />}
+                        <h4 className="font-[600] text-gray-900 text-[15px]">{t.name}</h4>
+                        {t.verified && <CheckCircle2 size={16} className="text-emerald-500" />}
                     </div>
-                    <span className="hidden sm:inline text-[#202b20] font-bold">•</span>
-                    <span className="text-xs text-[#202b20]/80 font-medium truncate">
-                        {t.role} @ <span className="text-[#202b20] font-[600] bg-[#efeff1] px-1 border border-[#202b20]">{t.college}</span>
+                    <span className="hidden sm:inline text-gray-300 font-bold">•</span>
+                    <span className="text-[13px] text-gray-500 font-[400] truncate">
+                        {t.role} @ <span className="text-gray-700 font-[500]">{t.college}</span>
                     </span>
                 </div>
 
-                <MessageContent className="text-[#202b20] font-[500] text-[15px] leading-relaxed mb-4 group-[.is-assistant]:text-[#202b20]">
+                <MessageContent className="text-gray-600 font-[400] text-[15px] leading-relaxed mb-5 group-[.is-assistant]:text-gray-600">
                     "{t.text}"
                 </MessageContent>
 
-                <div className="flex items-center justify-between mt-auto pt-3 border-t-2 border-[#202b20]">
-                    <div className="flex gap-0.5">
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                    <div className="flex gap-1">
                         {[...Array(5)].map((_, i) => (
                             <Star
                                 key={i}
-                                size={16}
-                                className={`${i < t.rating ? 'stroke-[#202b20] fill-[#ffa116] stroke-2' : 'stroke-[#202b20] fill-[#efeff1] stroke-2'}`}
+                                size={14}
+                                className={`${i < t.rating ? 'stroke-orange-400 fill-orange-400' : 'stroke-gray-200 fill-gray-200'}`}
                             />
                         ))}
                     </div>
-                    <a href="#" className="flex items-center justify-center w-8 h-8 rounded-none border-2 border-[#202b20] bg-white text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0_0_#202b20]" aria-label={`View ${t.name}'s LinkedIn profile`}>
+                    <a href="#" className="flex items-center justify-center w-8 h-8 rounded-full border border-gray-100 bg-slate-50 text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors" aria-label={`View ${t.name}'s LinkedIn profile`}>
                         <Linkedin size={14} fill="currentColor" />
                     </a>
                 </div>
@@ -146,67 +146,67 @@ export default function Testimonials() {
     const displayedTestimonials = showAll ? testimonials : testimonials.slice(0, 8); // Slice 8 for even 2-column
 
     return (
-        <section className="py-24 lg:py-32 bg-transparent relative overflow-hidden border-t-2 border-[#202b20]">
+        <section className="py-16 bg-transparent relative overflow-hidden">
             {/* Header */}
-            <div className="max-w-7xl mx-auto px-6 mb-24 relative z-10 text-center">
-                <h2 className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-[#202b20] mb-6">
-                    Offers dropped. <br className="md:hidden" /><span className="text-white bg-[#202b20] px-4 py-1 border-2 border-[#202b20] shadow-[2px_2px_0_0_#ffa116]">Lives changed.</span>
+            <div className="max-w-7xl mx-auto px-6 mb-12 relative z-10 text-center">
+                <h2 className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-black mb-4 leading-[1.05]">
+                    Offers dropped. <br className="md:hidden" />
+                    <span className="font-serif italic font-normal text-gray-400">Lives changed.</span>
                 </h2>
-                <p className="text-lg md:text-xl text-[#202b20]/75 font-[500] max-w-2xl mx-auto leading-relaxed mt-4">
+                <p className="text-[18px] md:text-[20px] text-gray-500 font-[500] max-w-2xl mx-auto leading-relaxed mt-6">
                     Stop practicing blindly. See what happens when you train like a senior engineer and finally beat the applicant tracking systems.
                 </p>
             </div>
 
             {/* Platform Impact Stats Strip */}
-            <div className="max-w-5xl mx-auto px-6 mb-20 relative z-10">
-                <div className="bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] rounded-none p-5 md:p-8 grid grid-cols-2 md:flex md:flex-row items-center justify-between md:divide-x-2 divide-[#202b20] gap-y-8 md:gap-0">
+            <div className="max-w-5xl mx-auto px-6 mb-16 relative z-10">
+                <div className="bg-slate-50/50 border border-gray-100 shadow-sm rounded-3xl p-6 md:p-8 grid grid-cols-2 md:flex md:flex-row items-center justify-between md:divide-x divide-gray-200 gap-y-8 md:gap-0">
 
                     <div className="flex flex-col items-center justify-center w-full md:w-1/4 pb-4 md:pb-0">
-                        <span className="text-3xl md:text-5xl font-[800] text-[#202b20] flex items-center gap-1.5 tracking-tighter">4.3 <Star className="w-5 h-5 md:w-8 md:h-8 stroke-[#202b20] fill-[#ffa116] stroke-2 -mt-1" /></span>
-                        <span className="text-[10px] md:text-[11px] font-[600] text-[#202b20] uppercase tracking-widest mt-2 text-center">Average Rating</span>
+                        <span className="text-3xl md:text-5xl font-[800] text-gray-900 flex items-center gap-2 tracking-tighter">4.3 <Star className="w-5 h-5 md:w-8 md:h-8 stroke-orange-400 fill-orange-400 -mt-1" /></span>
+                        <span className="text-[11px] font-[600] text-gray-400 uppercase tracking-widest mt-2 text-center">Average Rating</span>
                     </div>
 
                     <div className="flex flex-col items-center justify-center w-full md:w-1/4 pb-4 md:pb-0">
-                        <span className="text-3xl md:text-5xl font-[800] tracking-tighter text-[#202b20]">400+</span>
-                        <span className="text-[10px] md:text-[11px] font-[600] text-[#202b20] uppercase tracking-widest mt-2 text-center">Active Users</span>
+                        <span className="text-3xl md:text-5xl font-[800] tracking-tighter text-gray-900">400+</span>
+                        <span className="text-[11px] font-[600] text-gray-400 uppercase tracking-widest mt-2 text-center">Active Users</span>
                     </div>
 
                     <div className="flex flex-col items-center justify-center w-full md:w-1/4">
-                        <span className="text-3xl md:text-5xl font-[800] tracking-tighter text-[#202b20]">110+</span>
-                        <span className="text-[10px] md:text-[11px] font-[600] text-[#202b20] uppercase tracking-widest mt-2 text-center">Resumes Analysed</span>
+                        <span className="text-3xl md:text-5xl font-[800] tracking-tighter text-gray-900">110+</span>
+                        <span className="text-[11px] font-[600] text-gray-400 uppercase tracking-widest mt-2 text-center">Resumes Analysed</span>
                     </div>
 
                     <div className="flex flex-col items-center justify-center w-full md:w-1/4 relative group cursor-default">
-                        <div className="hidden md:block absolute inset-0 bg-[#ffa116] scale-0 group-hover:scale-110 transition-transform duration-500 border-2 border-[#202b20]" />
-                        <span className="text-3xl md:text-5xl font-[800] tracking-tighter text-[#202b20] relative z-10 group-hover:text-[#202b20] transition-colors">37</span>
-                        <span className="text-[10px] md:text-[11px] font-[600] text-[#202b20] uppercase tracking-widest mt-2 text-center relative z-10">Interviews Conducted</span>
+                        <span className="text-3xl md:text-5xl font-[800] tracking-tighter text-gray-900 relative z-10 transition-colors">37</span>
+                        <span className="text-[11px] font-[600] text-gray-400 uppercase tracking-widest mt-2 text-center relative z-10">Interviews Conducted</span>
                     </div>
 
                 </div>
             </div>
 
             {/* Conversation Grid Container */}
-            <div className="max-w-5xl mx-auto px-6 relative z-10">
-                <div className="mb-8 flex items-center gap-3 border-b-4 border-[#202b20] pb-4">
-                    <div className="w-3 h-3 rounded-none bg-red-500 animate-pulse border-2 border-[#202b20]" />
-                    <span className="text-sm font-[600] text-[#202b20] uppercase tracking-widest bg-[#efeff1] px-2 py-0.5 border-2 border-[#202b20]">Live Community Feedback</span>
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                <div className="mb-10 flex items-center gap-3 border-b border-gray-100 pb-4">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[12px] font-[600] text-gray-500 uppercase tracking-widest">Live Community Feedback</span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pr-4 pb-4">
-                    {testimonials.slice(0, 2).map((t, i) => {
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pr-2 pb-4">
+                    {testimonials.slice(0, 3).map((t, i) => {
                         const uniqueKey = `${t.name.replace(/\s+/g, '-')}-${i}`;
                         return <Card key={uniqueKey} t={t} />;
                     })}
                 </div>
 
-                <div className="mt-16 text-center">
+                <div className="mt-8 text-center">
                     <a
                         href="/reviews"
-                        className="inline-flex items-center justify-center bg-white border-2 border-[#202b20] text-[#202b20] hover:bg-[#ffa116] px-8 py-4 rounded-none font-[600] text-[13px] tracking-widest uppercase transition-all shadow-[2px_2px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#202b20] gap-2"
+                        className="inline-flex items-center justify-center bg-white border border-gray-200 text-gray-700 hover:text-gray-900 hover:bg-slate-50 px-8 py-4 rounded-full font-[500] text-[14px] transition-all shadow-sm hover:shadow-md gap-2"
                     >
                         Read all success stories
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="4" strokeLinecap="square" strokeLinejoin="miter" />
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </a>
                 </div>

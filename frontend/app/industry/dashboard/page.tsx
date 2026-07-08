@@ -1,20 +1,66 @@
 'use client';
 
 import { fetchApi } from '../../lib/apiClient';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
-import { Building2, Briefcase, Users, PlusCircle, TrendingUp, Calendar, ArrowRight } from 'lucide-react';
+import {
+    ArrowRight,
+    Briefcase,
+    BriefcaseBusiness,
+    ClipboardList,
+    Edit3,
+    Plus,
+    Settings,
+} from 'lucide-react';
 import Link from 'next/link';
+
+type PipelineStage = 'invited' | 'in_progress' | 'pending_review' | 'advanced' | 'rejected' | 'expired';
+
+type CompanyDrive = {
+    id: string;
+    title: string;
+    status: string;
+    type?: string;
+    location?: string;
+    assessmentCount?: number;
+    candidateCount?: number;
+    pipelineSummary?: Partial<Record<PipelineStage, number>>;
+    latestCandidateActivity?: {
+        id: string;
+        candidateName?: string | null;
+        candidateEmail?: string | null;
+        pipelineStage?: PipelineStage;
+        candidateJoinUrl?: string | null;
+        inviteUrl?: string | null;
+        interviewLaunchStatus?: string | null;
+        interviewEmailStatus?: string | null;
+        updatedAt?: string;
+    } | null;
+};
+
+const EMPTY_PIPELINE: Record<PipelineStage, number> = {
+    invited: 0,
+    in_progress: 0,
+    pending_review: 0,
+    advanced: 0,
+    rejected: 0,
+    expired: 0,
+};
+
+const stageLabels: Record<PipelineStage, string> = {
+    invited: 'Invited',
+    in_progress: 'In progress',
+    pending_review: 'Pending review',
+    advanced: 'Advanced',
+    rejected: 'Rejected',
+    expired: 'Expired',
+};
 
 export default function IndustryDashboard() {
     const router = useRouter();
     const { user } = useAuth();
-    const [stats, setStats] = useState({
-        activeDrives: 0,
-        totalApplicants: 0,
-    });
+    const [drives, setDrives] = useState<CompanyDrive[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [reloadKey, setReloadKey] = useState(0);
@@ -24,15 +70,15 @@ export default function IndustryDashboard() {
             setLoading(true);
             setErrorMessage(null);
             try {
-                // Fetch the company's drives
                 const { getActiveToken } = await import('@/app/lib/auth-storage');
                 const token = getActiveToken();
                 if (!token) {
                     router.push('/login/industry?next=%2Findustry%2Fdashboard');
                     return;
                 }
+
                 const drivesRes = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/placements/my-drives`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (drivesRes.status === 401) {
@@ -50,173 +96,253 @@ export default function IndustryDashboard() {
                     throw new Error(err?.message || 'Unable to load dashboard data.');
                 }
 
-                const drives = await drivesRes.json();
-                const activeDrivesCount = drives.filter((d: any) => d.status === 'Active Hiring').length;
-
-                // For MVP, we simply tally applicants (requires the new ATS endpoint)
-                // Let's do a mock up of stats until we build out the full application fetching logic
-                setStats({
-                    activeDrives: activeDrivesCount,
-                    totalApplicants: activeDrivesCount * 12 // Placeholder calculation
-                });
-
+                setDrives(await drivesRes.json());
             } catch (error) {
-                console.error("Failed to fetch dashboard stats", error);
+                console.error('Failed to fetch dashboard stats', error);
                 setErrorMessage('Unable to load dashboard data right now. Please try again.');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (user) {
-            fetchDashboardData();
-        }
+        if (user) fetchDashboardData();
     }, [user, router, reloadKey]);
+
+    const stats = useMemo(() => {
+        const pipeline = { ...EMPTY_PIPELINE };
+        drives.forEach((drive) => {
+            (Object.keys(EMPTY_PIPELINE) as PipelineStage[]).forEach((stage) => {
+                pipeline[stage] += drive.pipelineSummary?.[stage] || 0;
+            });
+        });
+
+        return {
+            assessments: drives.reduce((total, drive) => total + (drive.assessmentCount || 0), 0),
+            candidates: Object.values(pipeline).reduce((total, value) => total + value, 0),
+            submissions: pipeline.pending_review + pipeline.advanced + pipeline.rejected,
+            pipeline,
+        };
+    }, [drives]);
+
+    const creditsRemaining = Math.max(0, 30 - stats.assessments * 6);
+    const creditPercent = Math.max(0, Math.min(100, (creditsRemaining / 30) * 100));
+    const submissionRows = drives
+        .map((drive) => drive.latestCandidateActivity ? { drive, activity: drive.latestCandidateActivity } : null)
+        .filter((entry): entry is { drive: CompanyDrive; activity: NonNullable<CompanyDrive['latestCandidateActivity']> } => Boolean(entry))
+        .filter(({ activity }) => activity.pipelineStage === 'pending_review' || activity.pipelineStage === 'advanced' || activity.pipelineStage === 'rejected')
+        .slice(0, 3);
 
     if (loading) {
         return (
-            <div className="flex h-64 items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="flex min-h-[70vh] items-center justify-center bg-white">
+                <div className="h-7 w-7 animate-spin rounded-full border-2 border-neutral-200 border-t-neutral-950" />
             </div>
         );
     }
 
     if (errorMessage) {
         return (
-            <div className="max-w-3xl mx-auto mt-10">
-                <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-                    <h2 className="text-xl font-bold text-slate-900 mb-2">Dashboard unavailable</h2>
-                    <p className="text-slate-600 mb-6">{errorMessage}</p>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setReloadKey((k) => k + 1)}
-                            className="px-4 py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition"
-                        >
-                            Retry
-                        </button>
-                        <Link
-                            href="/industry/drives"
-                            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition"
-                        >
-                            Go to Drives
-                        </Link>
-                    </div>
-                </div>
+            <div className="mx-auto mt-24 max-w-xl rounded-2xl border border-neutral-200 bg-white p-8">
+                <h1 className="font-mono text-xl font-bold text-neutral-950">Dashboard unavailable</h1>
+                <p className="mt-2 text-sm text-neutral-600">{errorMessage}</p>
+                <button
+                    onClick={() => setReloadKey((key) => key + 1)}
+                    className="mt-6 rounded-lg bg-neutral-950 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-800"
+                >
+                    Retry
+                </button>
             </div>
         );
     }
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                        Welcome back, {user?.firstName}
+        <div className="min-h-screen bg-white">
+            <div className="mx-auto w-full max-w-5xl px-6 py-12">
+                {/* Header Section */}
+                <div className="mb-10 flex flex-col items-center justify-center">
+                    <h1 className="font-mono text-[4rem] leading-none font-black tracking-tighter text-black">
+                        Emble
                     </h1>
-                    <p className="text-slate-500 mt-2">
-                        Here's what's happening with your hiring pipeline today.
+                    <p className="mt-4 text-sm font-medium text-neutral-500">
+                        Welcome back, {(user as any)?.companyName || user?.firstName || 'Company Name'}
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/industry/drives/new"
-                        className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm"
-                    >
-                        <PlusCircle size={20} />
-                        Launch Campaign
-                    </Link>
-                </div>
-            </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-blue-100 transition-all">
-                    <div className="flex justify-between items-start">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
-                            <Briefcase size={24} />
-                        </div>
-                        <span className="flex items-center gap-1 text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
-                            <TrendingUp size={14} /> +2 this week
-                        </span>
-                    </div>
-                    <div className="mt-6">
-                        <h3 className="text-3xl font-bold text-slate-900">{stats.activeDrives}</h3>
-                        <p className="text-slate-500 font-medium text-sm mt-1">Active Drives</p>
-                    </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-slate-200 transition-all">
-                    <div className="flex justify-between items-start">
-                        <div className="p-3 bg-slate-50 text-slate-800 rounded-xl group-hover:scale-110 transition-transform">
-                            <Users size={24} />
-                        </div>
-                        <span className="flex items-center gap-1 text-sm font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
-                            <TrendingUp size={14} /> +14
-                        </span>
-                    </div>
-                    <div className="mt-6">
-                        <h3 className="text-3xl font-bold text-slate-900">{stats.totalApplicants}</h3>
-                        <p className="text-slate-500 font-medium text-sm mt-1">Total Applicants</p>
-                    </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-blue-600 to-slate-700 p-6 rounded-2xl shadow-md text-white flex flex-col justify-between relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <Building2 size={120} />
-                    </div>
-                    <div className="relative z-10">
-                        <div className="p-2 bg-white/20 w-fit rounded-xl backdrop-blur-sm">
-                            <Building2 size={24} />
-                        </div>
-                    </div>
-                    <div className="relative z-10 mt-6">
-                        <h3 className="text-xl font-bold">Employer Branding</h3>
-                        <p className="text-white/80 font-medium text-sm mt-2 line-clamp-2">Complete your company profile to attract 3x more students.</p>
-                        <Link href="/industry/profile" className="inline-flex items-center gap-2 mt-4 text-sm font-bold bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors">
-                            Edit Profile <ArrowRight size={16} />
+                {/* Action Bar */}
+                <div className="mb-6 relative rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+                    <div className="flex flex-wrap items-center justify-center gap-4">
+                        <Link
+                            href="/industry/assessments"
+                            className="flex items-center gap-2 rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-bold text-black transition-colors hover:bg-neutral-50"
+                        >
+                            <Plus size={16} /> New Assessment
+                        </Link>
+                        <Link
+                            href="/industry/assessments"
+                            className="flex items-center gap-2 rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-bold text-black transition-colors hover:bg-neutral-50"
+                        >
+                            <ClipboardList size={16} /> Assessments
+                        </Link>
+                        <Link
+                            href="/industry/drives"
+                            className="flex items-center gap-2 rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-bold text-black transition-colors hover:bg-neutral-50"
+                        >
+                            <BriefcaseBusiness size={16} /> Postings
                         </Link>
                     </div>
+                    <button className="absolute right-6 top-1/2 -translate-y-1/2 text-neutral-600 transition-colors hover:text-black hidden md:block">
+                        <Edit3 size={18} />
+                    </button>
                 </div>
-            </div>
 
-            {/* Quick Actions / Getting Started */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
-                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                    <Calendar className="text-blue-600" size={24} />
-                    Getting Started with Hiring Hub
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-5 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="bg-white p-2 rounded-lg shadow-sm">
-                                <PlusCircle className="text-slate-600" size={20} />
+                {/* Dashboard Grid */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {/* Organization Panel */}
+                    <Panel className="flex min-h-[250px] flex-col">
+                        <div className="mb-8 flex items-center justify-between">
+                            <h2 className="font-mono text-xl font-bold text-black">Organization</h2>
+                            <Link href="/industry/settings" className="text-neutral-400 hover:text-black">
+                                <Settings size={18} />
+                            </Link>
+                        </div>
+
+                        <div className="mb-5 flex items-center justify-between text-sm">
+                            <span className="text-neutral-500">Plan</span>
+                            <span className="font-bold text-black">Sample</span>
+                        </div>
+
+                        <div className="mb-3 flex items-center justify-between text-sm">
+                            <span className="text-neutral-500">Credits</span>
+                            <span className="font-bold text-black">{creditsRemaining} / 30</span>
+                        </div>
+                        <div className="mb-8 h-2 w-full overflow-hidden rounded-full bg-neutral-100 relative">
+                            <div className="h-full rounded-full bg-black absolute left-0 top-0" style={{ width: `${creditPercent}%` }} />
+                        </div>
+
+                        <div className="mt-auto grid grid-cols-3 gap-4 border-t border-neutral-100 pt-6">
+                            <div className="text-center">
+                                <div className="text-lg font-bold text-black">{stats.assessments}</div>
+                                <div className="mt-1 text-xs text-neutral-400">Assessments</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-lg font-bold text-black">{stats.candidates}</div>
+                                <div className="mt-1 text-xs text-neutral-400">Candidates</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-lg font-bold text-black">{stats.submissions}</div>
+                                <div className="mt-1 text-xs text-neutral-400">Submissions</div>
                             </div>
                         </div>
-                        <h3 className="font-bold text-slate-900 text-lg mb-2">1. Launch a Drive</h3>
-                        <p className="text-slate-600 text-sm mb-4 line-clamp-2">
-                            Create an Internship or Full-Time campaign. You can add specific targeting criteria to reach the right engineers.
-                        </p>
-                        <Link href="/industry/drives/new" className="text-blue-600 font-semibold text-sm hover:text-blue-700 flex items-center gap-1">
-                            Create Drive <ArrowRight size={14} />
-                        </Link>
-                    </div>
+                    </Panel>
 
-                    <div className="p-5 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="bg-white p-2 rounded-lg shadow-sm">
-                                <Users className="text-slate-600" size={20} />
-                            </div>
+                    {/* Tasks Panel */}
+                    <Panel className="flex min-h-[250px] flex-col">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="font-mono text-xl font-bold text-black">Tasks</h2>
+                            <button className="text-black hover:opacity-70">
+                                <Plus size={18} />
+                            </button>
                         </div>
-                        <h3 className="font-bold text-slate-900 text-lg mb-2">2. Review Candidates</h3>
-                        <p className="text-slate-600 text-sm mb-4 line-clamp-2">
-                            Once students apply, they appear in your private Kanban board. Review their verified tech scores.
-                        </p>
-                        <Link href="/industry/drives" className="text-blue-600 font-semibold text-sm hover:text-blue-700 flex items-center gap-1">
-                            View ATS Board <ArrowRight size={14} />
-                        </Link>
-                    </div>
+
+                        <div className="mb-6 flex items-center gap-6 border-b border-neutral-100">
+                            <button className="border-b-2 border-black pb-2 text-sm font-bold text-black">
+                                Mine
+                            </button>
+                            <button className="border-b-2 border-transparent pb-2 text-sm font-medium text-neutral-400 hover:text-neutral-600">
+                                Team
+                            </button>
+                        </div>
+
+                        <div className="flex min-h-[120px] flex-1 items-center justify-center">
+                            {/* Empty state or list */}
+                        </div>
+                    </Panel>
+
+                    {/* Recent Submissions Panel */}
+                    <Panel className="flex min-h-[200px] flex-col">
+                        <div className="mb-8 flex items-center justify-between">
+                            <h2 className="font-mono text-xl font-bold text-black">Recent Submissions</h2>
+                            <Link href="/industry/drives" className="flex items-center gap-1 text-sm font-bold text-black hover:underline">
+                                View All <ArrowRight size={14} />
+                            </Link>
+                        </div>
+
+                        <div className="flex flex-1 flex-col justify-center">
+                            {submissionRows.length ? (
+                                <div className="flex w-full flex-col gap-3">
+                                    {submissionRows.map(({ drive, activity }) => (
+                                        <Link
+                                            key={`${drive.id}-${activity.id}`}
+                                            href={`/industry/drives/${drive.id}/candidates/${activity.id}`}
+                                            className="group flex items-center justify-between rounded-lg border border-transparent p-2 transition-colors hover:border-neutral-200 hover:bg-neutral-50"
+                                        >
+                                            <div>
+                                                <div className="font-semibold text-neutral-900 group-hover:text-black">
+                                                    {activity.candidateName || activity.candidateEmail || 'Candidate'}
+                                                </div>
+                                                <div className="text-xs text-neutral-500">{drive.title}</div>
+                                            </div>
+                                            <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-600">
+                                                {activity.pipelineStage ? stageLabels[activity.pipelineStage] : 'Updated'}
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center text-sm font-medium text-neutral-400">
+                                    No submissions yet
+                                </div>
+                            )}
+                        </div>
+                    </Panel>
+
+                    {/* Postings Panel */}
+                    <Panel className="flex min-h-[200px] flex-col">
+                        <div className="mb-8 flex items-center justify-between">
+                            <h2 className="font-mono text-xl font-bold text-black">Postings</h2>
+                            <Link href="/industry/drives" className="flex items-center gap-1 text-sm font-bold text-black hover:underline">
+                                View All <ArrowRight size={14} />
+                            </Link>
+                        </div>
+
+                        <div className="flex flex-1 flex-col gap-3 justify-center">
+                            {drives.length ? (
+                                drives.slice(0, 3).map((drive) => (
+                                    <Link
+                                        key={drive.id}
+                                        href={`/industry/drives/${drive.id}/ats`}
+                                        className="rounded-xl border border-neutral-200 p-4 transition-colors hover:border-black block"
+                                    >
+                                        <div className="mb-3 flex items-center gap-2">
+                                            <span className="font-bold text-black text-sm">{drive.title}</span>
+                                            <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
+                                                Open
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-neutral-400">
+                                            <span className="uppercase">{drive.location || drive.type || 'Remote'}</span>
+                                            <span>{drive.candidateCount || 0} candidates</span>
+                                            <span>{drive.pipelineSummary?.pending_review || 0} submitted</span>
+                                        </div>
+                                    </Link>
+                                ))
+                            ) : (
+                                <div className="text-center text-sm font-medium text-neutral-400">
+                                    No postings yet
+                                </div>
+                            )}
+                        </div>
+                    </Panel>
                 </div>
             </div>
+        </div>
+    );
+}
+
+function Panel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+    return (
+        <div className={`rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm ${className}`}>
+            {children}
         </div>
     );
 }

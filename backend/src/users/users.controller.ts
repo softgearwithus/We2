@@ -44,6 +44,11 @@ import { Roles } from '../auth/decorators/auth.decorators';
 import { UserRole } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AdminSettingsService } from '../admin-settings/admin-settings.service';
+import {
+  ChangePasswordDto,
+  DisableTwoFactorDto,
+  EnableTwoFactorDto,
+} from './dto/security.dto';
 
 export class UpgradeSubscriptionDto {
   @IsString()
@@ -191,6 +196,51 @@ export class UsersController {
     }
     const fileUrl = `/uploads/avatars/${file.filename}`;
     return this.usersService.updateAvatar(req.user.id, fileUrl);
+  }
+
+  @Post('security/password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Change current user password' })
+  async changePassword(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.usersService.changePassword(
+      req.user.id,
+      dto.currentPassword,
+      dto.newPassword,
+    );
+  }
+
+  @Post('security/2fa/setup')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Start TOTP two-factor setup' })
+  async setupTwoFactor(@Request() req: AuthenticatedRequest) {
+    return this.usersService.setupTwoFactor(req.user.id);
+  }
+
+  @Post('security/2fa/enable')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Enable TOTP two-factor authentication' })
+  async enableTwoFactor(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: EnableTwoFactorDto,
+  ) {
+    return this.usersService.enableTwoFactor(req.user.id, dto.code);
+  }
+
+  @Post('security/2fa/disable')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Disable TOTP two-factor authentication' })
+  async disableTwoFactor(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: DisableTwoFactorDto,
+  ) {
+    return this.usersService.disableTwoFactor(
+      req.user.id,
+      dto.currentPassword,
+      dto.code,
+    );
   }
 
   @Post('upgrade')

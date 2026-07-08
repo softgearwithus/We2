@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
-import { cn } from '@/app/lib/utils';
 
 export default function PremiumPopup() {
     const { user, isLoading } = useAuth();
     const pathname = usePathname();
+    const [isMounted, setIsMounted] = useState(false);
     const [showMainModal, setShowMainModal] = useState(false);
 
     // Completely hide the component if the user is a premium member or on the pricing page
@@ -28,6 +28,10 @@ export default function PremiumPopup() {
     // OR if they are simply browsing any other page (excluding pricing and if they are not premium).
     const [hasTriggered, setHasTriggered] = useState(false);
     const [showMinimizedBanner, setShowMinimizedBanner] = useState(!isHomePage && !isPremium && !isPricingPage);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Update banner visibility immediately when route changes, overriding local state if needed
     useEffect(() => {
@@ -57,8 +61,8 @@ export default function PremiumPopup() {
         }
     }, [isLoading, isPremium, isHomePage, hasTriggered]);
 
-    // If premium or on pricing, render absolutely nothing
-    if (isPremium || isPricingPage) return null;
+    // Avoid hydration mismatches from auth/path-dependent client state.
+    if (!isMounted || isPremium || isPricingPage) return null;
 
     return (
         <>

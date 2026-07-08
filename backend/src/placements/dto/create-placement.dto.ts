@@ -4,10 +4,13 @@ import {
   IsOptional,
   IsUrl,
   IsArray,
+  IsBoolean,
   ArrayMinSize,
   IsInt,
   Min,
   IsDateString,
+  IsUUID,
+  ArrayMaxSize,
 } from 'class-validator';
 import {
   PlacementType,
@@ -88,4 +91,72 @@ export class CreatePlacementDto {
   @IsOptional()
   @IsString()
   location?: string;
+
+  @IsOptional()
+  @IsUrl()
+  githubRepositoryUrl?: string;
+
+  @IsOptional()
+  @IsUrl()
+  issueTrackerUrl?: string;
+
+  @IsOptional()
+  @IsUrl()
+  documentationUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  workContext?: string;
+
+  @IsOptional()
+  @IsString()
+  pipelineNotes?: string;
+
+  @IsOptional()
+  @IsString()
+  pipelineTemplateKey?: string;
+
+  @IsOptional()
+  @IsArray()
+  pipelineStages?: Record<string, any>[];
+
+  @IsOptional()
+  @IsBoolean()
+  automationEnabled?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  shortlistScoreThreshold?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(5)
+  interviewDurationMinutes?: number;
+
+  @IsOptional()
+  @IsDateString()
+  interviewWindowStart?: string;
+
+  @IsOptional()
+  @IsDateString()
+  interviewWindowEnd?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  autoInviteShortlisted?: boolean;
+
+  @IsOptional()
+  @IsString()
+  automationMode?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  companyProfileIncluded?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(8)
+  @IsUUID('4', { each: true })
+  repositoryIds?: string[];
 }

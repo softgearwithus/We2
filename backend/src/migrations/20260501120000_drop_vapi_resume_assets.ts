@@ -1,9 +1,13 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddVapiResumeAssets20260304150000 implements MigrationInterface {
-  name = 'AddVapiResumeAssets20260304150000';
+export class DropVapiResumeAssets20260501120000 implements MigrationInterface {
+  name = 'DropVapiResumeAssets20260501120000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('DROP TABLE IF EXISTS "vapi_resume_assets"');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "vapi_resume_assets" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -21,9 +25,5 @@ export class AddVapiResumeAssets20260304150000 implements MigrationInterface {
     await queryRunner.query(`
       CREATE INDEX IF NOT EXISTS "idx_vapi_resume_assets_userId" ON "vapi_resume_assets" ("userId");
     `);
-  }
-
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE IF EXISTS "vapi_resume_assets"');
   }
 }

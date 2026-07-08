@@ -61,7 +61,8 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
     const showNewTab = initialTab === 'new';
     const showHistoryTab = initialTab === 'history';
 
-    const isVideoSession = (session: InterviewSession) => session.provider === 'vapi' || session.type === 'technical';
+    const isVideoSession = (session: InterviewSession) =>
+        session.provider === 'ai-interviewer' || session.type === 'technical';
     const audioHistory = sessions.filter((session) => session.type === 'behavioral');
     const videoHistory = sessions.filter((session) => isVideoSession(session));
     const filteredSessions = historyFilter === 'all'
@@ -378,7 +379,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
             );
         }
 
-        if (selectedSession.provider === 'vapi' || selectedSession.type === 'technical') {
+        if (selectedSession.provider === 'ai-interviewer' || selectedSession.type === 'technical') {
             const assessmentData: AssessmentData = {
                 type: 'video',
                 metrics: buildVideoMetrics(selectedSession),
@@ -438,7 +439,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {[
                                     { title: 'Audio Drill', score: latestAudioScore, data: audioTrend, gradient: 'audioGradient', stroke: '#8b5cf6' },
-                                    { title: 'Video Simulation', score: latestVideoScore, data: videoTrend, gradient: 'videoGradient', stroke: '#10b981' },
+                                    { title: 'Live Interview', score: latestVideoScore, data: videoTrend, gradient: 'videoGradient', stroke: '#10b981' },
                                     { title: 'Overall', score: latestOverallScore, data: overallTrend, gradient: 'overallGradient', stroke: '#f59e0b' }
                                 ].map((chart, index) => (
                                     <Card key={index} className="p-5 border border-slate-200 rounded-3xl shadow-sm">
@@ -478,7 +479,7 @@ export default function CommunicationDrillDashboard({ onBack, initialTab = 'new'
                                 {[
                                     { key: 'all', label: 'All Sessions' },
                                     { key: 'audio', label: 'Audio Drill' },
-                                    { key: 'video', label: 'AI Video Interview' }
+                                    { key: 'video', label: 'Live Interview' }
                                 ].map((item) => (
                                     <button
                                         key={item.key}

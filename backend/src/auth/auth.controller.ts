@@ -26,6 +26,7 @@ import {
   RequestPasswordResetDto,
   ResetPasswordDto,
 } from './dto/auth.dto';
+import { TwoFactorLoginDto } from './dto/two-factor-login.dto';
 import { EmailOtpService } from './services/email-otp.service';
 import { Public, Roles } from './decorators/auth.decorators';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -125,6 +126,17 @@ export class AuthController {
     @Request() req: AuthenticatedRequest,
   ) {
     return this.authService.login(loginDto, req);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('login/2fa')
+  @ApiOperation({ summary: 'Complete login with a two-factor code' })
+  async loginTwoFactor(
+    @Body() dto: TwoFactorLoginDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.authService.verifyTwoFactorLogin(dto, req);
   }
 
   @ApiBearerAuth('JWT-auth')

@@ -3,7 +3,7 @@ import Script from 'next/script';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 
 import { AuthProvider } from './context/AuthContext';
-import PremiumPopup from './components/shared/PremiumPopup';
+import PremiumPopupHost from './components/shared/PremiumPopupHost';
 import { JsonLd } from './components/seo/JsonLd';
 
 import './lib/api-config';
@@ -118,7 +118,7 @@ export default function RootLayout({
             }
           }} />
           {children}
-          <PremiumPopup />
+          <PremiumPopupHost />
         </AuthProvider>
       </body>
     </html>

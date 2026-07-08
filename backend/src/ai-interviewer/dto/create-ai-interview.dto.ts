@@ -1,5 +1,6 @@
-import { IsUUID, IsOptional, IsString } from 'class-validator';
+import { IsUUID, IsOptional, IsString, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { InterviewDifficulty } from '../../interviews/entities/interview-session.entity';
 
 export class CreateAiInterviewDto {
   @ApiProperty({ description: 'Interview session id' })
@@ -16,4 +17,14 @@ export class CreateAiInterviewDto {
   @IsOptional()
   @IsString()
   role?: string;
+
+  @ApiProperty({ description: 'Optional company context', required: false })
+  @IsOptional()
+  @IsString()
+  company?: string;
+
+  @ApiProperty({ description: 'Interview difficulty', required: false, enum: InterviewDifficulty })
+  @IsOptional()
+  @IsEnum(InterviewDifficulty)
+  difficulty?: InterviewDifficulty;
 }

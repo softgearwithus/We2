@@ -4,8 +4,21 @@ import { fetchApi } from '../../lib/apiClient';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Briefcase, MapPin, Calendar, Users, Eye, ArrowRight, Loader2, PlusCircle, AlertCircle } from 'lucide-react';
+import { Briefcase, MapPin, Calendar, Users, Loader2, PlusCircle, AlertCircle, FileCheck2 } from 'lucide-react';
 import Link from 'next/link';
+
+type PipelineStage = 'invited' | 'in_progress' | 'pending_review' | 'advanced' | 'rejected' | 'expired';
+
+const STAGE_LABELS: Record<PipelineStage, string> = {
+    invited: 'Invited',
+    in_progress: 'In progress',
+    pending_review: 'Review',
+    advanced: 'Advanced',
+    rejected: 'Rejected',
+    expired: 'Expired',
+};
+
+const PIPELINE_STAGES = Object.keys(STAGE_LABELS) as PipelineStage[];
 
 export default function ActiveDrivesPage() {
     const router = useRouter();
@@ -156,6 +169,21 @@ export default function ActiveDrivesPage() {
                                     {drive.title}
                                 </h3>
 
+                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                    <div className="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2">
+                                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                                            <Users size={14} /> Candidates
+                                        </div>
+                                        <div className="mt-1 text-xl font-bold text-slate-950">{drive.candidateCount || 0}</div>
+                                    </div>
+                                    <div className="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2">
+                                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                                            <FileCheck2 size={14} /> Assessments
+                                        </div>
+                                        <div className="mt-1 text-xl font-bold text-slate-950">{drive.assessmentCount || 0}</div>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2 mb-4">
                                     <div className="flex items-center gap-2 text-sm text-slate-500">
                                         <Briefcase size={16} className="text-slate-400" />
@@ -174,6 +202,15 @@ export default function ActiveDrivesPage() {
                                             <p className="leading-relaxed">{drive.rejectionReason}</p>
                                         </div>
                                     )}
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2">
+                                    {PIPELINE_STAGES.map((stage) => (
+                                        <div key={stage} className="rounded-lg bg-white border border-slate-100 px-2.5 py-2">
+                                            <div className="text-sm font-bold text-slate-900">{drive.pipelineSummary?.[stage] || 0}</div>
+                                            <div className="text-[11px] font-semibold text-slate-500 truncate">{STAGE_LABELS[stage]}</div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 

@@ -45,6 +45,6 @@ import type { StringValue } from 'ms';
     RolesGuard,
   ],
   controllers: [AuthController],
-  exports: [JwtAuthGuard, RolesGuard],
+  exports: [AuthService, JwtAuthGuard, RolesGuard, EmailOtpService],
 })
 export class AuthModule {}

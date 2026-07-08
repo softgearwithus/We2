@@ -25,19 +25,13 @@ export const metadata: Metadata = {
 // Static grid style — defined once, not re-created per render
 const gridStyle = {
   backgroundImage:
-    'linear-gradient(to right,#202b2012 1px,transparent 1px),linear-gradient(to bottom,#202b2012 1px,transparent 1px)',
+    'linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px)',
   backgroundSize: '40px 40px',
 } as const;
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-transparent text-foreground font-sans antialiased selection:bg-primary/20 selection:text-foreground relative overflow-x-hidden">
-      {/* Client-only background — cursor aura + grain noise */}
-      <CursorGrainyCloud />
-
-      {/* Static architectural grid */}
-      <div className="absolute inset-0 pointer-events-none z-0" style={gridStyle} />
-
+    <div className="min-h-screen bg-white text-slate-900 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900 relative overflow-x-hidden">
       <Navbar />
 
       <div className="relative z-10 flex flex-col w-full pb-16">
@@ -46,11 +40,9 @@ export default function Home() {
         <HowItWorks />
         <FeatureShowcase />
         <ComparisonSection />
-        <TargetUsers />
         <Testimonials />
       </div>
 
-      <AboutUs />
       <Footer />
     </div>
   );

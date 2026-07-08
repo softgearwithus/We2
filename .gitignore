@@ -67,3 +67,6 @@ next-env.d.ts
 
 # Local scratch
 tmp/
+
+# Nested repositories
+interviewer/

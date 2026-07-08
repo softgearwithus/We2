@@ -43,9 +43,23 @@ export class InterviewsService {
 
     private mapStatus(status?: string): 'completed' | 'analyzing' | 'error' {
         if (status === 'completed') return 'completed';
-        if (status === 'in_progress') return 'analyzing';
+        if (status === 'in_progress' || status === 'scheduled') return 'analyzing';
         if (status === 'cancelled') return 'error';
-        return 'completed';
+        return 'analyzing';
+    }
+
+    private async syncAiInterviewReport(sessionId: string, token: string | null): Promise<void> {
+        if (!token) return;
+
+        try {
+            await fetchApi(`${this.apiBaseUrl}/ai-interviewer/sessions/${sessionId}/report`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        } catch (error) {
+            console.warn('AI interviewer report is not ready yet', error);
+        }
     }
 
     private mapSession(apiSession: any): InterviewSession {
@@ -153,7 +167,25 @@ export class InterviewsService {
                 throw new Error('Failed to fetch session');
             }
 
-            const session = await response.json();
+            let session = await response.json();
+
+            if (
+                session?.analysisProvider === 'ai-interviewer' &&
+                (!session.analysis || session.status !== 'completed')
+            ) {
+                await this.syncAiInterviewReport(id, token);
+
+                const refreshed = await fetchApi(`${this.apiBaseUrl}/interviews/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (refreshed.ok) {
+                    session = await refreshed.json();
+                }
+            }
+
             return this.mapSession(session);
         } catch (e) {
             console.error("Failed to fetch session", e);

@@ -13,6 +13,11 @@ import axios from 'axios';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
+  buildTotpUri,
+  generateTotpSecret,
+  verifyTotpCode,
+} from '../common/totp.util';
+import {
   InterviewSession,
   InterviewStatus,
 } from '../interviews/entities/interview-session.entity';
@@ -105,6 +110,7 @@ export class UsersService {
         'role',
         'isActive',
         'isTwoFactorEnabled',
+        'twoFactorSecret',
         'subscriptionPlan',
         'subscriptionStatus',
         'subscriptionEndDate',
@@ -161,6 +167,7 @@ export class UsersService {
         'role',
         'isActive',
         'isTwoFactorEnabled',
+        'twoFactorSecret',
         'subscriptionPlan',
         'subscriptionStatus',
         'subscriptionEndDate',
@@ -253,10 +260,6 @@ export class UsersService {
 
     if (updateUserDto.linkedinUrl !== undefined) {
       user.linkedinUrl = updateUserDto.linkedinUrl || null;
-    }
-
-    if (updateUserDto.isTwoFactorEnabled !== undefined) {
-      user.isTwoFactorEnabled = Boolean(updateUserDto.isTwoFactorEnabled);
     }
 
     if (updateUserDto.isActive !== undefined) {
@@ -358,6 +361,111 @@ export class UsersService {
     if (!result.affected) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
+  }
+
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.findById(userId);
+    const userWithPassword = await this.findByEmail(user.email);
+    if (!userWithPassword) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    const isValid = await this.validatePassword(
+      currentPassword,
+      userWithPassword.password,
+    );
+    if (!isValid) {
+      throw new BadRequestException('Current password is incorrect.');
+    }
+    await this.updatePasswordAndRevokeSessions(userId, newPassword);
+    return { success: true };
+  }
+
+  async setupTwoFactor(userId: string) {
+    const user = await this.findById(userId);
+    if (user.isTwoFactorEnabled && user.twoFactorSecret) {
+      throw new BadRequestException(
+        'Two-factor authentication is already enabled. Disable it before starting a new setup.',
+      );
+    }
+    if (user.twoFactorSecret) {
+      return {
+        secret: user.twoFactorSecret,
+        otpauthUrl: buildTotpUri({
+          issuer: 'Emble',
+          accountName: user.email,
+          secret: user.twoFactorSecret,
+        }),
+      };
+    }
+    const secret = generateTotpSecret();
+    user.twoFactorSecret = secret;
+    user.isTwoFactorEnabled = false;
+    await this.usersRepository.save(user);
+
+    return {
+      secret,
+      otpauthUrl: buildTotpUri({
+        issuer: 'Emble',
+        accountName: user.email,
+        secret,
+      }),
+    };
+  }
+
+  async verifyTwoFactorCode(userId: string, code: string) {
+    const user = await this.findById(userId);
+    if (!user.twoFactorSecret) {
+      return false;
+    }
+    return verifyTotpCode(user.twoFactorSecret, code);
+  }
+
+  async enableTwoFactor(userId: string, code: string) {
+    const user = await this.findById(userId);
+    if (!user.twoFactorSecret) {
+      throw new BadRequestException('Two-factor setup has not been started.');
+    }
+    if (!verifyTotpCode(user.twoFactorSecret, code)) {
+      throw new BadRequestException('Invalid two-factor code.');
+    }
+    user.isTwoFactorEnabled = true;
+    await this.usersRepository.save(user);
+    return { success: true };
+  }
+
+  async disableTwoFactor(
+    userId: string,
+    currentPassword: string,
+    code?: string,
+  ) {
+    const user = await this.findById(userId);
+    const userWithPassword = await this.findByEmail(user.email);
+    if (!userWithPassword) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    const isValid = await this.validatePassword(
+      currentPassword,
+      userWithPassword.password,
+    );
+    if (!isValid) {
+      throw new BadRequestException('Current password is incorrect.');
+    }
+    if (user.isTwoFactorEnabled && user.twoFactorSecret) {
+      if (!code) {
+        throw new BadRequestException('Two-factor code is required.');
+      }
+      if (!user.twoFactorSecret || !verifyTotpCode(user.twoFactorSecret, code)) {
+        throw new BadRequestException('Invalid two-factor code.');
+      }
+    }
+    user.isTwoFactorEnabled = false;
+    user.twoFactorSecret = null;
+    await this.usersRepository.save(user);
+    return { success: true };
   }
 
   async getDashboardStats(userId: string) {

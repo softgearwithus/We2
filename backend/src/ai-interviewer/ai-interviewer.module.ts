@@ -10,6 +10,10 @@ import { InterviewSession } from '../interviews/entities/interview-session.entit
 import { ConfigModule } from '@nestjs/config';
 import { AdminSettingsModule } from '../admin-settings/admin-settings.module';
 import { InterviewsModule } from '../interviews/interviews.module';
+import { UsersModule } from '../users/users.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import type { StringValue } from 'ms';
 
 @Module({
   imports: [
@@ -21,8 +25,26 @@ import { InterviewsModule } from '../interviews/interviews.module';
       InterviewSession,
     ]),
     ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+        if (!secret) {
+          throw new Error('JWT_SECRET is required');
+        }
+
+        return {
+          secret,
+          signOptions: {
+            expiresIn: '90s' as StringValue,
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
     AdminSettingsModule,
     InterviewsModule,
+    UsersModule,
   ],
   controllers: [AiInterviewerController],
   providers: [AiInterviewerService],

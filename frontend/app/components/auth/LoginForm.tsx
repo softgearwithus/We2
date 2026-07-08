@@ -2,7 +2,7 @@
 
 import { fetchApi } from '../../lib/apiClient';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
@@ -22,7 +22,10 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+    const [twoFactorChallenge, setTwoFactorChallenge] = useState<{ token: string; code: string; email?: string } | null>(null);
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const watchedEmail = watch('email');
+    const watchedPassword = watch('password');
 
     const nextParam = searchParams.get('next');
     const safeNext =
@@ -33,8 +36,13 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
             : null;
     const resolvedRedirectPath = safeNext || redirectPath;
 
+    useEffect(() => {
+        setTwoFactorChallenge(null);
+    }, [role, watchedEmail, watchedPassword]);
+
     const onSubmit = async (data: any) => {
         setIsLoading(true);
+        setTwoFactorChallenge(null);
         try {
             // In a real app with strict role checks, we might want to validate the role here or in backend
             const roleMap: Record<string, string> = {
@@ -77,6 +85,10 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
 
             if (response.ok) {
                 const result = await response.json();
+                if (result.requiresTwoFactor && result.twoFactorToken) {
+                    setTwoFactorChallenge({ token: result.twoFactorToken, code: '', email: data.email });
+                    return;
+                }
                 const allowedRoles = role === 'college'
                     ? [roleMap[role], 'mentor', 'student']
                     : [roleMap[role]];
@@ -100,6 +112,49 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
         }
     };
 
+    const handleTwoFactorSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!twoFactorChallenge) return;
+        setIsLoading(true);
+        try {
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/auth/login/2fa`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    twoFactorToken: twoFactorChallenge.token,
+                    code: twoFactorChallenge.code,
+                    rememberMe,
+                }),
+            });
+            if (!response.ok) {
+                alert('Invalid two-factor code.');
+                return;
+            }
+            const result = await response.json();
+            const roleMap: Record<string, string> = {
+                student: 'student',
+                college: 'college_admin',
+                industry: 'company_admin',
+                admin: 'super_admin',
+            };
+            const allowedRoles = role === 'college'
+                ? [roleMap[role], 'mentor', 'student']
+                : [roleMap[role]];
+            if (!allowedRoles.includes(result.user.role) && role !== 'admin') {
+                alert(`Access Denied: This portal is for ${role}s only.`);
+                return;
+            }
+            const scope = role === 'admin' ? 'admin' : 'user';
+            login(result.accessToken, result.user, rememberMe, scope);
+            router.push(resolvedRedirectPath);
+        } catch (error) {
+            console.error('2FA login error:', error);
+            alert('An error occurred during two-factor login');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const getButtonColor = () => {
         switch (role) {
             case 'student': return 'bg-slate-800 hover:bg-slate-900';
@@ -114,6 +169,42 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
         <>
             <AuthNotice />
 
+            {twoFactorChallenge ? (
+                <form onSubmit={handleTwoFactorSubmit} className="space-y-6">
+                    <div className={`rounded-xl border px-4 py-3 text-sm ${role === 'admin' ? 'border-green-800 bg-black/60 text-green-500' : 'border-slate-200 bg-slate-50 text-slate-600'}`}>
+                        <p className="font-bold">2FA is enabled for this account.</p>
+                        <p className="mt-1">
+                            Enter the authenticator code for {twoFactorChallenge.email || 'this login'} to continue.
+                        </p>
+                    </div>
+                    <div>
+                        <label className={`block text-sm font-medium mb-2 ${role === 'admin' ? 'font-mono text-green-700' : 'text-slate-700'}`}>Two-factor code</label>
+                        <input
+                            value={twoFactorChallenge.code}
+                            onChange={(event) => setTwoFactorChallenge({ ...twoFactorChallenge, code: event.target.value })}
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${role === 'admin' ? 'bg-black border-green-800 text-green-500 font-mono focus:border-green-500' : 'border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20'}`}
+                            placeholder="123456"
+                            maxLength={12}
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={isLoading || !twoFactorChallenge.code}
+                        className={`w-full text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${getButtonColor()}`}
+                    >
+                        {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Verify Code'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setTwoFactorChallenge(null)}
+                        className="w-full text-sm font-semibold text-slate-500 hover:text-slate-800"
+                    >
+                        Use a different account
+                    </button>
+                </form>
+            ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
                     <label className={`block text-sm font-medium mb-2 ${role === 'admin' ? 'font-mono text-green-700' : 'text-slate-700'}`}>Email</label>
@@ -170,8 +261,9 @@ export default function LoginForm({ role, redirectPath }: LoginFormProps) {
                     {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Sign In'}
                 </button>
             </form>
+            )}
 
-            {role !== 'admin' && (
+            {!twoFactorChallenge && role !== 'admin' && (
                 <p className="text-center text-sm text-slate-500">
                     Don't have an account?{' '}
                     <Link

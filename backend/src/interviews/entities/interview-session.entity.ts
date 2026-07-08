@@ -76,10 +76,10 @@ export class InterviewSession {
   aiInterviewerId: string | null; // AI persona identifier
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  externalCallId: string | null; // External provider call ID (e.g., Vapi)
+  externalCallId: string | null; // External runtime/session identifier
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  analysisProvider: string | null; // e.g., gemini, vapi
+  analysisProvider: string | null; // e.g., gemini, ai-interviewer
 
   @Column({ type: 'int', nullable: true })
   overallScore: number | null; // 0-100
