@@ -8,7 +8,7 @@ import { blogPosts } from '@/app/lib/blog-data';
 
 export default function Footer() {
     return (
-        <footer className="w-full bg-[#efeff1] border-t-4 border-[#202b20] pt-16 pb-0 flex flex-col items-center relative overflow-hidden font-sans mt-auto">
+        <footer className="w-full bg-white border-t border-gray-100 pt-16 pb-0 flex flex-col items-center relative overflow-hidden font-sans mt-auto">
             {/* Divider */}
             <div className="w-full max-w-[1400px] mx-auto mt-8" />
 
@@ -17,53 +17,52 @@ export default function Footer() {
                 {/* Left: Branding */}
                 <div className="flex flex-col justify-start max-w-xs">
                     <Link href="/" className="inline-flex items-center group mb-4">
-                        <span className="text-3xl font-black tracking-tighter text-[#202b20] uppercase bg-[#ffa116] px-2 py-1 border-4 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20]">
+                        <span className="text-3xl font-black tracking-tighter text-gray-900 uppercase">
                             EMBLE
                         </span>
                     </Link>
-                    <p className="text-[#202b20] text-sm leading-relaxed font-[500] border-2 border-[#202b20] bg-white p-3 shadow-[2px_2px_0px_0px_#202b20]">
+                    <p className="text-gray-500 text-sm leading-relaxed font-medium mt-2">
                         The most human AI interviews with free core tools for preparation mastery.
                     </p>
-                    <a href="mailto:support@emble.in" className="text-[#202b20] hover:bg-[#ffa116] border-2 border-transparent hover:border-[#202b20] p-1 -ml-1 text-sm mt-4 font-black inline-flex items-center gap-2 transition-all shadow-none hover:shadow-[2px_2px_0px_0px_#202b20] uppercase">
+                    <a href="mailto:support@emble.in" className="text-gray-600 hover:text-indigo-600 text-sm mt-4 font-semibold inline-flex items-center gap-2 transition-all uppercase">
                         <Mail className="w-4 h-4" /> support@emble.in
                     </a>
                 </div>
 
                 {/* Right: Horizontal Links & Socials */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:gap-12">
-                    <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-black text-[#202b20] uppercase tracking-widest">
-                        <Link href="/features" className="hover:bg-[#ffa116] transition-colors px-1">Features</Link>
-                        <Link href="/reviews" className="hover:bg-[#ffa116] transition-colors px-1">Success Stories</Link>
-                        <Link href="/pricing" className="hover:bg-[#ffa116] transition-colors px-1">Pricing</Link>
-                        <Link href="/faq" className="hover:bg-[#ffa116] transition-colors px-1">FAQ</Link>
-                        <Link href="/blog" className="hover:bg-[#ffa116] transition-colors px-1">Blog</Link>
-                        <Link href="/about" className="hover:bg-[#ffa116] transition-colors px-1">About Us</Link>
-                        <Link href="/privacy" className="hover:bg-[#ffa116] transition-colors px-1">Privacy</Link>
-                        <Link href="/terms" className="hover:bg-[#ffa116] transition-colors px-1">Terms</Link>
-                        <Link href="/contact" className="hover:bg-[#ffa116] transition-colors px-1">Contact</Link>
+                    <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-gray-600 tracking-wider">
+                        <Link href="/reviews" className="hover:text-indigo-600 transition-colors">Success Stories</Link>
+                        <Link href="/pricing" className="hover:text-indigo-600 transition-colors">Pricing</Link>
+                        <Link href="/faq" className="hover:text-indigo-600 transition-colors">FAQ</Link>
+                        <Link href="/blog" className="hover:text-indigo-600 transition-colors">Blog</Link>
+                        <Link href="/about" className="hover:text-indigo-600 transition-colors">About Us</Link>
+                        <Link href="/privacy" className="hover:text-indigo-600 transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-indigo-600 transition-colors">Terms</Link>
+                        <Link href="/contact" className="hover:text-indigo-600 transition-colors">Contact</Link>
                     </nav>
 
                     {/* Socials */}
                     <div className="flex items-center gap-4 text-[#202b20]">
-                        <Link href="https://www.linkedin.com/company/joinemble/" target="_blank" className="w-10 h-10 rounded-none bg-white border-2 border-[#202b20] flex items-center justify-center text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0px_0px_#202b20] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" aria-label="LinkedIn">
+                        <Link href="https://www.linkedin.com/company/joinemble/" target="_blank" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all hover:scale-110" aria-label="LinkedIn">
                             <Linkedin className="w-5 h-5" />
                         </Link>
-                        <Link href="https://x.com/joinEmble" target="_blank" className="w-10 h-10 rounded-none bg-white border-2 border-[#202b20] flex items-center justify-center text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0px_0px_#202b20] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" aria-label="X (Twitter)">
+                        <Link href="https://x.com/joinEmble" target="_blank" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all hover:scale-110" aria-label="X (Twitter)">
                             <Twitter className="w-5 h-5" />
                         </Link>
-                         <Link href="https://www.instagram.com/emble.in/" target="_blank" className="w-10 h-10 rounded-none bg-white border-2 border-[#202b20] flex items-center justify-center text-[#202b20] hover:bg-[#ffa116] transition-colors shadow-[2px_2px_0px_0px_#202b20] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" aria-label="Instagram">
-                             <Instagram className="w-5 h-5" />
-                         </Link>
+                        <Link href="https://www.instagram.com/emble.in/" target="_blank" className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all hover:scale-110" aria-label="Instagram">
+                            <Instagram className="w-5 h-5" />
+                        </Link>
                     </div>
                 </div>
             </div>
 
             {/* Bottom Row */}
-            <div className="w-full border-t-4 border-[#202b20] mt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-[#202b20] font-black uppercase tracking-widest relative z-10 bg-[#efeff1]">
+            <div className="w-full border-t border-gray-100 mt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 font-medium tracking-wide relative z-10 bg-gray-50">
                 <div className="max-w-[1400px] mx-auto w-full px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <p>© 2026 Emble. All rights reserved.</p>
                     <div className="flex items-center gap-4">
-                        <p className="flex items-center gap-1">Made with <span className="text-white bg-red-500 border border-[#202b20] px-1 shadow-[1px_1px_0px_0px_#202b20]">♥</span> for preparation</p>
+                        <p className="flex items-center gap-1">Made with <span className="text-red-500 font-bold">♥</span> for preparation</p>
                     </div>
                 </div>
             </div>
@@ -127,8 +126,8 @@ export default function Footer() {
             </div>
 
             {/* Massive Footer Branding */}
-            <div className="w-full overflow-hidden flex justify-end items-center mt-8 pointer-events-none select-none pr-8 md:pr-12 bg-[#efeff1]" aria-hidden="true">
-                <div className="text-[15vw] leading-[0.8] font-[1000] text-[#202b20]/5 tracking-wider uppercase font-sans">
+            <div className="w-full overflow-hidden flex justify-end items-center mt-8 pointer-events-none select-none pr-8 md:pr-12 bg-gray-50" aria-hidden="true">
+                <div className="text-[15vw] leading-[0.8] font-[1000] text-gray-200/50 tracking-wider uppercase font-sans">
                     emble
                 </div>
             </div>

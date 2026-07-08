@@ -113,6 +113,51 @@ export class Placement {
   @Column({ nullable: true })
   location: string;
 
+  @Column({ nullable: true })
+  githubRepositoryUrl: string;
+
+  @Column({ nullable: true })
+  issueTrackerUrl: string;
+
+  @Column({ nullable: true })
+  documentationUrl: string;
+
+  @Column({ type: 'text', nullable: true })
+  workContext: string;
+
+  @Column({ type: 'text', nullable: true })
+  pipelineNotes: string;
+
+  @Column({ nullable: true })
+  pipelineTemplateKey: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  pipelineStages: Record<string, any>[] | null;
+
+  @Column({ type: 'boolean', default: true })
+  automationEnabled: boolean;
+
+  @Column({ type: 'int', default: 75 })
+  shortlistScoreThreshold: number;
+
+  @Column({ type: 'int', default: 45 })
+  interviewDurationMinutes: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  interviewWindowStart: Date | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  interviewWindowEnd: Date | null;
+
+  @Column({ type: 'boolean', default: false })
+  autoInviteShortlisted: boolean;
+
+  @Column({ type: 'varchar', length: 40, default: 'manual_screening' })
+  automationMode: string;
+
+  @Column({ type: 'boolean', default: true })
+  companyProfileIncluded: boolean;
+
   @Column({
     type: 'enum',
     enum: DriveVerificationStatus,

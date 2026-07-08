@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchApi } from '@/app/lib/apiClient';
 import { useAuth } from '@/app/context/AuthContext';
-import { X, CheckCircle2, Loader2, ExternalLink } from 'lucide-react';
+import { X, CheckCircle2, Loader2, ExternalLink, FileText, UploadCloud } from 'lucide-react';
 
 interface ApplyJobModalProps {
     isOpen: boolean;
@@ -31,7 +31,7 @@ type FormState = {
     resumeDriveUrl: string;
 };
 
-type FormErrors = Partial<Record<keyof FormState, string>>;
+type FormErrors = Partial<Record<keyof FormState | 'resumeFile', string>>;
 
 const EMPTY_FORM: FormState = {
     candidateName: '',
@@ -58,11 +58,26 @@ const fieldClassName = (hasError: boolean) =>
             : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20'
     }`;
 
+const submitMultipartApplication = (token: string | null, payload: Record<string, string>, resumeFile: File) => {
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+        if (value) formData.append(key, value);
+    });
+    formData.append('resumeFile', resumeFile);
+    return fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/apply-with-resume`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData,
+    });
+};
+
 export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModalProps) {
     const { user, isLoading: authLoading } = useAuth();
     const [placement, setPlacement] = useState<PlacementDetail | null>(null);
     const [formData, setFormData] = useState<FormState>(EMPTY_FORM);
     const [formErrors, setFormErrors] = useState<FormErrors>({});
+    const [resumeMode, setResumeMode] = useState<'upload' | 'link'>('upload');
+    const [resumeFile, setResumeFile] = useState<File | null>(null);
     const [pageError, setPageError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -147,6 +162,21 @@ export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModa
         });
     };
 
+    const handleResumeFile = (file: File | null) => {
+        if (!file) return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            setFormErrors((prev) => ({ ...prev, resumeFile: 'Please upload a PDF resume.' }));
+            return;
+        }
+        setResumeFile(file);
+        setFormErrors((prev) => {
+            const next = { ...prev };
+            delete next.resumeFile;
+            delete next.resumeDriveUrl;
+            return next;
+        });
+    };
+
     const validateForm = () => {
         const nextErrors: FormErrors = {};
         const trimmedName = formData.candidateName.trim();
@@ -188,7 +218,11 @@ export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModa
             }
         }
 
-        if (!trimmedResume) {
+        if (resumeMode === 'upload') {
+            if (!resumeFile) {
+                nextErrors.resumeFile = 'Resume PDF upload is required.';
+            }
+        } else if (!trimmedResume) {
             nextErrors.resumeDriveUrl = 'Resume Google Drive link is required.';
         } else {
             try {
@@ -223,24 +257,37 @@ export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModa
             const { getActiveToken } = await import('@/app/lib/auth-storage');
             const token = getActiveToken();
 
-            const res = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                },
-                body: JSON.stringify({
-                    placementId: driveId,
-                    candidateName: formData.candidateName.trim(),
-                    candidateEmail: formData.candidateEmail.trim(),
-                    candidatePhone: formData.candidatePhone.trim(),
-                    candidateDepartment: formData.candidateDepartment.trim() || undefined,
-                    candidateYear: formData.candidateYear.trim() || undefined,
-                    candidateLocation: formData.candidateLocation.trim() || undefined,
-                    candidateLinkedinUrl: formData.candidateLinkedinUrl.trim() || undefined,
-                    resumeDriveUrl: formData.resumeDriveUrl.trim(),
-                }),
-            });
+            const applicationPayload = {
+                placementId: driveId,
+                candidateName: formData.candidateName.trim(),
+                candidateEmail: formData.candidateEmail.trim(),
+                candidatePhone: formData.candidatePhone.trim(),
+                candidateDepartment: formData.candidateDepartment.trim(),
+                candidateYear: formData.candidateYear.trim(),
+                candidateLocation: formData.candidateLocation.trim(),
+                candidateLinkedinUrl: formData.candidateLinkedinUrl.trim(),
+                resumeDriveUrl: formData.resumeDriveUrl.trim(),
+            };
+            const res = resumeMode === 'upload' && resumeFile
+                ? await submitMultipartApplication(token, applicationPayload, resumeFile)
+                : await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
+                    body: JSON.stringify({
+                        placementId: applicationPayload.placementId,
+                        candidateName: applicationPayload.candidateName,
+                        candidateEmail: applicationPayload.candidateEmail,
+                        candidatePhone: applicationPayload.candidatePhone,
+                        candidateDepartment: applicationPayload.candidateDepartment || undefined,
+                        candidateYear: applicationPayload.candidateYear || undefined,
+                        candidateLocation: applicationPayload.candidateLocation || undefined,
+                        candidateLinkedinUrl: applicationPayload.candidateLinkedinUrl || undefined,
+                        resumeDriveUrl: applicationPayload.resumeDriveUrl,
+                    }),
+                });
 
             if (res.status === 401) {
                 setPageError('Session expired. Please log in again.');
@@ -259,7 +306,7 @@ export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModa
                 return;
             }
 
-            setSuccessMessage('Application submitted successfully. Your details have been shared with the hiring team.');
+            setSuccessMessage('Application submitted successfully. Your profile is now in screening, and your dashboard will update with the next status.');
         } catch (error) {
             console.error('Failed to submit application', error);
             setPageError('Something went wrong while submitting your application. Please try again.');
@@ -299,7 +346,7 @@ export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModa
                                     <CheckCircle2 className="text-emerald-600 shrink-0 mt-0.5" size={18} />
                                     <div className="space-y-1 text-sm text-emerald-900">
                                         <p className="font-semibold">Before you submit</p>
-                                        <p>The resume link must use https://, stay on drive.google.com, and be shared as "Anyone with the link".</p>
+                                        <p>Upload your latest PDF resume so Emble can run ATS screening for this role. Google Drive links still work as a fallback.</p>
                                     </div>
                                 </div>
                             </div>
@@ -424,18 +471,53 @@ export default function ApplyJobModal({ isOpen, onClose, driveId }: ApplyJobModa
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">Resume Google Drive link <span className="text-rose-500">*</span></label>
-                                        <input
-                                            type="url"
-                                            value={formData.resumeDriveUrl}
-                                            onChange={(e) => handleChange('resumeDriveUrl', e.target.value)}
-                                            className={fieldClassName(Boolean(formErrors.resumeDriveUrl))}
-                                            placeholder="https://drive.google.com/file/d/..."
-                                        />
-                                        <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-600 space-y-1">
-                                            <p>Accepted example: https://drive.google.com/file/d/.../view</p>
+                                        <div className="mb-3 flex rounded-xl border border-slate-200 bg-slate-50 p-1 text-sm font-semibold">
+                                            <button type="button" onClick={() => setResumeMode('upload')} className={`flex-1 rounded-lg px-3 py-2 ${resumeMode === 'upload' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500'}`}>Upload PDF</button>
+                                            <button type="button" onClick={() => setResumeMode('link')} className={`flex-1 rounded-lg px-3 py-2 ${resumeMode === 'link' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500'}`}>Use Drive link</button>
                                         </div>
-                                        {formErrors.resumeDriveUrl ? <p className="text-xs text-rose-600 mt-2">{formErrors.resumeDriveUrl}</p> : null}
+                                        {resumeMode === 'upload' ? (
+                                            <div>
+                                                <label className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-7 text-center transition ${formErrors.resumeFile ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-slate-50 hover:border-emerald-300'}`}>
+                                                    <input type="file" accept=".pdf,application/pdf" className="hidden" onChange={(event) => handleResumeFile(event.target.files?.[0] || null)} />
+                                                    {resumeFile ? (
+                                                        <span className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-left">
+                                                            <span className="flex min-w-0 items-center gap-3">
+                                                                <FileText size={18} className="shrink-0 text-emerald-600" />
+                                                                <span className="min-w-0">
+                                                                    <span className="block truncate text-sm font-bold text-slate-900">{resumeFile.name}</span>
+                                                                    <span className="text-xs text-slate-500">{(resumeFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                                                                </span>
+                                                            </span>
+                                                            <button type="button" onClick={(event) => { event.preventDefault(); setResumeFile(null); }} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+                                                                <X size={16} />
+                                                            </button>
+                                                        </span>
+                                                    ) : (
+                                                        <>
+                                                            <UploadCloud size={26} className="text-emerald-600" />
+                                                            <p className="mt-3 text-sm font-bold text-slate-900">Click to upload resume PDF</p>
+                                                            <p className="mt-1 text-xs text-slate-500">Emble will parse it for ATS screening.</p>
+                                                        </>
+                                                    )}
+                                                </label>
+                                                {formErrors.resumeFile ? <p className="text-xs text-rose-600 mt-2">{formErrors.resumeFile}</p> : null}
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <label className="block text-sm font-semibold text-slate-700 mb-2">Resume Google Drive link <span className="text-rose-500">*</span></label>
+                                                <input
+                                                    type="url"
+                                                    value={formData.resumeDriveUrl}
+                                                    onChange={(e) => handleChange('resumeDriveUrl', e.target.value)}
+                                                    className={fieldClassName(Boolean(formErrors.resumeDriveUrl))}
+                                                    placeholder="https://drive.google.com/file/d/..."
+                                                />
+                                                <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-600 space-y-1">
+                                                    <p>Accepted example: https://drive.google.com/file/d/.../view</p>
+                                                </div>
+                                                {formErrors.resumeDriveUrl ? <p className="text-xs text-rose-600 mt-2">{formErrors.resumeDriveUrl}</p> : null}
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="pt-4 border-t border-slate-100 flex gap-3">

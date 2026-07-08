@@ -78,8 +78,8 @@ export class User {
   @Column({ default: false })
   isTwoFactorEnabled: boolean;
 
-  @Column({ nullable: true })
-  twoFactorSecret?: string;
+  @Column({ type: 'varchar', length: 128, nullable: true })
+  twoFactorSecret?: string | null;
 
   @Column({ type: 'int', default: 0 })
   sessionVersion: number;

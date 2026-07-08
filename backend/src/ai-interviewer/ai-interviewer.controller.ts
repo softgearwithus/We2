@@ -16,7 +16,6 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AiInterviewerService } from './ai-interviewer.service';
 import { CreateAiInterviewDto } from './dto/create-ai-interview.dto';
-import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-limit.interceptor';
 
@@ -25,48 +24,19 @@ import { UploadLimitInterceptor } from '../admin-settings/interceptors/upload-li
 @UseGuards(JwtAuthGuard)
 @Controller('ai-interviewer')
 export class AiInterviewerController {
-  constructor(
-    private readonly aiService: AiInterviewerService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly aiService: AiInterviewerService) {}
 
   @Post('sessions')
   async createSession(
     @Request() req: AuthenticatedRequest,
     @Body() dto: CreateAiInterviewDto,
   ) {
-    const session = await this.aiService.createSession(req.user.id, dto);
-    const aiBase = this.configService.get<string>('AI_INTERVIEW_BASE_URL');
-    const aiKey = this.configService.get<string>('AI_INTERVIEW_INTERNAL_KEY');
-    if (aiBase && aiKey) {
-      try {
-        const res = await fetch(`${aiBase}/ai-interview/sessions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-internal-key': aiKey,
-          },
-          body: JSON.stringify({
-            interview_session_id: session.interviewSessionId,
-            user_id: session.userId,
-            resume_id: session.resumeId,
-          }),
-        });
-        if (res.ok) {
-          const data = await res.json().catch(() => null);
-          if (data?.id) {
-            await this.aiService.saveExternalId(session.id, data.id);
-            session.externalSessionId = data.id;
-          }
-        }
-      } catch {
-        // ignore
-      }
-    }
-    return {
-      ...session,
-      externalSessionId: session.externalSessionId,
-    };
+    return this.aiService.launchInterview(req.user.id, dto);
+  }
+
+  @Post('trusted-launch')
+  async createTrustedLaunch(@Request() req: AuthenticatedRequest) {
+    return this.aiService.createTrustedLaunchUrl(req.user.id);
   }
 
   @Get('sessions/:id/report')

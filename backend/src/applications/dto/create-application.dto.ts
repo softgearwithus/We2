@@ -53,10 +53,15 @@ export class CreateApplicationDto {
   @MaxLength(255)
   candidateLinkedinUrl?: string;
 
+  @IsOptional()
   @IsUrl(
     { require_protocol: true, protocols: ['https'] },
     { message: 'Resume link must start with https://.' },
   )
-  @IsNotEmpty()
-  resumeDriveUrl: string;
+  resumeDriveUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  inviteToken?: string;
 }

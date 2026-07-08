@@ -64,17 +64,30 @@ import { CareersModule } from './careers/careers.module';
 import { Career } from './careers/entities/career.entity';
 import { PlacementsModule } from './placements/placements.module';
 import { Placement } from './placements/entities/placement.entity';
+import { HiringAssessment } from './placements/entities/hiring-assessment.entity';
+import { HiringAssessmentPlacementLink } from './placements/entities/hiring-assessment-placement-link.entity';
 import { ApplicationsModule } from './applications/applications.module';
 import { Application } from './applications/entities/application.entity';
+import { AssessmentsModule } from './assessments/assessments.module';
+import { IntegrationsModule } from './integrations/integrations.module';
+import { GithubInstallation } from './integrations/entities/github-installation.entity';
+import { GithubRepository } from './integrations/entities/github-repository.entity';
+import { AssessmentGenerationRun } from './assessments/entities/assessment-generation-run.entity';
 import { CompanyLeadsModule } from './company-leads/company-leads.module';
 import { CompanyLead } from './company-leads/entities/company-lead.entity';
+import { CompanySettingsModule } from './company-settings/company-settings.module';
+import { CompanyProfile } from './company-settings/entities/company-profile.entity';
+import { CompanyMember } from './company-settings/entities/company-member.entity';
+import { CompanyInvite } from './company-settings/entities/company-invite.entity';
+import { CompanyBillingOrder } from './company-settings/entities/company-billing-order.entity';
+import { CompanyApiKey } from './company-settings/entities/company-api-key.entity';
+import { CompanyAuditLog } from './company-settings/entities/company-audit-log.entity';
 import { EmailOtp } from './auth/entities/email-otp.entity';
 import { AiInterviewerModule } from './ai-interviewer/ai-interviewer.module';
 import { ResumeDocument } from './ai-interviewer/entities/resume-document.entity';
 import { AiInterviewSession } from './ai-interviewer/entities/ai-interview-session.entity';
 import { AiInterviewReport } from './ai-interviewer/entities/ai-interview-report.entity';
 import { AiInterviewModerationEvent } from './ai-interviewer/entities/ai-interview-moderation-event.entity';
-import { VapiResumeAsset } from './interview/entities/vapi-resume-asset.entity';
 import { PendingUpgradeOrder } from './users/entities/pending-upgrade-order.entity';
 import { MentorPaymentOrder } from './mentors/entities/mentor-payment-order.entity';
 import { QueriesModule } from './queries/queries.module';
@@ -82,16 +95,22 @@ import { Query } from './queries/entities/query.entity';
 
 import { ScheduleModule } from '@nestjs/schedule';
 
+const isDevelopmentEnv =
+  (process.env.NODE_ENV || 'development') === 'development';
+const developmentEnvFilePaths = [
+  join(process.cwd(), '.env.development'),
+  join(process.cwd(), 'backend', '.env.development'),
+  join(__dirname, '..', '.env.development'),
+  join(__dirname, '..', '..', '.env.development'),
+];
+
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath:
-        (process.env.NODE_ENV || 'development') === 'development'
-          ? '.env.development'
-          : undefined,
-      ignoreEnvFile: (process.env.NODE_ENV || 'development') !== 'development',
+      envFilePath: isDevelopmentEnv ? developmentEnvFilePaths : undefined,
+      ignoreEnvFile: !isDevelopmentEnv,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'uploads'),
@@ -185,17 +204,27 @@ import { ScheduleModule } from '@nestjs/schedule';
             MentorPayout,
             Career,
             Placement,
+            HiringAssessment,
+            HiringAssessmentPlacementLink,
             Application,
+            GithubInstallation,
+            GithubRepository,
+            AssessmentGenerationRun,
             CompanyLead,
             EmailOtp,
             ResumeDocument,
             AiInterviewSession,
             AiInterviewReport,
             AiInterviewModerationEvent,
-            VapiResumeAsset,
             PendingUpgradeOrder,
             MentorPaymentOrder,
             Query,
+            CompanyProfile,
+            CompanyMember,
+            CompanyInvite,
+            CompanyBillingOrder,
+            CompanyApiKey,
+            CompanyAuditLog,
           ],
           synchronize: !isProduction,
           logging: !isProduction,
@@ -232,8 +261,11 @@ import { ScheduleModule } from '@nestjs/schedule';
     WriteXModule,
     CareersModule,
     PlacementsModule,
+    AssessmentsModule,
     ApplicationsModule,
+    IntegrationsModule,
     CompanyLeadsModule,
+    CompanySettingsModule,
     AiInterviewerModule,
     QueriesModule,
   ],

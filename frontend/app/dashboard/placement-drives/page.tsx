@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSearchParams, useRouter } from 'next/navigation';
 import DriveCard from '../../components/placements/DriveCard';
 import ApplyJobModal from '../../components/placements/ApplyJobModal';
-import { Building2, Search, Filter } from 'lucide-react';
+import { Building2, CheckCircle2, ExternalLink, Filter, Search, UploadCloud, Video, XCircle } from 'lucide-react';
 
 function ActiveJobsContent() {
     const { token } = useAuth();
@@ -18,6 +18,9 @@ function ActiveJobsContent() {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState<string>('All');
     const [selectedDriveId, setSelectedDriveId] = useState<string | null>(null);
+    const [applications, setApplications] = useState<any[]>([]);
+    const [applicationNotice, setApplicationNotice] = useState<string | null>(null);
+    const [resumeReplacingId, setResumeReplacingId] = useState<string | null>(null);
 
     useEffect(() => {
         const applyId = searchParams.get('apply');
@@ -63,6 +66,19 @@ function ActiveJobsContent() {
                     const data = await response.json();
                     setDrives(data);
                 }
+
+                if (token) {
+                    const applicationsResponse = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/my`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    if (applicationsResponse.ok) {
+                        setApplications(await applicationsResponse.json());
+                    }
+                } else {
+                    setApplications([]);
+                }
             } catch (error) {
                 console.error('Failed to fetch active jobs', error);
             } finally {
@@ -80,6 +96,58 @@ function ActiveJobsContent() {
     );
 
     const filterOptions = ['All', 'Internship', 'Remote', 'Hybrid', 'Active Hiring'];
+
+    const statusTone = (status?: string) => {
+        switch (status) {
+            case 'rejected':
+                return 'bg-rose-50 text-rose-700 border-rose-200';
+            case 'interview_invited':
+                return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            case 'shortlisted':
+                return 'bg-blue-50 text-blue-700 border-blue-200';
+            default:
+                return 'bg-slate-50 text-slate-700 border-slate-200';
+        }
+    };
+
+    const statusLabel = (status?: string) =>
+        String(status || 'applied').replace(/_/g, ' ');
+
+    const replaceApplicationResume = async (applicationId: string, file?: File | null) => {
+        if (!file || !token) return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            setApplicationNotice('Please choose a PDF resume file.');
+            return;
+        }
+
+        setResumeReplacingId(applicationId);
+        setApplicationNotice(null);
+        try {
+            const formData = new FormData();
+            formData.append('resumeFile', file);
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/applications/${applicationId}/resume`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+            const payload = await response.json().catch(() => null);
+            if (!response.ok) {
+                setApplicationNotice(payload?.message || 'Unable to replace resume right now.');
+                return;
+            }
+            setApplications((current) => current.map((application) => (
+                application.id === applicationId ? payload : application
+            )));
+            setApplicationNotice('Resume updated. This application is ready for screening again.');
+        } catch (error) {
+            console.error('Failed to replace resume', error);
+            setApplicationNotice('Unable to replace resume right now.');
+        } finally {
+            setResumeReplacingId(null);
+        }
+    };
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 font-inter">
@@ -133,6 +201,90 @@ function ActiveJobsContent() {
                     ))}
                 </div>
             </div>
+
+            {token && applications.length > 0 ? (
+                <section className="bg-white border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] p-5">
+                    <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+                        <div>
+                            <p className="text-xs font-[800] uppercase tracking-[0.22em] text-[#202b20]/60">Application History</p>
+                            <h2 className="text-xl font-[800] uppercase tracking-tight text-[#202b20]">Your active hiring status</h2>
+                        </div>
+                        <span className="text-xs font-[800] uppercase tracking-widest text-[#202b20]/70">{applications.length} application{applications.length === 1 ? '' : 's'}</span>
+                    </div>
+                    {applicationNotice ? (
+                        <div className="mb-4 border-2 border-[#202b20] bg-white px-3 py-2 text-xs font-[800] text-[#202b20] shadow-[1px_1px_0_0_#202b20]">
+                            {applicationNotice}
+                        </div>
+                    ) : null}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        {applications.slice(0, 6).map((application) => {
+                            const resumeStatus =
+                                application.submissionArtifacts?.resumeAsset?.extractionStatus ||
+                                application.submissionArtifacts?.resumeExtractionStatus ||
+                                null;
+                            const canReplaceResume = Boolean(
+                                resumeStatus &&
+                                resumeStatus !== 'parsed' &&
+                                !application.candidateJoinUrl &&
+                                application.studentFacingStatus !== 'rejected',
+                            );
+                            return (
+                                <div key={application.id} className="border-2 border-[#202b20] bg-[#f8faf4] p-4 shadow-[1px_1px_0_0_#202b20]">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <h3 className="font-[800] text-[#202b20] line-clamp-1">{application.placement?.title || 'Hiring role'}</h3>
+                                            <p className="text-sm font-[600] text-[#202b20]/70 line-clamp-1">{application.placement?.companyName || application.candidateEmail}</p>
+                                        </div>
+                                        <span className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-[800] uppercase ${statusTone(application.studentFacingStatus)}`}>
+                                            {statusLabel(application.studentFacingStatus)}
+                                        </span>
+                                    </div>
+                                    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-[700] text-[#202b20]/70">
+                                        {typeof application.score === 'number' ? (
+                                            <span className="inline-flex items-center gap-1 rounded-full border border-[#202b20]/20 bg-white px-2 py-1">
+                                                <CheckCircle2 size={13} /> Score {application.score}/100
+                                            </span>
+                                        ) : null}
+                                        {resumeStatus ? (
+                                            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 ${resumeStatus === 'parsed' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
+                                                Resume {String(resumeStatus).replace(/_/g, ' ')}
+                                            </span>
+                                        ) : null}
+                                        {application.studentFacingStatus === 'rejected' ? (
+                                            <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-1 text-rose-700">
+                                                <XCircle size={13} /> Not shortlisted
+                                            </span>
+                                        ) : null}
+                                        {application.candidateJoinUrl ? (
+                                            <a
+                                                href={application.candidateJoinUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700 hover:bg-emerald-100"
+                                            >
+                                                <Video size={13} /> Start interview <ExternalLink size={12} />
+                                            </a>
+                                        ) : null}
+                                        {canReplaceResume ? (
+                                            <label className={`inline-flex cursor-pointer items-center gap-1 rounded-full border border-[#202b20]/30 bg-white px-2 py-1 hover:bg-[#fff7df] ${resumeReplacingId === application.id ? 'opacity-60' : ''}`}>
+                                                <UploadCloud size={13} />
+                                                {resumeReplacingId === application.id ? 'Updating resume...' : 'Replace PDF'}
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,application/pdf"
+                                                    className="hidden"
+                                                    disabled={resumeReplacingId === application.id}
+                                                    onChange={(event) => replaceApplicationResume(application.id, event.target.files?.[0] || null)}
+                                                />
+                                            </label>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </section>
+            ) : null}
 
             {isLoading ? (
                 <div className="flex items-center justify-center py-20">

@@ -102,6 +102,11 @@ export class ResumeController {
     if (!file) {
       throw new BadRequestException('File is required');
     }
+    const fileName = String(file.originalname || '').toLowerCase();
+    const contentType = String(file.mimetype || '').toLowerCase();
+    if (contentType !== 'application/pdf' && !fileName.endsWith('.pdf')) {
+      throw new BadRequestException('Please upload a PDF resume file.');
+    }
     return this.resumeService.analyzeResume(
       req.user.id,
       file.buffer,

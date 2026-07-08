@@ -1,3 +1,4 @@
+// Trigger HMR
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -11,10 +12,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollProgressProvider, ScrollProgress } from '@/components/animate-ui/primitives/animate/scroll-progress';
 
 const GUEST_NAV_ITEMS = [
-    { label: 'Features', href: '/features' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Active Jobs', href: '/active-jobs' },
-    { label: 'Blog', href: '/blog' },
     { label: 'FAQ', href: '/faq' }
 ] as const;
 
@@ -101,35 +100,32 @@ export default function Navbar() {
     return (
         <ScrollProgressProvider global>
             <nav className={cn(
-                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 sm:px-6 backdrop-blur-none",
-                isScrolled ? "py-3 bg-white/70 backdrop-blur-xl border-b border-[#202b20]/5 shadow-sm" : "pt-5 pointer-events-none",
-                mobileMenuOpen ? "bg-white/95 backdrop-blur-md pointer-events-auto h-screen py-5" : ""
+                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 sm:px-6",
+                isScrolled ? "py-4 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm" : "pt-6 pointer-events-none",
+                mobileMenuOpen ? "bg-white/95 backdrop-blur-md pointer-events-auto h-screen py-6" : ""
             )}>
-                <ScrollProgress 
-                    className="absolute top-0 left-0 h-[3px] bg-[#ffa116] origin-left z-[60] shadow-[0_0_10px_rgba(255,161,22,0.8)]" 
+                <ScrollProgress
+                    className="absolute top-0 left-0 h-[2px] bg-gray-900 origin-left z-[60]"
                 />
-                
-                <div className="max-w-7xl mx-auto h-[46px] sm:h-12 flex items-stretch justify-between gap-3 sm:gap-4 pointer-events-auto shadow-none">
-                    
+
+                <div className="max-w-7xl mx-auto h-[48px] flex items-center justify-between gap-4 pointer-events-auto">
+
                     {/* Brand Logo - Pure Text */}
-                    <Link href={user ? "/dashboard" : "/"} className="flex flex-col justify-center px-2 sm:px-4 group transition-transform hover:scale-[1.02]">
-                        <span className="text-[1.4rem] sm:text-[1.6rem] font-[900] tracking-tighter text-[#202b20] leading-none mb-1">
+                    <Link href={user ? "/dashboard" : "/"} className="flex flex-col justify-center px-2 group transition-transform hover:scale-[1.02]">
+                        <span className="text-[1.5rem] font-bold tracking-tight text-gray-900 leading-none">
                             emble
                         </span>
                     </Link>
 
                     {/* Nav Links Block */}
-                    <div className="hidden md:flex bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] items-stretch">
-                        <div className="flex items-stretch font-[500] text-[14px] lg:text-[15px] tracking-tight text-[#202b20]">
+                    <div className="hidden md:flex items-center bg-white/60 backdrop-blur-md border border-gray-200/60 shadow-sm rounded-full p-1">
+                        <div className="flex items-center font-medium text-[14px] text-gray-600">
                             {isDashboardLayout ? (
                                 dashboardNavItems.map((item, idx) => (
                                     <Link
                                         key={item.label}
                                         href={item.href!}
-                                        className={cn(
-                                            "flex items-center gap-2 px-4 lg:px-5 hover:bg-[#202b20] hover:text-white transition-colors relative",
-                                            idx !== dashboardNavItems.length - 1 ? "border-r-2 border-[#202b20]" : ""
-                                        )}
+                                        className="flex items-center gap-2 px-5 py-2 rounded-full hover:bg-gray-100/50 hover:text-gray-900 transition-colors"
                                     >
                                         {/* @ts-ignore */}
                                         {item.icon && <item.icon size={16} />}
@@ -140,21 +136,16 @@ export default function Navbar() {
                                 currentNavItems.map((item, idx) => {
                                     const isAnchor = item.href.includes('#');
                                     const LinkComponent = isAnchor && pathname !== '/' ? 'a' : Link;
-                                    const hasBullet = item.label === 'Pricing' || item.label === 'Active Jobs';
 
                                     return (
                                         <LinkComponent
                                             key={item.label}
                                             href={item.href}
-                                            className={cn(
-                                                "flex items-center gap-2 px-4 lg:px-5 hover:bg-[#202b20] hover:text-white transition-colors relative group",
-                                                idx !== currentNavItems.length - 1 ? "border-r-2 border-[#202b20]" : ""
-                                            )}
+                                            className="flex items-center gap-2 px-5 py-2 rounded-full hover:bg-gray-100/50 hover:text-gray-900 transition-colors group"
                                         >
                                             {/* @ts-ignore - icon is optional */}
                                             {user && item.icon && <item.icon size={16} />}
                                             <span className="flex items-center gap-2">
-                                                {hasBullet && <span className="w-1.5 h-1.5 bg-[#202b20] inline-block group-hover:bg-[#ffa116] transition-colors"></span>}
                                                 {item.label}
                                             </span>
                                         </LinkComponent>
@@ -165,174 +156,185 @@ export default function Navbar() {
                     </div>
 
                     {/* Right Block */}
-                    <div className="hidden md:flex bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] items-stretch">
+                    <div className="hidden md:flex items-center gap-2">
                         {user ? (
                             <div className="relative flex" ref={userMenuRef}>
                                 <button
                                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                    className="flex items-center gap-3 px-5 hover:bg-[#ffa116] text-[#202b20] transition-colors text-[10px] lg:text-[12px] tracking-widest border-l-[0px] border-[#202b20]"
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-gray-200/60 shadow-sm hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
                                 >
-                                    <div className="w-[22px] h-[22px] border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] flex items-center justify-center bg-white font-bold text-[10px] shrink-0 overflow-hidden relative">
+                                    <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 text-gray-700 shrink-0 overflow-hidden relative">
                                         {avatarSrc ? (
                                             <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" />
                                         ) : (
                                             user.email[0].toUpperCase()
                                         )}
                                         {profileIncomplete && (
-                                            <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                                                <span className="animate-ping absolute inline-flex h-full w-full bg-red-500"></span>
-                                                <span className="relative inline-flex h-2 w-2 bg-red-500 border border-[#202b20]"></span>
+                                            <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
                                             </span>
                                         )}
                                     </div>
-                                    <span className="max-w-[70px] lg:max-w-[100px] truncate leading-none mt-1">{user.email.split('@')[0]}</span>
-                                    <ChevronDown size={14} className="mt-0.5" />
+                                    <span className="max-w-[100px] truncate">{user.email.split('@')[0]}</span>
+                                    <ChevronDown size={14} className="text-gray-400" />
                                 </button>
 
                                 <AnimatePresence>
                                     {userMenuOpen && (
                                         <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 10 }}
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                             transition={{ duration: 0.2 }}
-                                            className="absolute right-[-2px] xl:right-0 top-[calc(100%+14px)] w-56 bg-white border-2 border-[#202b20] shadow-[3px_3px_0px_0px_#202b20] text-[#202b20] overflow-hidden flex flex-col pt-1"
+                                            className="absolute right-0 top-[calc(100%+12px)] w-64 bg-white border border-gray-100 shadow-xl rounded-2xl text-gray-700 overflow-hidden flex flex-col z-50"
                                         >
-                                            <div className="px-4 py-3 border-b-2 border-[#202b20] bg-white">
-                                                <p className="text-[9px] font-bold tracking-widest text-[#ffa116]">SIGNED IN AS</p>
-                                                <p className="text-[12px] mt-1 truncate">{user.email}</p>
-                                                <p className="text-[9px] mt-1.5 italic bg-[#202b20]/5 p-1 inline-block border border-[#202b20]">{getDisplayPlan(user.subscriptionPlan)} PLAN</p>
+                                            <div className="px-5 py-4 border-b border-gray-100 bg-gray-50/50">
+                                                <p className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">Signed in as</p>
+                                                <p className="text-[13px] font-medium text-gray-900 mt-1 truncate">{user.email}</p>
+                                                <p className="text-[10px] mt-2 font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-md inline-block uppercase tracking-wider">{getDisplayPlan(user.subscriptionPlan)} PLAN</p>
                                             </div>
 
-                                            <Link href="/dashboard/profile" className="flex items-center justify-between px-4 py-3 text-[11px] tracking-wider hover:bg-[#202b20] hover:text-white transition-colors border-b-2 border-[#202b20]" onClick={() => setUserMenuOpen(false)}>
-                                                <div className="flex items-center gap-2">
-                                                    <User size={14} />
-                                                    <span className="mt-0.5">PROFILE</span>
-                                                </div>
-                                                {profileIncomplete && <span className="text-[8px] bg-[#ffa116] text-[#202b20] border-2 border-[#202b20] px-1.5 shadow-[2px_2px_0px_0px_#202b20]">INCOMPLETE</span>}
-                                            </Link>
-                                            <Link href="/dashboard/settings" className="flex items-center justify-between px-4 py-3 text-[11px] tracking-wider hover:bg-[#202b20] hover:text-white transition-colors border-b-2 border-[#202b20]" onClick={() => setUserMenuOpen(false)}>
-                                                <div className="flex items-center gap-2">
-                                                    <Settings size={14} />
-                                                    <span className="mt-0.5">SETTINGS</span>
-                                                </div>
-                                                {profileIncomplete && <span className="w-2 h-2 bg-red-500 border border-[#202b20]"></span>}
-                                            </Link>
+                                            <div className="p-2 flex flex-col gap-1">
+                                                <Link href="/dashboard/profile" className="flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium hover:bg-gray-100 transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                                    <div className="flex items-center gap-3">
+                                                        <User size={16} className="text-gray-500" />
+                                                        <span>Profile</span>
+                                                    </div>
+                                                    {profileIncomplete && <span className="text-[9px] font-bold bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">INCOMPLETE</span>}
+                                                </Link>
+                                                <Link href="/dashboard/settings" className="flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium hover:bg-gray-100 transition-colors" onClick={() => setUserMenuOpen(false)}>
+                                                    <div className="flex items-center gap-3">
+                                                        <Settings size={16} className="text-gray-500" />
+                                                        <span>Settings</span>
+                                                    </div>
+                                                    {profileIncomplete && <span className="w-2 h-2 rounded-full bg-red-500"></span>}
+                                                </Link>
+                                            </div>
 
-                                            <button
-                                                onClick={() => {
-                                                    logout();
-                                                    setUserMenuOpen(false);
-                                                }}
-                                                className="w-full flex items-center justify-start gap-2 px-4 py-3 text-[11px] tracking-wider hover:bg-[#ffa116] hover:text-[#202b20] transition-colors"
-                                            >
-                                                <LogOut size={14} />
-                                                <span className="mt-0.5">SIGN OUT</span>
-                                            </button>
+                                            <div className="p-2 border-t border-gray-100">
+                                                <button
+                                                    onClick={() => {
+                                                        logout();
+                                                        setUserMenuOpen(false);
+                                                    }}
+                                                    className="w-full flex items-center justify-start gap-3 px-3 py-2 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                                >
+                                                    <LogOut size={16} />
+                                                    <span>Sign out</span>
+                                                </button>
+                                            </div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
                             </div>
                         ) : (
-                            <>
-                                <Link href="/login" className="flex items-center px-4 lg:px-6 hover:bg-[#202b20] hover:text-white transition-colors text-[14px] lg:text-[15px] font-[500] tracking-tight text-[#202b20]">
-                                    <span className="mt-1">Login</span>
+                            <div className="flex items-center gap-2">
+                                <Link href="/login" className="px-5 py-2.5 rounded-full hover:bg-gray-100/50 transition-colors text-[14px] font-medium text-gray-700">
+                                    Login
                                 </Link>
-                                <Link href="/register" className="flex items-center px-4 lg:px-6 bg-[#ffa116] text-[#202b20] hover:bg-[#202b20] hover:text-white transition-colors border-l-2 border-[#202b20] text-[14px] lg:text-[15px] font-[500] tracking-tight leading-none pt-1">
+                                <Link href="/register" className="px-6 py-2.5 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition-all shadow-sm text-[14px] font-medium">
                                     Get Started
                                 </Link>
-                            </>
+                            </div>
                         )}
                     </div>
 
                     {/* Mobile Menu Toggle */}
                     <button
                         aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-                        className="md:hidden flex items-center justify-center w-[46px] bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] text-[#202b20] pointer-events-auto hover:bg-[#ffa116] transition-colors active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_#202b20]"
+                        className="md:hidden flex items-center justify-center w-10 h-10 bg-white border border-gray-200 rounded-full shadow-sm text-gray-700 pointer-events-auto hover:bg-gray-50 transition-colors"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     >
-                        {mobileMenuOpen ? <X size={20} strokeWidth={3} /> : <Menu size={20} strokeWidth={3} />}
+                        {mobileMenuOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
                     </button>
                 </div>
 
-                {/* Mobile Menu dropdown inside the relatively floating space */}
+                {/* Mobile Menu Dropdown */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full pointer-events-auto">
-                    {mobileMenuOpen && (
-                        <div className="mt-4 bg-white border-2 border-[#202b20] flex flex-col md:hidden shadow-[3px_3px_0px_0px_#202b20] animate-fade-in-up max-h-[80vh] overflow-y-auto">
-                            {user && (
-                                <div className="flex flex-col gap-2 p-5 border-b-2 border-[#202b20] bg-white">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] flex items-center justify-center bg-[#ffa116] font-bold text-xs shrink-0 overflow-hidden">
-                                            {avatarSrc ? (
-                                                <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" />
-                                            ) : (
-                                                user.email[0].toUpperCase()
-                                            )}
+                    <AnimatePresence>
+                        {mobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="mt-4 bg-white border border-gray-100 rounded-2xl flex flex-col md:hidden shadow-xl max-h-[80vh] overflow-y-auto"
+                            >
+                                {user && (
+                                    <div className="flex flex-col gap-3 p-6 border-b border-gray-100 bg-gray-50/50 rounded-t-2xl">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center bg-white shadow-sm overflow-hidden text-gray-600 font-semibold">
+                                                {avatarSrc ? (
+                                                    <img loading="lazy" decoding="async" src={avatarSrc} alt="Avatar" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    user.email[0].toUpperCase()
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-gray-900">{user.email.split('@')[0]}</div>
+                                                <div className="text-[12px] text-gray-500 mt-0.5">{user.email}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div className="font-[600] text-[#202b20] text-sm">{user.email.split('@')[0]}</div>
-                                            <div className="text-[10px] tracking-wide mt-1">{user.email}</div>
-                                        </div>
-                                    </div>
-                                    {profileIncomplete && (
-                                        <span className="text-[10px] mt-2 inline-block self-start font-bold bg-[#ffa116] text-[#202b20] border-2 border-[#202b20] px-2 py-0.5 shadow-[2px_2px_0px_0px_#202b20]">
-                                            PROFILE INCOMPLETE
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-
-                            <div className="flex flex-col bg-white">
-                                {currentNavItems.map((item) => {
-                                    const isAnchor = item.href.includes('#');
-                                    const LinkComponent = isAnchor && pathname !== '/' ? 'a' : Link;
-                                    
-                                    return (
-                                        <LinkComponent
-                                            key={item.label}
-                                            href={item.href}
-                                            className="text-[13px] tracking-widest font-[600] text-[#202b20] hover:bg-[#ffa116] flex items-center gap-3 p-5 border-b-2 border-[#202b20] transition-colors group"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            {/* @ts-ignore */}
-                                            {user && item.icon && <item.icon size={18} />}
-                                            <span className="w-1.5 h-1.5 bg-transparent group-hover:bg-[#202b20] inline-block"></span>
-                                            {item.label}
-                                        </LinkComponent>
-                                    );
-                                })}
-
-                                {user ? (
-                                    <>
-                                        <Link href="/dashboard/profile" className="flex items-center gap-3 p-5 text-[13px] tracking-widest font-[600] border-b-2 border-[#202b20] hover:bg-[#202b20] hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                                            <User size={18} /> PROFILE
-                                        </Link>
-                                        <Link href="/dashboard/settings" className="flex items-center gap-3 p-5 text-[13px] tracking-widest font-[600] border-b-2 border-[#202b20] hover:bg-[#202b20] hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                                            <Settings size={18} /> SETTINGS
-                                        </Link>
-                                        <button
-                                            onClick={() => {
-                                                logout();
-                                                setMobileMenuOpen(false);
-                                            }}
-                                            className="flex items-center justify-start gap-3 p-5 text-[13px] tracking-widest font-[600] text-[#202b20] bg-[#ffa116] hover:bg-[#ff9100] transition-colors"
-                                        >
-                                            <LogOut size={18} /> SIGN OUT
-                                        </button>
-                                    </>
-                                ) : (
-                                    <div className="flex flex-col">
-                                        <Link href="/login" className="text-left p-5 text-[13px] tracking-widest font-[600] text-[#202b20] hover:bg-[#ffa116] border-b-2 border-[#202b20] transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                                            LOGIN
-                                        </Link>
-                                        <Link href="/register" className="bg-[#ffa116] text-[#202b20] p-5 text-left text-[13px] tracking-widest font-[600] hover:bg-[#ff9100] transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                                            GET STARTED
-                                        </Link>
+                                        {profileIncomplete && (
+                                            <span className="text-[10px] mt-1 inline-block self-start font-bold bg-orange-100 text-orange-600 px-3 py-1 rounded-full">
+                                                PROFILE INCOMPLETE
+                                            </span>
+                                        )}
                                     </div>
                                 )}
-                            </div>
-                        </div>
-                    )}
+
+                                <div className="flex flex-col p-2">
+                                    {currentNavItems.map((item) => {
+                                        const isAnchor = item.href.includes('#');
+                                        const LinkComponent = isAnchor && pathname !== '/' ? 'a' : Link;
+
+                                        return (
+                                            <LinkComponent
+                                                key={item.label}
+                                                href={item.href}
+                                                className="text-[14px] font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-xl flex items-center gap-3 p-4 transition-colors"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                            >
+                                                {/* @ts-ignore */}
+                                                {user && item.icon && <item.icon size={18} className="text-gray-400" />}
+                                                {item.label}
+                                            </LinkComponent>
+                                        );
+                                    })}
+
+                                    {user ? (
+                                        <>
+                                            <div className="my-2 border-t border-gray-100" />
+                                            <Link href="/dashboard/profile" className="flex items-center gap-3 p-4 text-[14px] font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                                                <User size={18} className="text-gray-400" /> Profile
+                                            </Link>
+                                            <Link href="/dashboard/settings" className="flex items-center gap-3 p-4 text-[14px] font-medium text-gray-700 hover:bg-gray-100 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                                                <Settings size={18} className="text-gray-400" /> Settings
+                                            </Link>
+                                            <button
+                                                onClick={() => {
+                                                    logout();
+                                                    setMobileMenuOpen(false);
+                                                }}
+                                                className="flex items-center justify-start gap-3 p-4 text-[14px] font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors mt-2"
+                                            >
+                                                <LogOut size={18} /> Sign out
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <div className="flex flex-col gap-2 p-4 mt-2">
+                                            <Link href="/login" className="w-full text-center p-3 rounded-xl text-[14px] font-medium text-gray-700 hover:bg-gray-100 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                                                Login
+                                            </Link>
+                                            <Link href="/register" className="w-full text-center p-3 rounded-xl bg-gray-900 text-white text-[14px] font-medium hover:bg-gray-800 transition-colors shadow-sm" onClick={() => setMobileMenuOpen(false)}>
+                                                Get Started
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </nav>
         </ScrollProgressProvider>

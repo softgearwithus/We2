@@ -79,28 +79,29 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-[#efeff1] relative overflow-hidden" id="faq">
+    <section className="py-16 md:py-24 bg-transparent relative overflow-hidden" id="faq">
       <JsonLd data={faqSchema} />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
           
           {/* Left Side: Headings & CTA */}
           <div className="lg:col-span-5 flex flex-col items-start pt-4">
-            <span className="inline-block px-4 py-1.5 rounded-none border-2 border-[#202b20] text-[13px] font-bold uppercase tracking-wider text-[#202b20] mb-6 bg-[#ffa116] shadow-[2px_2px_0_0_#202b20]">
+            <span className="inline-block px-3 py-1 rounded-full text-[12px] font-[600] uppercase tracking-widest border border-gray-200 text-gray-600 mb-6 bg-white/50 backdrop-blur-sm shadow-sm">
               FAQs
             </span>
-            <h2 className="text-[3rem] md:text-[4.5rem] font-[800] text-[#202b20] tracking-tighter mb-6 leading-none">
-              Everything you <span className="text-white bg-[#202b20] px-3 shadow-[2px_2px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">need</span> to know
+            <h2 className="text-[3rem] md:text-[4rem] font-[800] text-black tracking-tighter mb-4 leading-[1.05]">
+              Everything you <br className="hidden sm:block" />
+              <span className="font-serif italic font-normal text-gray-400">need to know.</span>
             </h2>
-            <p className="text-lg text-[#202b20]/70 leading-relaxed mb-16 max-w-md">
+            <p className="text-[18px] text-gray-500 font-[400] leading-relaxed mb-12 max-w-md">
               Explore helpful information about our AI interviews, practice drills, and the free tools available to supercharge your hiring potential.
             </p>
 
-            <div className="bg-[#ffa116] p-8 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] rounded-none w-full max-w-sm">
-              <h3 className="text-xl font-bold uppercase tracking-wide text-[#202b20] mb-6">
-                Still have questions? Our team is ready to assist.
+            <div className="bg-slate-50/50 p-8 md:p-10 border border-gray-100 shadow-sm rounded-3xl w-full max-w-md">
+              <h3 className="text-[18px] font-[600] text-gray-900 mb-6 leading-snug">
+                Still have questions? <br /> Our team is ready to assist.
               </h3>
-              <Button asChild className="rounded-none px-6 py-5 bg-white text-[#202b20] border-2 border-[#202b20] font-bold shadow-[2px_2px_0_0_#202b20] hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] hover:bg-slate-50 transition-all w-full sm:w-auto">
+              <Button asChild className="rounded-full px-8 h-12 bg-gray-900 text-white font-[500] text-[15px] hover:scale-[1.02] hover:bg-gray-800 shadow-md transition-all w-full sm:w-auto">
                 <Link href="/contact">
                   Contact Support
                 </Link>
@@ -112,7 +113,7 @@ export default function FAQSection() {
           <div className="lg:col-span-7">
             
             {/* Tabs */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-white border-2 border-[#202b20] rounded-none w-max max-w-full overflow-x-auto shadow-[2px_2px_0_0_#202b20]">
+            <div className="flex flex-wrap items-center gap-2 p-1.5 mb-8 bg-slate-50/80 border border-gray-100 rounded-2xl w-max max-w-full overflow-x-auto shadow-sm backdrop-blur-sm">
               {categories.map((cat) => (
                 <button
                   key={cat}
@@ -120,10 +121,10 @@ export default function FAQSection() {
                     setActiveTab(cat);
                     setOpenIndex(0); // Reset accordion on tab change
                   }}
-                  className={`px-5 py-2.5 rounded-none text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-                    activeTab === cat 
-                      ? 'bg-[#202b20] text-white border-2 border-[#202b20]' 
-                      : 'text-[#202b20]/60 hover:text-[#202b20] hover:bg-slate-50 border-2 border-transparent'
+                  className={`px-5 py-2 rounded-xl text-[14px] font-[600] tracking-wide transition-all whitespace-nowrap ${
+                    activeTab === cat
+                      ? 'bg-white text-gray-900 shadow-sm border border-gray-200/50'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-white/50 border border-transparent'
                   }`}
                 >
                   {cat}
@@ -144,16 +145,16 @@ export default function FAQSection() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2, delay: index * 0.05 }}
-                      className={`border-2 rounded-none transition-all duration-300 ${isOpen ? 'bg-white border-[#202b20] shadow-[2px_2px_0_0_#202b20]' : 'bg-white/50 border-[#202b20]/20 hover:border-[#202b20] hover:shadow-[2px_2px_0_0_#ffa116]'}`}
+                      className={`border rounded-3xl transition-all duration-300 overflow-hidden ${isOpen ? 'bg-white border-gray-200 shadow-md' : 'bg-white/40 border-gray-100 hover:border-gray-200 hover:bg-white hover:shadow-sm'}`}
                     >
                       <button
                         onClick={() => setOpenIndex(isOpen ? null : index)}
-                        className="w-full text-left px-6 py-5 flex items-center justify-between group"
+                        className="w-full text-left px-6 py-6 flex items-center justify-between group"
                       >
-                        <span className={`text-lg font-bold pr-8 transition-colors ${isOpen ? 'text-[#202b20]' : 'text-[#202b20]/70 group-hover:text-[#202b20]'}`}>
+                        <span className={`text-[16px] font-[600] pr-8 transition-colors ${isOpen ? 'text-gray-900' : 'text-gray-700 group-hover:text-gray-900'}`}>
                           {faq.q}
                         </span>
-                        <div className={`p-1.5 rounded-none transition-colors border-2 flex-shrink-0 ${isOpen ? 'bg-[#ffa116] border-[#202b20] text-[#202b20] shadow-[2px_2px_0_0_#202b20]' : 'text-[#202b20]/40 group-hover:bg-[#ffa116] border-transparent group-hover:border-[#202b20] group-hover:shadow-[2px_2px_0_0_#202b20] group-hover:text-[#202b20]'}`}>
+                        <div className={`p-2 rounded-full transition-colors shrink-0 ${isOpen ? 'bg-gray-100 text-gray-900' : 'text-gray-400 group-hover:bg-gray-50 group-hover:text-gray-900'}`}>
                           <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                             <ChevronDown className="w-5 h-5 text-current" />
                           </motion.div>
@@ -169,7 +170,7 @@ export default function FAQSection() {
                             transition={{ duration: 0.3, ease: 'easeInOut' }}
                             className="overflow-hidden"
                           >
-                            <div className="px-6 pb-6 text-[#202b20]/80 font-[500] leading-relaxed pt-2 border-t-2 border-[#202b20]/10 mt-2">
+                            <div className="px-6 pb-6 text-gray-500 font-[400] text-[15px] leading-relaxed pt-2 border-t border-gray-50 mt-2">
                               {faq.a}
                             </div>
                           </motion.div>

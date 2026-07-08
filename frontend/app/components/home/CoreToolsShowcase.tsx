@@ -93,25 +93,25 @@ export default function CoreToolsShowcase() {
   };
 
   return (
-    <section className="pt-24 pb-32 bg-[#efeff1] relative overflow-hidden" id="free-tools">
+    <section className="pt-24 pb-32 bg-transparent relative overflow-hidden" id="free-tools">
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
         
         {/* Section Header */}
-        <div className="mb-12 text-center">
+        <div className="mb-16 text-center">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[3rem] md:text-[4.5rem] leading-[1.1] font-[800] tracking-tighter text-[#202b20] mb-5"
+            className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-black mb-4 leading-[1.05]"
           >
-            Free <span className="text-white bg-[#202b20] px-3 shadow-[2px_2px_0_0_#ffa116] block sm:inline-block mt-2 sm:mt-0">Core Tools</span> for Interview Preparation
+            Free <span className="font-serif italic font-normal text-gray-400">core tools</span> <br className="hidden sm:block" /> for interview preparation.
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-[#202b20]/80 font-[500] max-w-2xl mx-auto leading-relaxed"
+            className="text-[18px] md:text-[20px] text-gray-500 font-[500] max-w-2xl mx-auto leading-relaxed mt-6"
           >
             Your personal AI assistant integrates all the tools you need directly into your dashboard, making 100% free lifetime access feel premium.
           </motion.p>
@@ -125,18 +125,18 @@ export default function CoreToolsShowcase() {
           {/* Navigation Arrows */}
           <button 
             onClick={prevSlide}
-            className="absolute left-0 md:left-6 z-40 bg-[#ffa116] border-2 border-[#202b20] p-3 md:p-4 rounded-none shadow-[2px_2px_0_0_#202b20] opacity-0 translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] transition-all duration-300"
+            className="absolute left-0 md:left-6 z-40 bg-white border border-gray-100 text-gray-600 p-3 md:p-4 rounded-full shadow-md opacity-0 translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:bg-gray-50 hover:scale-110 transition-all duration-300"
             aria-label="Previous slide"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-[#202b20]"><path d="m15 18-6-6 6-6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           </button>
           
           <button 
             onClick={nextSlide}
-            className="absolute right-0 md:right-6 z-40 bg-[#ffa116] border-2 border-[#202b20] p-3 md:p-4 rounded-none shadow-[2px_2px_0_0_#202b20] opacity-0 -translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:shadow-[2px_2px_0_0_#202b20] hover:translate-y-[2px] transition-all duration-300"
+            className="absolute right-0 md:right-6 z-40 bg-white border border-gray-100 text-gray-600 p-3 md:p-4 rounded-full shadow-md opacity-0 -translate-x-4 group-hover/carousel:translate-x-0 group-hover/carousel:opacity-100 hover:bg-gray-50 hover:scale-110 transition-all duration-300"
             aria-label="Next slide"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-[#202b20]"><path d="m9 18 6-6-6-6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </button>
 
           {tools.map((tool, i) => {
@@ -160,11 +160,11 @@ export default function CoreToolsShowcase() {
                 style={{ pointerEvents: props.pointerEvents }}
               >
                 {/* Image Container with Dynamic Border */}
-                 <div className={`relative w-full pb-[60%] bg-white rounded-none transition-all duration-300 ${props.diff === 0 ? 'border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20]' : 'border-2 border-[#202b20]/50 shadow-[2px_2px_0px_0px_rgba(32,43,32,0.2)]'}`}>
+                 <div className={`relative w-full pb-[60%] bg-white rounded-3xl transition-all duration-300 ${props.diff === 0 ? 'border border-gray-200 shadow-xl' : 'border border-gray-100 shadow-sm'}`}>
                     <img 
                       src={tool.image} 
                       alt={tool.title} 
-                      className="absolute inset-0 w-full h-full object-contain p-4 md:p-8 rounded-none"
+                      className="absolute inset-0 w-full h-full object-contain p-4 md:p-8 rounded-3xl"
                     />
                  </div>
               </motion.div>
@@ -173,12 +173,12 @@ export default function CoreToolsShowcase() {
         </div>
 
         {/* Carousel Pagination Dots */}
-        <div className="flex justify-center items-center gap-2 mt-4 mb-4 md:mt-8 md:mb-6">
+        <div className="flex justify-center items-center gap-2 mt-4 mb-8 md:mt-8 md:mb-10">
           {tools.map((_, i) => (
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`h-2 border border-[#202b20] rounded-none transition-all duration-300 ${i === activeIndex ? "w-6 bg-[#202b20]" : "w-2 bg-white hover:bg-[#ffa116]"}`}
+              className={`h-2 rounded-full transition-all duration-300 ${i === activeIndex ? "w-8 bg-gray-800" : "w-2 bg-gray-200 hover:bg-gray-300"}`}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
@@ -196,16 +196,16 @@ export default function CoreToolsShowcase() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="bg-transparent rounded-none p-4 md:p-0 transition-colors duration-300"
+              className="bg-transparent rounded-3xl p-4 md:p-0 transition-colors duration-300"
             >
-              <p className="text-[#202b20]/60 font-bold uppercase tracking-widest text-[11px] mb-3">
+              <p className="text-gray-500 font-[600] uppercase tracking-widest text-[12px] mb-3">
                  {tools[activeIndex].subtitle}
               </p>
-              <h3 className="text-3xl md:text-4xl font-[800] text-[#202b20] mb-4 tracking-tighter inline-flex items-center">
+              <h3 className="text-3xl md:text-4xl font-[700] text-gray-900 mb-4 tracking-tight inline-flex items-center">
                 {tools[activeIndex].title}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="ml-3 w-8 h-8 p-1.5 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 bg-[#202b20] text-[#ffa116] border-2 border-[#202b20] shadow-[2px_2px_0_0_#ffa116]"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-3 w-8 h-8 p-1.5 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 bg-gray-100 text-gray-900 rounded-full"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </h3>
-              <p className="text-[#202b20]/80 font-[500] leading-relaxed max-w-xl mx-auto text-[16px]">
+              <p className="text-gray-500 font-[400] leading-relaxed max-w-xl mx-auto text-[16px]">
                 {tools[activeIndex].description}
               </p>
             </motion.div>

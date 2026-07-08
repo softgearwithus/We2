@@ -28,6 +28,9 @@ export class ResumeDocument {
   @Column({ type: 'varchar', length: 20, default: 'pending' })
   parseStatus: string;
 
+  @Column({ type: 'text', nullable: true })
+  extractedText: string | null;
+
   @Column({ type: 'json', nullable: true })
   parsedJson: Record<string, any> | null;
 

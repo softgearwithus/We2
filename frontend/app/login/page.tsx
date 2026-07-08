@@ -11,77 +11,62 @@ import { Badge } from '../../components/ui/badge';
 function LoginSelectionPageContent() {
     const searchParams = useSearchParams();
     const nextParam = searchParams.get('next');
-    const safeNext =
-        nextParam &&
-            nextParam.startsWith('/') &&
-            !nextParam.startsWith('//')
-            ? nextParam
-            : null;
+    const safeNext = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : null;
 
     const portals = [
         {
             role: 'Student',
-            icon: <GraduationCap size={28} className="text-white" />,
+            icon: <GraduationCap size={24} className="text-indigo-600" />,
             description: 'Access simulations, track progress, and build your verified portfolio.',
             link: safeNext ? `/login/student?next=${encodeURIComponent(safeNext)}` : '/login/student',
-            gradient: 'from-violet-500 to-indigo-600',
-            badge: 'Login Portal',
-            badgeVar: 'default' as const,
+            hoverColor: 'hover:border-indigo-500 hover:shadow-[0_8px_30px_rgb(99,102,241,0.12)]',
+            iconBg: 'bg-indigo-50',
             cta: 'Student Login'
         },
         {
             role: 'Institute',
-            icon: <Building2 size={28} className="text-white" />,
+            icon: <Building2 size={24} className="text-emerald-600" />,
             description: 'Partner with us to transform your campus into a tech talent hub.',
             link: safeNext ? `/login/college?next=${encodeURIComponent(safeNext)}` : '/login/college',
-            gradient: 'from-emerald-500 to-teal-600',
-            badge: 'Partner Program',
-            badgeVar: 'secondary' as const,
+            hoverColor: 'hover:border-emerald-500 hover:shadow-[0_8px_30px_rgb(16,185,129,0.12)]',
+            iconBg: 'bg-emerald-50',
             cta: 'Institute Login'
         },
         {
             role: 'Industry',
-            icon: <Briefcase size={28} className="text-white" />,
+            icon: <Briefcase size={24} className="text-purple-600" />,
             description: 'Hire pre-vetted talent directly from our high-performance cohorts.',
             link: safeNext ? `/login/industry?next=${encodeURIComponent(safeNext)}` : '/login/industry',
-            gradient: 'from-slate-800 to-black',
-            badge: 'Hiring Solutions',
-            badgeVar: 'outline' as const,
+            hoverColor: 'hover:border-purple-500 hover:shadow-[0_8px_30px_rgb(168,85,247,0.12)]',
+            iconBg: 'bg-purple-50',
             cta: 'Company Login'
         },
     ];
 
     return (
-        <div className="min-h-screen bg-[#f8f9fa] selection:bg-[#ffa116] selection:text-[#202b20] relative overflow-hidden flex flex-col font-inter">
-            {/* Minimal Grid Background */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `linear-gradient(to right, #202b20 1px, transparent 1px), linear-gradient(to bottom, #202b20 1px, transparent 1px)`,
-                    backgroundSize: '40px 40px'
-                }} />
-            </div>
+        <div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col font-sans">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-[100px] rounded-full pointer-events-none opacity-50" />
 
             {/* Header */}
             <header className="relative z-10 py-8 px-6 md:px-12 flex items-center justify-between">
                 <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-                    <span className="font-[800] text-3xl text-[#202b20] tracking-tighter">emble</span>
+                    <span className="font-[800] text-2xl text-gray-900 tracking-tighter">emble</span>
                 </Link>
             </header>
 
             {/* Content */}
             <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
-                <div className="text-center max-w-3xl mb-16 animate-fade-in-up">
-
-                    <h1 className="text-5xl md:text-7xl font-[800] text-[#202b20] mb-6 tracking-tight leading-[1.1] uppercase">
-                        Choose Your <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffa116] to-[#ff9100]">Gateway.</span>
+                <div className="text-center max-w-2xl mb-12 animate-fade-in-up">
+                    <h1 className="text-4xl md:text-5xl font-[800] text-gray-900 mb-4 tracking-tight leading-[1.1]">
+                        Welcome back to <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">Emble</span>
                     </h1>
-                    <p className="text-xl text-[#202b20]/70 font-[500] max-w-lg mx-auto leading-relaxed">
-                        Whether you're a student building a career or an organization building the future, start here.
+                    <p className="text-lg text-gray-500 font-[500] max-w-lg mx-auto leading-relaxed">
+                        Select your portal to continue.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
                     {portals.map((portal, idx) => (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -91,30 +76,16 @@ function LoginSelectionPageContent() {
                             className="h-full"
                         >
                             <Link href={portal.link} className="block h-full group">
-                                <div className="h-full flex flex-col border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] hover:shadow-[4px_4px_0_0_#ffa116] hover:-translate-y-1 transition-all duration-300 bg-white relative">
-                                    <div className="absolute top-0 left-0 w-full h-2 border-b-2 border-[#202b20]" style={{
-                                        backgroundColor: portal.role === 'Student' ? '#ffa116' : portal.role === 'Institute' ? '#34d399' : '#202b20'
-                                    }} />
-                                    <div className="p-8 pb-4 relative mt-2">
-                                        <div className="absolute top-8 right-8 text-[10px] uppercase font-[800] tracking-wider px-2 py-1 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] bg-white">
-                                            {portal.badge}
-                                        </div>
-                                        <div className={`w-14 h-14 border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`} style={{
-                                            backgroundColor: portal.role === 'Student' ? '#ffa116' : portal.role === 'Institute' ? '#34d399' : '#202b20'
-                                        }}>
-                                            {portal.icon}
-                                        </div>
-                                        <h2 className="text-2xl font-[800] uppercase text-[#202b20]">{portal.role}</h2>
+                                <div className={`h-full flex flex-col bg-white border border-gray-200 rounded-2xl p-8 transition-all duration-300 ${portal.hoverColor}`}>
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 ${portal.iconBg}`}>
+                                        {portal.icon}
                                     </div>
-                                    <div className="px-8 pb-6 flex-1">
-                                        <p className="text-base text-[#202b20]/80 font-[600] leading-relaxed">
-                                            {portal.description}
-                                        </p>
-                                    </div>
-                                    <div className="px-8 pb-8 pt-0 mt-auto">
-                                        <div className="flex items-center gap-2 font-[800] uppercase text-sm text-[#202b20] group-hover:gap-4 transition-all">
-                                            {portal.cta} <ArrowRight size={16} className="text-[#ffa116]" strokeWidth={3} />
-                                        </div>
+                                    <h2 className="text-xl font-[700] text-gray-900 mb-3">{portal.role}</h2>
+                                    <p className="text-sm text-gray-500 font-[500] leading-relaxed flex-1 mb-8">
+                                        {portal.description}
+                                    </p>
+                                    <div className="flex items-center gap-2 font-[600] text-sm text-gray-900 group-hover:text-indigo-600 transition-colors mt-auto">
+                                        {portal.cta} <ArrowRight size={16} />
                                     </div>
                                 </div>
                             </Link>
@@ -122,14 +93,14 @@ function LoginSelectionPageContent() {
                     ))}
                 </div>
 
-                <div className="mt-20">
-                    <div className="flex items-center justify-center gap-6 text-sm font-[600] text-[#202b20]/60 uppercase tracking-widest">
-                        <Link href="/secure/admin" className="flex items-center gap-2 hover:text-[#ffa116] transition-colors">
+                <div className="mt-16">
+                    <div className="flex items-center justify-center gap-6 text-sm font-[500] text-gray-400">
+                        <Link href="/secure/admin" className="flex items-center gap-2 hover:text-gray-900 transition-colors">
                             <ShieldCheck size={14} />
                             Admin Access
                         </Link>
-                        <span className="w-1.5 h-1.5 bg-[#202b20]" />
-                        <Link href="/contact" className="hover:text-[#ffa116] transition-colors">
+                        <span className="w-1 h-1 rounded-full bg-gray-300" />
+                        <Link href="/contact" className="hover:text-gray-900 transition-colors">
                             Need Help?
                         </Link>
                     </div>

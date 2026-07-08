@@ -31,27 +31,28 @@ export default function TargetUsers() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-[#202b20] mb-6"
+            className="text-[2.5rem] md:text-[4rem] font-[800] tracking-tighter text-black mb-4 leading-[1.05]"
           >
-            Built for modern tech roles
+            Built for modern <br className="hidden sm:block" />
+            <span className="font-serif italic font-normal text-gray-400">tech roles.</span>
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 pb-4 pr-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 pb-4 pr-4">
           {personas.map((persona, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, duration: 0.4 }}
-              className="group bg-white p-10 rounded-none border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[2px_2px_0_0_#ffa116] transition-all duration-300"
+              className="group bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <div className="h-16 w-16 rounded-none bg-[#efeff1] border-2 border-[#202b20] shadow-[2px_2px_0_0_#202b20] flex items-center justify-center mb-8">
+              <div className="h-14 w-14 rounded-2xl bg-slate-50 border border-gray-100 flex items-center justify-center mb-8">
                 {persona.icon}
               </div>
-              <h3 className="text-2xl font-[600] text-[#202b20] mb-4">{persona.role}</h3>
-              <p className="text-[#202b20]/75 font-[500] text-[16px] leading-relaxed">
+              <h3 className="text-2xl font-[600] text-gray-900 mb-3 tracking-tight">{persona.role}</h3>
+              <p className="text-gray-500 font-[400] text-[16px] leading-relaxed">
                 {persona.description}
               </p>
             </motion.div>

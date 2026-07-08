@@ -14,6 +14,18 @@ const OTP_EXPIRY_MINUTES = 10;
 const OTP_MIN_INTERVAL_SECONDS = 60;
 const OTP_MAX_ATTEMPTS = 5;
 
+export type TransactionalEmailResult = {
+  status: 'sent' | 'failed';
+  error?: string;
+};
+
+export type TransactionalEmailInput = {
+  to: string;
+  subject: string;
+  plainText: string;
+  html?: string;
+};
+
 @Injectable()
 export class EmailOtpService {
   private readonly client: EmailClient;
@@ -42,6 +54,46 @@ export class EmailOtpService {
 
   private generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  async sendTransactionalEmail(
+    input: TransactionalEmailInput,
+  ): Promise<TransactionalEmailResult> {
+    const to = this.normalizeEmail(input.to);
+    const emailMessage = {
+      senderAddress: this.senderAddress,
+      content: {
+        subject: input.subject,
+        plainText: input.plainText,
+        html: input.html,
+      },
+      recipients: {
+        to: [{ address: to }],
+      },
+    } as any;
+
+    try {
+      const poller = await this.client.beginSend(emailMessage);
+      const result: any = await poller.pollUntilDone();
+      if (
+        result?.status &&
+        String(result.status).toLowerCase() !== 'succeeded'
+      ) {
+        return {
+          status: 'failed',
+          error:
+            result?.error?.message ||
+            result?.error?.name ||
+            'Email delivery failed.',
+        };
+      }
+      return { status: 'sent' };
+    } catch (error: any) {
+      return {
+        status: 'failed',
+        error: error?.message || 'Email delivery failed.',
+      };
+    }
   }
 
   private async requestOtpForPurpose(
@@ -95,33 +147,15 @@ export class EmailOtpService {
       );
     }
 
-    const emailMessage = {
-      senderAddress: this.senderAddress,
-      content: {
-        subject,
-        plainText: `Your EMBLE verification code is ${otp}. ${bodyLine} It expires in ${OTP_EXPIRY_MINUTES} minutes.`,
-        html: `<html><body><h2>Your EMBLE verification code</h2><p>Use <strong>${otp}</strong>. ${bodyLine}</p><p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p></body></html>`,
-      },
-      recipients: {
-        to: [{ address: normalizedEmail }],
-      },
-    } as any;
+    const delivery = await this.sendTransactionalEmail({
+      to: normalizedEmail,
+      subject,
+      plainText: `Your EMBLE verification code is ${otp}. ${bodyLine} It expires in ${OTP_EXPIRY_MINUTES} minutes.`,
+      html: `<html><body><h2>Your EMBLE verification code</h2><p>Use <strong>${otp}</strong>. ${bodyLine}</p><p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p></body></html>`,
+    });
 
-    try {
-      const poller = await this.client.beginSend(emailMessage);
-      const result: any = await poller.pollUntilDone();
-      if (
-        result?.status &&
-        String(result.status).toLowerCase() !== 'succeeded'
-      ) {
-        const errorMessage =
-          result?.error?.message ||
-          result?.error?.name ||
-          'Email delivery failed.';
-        throw new HttpException(errorMessage, HttpStatus.BAD_GATEWAY);
-      }
-    } catch (error: any) {
-      const rawMessage = error?.message || 'Email delivery failed.';
+    if (delivery.status !== 'sent') {
+      const rawMessage = delivery.error || 'Email delivery failed.';
       const status = rawMessage.includes('EmailDroppedAllRecipientsSuppressed')
         ? HttpStatus.BAD_REQUEST
         : HttpStatus.BAD_GATEWAY;

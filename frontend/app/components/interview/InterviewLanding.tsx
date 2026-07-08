@@ -1,24 +1,20 @@
 'use client';
 
-import { fetchApi } from '../../lib/apiClient';
-
 import { useState, useEffect, useRef } from 'react';
 import { Play, Loader2, Mic, Video, ArrowRight, CheckCircle2, BarChart3, Sparkles } from 'lucide-react';
 import CommunicationDrillDashboard from './CommunicationDrillDashboard';
-import PreInterviewInstructions from './PreInterviewInstructions';
-import InterviewSession from './InterviewSession';
-import AssessmentReport, { AssessmentData, SectionScore, VideoMetrics } from './AssessmentReport';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '@/components/ui/card';
+import AssessmentReport, { AssessmentData, SectionScore } from './AssessmentReport';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { InterviewsService } from '@/app/services/InterviewsService';
 import { useCredits } from '@/app/hooks/useCredits';
+import { fetchApi } from '../../lib/apiClient';
 
 interface InterviewLandingProps {
     initialMode?: Mode;
 }
 
-type Mode = 'landing' | 'audio' | 'instructions' | 'video_session' | 'result' | 'analysis';
+type Mode = 'landing' | 'audio' | 'result' | 'analysis';
 
 export default function InterviewLanding({ initialMode = 'landing' }: InterviewLandingProps) {
     const [mode, setMode] = useState<Mode>(initialMode);
@@ -32,7 +28,6 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
     const isAudioLimited = false;
     const isVideoLimited = false;
     const isFreePlan = false;
-
     // Sync mode when initialMode prop changes (e.g. navigation)
     useEffect(() => {
         setMode(initialMode);
@@ -55,43 +50,40 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
         loadLatest();
     }, [mode]);
 
-    const handleStartVideoFlow = () => {
+    const handleStartVideoFlow = async () => {
         if (isVideoLimited) return;
-        setMode('instructions');
+        setIsLoading(true);
+
+        try {
+            const { getActiveToken } = await import('@/app/lib/auth-storage');
+            const token = getActiveToken() || '';
+            const response = await fetchApi(`${process.env.NEXT_PUBLIC_API_URL}/ai-interviewer/trusted-launch`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create trusted launch session');
+            }
+
+            const payload = await response.json();
+            if (!payload?.launchUrl) {
+                throw new Error('Missing trusted launch URL');
+            }
+
+            window.location.href = payload.launchUrl;
+        } catch (error) {
+            console.error('Failed to start trusted live interview', error);
+            alert('Unable to authorize the interview launch. Please verify your Pro subscription and try again.');
+            setIsLoading(false);
+        }
     };
 
     const handleStartAudioFlow = () => {
         if (isAudioLimited) return;
         setMode('audio');
-    };
-
-    const startVideoSession = async (resumeId?: string) => {
-        if (isVideoLimited) return;
-        setIsLoading(true);
-        try {
-            const { getActiveToken } = await import('@/app/lib/auth-storage');
-            const token = getActiveToken() || '';
-            if (!resumeId) {
-                throw new Error('Resume required');
-            }
-            sessionStorage.setItem('emble.ai.resumeId', resumeId);
-            setIsLoading(false);
-            setMode('video_session');
-        } catch (error) {
-            console.error('Failed to initialize video session', error);
-            setIsLoading(false);
-        }
-    };
-
-    const handleVideoComplete = (metrics: VideoMetrics, durationSeconds: number) => {
-        setAssessmentData({
-            type: 'video',
-            metrics: metrics,
-            date: new Date(),
-            duration: durationSeconds
-        });
-        setMode('result');
-        refetch();
     };
 
     const handleAudioComplete = (scores: SectionScore[], durationSeconds: number) => {
@@ -120,20 +112,6 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
         return <CommunicationDrillDashboard onBack={() => setMode('landing')} initialTab="history" />;
     }
 
-    if (mode === 'instructions') {
-        return <PreInterviewInstructions onStart={startVideoSession} onBack={() => setMode('landing')} />;
-    }
-
-    if (mode === 'video_session') {
-        return (
-            <InterviewSession
-                onEnd={handleVideoComplete}
-                onCancel={() => setMode('landing')}
-                initialSeconds={900}
-            />
-        );
-    }
-
     if (mode === 'result' && assessmentData) {
         return (
             <AssessmentReport
@@ -153,7 +131,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                     <div className="space-y-4 max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-bold uppercase tracking-wider border border-violet-200">
                             <Sparkles size={12} className="fill-violet-700" />
-                            <span>Placement Mode Ultra Interface</span>
+                            <span>Live Interview Suite</span>
                         </div>
                         <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1]">
                             Mock Interview <br className="hidden md:block" />
@@ -249,7 +227,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                                         <Video size={24} />
                                     </div>
                                     <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
-                                        Beta Access
+                                        Full Interview
                                     </span>
                                 </div>
 
@@ -263,8 +241,7 @@ export default function InterviewLanding({ initialMode = 'landing' }: InterviewL
                                         )}
                                     </div>
                                     <p className="text-sm text-slate-400 leading-relaxed">
-                                        Face our AI avatar in a realistic environment.
-                                        Get feedback on body language & confidence.
+                                        Launch the full Emble live interview flow with resume-aware questioning and a dedicated interview workspace.
                                     </p>
                                 </div>
                             </div>

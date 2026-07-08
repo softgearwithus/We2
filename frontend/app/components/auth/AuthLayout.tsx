@@ -12,36 +12,31 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children, title, subtitle, role }: AuthLayoutProps) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#f8f9fa] selection:bg-[#ffa116] selection:text-[#202b20] relative overflow-hidden font-inter">
-            {/* Minimal Grid Background */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `linear-gradient(to right, #202b20 1px, transparent 1px), linear-gradient(to bottom, #202b20 1px, transparent 1px)`,
-                    backgroundSize: '40px 40px'
-                }} />
-            </div>
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50 relative overflow-hidden font-sans">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
 
             <div className="relative z-10 w-full max-w-md animate-fade-in-up">
                 {/* Logo Area */}
                 <div className="flex justify-center mb-8">
-                    <Link href="/" className="flex items-center gap-3 group px-6 py-2 border-2 border-[#202b20] bg-white shadow-[2px_2px_0px_0px_#202b20] hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#202b20] transition-all">
-                        <span className="font-[800] text-3xl text-[#202b20] tracking-tighter">emble</span>
+                    <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+                        <span className="font-[800] text-2xl text-gray-900 tracking-tighter">emble</span>
                     </Link>
                 </div>
                 
                 {/* Centered Card */}
-                <div className="bg-white border-2 border-[#202b20] shadow-[2px_2px_0px_0px_#202b20] p-8 sm:p-10 relative overflow-hidden">
+                <div className="bg-white border border-gray-200 rounded-2xl shadow-xl shadow-gray-200/50 p-8 sm:p-10 relative overflow-hidden">
                     {/* Role Indicator Bar */}
-                    <div className={`absolute top-0 left-0 w-full h-2 border-b-2 border-[#202b20] ${
-                        role === 'student' ? 'bg-[#ffa116]' :
-                        role === 'college' ? 'bg-emerald-400' :
-                        role === 'industry' ? 'bg-[#202b20]' :
-                        'bg-blue-400'
+                    <div className={`absolute top-0 left-0 w-full h-1.5 ${
+                        role === 'student' ? 'bg-indigo-500' :
+                        role === 'college' ? 'bg-emerald-500' :
+                        role === 'industry' ? 'bg-purple-500' :
+                        'bg-blue-500'
                     }`} />
                     
                     <div className="text-center mb-8 mt-2">
-                        <h1 className="text-2xl font-[700] text-[#202b20] mb-2 tracking-tight uppercase">{title}</h1>
-                        <p className="text-sm text-[#202b20]/70 font-[500] leading-relaxed">{subtitle}</p>
+                        <h1 className="text-2xl font-[800] text-gray-900 mb-2 tracking-tight">{title}</h1>
+                        <p className="text-sm text-gray-500 font-[500] leading-relaxed">{subtitle}</p>
                     </div>
 
                     <div className="mt-8">
@@ -52,16 +47,16 @@ export default function AuthLayout({ children, title, subtitle, role }: AuthLayo
                 <div className="mt-8 text-center flex items-center justify-center gap-4">
                     <Link
                         href="/login"
-                        className="text-sm font-[600] text-[#202b20] hover:bg-[#ffa116] px-2 py-1 border-2 border-transparent hover:border-[#202b20] transition-colors"
+                        className="text-sm font-[600] text-gray-500 hover:text-indigo-600 transition-colors"
                     >
-                        ← PORTAL
+                        ← Portal Selection
                     </Link>
-                    <span className="w-1.5 h-1.5 bg-[#202b20]" />
+                    <span className="w-1 h-1 rounded-full bg-gray-300" />
                     <Link
                         href="/"
-                        className="text-sm font-[600] text-[#202b20] hover:bg-[#ffa116] px-2 py-1 border-2 border-transparent hover:border-[#202b20] transition-colors"
+                        className="text-sm font-[600] text-gray-500 hover:text-indigo-600 transition-colors"
                     >
-                        HOME
+                        Home
                     </Link>
                 </div>
             </div>

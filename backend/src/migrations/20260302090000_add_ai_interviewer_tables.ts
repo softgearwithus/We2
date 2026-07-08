@@ -12,6 +12,7 @@ export class AddAiInterviewerTables20260302090000 implements MigrationInterface 
                 "fileName" character varying(255),
                 "fileType" character varying(20),
                 "parseStatus" character varying(20) NOT NULL DEFAULT 'pending',
+                "extractedText" text,
                 "parsedJson" jsonb,
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now()
@@ -33,6 +34,7 @@ export class AddAiInterviewerTables20260302090000 implements MigrationInterface 
                 "coverageMap" jsonb,
                 "providerVersion" character varying(50),
                 "externalSessionId" character varying(80),
+                "candidateJoinUrl" character varying(512),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now()
             );

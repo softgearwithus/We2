@@ -50,6 +50,9 @@ export class AiInterviewSession {
   @Column({ type: 'varchar', length: 80, nullable: true })
   externalSessionId: string | null;
 
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  candidateJoinUrl: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

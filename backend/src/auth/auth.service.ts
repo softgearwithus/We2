@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto, LoginDto, ResetPasswordDto } from './dto/auth.dto';
+import { TwoFactorLoginDto } from './dto/two-factor-login.dto';
 import { EmailOtpService } from './services/email-otp.service';
 import { Request } from 'express';
 import { UserRole } from '../users/user.entity';
@@ -20,10 +21,19 @@ type AuthUserResponse = {
   subscriptionEndDate: Date | null;
   firstName: string | null;
   lastName: string | null;
+  isTwoFactorEnabled: boolean;
   credentialId: string | null;
   collegeId: string | null;
   department: string | null;
   year: string | null;
+};
+
+type TwoFactorPayload = {
+  sub: string;
+  email: string;
+  role: string;
+  purpose: 'two_factor';
+  rememberMe?: boolean;
 };
 
 @Injectable()
@@ -73,6 +83,8 @@ export class AuthService {
     subscriptionEndDate: Date | null;
     firstName: string | null;
     lastName: string | null;
+    isTwoFactorEnabled?: boolean;
+    twoFactorSecret?: string | null;
     credentialId?: string | null;
     collegeId?: string | null;
     department?: string | null;
@@ -87,6 +99,7 @@ export class AuthService {
       subscriptionEndDate: user.subscriptionEndDate,
       firstName: user.firstName,
       lastName: user.lastName,
+      isTwoFactorEnabled: Boolean(user.isTwoFactorEnabled && user.twoFactorSecret),
       credentialId: user.credentialId || null,
       collegeId: user.collegeId || null,
       department: user.department || null,
@@ -125,6 +138,24 @@ export class AuthService {
       ? rawUserAgent.join(' ')
       : rawUserAgent || null;
 
+    if (user.isTwoFactorEnabled && user.twoFactorSecret) {
+      const twoFactorToken = await this.jwtService.signAsync(
+        {
+          sub: user.id,
+          email: user.email,
+          role: user.role,
+          purpose: 'two_factor',
+          rememberMe: Boolean(loginDto.rememberMe),
+        },
+        { expiresIn: '5m' },
+      );
+      return {
+        requiresTwoFactor: true,
+        twoFactorToken,
+        user: this.toAuthUserResponse(user),
+      };
+    }
+
     const sessionVersion = await this.usersService.rotateSessionVersion(
       user.id,
       request?.ip || null,
@@ -146,6 +177,99 @@ export class AuthService {
     } else {
       accessToken = await this.jwtService.signAsync(payload);
     }
+
+    return {
+      accessToken,
+      user: this.toAuthUserResponse(user),
+    };
+  }
+
+  async issueAccessTokenForUser(
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      subscriptionPlan: string;
+      subscriptionStatus: string;
+      subscriptionEndDate: Date | null;
+      firstName: string | null;
+      lastName: string | null;
+      isTwoFactorEnabled?: boolean;
+      twoFactorSecret?: string | null;
+      credentialId?: string | null;
+      collegeId?: string | null;
+      department?: string | null;
+      year?: string | null;
+    },
+    request?: Request,
+    rememberMe = false,
+  ) {
+    const rawUserAgent = request?.headers?.['user-agent'];
+    const userAgent = Array.isArray(rawUserAgent)
+      ? rawUserAgent.join(' ')
+      : rawUserAgent || null;
+    const sessionVersion = await this.usersService.rotateSessionVersion(
+      user.id,
+      request?.ip || null,
+      userAgent,
+    );
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      sv: sessionVersion,
+    };
+    const accessToken = rememberMe
+      ? await this.jwtService.signAsync(payload, { expiresIn: '7d' })
+      : await this.jwtService.signAsync(payload);
+
+    return {
+      accessToken,
+      user: this.toAuthUserResponse(user),
+    };
+  }
+
+  async verifyTwoFactorLogin(dto: TwoFactorLoginDto, request?: Request) {
+    let payload: TwoFactorPayload;
+    try {
+      payload = await this.jwtService.verifyAsync<TwoFactorPayload>(
+        dto.twoFactorToken,
+      );
+    } catch {
+      throw new UnauthorizedException('Two-factor session expired.');
+    }
+    if (payload.purpose !== 'two_factor') {
+      throw new UnauthorizedException('Invalid two-factor session.');
+    }
+
+    const user = await this.usersService.findById(payload.sub);
+    if (!user.isTwoFactorEnabled || !user.twoFactorSecret) {
+      throw new UnauthorizedException('Two-factor authentication is disabled.');
+    }
+    const valid = await this.usersService.verifyTwoFactorCode(user.id, dto.code);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid two-factor code.');
+    }
+
+    const rawUserAgent = request?.headers?.['user-agent'];
+    const userAgent = Array.isArray(rawUserAgent)
+      ? rawUserAgent.join(' ')
+      : rawUserAgent || null;
+    const sessionVersion = await this.usersService.rotateSessionVersion(
+      user.id,
+      request?.ip || null,
+      userAgent,
+    );
+    const accessPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      sv: sessionVersion,
+    };
+    const rememberMe = Boolean(dto.rememberMe ?? payload.rememberMe);
+    const accessToken = rememberMe
+      ? await this.jwtService.signAsync(accessPayload, { expiresIn: '7d' })
+      : await this.jwtService.signAsync(accessPayload);
 
     return {
       accessToken,

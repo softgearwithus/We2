@@ -25,32 +25,30 @@ export default function BlogPage() {
     }, [searchQuery, selectedCategory]);
 
     return (
-        <div className="min-h-screen bg-[#efeff1] font-sans">
+        <div className="min-h-screen bg-slate-50 font-sans">
             <Navbar />
             <div className="max-w-7xl mx-auto px-6 pt-32 pb-24">
                 
                 {/* Header & Search Section */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-16">
                     <div>
-                        <h1 className="text-[3rem] md:text-[5rem] font-[300] tracking-tighter text-[#202b20] leading-[1.0] mb-5">
+                        <h1 className="text-[3rem] md:text-[5rem] font-[800] tracking-tighter text-gray-900 leading-[1.0] mb-5">
                             Resources for <br className="hidden md:block" />
-                            <span className="font-black">every interview.</span>
+                            <span className="font-serif italic font-normal text-gray-500">every interview.</span>
                         </h1>
-                        <p className="text-[15px] md:text-[18px] text-[#202b20]/55 max-w-lg font-[440] leading-relaxed">
+                        <p className="text-[15px] md:text-[18px] text-gray-500 max-w-lg font-[500] leading-relaxed">
                             Whether you&apos;re hiring engineers or preparing to ace your next technical round — everything you need is here.
                         </p>
                     </div>
 
-
                     {/* Search Bar */}
-                    <div className="w-full lg:w-[400px] relative group">
-                        <div className="absolute inset-0 bg-[#202b20] translate-x-2 translate-y-2 group-focus-within:translate-x-3 group-focus-within:translate-y-3 transition-all"></div>
-                        <div className="relative flex items-center bg-white border-4 border-[#202b20] px-4 py-3">
-                            <Search className="w-6 h-6 text-[#202b20] mr-3" />
+                    <div className="w-full lg:w-[400px]">
+                        <div className="relative flex items-center bg-white border border-gray-200 rounded-full px-5 py-3.5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
+                            <Search className="w-5 h-5 text-gray-400 mr-3" />
                             <input 
                                 type="text"
-                                placeholder="Search by subject (Python, AI...)"
-                                className="w-full bg-transparent outline-none font-black uppercase tracking-widest text-[14px] placeholder:text-[#202b20]/30"
+                                placeholder="Search resources..."
+                                className="w-full bg-transparent outline-none font-medium text-[15px] text-gray-900 placeholder:text-gray-400"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -60,17 +58,17 @@ export default function BlogPage() {
 
                 {/* Filter Bar */}
                 <div className="flex flex-wrap items-center gap-3 mb-12">
-                    <div className="flex items-center gap-2 mr-4 text-[12px] font-black uppercase tracking-widest text-[#202b20]/40">
+                    <div className="flex items-center gap-2 mr-4 text-[13px] font-semibold tracking-wide text-gray-500 uppercase">
                         <Filter className="w-4 h-4" /> Filter By:
                     </div>
                     {categories.map(category => (
                         <button
                             key={category}
                             onClick={() => setSelectedCategory(category)}
-                            className={`px-6 py-2 border-2 border-[#202b20] text-[12px] font-black uppercase tracking-widest transition-all ${
-                                selectedCategory === category 
-                                ? 'bg-[#202b20] text-white shadow-none translate-x-1 translate-y-1' 
-                                : 'bg-white text-[#202b20] shadow-[2px_2px_0px_0px_#202b20] hover:translate-x-1 hover:translate-y-1 hover:shadow-none'
+                            className={`px-5 py-2 rounded-full text-[14px] font-medium transition-all ${
+                                selectedCategory === category
+                                ? 'bg-gray-900 text-white shadow-sm'
+                                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
                             }`}
                         >
                             {category}
@@ -80,57 +78,57 @@ export default function BlogPage() {
 
                 {/* Blog Grid (Tiles) */}
                 {filteredPosts.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredPosts.map((post) => (
                             <Link 
                                 key={post.slug} 
                                 href={`/blog/${post.slug}`}
-                                className="group bg-white border-2 border-[#202b20] shadow-[3px_3px_0px_0px_#202b20] flex flex-col p-6 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0px_0px_#ffa116] transition-all h-full"
+                                className="group bg-white border border-gray-100 rounded-3xl flex flex-col p-8 hover:shadow-lg transition-all h-full"
                             >
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="px-2 py-0.5 bg-[#ffa116] border-2 border-[#202b20] text-[9px] uppercase font-black tracking-widest text-[#202b20]">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[12px] font-semibold tracking-wide">
                                         {post.category}
                                     </div>
-                                    <div className="text-[9px] font-black uppercase tracking-widest text-[#202b20]/40 flex items-center gap-1">
-                                        <Clock className="w-3 h-3" /> {post.readTime}
+                                    <div className="text-[12px] font-medium text-gray-400 flex items-center gap-1.5">
+                                        <Clock className="w-3.5 h-3.5" /> {post.readTime}
                                     </div>
                                 </div>
 
-                                <h2 className="text-[20px] font-black text-[#202b20] leading-[1.2] mb-3 group-hover:text-[#ffa116] transition-colors">
+                                <h2 className="text-[22px] font-bold text-gray-900 leading-[1.3] mb-4 group-hover:text-indigo-600 transition-colors">
                                     {post.title}
                                 </h2>
 
-                                <p className="text-[13px] text-[#202b20]/70 font-[500] leading-relaxed mb-6 line-clamp-2">
+                                <p className="text-[15px] text-gray-500 font-medium leading-relaxed mb-8 line-clamp-3">
                                     {post.excerpt}
                                 </p>
 
-                                <div className="mt-auto flex flex-wrap gap-1.5 mb-6">
+                                <div className="mt-auto flex flex-wrap gap-2 mb-6">
                                     {post.keywords.slice(0, 3).map(kw => (
-                                        <span key={kw} className="text-[8px] font-black uppercase tracking-tighter text-[#202b20]/30 border border-[#202b20]/10 px-1.5 py-0.5 bg-[#efeff1]">
+                                        <span key={kw} className="text-[12px] font-medium text-gray-400 bg-gray-50 border border-gray-100 rounded-md px-2 py-1">
                                             #{kw}
                                         </span>
                                     ))}
                                 </div>
 
-                                <div className="pt-4 border-t-2 border-[#202b20]/5 flex items-center justify-between group/read">
-                                    <span className="text-[11px] font-black uppercase tracking-widest group-hover/read:text-[#ffa116] transition-colors">
-                                        Open Article
+                                <div className="pt-5 border-t border-gray-100 flex items-center justify-between group/read mt-auto">
+                                    <span className="text-[14px] font-semibold text-gray-900 group-hover/read:text-indigo-600 transition-colors">
+                                        Read Article
                                     </span>
-                                    <ArrowRight className="w-4 h-4 group-hover/read:translate-x-1 transition-all" />
+                                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover/read:text-indigo-600 group-hover/read:translate-x-1 transition-all" />
                                 </div>
                             </Link>
                         ))}
                     </div>
                 ) : (
-                    <div className="py-32 text-center border-4 border-dashed border-[#202b20]/20 bg-white shadow-[2px_2px_0px_0px_#202b20]/5">
-                        <div className="bg-[#ffa116] w-16 h-16 mx-auto flex items-center justify-center border-4 border-[#202b20] shadow-[2px_2px_0_0_#202b20] mb-6">
-                            <Search className="w-8 h-8" />
+                    <div className="py-24 text-center border border-gray-200 bg-white rounded-3xl shadow-sm">
+                        <div className="bg-gray-50 w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-6">
+                            <Search className="w-8 h-8 text-gray-400" />
                         </div>
-                        <h3 className="text-2xl font-black uppercase tracking-widest text-[#202b20] mb-2">No Articles Found</h3>
-                        <p className="text-[#202b20]/50 font-medium">Try searching for subjects like "Python", "Scale", or "Hiring".</p>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">No Articles Found</h3>
+                        <p className="text-gray-500 font-medium">Try searching for different terms or adjust your category filter.</p>
                         <button 
                             onClick={() => {setSearchQuery(''); setSelectedCategory('All');}}
-                            className="mt-8 px-8 py-3 bg-[#202b20] text-white font-black uppercase tracking-widest text-sm shadow-[2px_2px_0_0_#ffa116] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                            className="mt-8 px-8 py-3 bg-gray-900 text-white rounded-full font-semibold text-[15px] hover:bg-gray-800 transition-all"
                         >
                             Reset Search
                         </button>
